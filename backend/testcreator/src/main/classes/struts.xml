@@ -1,5 +1,7 @@
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"  "http://struts.apache.org/dtds/struts-2.5.dtd">
 <struts>
+
+
 	<package name="classroom" namespace="/api" extends="json-default">
 		
 		<interceptors>
@@ -26,6 +28,10 @@
 				<param name="root">error</param>
 				<param name="statusCode">400</param>
 			</result>
+			<result name="login" type="json">
+        		<param name="root">error</param>
+        		<param name="statusCode">401</param>
+    		</result>	
 		</global-results>
 		
 		
@@ -55,11 +61,18 @@
 				<param name="root">createdClassrooms</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
-		  </action>
+		</action>
+		
+		<action name="isLoggedin" class="com.testcreator.actions.AuthAction" method="isValidToken">
+			<result name="success" type="json">
+				<param name="root">status</param>
+			</result>
+		</action>
+		
+		
 	</package>
 	
 	<package name="authentication" namespace="/" extends="json-default">
-		
 		<interceptors>
 			<interceptor name="jsonExceptionInterceptor" class="com.testcreator.interceptors.JsonApiExceptionInterceptor"/>
 			<interceptor-stack name="authenticationStack">
@@ -83,8 +96,12 @@
 			</result>
 			<result name="duplicate" type="json">
 				<param name="root">error</param>
-				<param name="statusCode">409</param>
+				<param name="statusCode">200</param>
 			</result>
+			 <result name="login" type="json">
+        		<param name="root">error</param>
+        		<param name="statusCode">401</param>
+    		</result>	
 		</global-results>
 		
 		<global-exception-mappings>
@@ -93,13 +110,15 @@
 		
 		<action name="signin" class="com.testcreator.actions.UserAction" method="signin">
 			<result name="success" type="json">
-				<param name="root">userId</param>
+				<param name="root">authDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
 		
 		<action name="signup" class="com.testcreator.actions.UserAction" method="signup">
 			<result name="success" type="json">
-				<param name="root">userId</param>
+				<param name="root">authDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
 		

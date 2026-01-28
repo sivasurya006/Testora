@@ -4,31 +4,38 @@ package com.testcreator.actions;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.util.ServletContextAware;
 
-import com.opensymphony.xwork2.Action;
 import com.testcreator.dto.ApiError;
+import com.testcreator.dto.UserAuthenticationDto;
 import com.testcreator.exception.UserNotFoundException;
 import com.testcreator.service.Userservice;
 import com.testcreator.util.InputValidatorUtil;
 import com.testcreator.util.JwtUtil;
 
 
-public class UserAction extends JsonApiAction implements ServletResponseAware, ServletContextAware{
+public class UserAction extends JsonApiAction implements ServletResponseAware, ServletRequestAware  , ServletContextAware{
 	
 	private String userName;
 	private String userEmail;
 	private String userPassword;
 	private int userId;
 	private HttpServletResponse response;
+	private HttpServletRequest request;
 	private ServletContext context;
+	private UserAuthenticationDto authDto;
 	
 	public String signin() {
+		
+		System.out.println("Hello I am called");
+		
 		if(! InputValidatorUtil.isValidEmail(userEmail)) {
-			setError(new ApiError("Invalid email", 400));
+			setError(new ApiError("Invalid email format", 400));
 			return INPUT;
 		}
 		if(userPassword == null) {
@@ -40,18 +47,37 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 			userId =  userservice.signin(userEmail, userPassword);
 			if(userId == -1) {
 				setError(new ApiError("Invalid email or password", 401));
-				return ERROR;
+				return LOGIN;
 			}
+			
+			String clientType = request.getHeader("X-Client-Type");
+			
+			if(clientType == null) {
+				setError(new ApiError("Client type missing", 401));
+				return INPUT;
+			}
+			
 			JwtUtil jwt = new JwtUtil(context);
 			String token = jwt.generateToken(userId+"");
 			Cookie cookie = new Cookie("token", token);
-			cookie.setMaxAge(60);
 			cookie.setHttpOnly(true);
+			cookie.setSecure(false);
+			cookie.setPath("/");
+			cookie.setMaxAge(24 * 60 * 60); 
 			
-			response.addCookie(cookie);
-			
-			
-			System.out.println("cookie added");
+			if(clientType.equals("mobile")) {
+				this.authDto = new UserAuthenticationDto(true, token);
+			}else {
+				response.addCookie(cookie);
+				response.setHeader("Set-Cookie",
+				        String.format("%s=%s; HttpOnly; Secure; Path=%s; Max-Age=%d; SameSite=None",
+				                cookie.getName(),
+				                cookie.getValue(),
+				                cookie.getPath(),
+				                cookie.getMaxAge()));
+
+				this.authDto = new UserAuthenticationDto(true, null);
+			}
 			return SUCCESS;
 		}catch (UserNotFoundException e) {
 			// TODO: logger
@@ -61,6 +87,10 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 		setError(new ApiError("Invalid email or password", 401));
 		return ERROR;
 		
+	}
+
+	public UserAuthenticationDto getAuthDto() {
+		return authDto;
 	}
 
 	public String signup() {
@@ -85,14 +115,30 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 			return "duplicate";
 		}
 		
+		String clientType = request.getHeader("X-Client-Type");
+		
+		if(clientType == null) {
+			setError(new ApiError("Client type missing", 401));
+			return INPUT;
+		}
+		
+		
 		
 		JwtUtil jwt = new JwtUtil(context);
 		String token = jwt.generateToken(userId+"");
 		Cookie cookie = new Cookie("token", token);
-		cookie.setMaxAge(60);
+		cookie.setMaxAge(60 * 60 * 24);
 		cookie.setHttpOnly(true);
 		
-		response.addCookie(cookie);		
+		if(clientType.equals("mobile")) {
+			this.authDto = new UserAuthenticationDto(true, token);
+			System.out.println("cookie not added (mob)");
+		}else {
+			response.addCookie(cookie);
+			this.authDto = new UserAuthenticationDto(true, null);
+			System.out.println("cookie added");
+		}
+			
 		return SUCCESS;
 	}	
 
@@ -120,6 +166,11 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;
+	}
+
+	@Override
+	public void setServletRequest(HttpServletRequest request) {		
+		this.request = request;
 	}
 
 	

@@ -93,13 +93,15 @@
 		
 		<action name="signin" class="com.testcreator.actions.UserAction" method="signin">
 			<result name="success" type="json">
-				<param name="root">userId</param>
+				<param name="root">authDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
 		
 		<action name="signup" class="com.testcreator.actions.UserAction" method="signup">
 			<result name="success" type="json">
-				<param name="root">userId</param>
+				<param name="root">authDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
 		

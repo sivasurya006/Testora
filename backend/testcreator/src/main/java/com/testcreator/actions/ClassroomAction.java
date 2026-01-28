@@ -38,6 +38,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 
 	
 	public String createClassroom() {
+		
 		if(this.classroomName == null || this.classroomName.isBlank()) {
 			setError(new ApiError("Invalid classroom name", 400));
 			return INPUT;
@@ -50,8 +51,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			return ERROR;
 		}
 		try {
-			Connection dbConnection = DBConnectionMaker.getInstance(servletContext).getConnection();
-			ClassroomService classroomService = new ClassroomService(dbConnection);
+			ClassroomService classroomService = new ClassroomService();
 			Classroom classroom =  classroomService.createNewClassRoom(userId, classroomName);
 			if(classroom == null) {
 				setError(new ApiError("Can't create classroom", 500));
@@ -77,8 +77,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			return ERROR;
 		}
 		try {
-			Connection connection = DBConnectionMaker.getInstance(servletContext).getConnection();
-			ClassroomService classroomService = new ClassroomService(connection);
+			ClassroomService classroomService = new ClassroomService();
 			this.createdClassrooms = classroomService.getAllCreatedClassrooms(userId);
 			return SUCCESS;
 		}catch (Exception e) {
@@ -98,8 +97,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			return ERROR;
 		}
 		try {
-			Connection connection = DBConnectionMaker.getInstance(servletContext).getConnection();
-			ClassroomService classroomService = new ClassroomService(connection);
+			ClassroomService classroomService = new ClassroomService();
 			this.createdClassrooms = classroomService.getAllJoinedClassrooms(userId);
 			return SUCCESS;
 		}catch (Exception e) {

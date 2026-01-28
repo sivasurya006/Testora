@@ -3,11 +3,17 @@ package com.testcreator.service;
 import java.sql.Connection;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
+import org.apache.struts2.ServletActionContext;
+
 import com.testcreator.dao.ClassroomDao;
 import com.testcreator.dao.UserDao;
+import com.testcreator.exception.DatabaseConnectionException;
 import com.testcreator.exception.UserNotFoundException;
 import com.testcreator.model.Classroom;
 import com.testcreator.model.User;
+import com.testcreator.util.DBConnectionMaker;
 
 
 
@@ -16,11 +22,21 @@ public class ClassroomService {
 	
 	private final UserDao userDao;
 	private final ClassroomDao classroomDao;
+	private Connection connection;
+	private ServletContext context;
 	
 	
-	public ClassroomService(Connection connection) {
-		userDao = new UserDao(connection);
-		classroomDao = new ClassroomDao(connection);
+	public ClassroomService() {
+		try {
+			this.context = ServletActionContext.getServletContext();
+			this.connection = DBConnectionMaker.getInstance(context).getConnection();
+			userDao = new UserDao(connection);
+			classroomDao = new ClassroomDao(connection);
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new DatabaseConnectionException(e.getMessage());
+		}
 	}
 	
 	public Classroom createNewClassRoom(int creatorId,String name) {
