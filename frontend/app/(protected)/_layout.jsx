@@ -30,7 +30,7 @@ export default function ProtectedLayout() {
     if (!authContext.isLoggedIn) {
         return <Redirect href='/signin' />
     }
-
+    
     return (
         <SafeAreaView style={{flex:1}}>
             <Header/>
@@ -68,6 +68,7 @@ export default function ProtectedLayout() {
                       />
                     )
                 }} />
+                
                 <Tabs.Screen name='joinedClassrooms' options={{
                     tabBarIcon: ({ color }) => (
                         <MaterialIcons name="school" size={30} color={color} />
