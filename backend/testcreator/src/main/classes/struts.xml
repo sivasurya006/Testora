@@ -35,6 +35,10 @@
         		<param name="root">error</param>
         		<param name="statusCode">401</param>
     		</result>	
+    		<result name="notFound" type="json">
+        		<param name="root">error</param>
+        		<param name="statusCode">404</param>
+    		</result>	
 		</global-results>
 		
 		
@@ -46,7 +50,7 @@
 		<action name="create-classroom"
 			class="com.testcreator.actions.ClassroomAction" method="createClassroom">
 			<result name="success" type="json" >
-				<param name="excludeProperties">error,createdClassrooms,joinedClassrooms</param>
+				<param name="root">classroomDto</param>
 			</result>
 		</action>
 		
@@ -61,11 +65,19 @@
 		<action name="joined-classrooms"
 		  class="com.testcreator.actions.ClassroomAction" method="allJoinedClassrooms">
 		  	<result name="success" type="json">
-				<param name="root">createdClassrooms</param>
+				<param name="root">joinedClassrooms</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
 		
+		<action name="delete-classroom" 
+			class="com.testcreator.actions.ClassroomAction" method="deleteClassroom"> 
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+		</action>
+		
+		<!-- currently not needed -->
 		<action name="isLoggedin" class="com.testcreator.actions.AuthAction" method="isValidToken">
 			<result name="success" type="json">
 				<param name="root">status</param>

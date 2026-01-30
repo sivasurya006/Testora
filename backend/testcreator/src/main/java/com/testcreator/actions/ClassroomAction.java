@@ -1,25 +1,22 @@
 package com.testcreator.actions;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.util.ServletContextAware;
 
-import com.opensymphony.xwork2.ActionSupport;
-import com.testcreator.dao.ClassroomDao;
+
 import com.testcreator.dto.ApiError;
+import com.testcreator.dto.ClassroomDto;
+import com.testcreator.dto.SuccessDto;
+import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.Classroom;
 import com.testcreator.service.ClassroomService;
-import com.testcreator.service.Userservice;
-import com.testcreator.util.DBConnectionMaker;
+
 
 public class ClassroomAction extends JsonApiAction implements ServletContextAware {
 	private ServletContext servletContext;
@@ -28,8 +25,13 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	private long createdAt;
 	private int classroomId;
 	
-	private List<Classroom> joinedClassrooms;
-	private List<Classroom> createdClassrooms;
+
+
+	private ClassroomDto classroomDto;
+	private SuccessDto successDto;
+	
+	private List<ClassroomDto> joinedClassrooms;
+	private List<ClassroomDto> createdClassrooms;
 	
 	@Override
 	public void setServletContext(ServletContext servletContext) {
@@ -57,9 +59,13 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 				setError(new ApiError("Can't create classroom", 500));
 				return ERROR;
 			}
-			this.classroomId = classroom.getClassroomId();
-			this.classroomName = classroom.getName();
-			this.createdAt = classroom.getcreatedAt().toEpochMilli();
+			
+			this.classroomDto = new ClassroomDto();
+			classroomDto.setClassroomId(classroom.getClassroomId());
+			classroomDto.setClassroomName(classroom.getName());;
+			classroomDto.setCreatedAt(classroom.getcreatedAt().toEpochMilli());
+			classroomDto.setCreatedBy(classroom.getcreatedBy());
+			
 			return SUCCESS;
 		} catch (Exception e) {
 			// TODO implementLogger
@@ -98,7 +104,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		}
 		try {
 			ClassroomService classroomService = new ClassroomService();
-			this.createdClassrooms = classroomService.getAllJoinedClassrooms(userId);
+			this.joinedClassrooms = classroomService.getAllJoinedClassrooms(userId);
 			return SUCCESS;
 		}catch (Exception e) {
 			// TODO implement logger
@@ -108,7 +114,49 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		return ERROR;
 	}
 	
-	public List<Classroom> getCreatedClassrooms() {
+	
+	public String deleteClassroom() {
+		
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		
+		this.classroomId =  Integer.parseInt(request.getHeader("X-ClassroomId"));
+		
+		if(classroomId <= 0) {
+			setError(new ApiError("Invalid classroom id", 400));
+			return INPUT;
+		}
+		
+		try {
+			ClassroomService classroomService = new ClassroomService();
+			if(classroomService.deleteClassRoom(userId,classroomId)) {
+				this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
+				System.out.println("success");
+				return SUCCESS;
+			}else {
+				this.successDto = new SuccessDto("Classroom not deleted", 422, false);
+				return SUCCESS;
+			}
+			
+		}catch(UnauthorizedException e) {
+			setError(new ApiError("Authendication failed", 401));
+			return LOGIN;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			setError(new ApiError("Server error", 500));
+		}
+		return ERROR;
+	}
+	
+	
+	public SuccessDto getSuccessDto() {
+		return successDto;
+	}
+	
+	
+	
+	public List<ClassroomDto> getCreatedClassrooms() {
 		return this.createdClassrooms;
 	}
 	public String getClassroomName() {
@@ -125,6 +173,15 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	}
 	public ApiError getError() {
 		return error;
+	}
+	
+	public ClassroomDto getClassroomDto() {
+		return classroomDto;
+	}
+	
+
+	public List<ClassroomDto> getJoinedClassrooms() {
+		return joinedClassrooms;
 	}
 
 }

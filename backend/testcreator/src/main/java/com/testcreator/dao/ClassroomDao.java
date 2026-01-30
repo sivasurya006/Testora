@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.testcreator.dto.ClassroomDto;
+import com.testcreator.exception.ClassroomNotNoundException;
+import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.Classroom;
 import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.User;
@@ -104,14 +107,19 @@ public class ClassroomDao {
 		return false;
 	}
 	
-	public List<Classroom> getAllCreatedClassrooms(int createdBy){
-		List<Classroom> classrooms = new LinkedList<>();
+	public List<ClassroomDto> getAllCreatedClassrooms(int createdBy){
+		List<ClassroomDto> classrooms = new LinkedList<>();
 		try(PreparedStatement getCreatedClassrooms = connection.prepareStatement(Queries.selectCreatedClassrooms)){
 			getCreatedClassrooms.setInt(1, createdBy);
 			try(ResultSet rs = getCreatedClassrooms.executeQuery()){
 				while ( rs.next() ) {
-					classrooms.add(new Classroom(rs.getInt("classroom_id"), rs.getInt("created_by"), 
-								rs.getString("name"), rs.getTimestamp("created_at").toInstant()));
+					
+					ClassroomDto classroomDto = new ClassroomDto();
+					classroomDto.setClassroomId(rs.getInt("classroom_id"));
+					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
+					classroomDto.setCreatedBy(rs.getInt("created_by"));
+					classroomDto.setClassroomName(rs.getString("name"));
+					classrooms.add(classroomDto);
 				}
 			}
 		} catch (SQLException e) {
@@ -122,17 +130,22 @@ public class ClassroomDao {
 		return classrooms;
 	}
 	
-	public List<Classroom> getAllJoinedClassrooms(int userId){
-		List<Classroom> classrooms = new LinkedList<>();
+	public List<ClassroomDto> getAllJoinedClassrooms(int userId){
+		List<ClassroomDto> classrooms = new LinkedList<>();
 		try(PreparedStatement getCreatedClassrooms = connection.prepareStatement(Queries.selectJoinedClassrooms)){
 			getCreatedClassrooms.setInt(1, userId);
 			try(ResultSet rs = getCreatedClassrooms.executeQuery()){
 				while ( rs.next() ) {
-					Classroom classroom = new Classroom(rs.getInt("classroom_id"), rs.getInt("created_by"), 
-								rs.getString("name"), rs.getTimestamp("created_at").toInstant());
-					classroom.setJoinedAt(rs.getTimestamp("joined_at").toInstant());
 					
-					classrooms.add(classroom);
+					ClassroomDto classroomDto = new ClassroomDto();
+					classroomDto.setClassroomId(rs.getInt("classroom_id"));
+					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
+					classroomDto.setCreatedBy(rs.getInt("created_by"));
+					classroomDto.setClassroomName(rs.getString("name"));
+
+					classroomDto.setJoinedAt(rs.getTimestamp("joined_at").toInstant().getEpochSecond());
+					
+					classrooms.add(classroomDto);
 				}
 			}
 		} catch (SQLException e) {
@@ -183,4 +196,35 @@ public class ClassroomDao {
 		
 		return tutors;
 	}
+	
+	
+	public boolean deleteClassroom(int userId, int classroomId) throws SQLException {
+		
+		try(PreparedStatement isAuthorized = connection.prepareStatement(Queries.selectClassroomByCreatedByAndClassroomId)){
+
+			isAuthorized.setInt(1, classroomId);
+			isAuthorized.setInt(2, userId);
+			
+			try(ResultSet rs = isAuthorized.executeQuery()){
+				if(! rs.next()) {
+					System.out.println("unautorized");
+					throw new UnauthorizedException();
+				}else {
+					try(PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteClassroom)){
+						deleteClass.setInt(1, classroomId);
+						deleteClass.setInt(2, userId);
+						
+						if(deleteClass.executeUpdate() == 1) {
+							System.out.println("deleted");
+							return true;
+						}else {
+							throw new ClassroomNotNoundException();
+						}
+					}
+				}
+			}
+			
+		}
+	}
+	
 }
