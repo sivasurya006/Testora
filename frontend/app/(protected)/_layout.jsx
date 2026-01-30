@@ -27,9 +27,13 @@ export default function ProtectedLayout() {
          )
     }
 
-    if (!authContext.isLoggedIn) {
-        return <Redirect href='/signin' />
-    }
+    {/** For authentication check we don't need separate api. 
+    Bcz we handle it on server (if any unauthorized request happens server respond with 401)
+ check api.interceptors.response  */}
+    
+    // if (!authContext.isLoggedIn) {
+    //     return <Redirect href='/signin' />
+    // }
 
     return (
         <SafeAreaView style={{flex:1}}>
