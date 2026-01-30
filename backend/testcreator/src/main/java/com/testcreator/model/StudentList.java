@@ -4,7 +4,6 @@ public class StudentList {
      public int studentId;
      public String studentName;
      public StudentList(int StudentId,String studentName) {
-    	 this.studentId=studentId;
     	 this.studentName=studentName;
      }
 	 public int getStudentId() {
