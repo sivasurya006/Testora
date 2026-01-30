@@ -7,36 +7,43 @@ import * as SecureStore from "expo-secure-store";
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
-    const [isLoggedIn, setLoggedIn] = useState(false);
-    const [isLoading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(false);
 
     {/**
         This effect run for check the current user is Logged in after refresh
     */}
-    useEffect(() => {
-        const checkIsLoggedIn = async () => {
-          try {
-            const res = await api.get('/api/isLoggedin');
-            setLoggedIn(res.data);
-          } catch (e) {
-            setLoggedIn(false);
-          } finally {
-            setLoading(false);
-          }
-        };
-        checkIsLoggedIn();
-      }, []);
+
+    {/** For authentication check we don't need separate api. 
+        Bcz we handle it on server (if any unauthorized request happens server respond with 401) 
+        check api.interceptors.response in ./uti/api.js  */}
+
+    // useEffect(() => {
+    //     const checkIsLoggedIn = async () => {
+    //       try {
+    //         const res = await api.get('/api/isLoggedin');
+    //         setLoggedIn(res.data);
+    //       } catch (e) {
+    //         setLoggedIn(false);
+    //       } finally {
+    //         setLoading(false);
+    //       }
+    //     };
+    //     checkIsLoggedIn();
+    //   }, []);
     
     async function signUp(userName,userEmail,userPassword) {
         setLoading(true);
         try{
-            const res = await api.post('/signup',{userName,userEmail,userPassword});
+            const res = await api.post('/signup',{userName,userEmail,userPassword},{
+                headers : {
+                    'Content-Type' : 'application/json'
+                }
+            });
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signup error:", errorText);
                 return { success: false, error: errorText };
             }
-            setLoggedIn(true);
             router.replace('/');  
              {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */}
              if(Platform.OS != 'web'){
@@ -61,14 +68,15 @@ export default function AuthContextProvider({ children }) {
     async function signIn(userEmail, userPassword) {
         setLoading(true);
         try {
-            const res = await api.post("/signin" ,{ userEmail, userPassword });
+            const res = await api.post("/signin" ,{ userEmail, userPassword }, {
+                'Content-Type' : 'application'
+            });
 
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signin error:", errorText);
                 return { success: false, error: errorText };
             }
-            setLoggedIn(true);
             router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */}
             if(Platform.OS != 'web'){
@@ -91,7 +99,7 @@ export default function AuthContextProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, isLoading ,signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ isLoading ,signIn, signUp, signOut }}>
             {children}
         </AuthContext.Provider>
     );
