@@ -8,11 +8,13 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDao {
+import com.testcreator.util.Queries;
+
+public class StudentListDao {
 
     private Connection connection;
 
-    public StudentDao(Connection connection) {
+    public StudentListDao(Connection connection) {
         this.connection = connection;
     }
 
@@ -22,7 +24,7 @@ public class StudentDao {
 
        
 
-        try (PreparedStatement ps = connection.prepareStatement(Queries.seleectStudentName)) {
+        try (PreparedStatement ps = connection.prepareStatement(Queries.deleteClassroom)) {
 
             ps.setInt(1, classroomId);
 

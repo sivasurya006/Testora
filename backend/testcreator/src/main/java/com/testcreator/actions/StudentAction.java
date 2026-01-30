@@ -10,6 +10,9 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.util.ServletContextAware;
 
 import com.testcreator.dto.ApiError;
+import com.testcreator.model.Classroom;
+import com.testcreator.model.StudentList;
+import com.testcreator.service.ClassroomService;
 import com.testcreator.service.StudentService;
 import com.testcreator.util.DBConnectionMaker;
 
@@ -29,26 +32,31 @@ public class StudentAction extends JsonApiAction implements ServletContextAware 
     public String studentsInClassroom() {
 
         if (classroomId <= 0) {
-            setError(new ApiError("Invalid classroom id", 400));
+        	setError(new ApiError("Invalid classroom id", 400));
             return INPUT;
         }
-
-        try {
-            Connection connection =
-                DBConnectionMaker.getInstance(servletContext).getConnection();
-
-            StudentService studentService = new StudentService(connection);
-            this.studentNames =
-                studentService.getStudentNamesByClassroomId(classroomId);
-
-            return SUCCESS;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        setError(new ApiError("Unable to fetch students", 500));
-        return ERROR;
+         
+        HttpServletRequest request = ServletActionContext.getRequest();
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		if(userId <=0) {
+			setError(new ApiError("Authentication failed", 401));
+			return ERROR;
+		}
+		try {
+			StudentService StudentService = new StudentService();
+			StudentList sl =  (StudentList) StudentService.getStudentNamesByClassroomId(userId);
+			if(classroomId == 0) {
+				setError(new ApiError("Can't create classroom", 500));
+				return ERROR;
+			}
+					
+			return SUCCESS;
+		} catch (Exception e) {
+			// TODO implementLogger
+			e.printStackTrace();
+		}
+	    setError(new ApiError("Can't create classroom", 500));
+		return ERROR;
     }
 
     public List<String> getStudentNames() {
