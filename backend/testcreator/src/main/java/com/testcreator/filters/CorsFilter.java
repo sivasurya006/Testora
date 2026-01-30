@@ -29,7 +29,8 @@ public class CorsFilter extends HttpFilter implements Filter {
 	    HttpServletResponse response = (HttpServletResponse) res;
 
 	    String origin = request.getHeader("Origin");
-
+        System.out.println(req);
+        System.out.println(request);
 	    System.out.println("Orgin : "+origin);
 	    if ( "http://localhost:8081".equals(origin) ||  "http://testcreator.com:8081".equals(origin) || "http://192.168.20.6:8081".equals(origin) || "https://biochemically-fattish-kynlee.ngrok-free.dev".equals(origin)) {
 	        response.setHeader("Access-Control-Allow-Origin", origin);

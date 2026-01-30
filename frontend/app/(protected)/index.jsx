@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
 
 
 
+<<<<<<< HEAD
 async function getAllCreatedClassrooms(setCreatedClassrooms) {
     try {
         const result = await api.get('/api/created-classrooms');
@@ -141,3 +142,5 @@ function TopBar({setCreateModalVisible}) {
 <FontAwesome name='search' size={16}/>
 <TextInput style={{outline : 0,flex:1,marginLeft : 10}} placeholder='search' />
 </View> */}
+=======
+>>>>>>> prithi

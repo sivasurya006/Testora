@@ -27,6 +27,7 @@ export default function ProtectedLayout() {
          )
     }
 
+<<<<<<< HEAD
     {/** For authentication check we don't need separate api. 
     Bcz we handle it on server (if any unauthorized request happens server respond with 401)
  check api.interceptors.response  */}
@@ -35,6 +36,12 @@ export default function ProtectedLayout() {
     //     return <Redirect href='/signin' />
     // }
 
+=======
+    if (!authContext.isLoggedIn) {
+        return <Redirect href='/signin' />
+    }
+    
+>>>>>>> prithi
     return (
         <SafeAreaView style={{flex:1}}>
             <Header/>
@@ -72,6 +79,7 @@ export default function ProtectedLayout() {
                       />
                     )
                 }} />
+                
                 <Tabs.Screen name='joinedClassrooms' options={{
                     tabBarIcon: ({ color }) => (
                         <MaterialIcons name="school" size={30} color={color} />
