@@ -26,8 +26,6 @@ export default function ProtectedLayout() {
             </View>
          )
     }
-
-<<<<<<< HEAD
     {/** For authentication check we don't need separate api. 
     Bcz we handle it on server (if any unauthorized request happens server respond with 401)
  check api.interceptors.response  */}
@@ -36,12 +34,11 @@ export default function ProtectedLayout() {
     //     return <Redirect href='/signin' />
     // }
 
-=======
-    if (!authContext.isLoggedIn) {
-        return <Redirect href='/signin' />
-    }
-    
->>>>>>> prithi
+
+    // if (!authContext.isLoggedIn) {
+    //     return <Redirect href='/signin' />
+    // }
+
     return (
         <SafeAreaView style={{flex:1}}>
             <Header/>
