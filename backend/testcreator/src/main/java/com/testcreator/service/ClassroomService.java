@@ -1,6 +1,7 @@
 package com.testcreator.service;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -9,6 +10,7 @@ import org.apache.struts2.ServletActionContext;
 
 import com.testcreator.dao.ClassroomDao;
 import com.testcreator.dao.UserDao;
+import com.testcreator.dto.ClassroomDto;
 import com.testcreator.exception.DatabaseConnectionException;
 import com.testcreator.exception.UserNotFoundException;
 import com.testcreator.model.Classroom;
@@ -47,12 +49,18 @@ public class ClassroomService {
 		return classroomDao.createNewClassRoom(user.getUserId(), name);	
 	}
 	
-	public List<Classroom> getAllCreatedClassrooms(int userId){
+	public List<ClassroomDto> getAllCreatedClassrooms(int userId){
 		return classroomDao.getAllCreatedClassrooms(userId);
 	}
 
-	public List<Classroom> getAllJoinedClassrooms(int userId){
+	public List<ClassroomDto> getAllJoinedClassrooms(int userId){
 		return classroomDao.getAllJoinedClassrooms(userId);
+	}
+
+	public boolean deleteClassRoom(int userId, int classroomId) throws SQLException {
+		if(userId <=0 || classroomId <= 0) return false;
+		System.out.println("user Id : "+userId+"classroom ID"+classroomId);
+		return classroomDao.deleteClassroom(userId, classroomId);
 	}
 	
 }
