@@ -71,7 +71,7 @@ export default function Index() {
                     animationType='fade'
                 >
 
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={styles.createModal}>
                         <View style={{ backgroundColor: Colors.shadeGray, padding: 30 }}>
                             <TextInput placeholder='Class name' onChangeText={(text) => setClassroomName(text)} />
                             <View style={{ flexDirection: 'row' }}>
@@ -115,14 +115,22 @@ const styles = StyleSheet.create({
     },
     topBarHeader: {
         fontSize: 18
+    },
+    createModal:{
+        flex: 1,
+        alignItems: 'center', 
+        justifyContent: 'center' 
     }
 })
 
 async function getAllCreatedClassrooms(setCreatedClassrooms) {
     try {
         const result = await api.get('/api/created-classrooms');
-        if (result.status == 200) {
+       
+        if (result?.status == 200) {
             setCreatedClassrooms(result.data);
+        }else{
+            console.log(`can't fetch created classrooms`);
         }
     } catch (err) {
         console.log(err)
