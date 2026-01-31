@@ -77,6 +77,13 @@
 			</result>
 		</action>
 		
+		<action name="rename-classroom" 
+			class="com.testcreator.actions.ClassroomAction" method="renameClassroom"> 
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+		</action>
+		
 		<!-- currently not needed -->
 		<action name="isLoggedin" class="com.testcreator.actions.AuthAction" method="isValidToken">
 			<result name="success" type="json">

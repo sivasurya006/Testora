@@ -59,8 +59,12 @@ public class ClassroomService {
 
 	public boolean deleteClassRoom(int userId, int classroomId) throws SQLException {
 		if(userId <=0 || classroomId <= 0) return false;
-		System.out.println("user Id : "+userId+"classroom ID"+classroomId);
 		return classroomDao.deleteClassroom(userId, classroomId);
+	}
+	
+	public boolean updateClassroomName(int userId,int classroomId, String newName) throws SQLException {
+		if(userId <=0 || classroomId <= 0) return false;
+		return classroomDao.renameClassroom(userId, classroomId, newName);
 	}
 	
 }
