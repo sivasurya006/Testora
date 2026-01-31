@@ -23,8 +23,6 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 		
 		HttpServletRequest request = (HttpServletRequest) ServletActionContext.getRequest();
 		
-		System.out.println(" path info " +request.getRequestURL());
-		
 		String clientType = request.getHeader("X-Client-Type");
 		String tokenValue = null;
 		
@@ -45,8 +43,6 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 		else {
 			
 			Cookie[] cookies = request.getCookies();
-			
-			System.out.println(Arrays.toString(cookies));
 			
 			if(cookies == null) {
 				Object action = invocation.getAction();

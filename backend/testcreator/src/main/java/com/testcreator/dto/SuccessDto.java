@@ -3,12 +3,12 @@ package com.testcreator.dto;
 public class SuccessDto {
 	private String message;
 	private int statusCode;
-	private boolean sucess;
+	private boolean success;
 	
-	public SuccessDto(String message, int statusCode, boolean sucess) {
+	public SuccessDto(String message, int statusCode, boolean success) {
 		this.message = message;
 		this.statusCode = statusCode;
-		this.sucess = sucess;
+		this.success = success;
 	}
 
 	public String getMessage() {
@@ -23,11 +23,11 @@ public class SuccessDto {
 	public void setStatusCode(int statusCode) {
 		this.statusCode = statusCode;
 	}
-	public boolean isSucess() {
-		return sucess;
+	public boolean issuccess() {
+		return success;
 	}
-	public void setSucess(boolean sucess) {
-		this.sucess = sucess;
+	public void setsuccess(boolean success) {
+		this.success = success;
 	}
 	
 	
