@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     emptyClassContainer : {
-        boxShadow: '',
         alignItems: 'center',
         padding: 50,
         rowGap: 25,

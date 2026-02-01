@@ -32,8 +32,6 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 	
 	public String signin() {
 		
-		System.out.println("Hello I am called");
-		
 		if(! InputValidatorUtil.isValidEmail(userEmail)) {
 			setError(new ApiError("Invalid email format", 400));
 			return INPUT;
@@ -47,7 +45,6 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 			userId =  userservice.signin(userEmail, userPassword);
 			if(userId == -1) {
 				setError(new ApiError("Invalid email or password", 401));
-				System.out.println("I am called here login");
 				return LOGIN;
 			}
 			
@@ -70,13 +67,6 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 				this.authDto = new UserAuthenticationDto(true, token);
 			}else {
 				response.addCookie(cookie);
-//				response.setHeader("Set-Cookie",
-//				        String.format("%s=%s; HttpOnly; Secure; Path=%s; Max-Age=%d; SameSite=None",
-//				                cookie.getName(),
-//				                cookie.getValue(),
-//				                cookie.getPath(),
-//				                cookie.getMaxAge()));
-
 				this.authDto = new UserAuthenticationDto(true, null);
 			}
 			return SUCCESS;
@@ -130,11 +120,9 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 		
 		if(clientType.equals("mobile")) {
 			this.authDto = new UserAuthenticationDto(true, token);
-			System.out.println("cookie not added (mob)");
 		}else {
 			response.addCookie(cookie);
 			this.authDto = new UserAuthenticationDto(true, null);
-			System.out.println("cookie added");
 		}
 			
 		return SUCCESS;

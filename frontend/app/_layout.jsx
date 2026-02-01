@@ -1,10 +1,14 @@
-import {  Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import AuthContextProvider from '../util/AuthContext'
+import { Provider as PaperProvider } from "react-native-paper"
 
 export default function RootLayout() {
     return (
-       <AuthContextProvider>
-             <Stack screenOptions={{ headerShown: false , animation : 'fade' }} />
-       </AuthContextProvider>
+
+        <AuthContextProvider>
+            <PaperProvider>
+                <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
+            </PaperProvider>
+        </AuthContextProvider>
     )
 }

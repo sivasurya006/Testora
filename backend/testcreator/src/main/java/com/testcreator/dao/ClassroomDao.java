@@ -227,4 +227,30 @@ public class ClassroomDao {
 		}
 	}
 	
+	
+	public boolean renameClassroom(int userId,int classroomId, String newName) throws SQLException {	
+		try(PreparedStatement isAuthorized = connection.prepareStatement(Queries.selectClassroomByCreatedByAndClassroomId)){
+			isAuthorized.setInt(1, classroomId);
+			isAuthorized.setInt(2, userId);
+			
+			try(ResultSet rs = isAuthorized.executeQuery()){
+				if(! rs.next()) {
+					System.out.println("Unauthorized access");
+					throw new UnauthorizedException();
+				}else {
+					try(PreparedStatement updateClass = connection.prepareStatement(Queries.updateClassRoomName)){
+						updateClass.setString(1, newName);
+						updateClass.setInt(2, classroomId);
+						if(updateClass.executeUpdate() == 1) {
+							System.out.println("updated");
+							return true;
+						}else {
+							throw new ClassroomNotNoundException();
+						}
+					}
+				}
+			}
+		}
+	}
+	
 }
