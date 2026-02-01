@@ -119,6 +119,7 @@ public class ClassroomDao {
 					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					classroomDto.setCreatedBy(rs.getInt("created_by"));
 					classroomDto.setClassroomName(rs.getString("name"));
+					classroomDto.setCreatorName(rs.getString("creator_name"));
 					classrooms.add(classroomDto);
 				}
 			}
@@ -142,8 +143,8 @@ public class ClassroomDao {
 					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					classroomDto.setCreatedBy(rs.getInt("created_by"));
 					classroomDto.setClassroomName(rs.getString("name"));
-
 					classroomDto.setJoinedAt(rs.getTimestamp("joined_at").toInstant().getEpochSecond());
+					classroomDto.setCreatorName(rs.getString("creator_name"));
 					
 					classrooms.add(classroomDto);
 				}
