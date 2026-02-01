@@ -5,13 +5,31 @@ import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
 export const AuthContext = createContext();
-
+console.log(AuthContext);
 export default function AuthContextProvider({ children }) {
     const [isLoading, setLoading] = useState(false);
-    // console.log(typeof AuthContext.Provider)
+
     {/**
         This effect run for check the current user is Logged in after refresh
     */}
+
+    {/** For authentication check we don't need separate api. 
+        Bcz we handle it on server (if any unauthorized request happens server respond with 401) 
+        check api.interceptors.response in ./uti/api.js  */}
+
+    // useEffect(() => {
+    //     const checkIsLoggedIn = async () => {
+    //       try {
+    //         const res = await api.get('/api/isLoggedin');
+    //         setLoggedIn(res.data);
+    //       } catch (e) {
+    //         setLoggedIn(false);
+    //       } finally {
+    //         setLoading(false);
+    //       }
+    //     };
+    //     checkIsLoggedIn();
+    //   }, []);
 
     {/** For authentication check we don't need separate api. 
         Bcz we handle it on server (if any unauthorized request happens server respond with 401) 

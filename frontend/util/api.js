@@ -13,6 +13,7 @@ const api = axios.create({
 });
 
 
+// console.log(api.interceptors)
 api.interceptors.request.use(async (config) => {
     console.log("hoi");
 
@@ -32,10 +33,8 @@ api.interceptors.request.use(async (config) => {
 
 
 
-api.interceptors.response.use(null, (error) => {
-    console.log("hoi")
+api.interceptors.response.use( null ,(error) => {
     if (error.response?.status === 401) {
-        console.log("hi");
         router.replace('/signin');
 
     }
