@@ -3,12 +3,12 @@ import {  MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 
 
-export default function EmptyClassroom() {
+export default function EmptyClassroom({message}) {
     return (
         <View style={styles.container}>
             <View style={styles.emptyClassContainer}>
                 <MaterialCommunityIcons name="google-classroom" size={30} color="black" />
-                <Text>No classrooms created</Text>
+                <Text>{message}</Text>
             </View>
         </View>
     )
@@ -26,6 +26,6 @@ const styles = StyleSheet.create({
         rowGap: 25,
         borderRadius: 8,
         backgroundColor: Colors.white,
-        boxShadow : '0px 4px 12px rgba(0, 0, 0, 0.25)',
+        boxShadow : Colors.blackBoxShadow,
     }
 })

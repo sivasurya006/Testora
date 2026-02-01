@@ -41,7 +41,7 @@ export default function ProtectedLayout() {
 
     return (
         <SafeAreaView style={{flex:1}}>
-            <Header/>
+             { isLargeScreen ? <Header/> : null}
             <Tabs screenOptions={{
                 tabBarPosition: isLargeScreen ? "left" : 'bottom',
                 headerShown: false,

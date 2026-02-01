@@ -53,7 +53,11 @@ export default function Index() {
     return (
         <React.Fragment>
             <TopBar setCreateModalVisible={setCreateModalVisible} />
-            {createdClassrooms.length == 0 ? <EmptyClassroom /> : null}
+            {createdClassrooms.length == 0 ? (
+                <React.Fragment>
+                    <EmptyClassroom message="No classroom created" />
+                </React.Fragment>
+            ) : null}
             {createdClassrooms.length != 0 ? <FlatList
                 // numColumns={2}
                 // horizontal={true}
@@ -75,30 +79,6 @@ export default function Index() {
                     onValueChange={setClassroomName}
                     onConfirm={onConfirmCreateClassModal}
                     onCancel={onCancelCreateClassModal} />
-
-                // <Modal
-                //     visible={createModalVisible}
-                //     onRequestClose={() => setCreateModalVisible(!createModalVisible)}
-                //     transparent
-                //     animationType='fade'
-                // >
-
-                //     <View style={styles.createModal}>
-                //         <View style={styles.createModalContent}>
-                //             <TextInput style={styles.inputBox} placeholder='Class name' onChangeText={(text) => setClassroomName(text)} />
-                //             <View style={{ flexDirection: 'row' }}>
-                //                 <Pressable onPress={() => setCreateModalVisible(false)}>
-                //                     <Text>Cancel</Text>
-                //                 </Pressable>
-                //                 <Pressable onPress={handleCreateClassroom}>
-                //                     <Text>Create</Text>
-                //                 </Pressable>
-                //             </View>
-                //         </View>
-                //     </View>
-
-                // </Modal>
-
                 : null}
         </React.Fragment >
     )
@@ -112,7 +92,7 @@ const styles = StyleSheet.create({
         width: 90,
         padding: 10,
         borderRadius: 8,
-        marginRight: 20,
+        marginRight: 10,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -125,22 +105,6 @@ const styles = StyleSheet.create({
     topBarHeader: {
         fontSize: 18
     },
-    createModal: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    createModalContent: {
-        backgroundColor: Colors.white,
-        boxShadow: Colors.blackBoxShadow,
-        padding: 30,
-        borderRadius: 8
-    },
-    inputBox: {
-        padding: 10,
-        borderWidth: 1,
-        borderRadius: 8,
-    }
 })
 
 async function getAllCreatedClassrooms(setCreatedClassrooms) {
