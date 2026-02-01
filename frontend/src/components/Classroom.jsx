@@ -1,9 +1,11 @@
-import { Pressable, StyleSheet, View, Text, Modal, Button } from 'react-native'
+import { Pressable, StyleSheet, View, Text, Button, Alert } from 'react-native'
 import React, { useState } from 'react'
 import api from '../../util/api'
 import Colors from '../../styles/Colors';
 import { Menu, IconButton } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ConfirmModal from './modals/ConfirmModal';
+import InputModal from './modals/InputModal';
 
 
 
@@ -11,48 +13,60 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms }) {
 
 
-    const dropDownOptions = {
-       rename : {
-            name: "Rename",
-            action: async (newName) => {
-                const res = await renameClass(id, newName);
-                if (res) {
-                    setCreatedClassrooms(createdClassrooms.map(classroom => {
-                        if (classroom.classroomId == id){
-                            classroom.classroomName = newName
-                        } 
-                        return classroom;
-                    }));
-                } else {
-                    console.log("can't rename");
+    const [isDeleteConfirmModalVisible, setDeleteModalVisible] = useState(false);
+    const [isRenameModalVisible, setReNameModalVisible] = useState(false);
+    const [newClassName, setNewClassName] = useState(false);
+
+    const onDeleteConfirm = async () => {
+        await handleDelete();
+        onDeleteCancel(); // set the confirm back to false
+    };
+    const onDeleteCancel = () => {
+        setDeleteModalVisible(false);
+    }
+
+    const onConfirmRenameClassroom = async () => {
+        if (newClassName.trim().length == 0) return;
+        await handleRenameClassroom();
+        onCancelRenameClassroom();
+    }
+    const onCancelRenameClassroom = () => setReNameModalVisible(false);
+
+    const handleRenameClassroom = async () => {
+        const res = await renameClass(id, newClassName);
+        if (res) {
+            setCreatedClassrooms(createdClassrooms.map(classroom => {
+                if (classroom.classroomId == id) {
+                    classroom.classroomName = newClassName
                 }
-            }
-        },
-        delete : {
-            name: "Delete",
-            action: async () => {
-                const res = await deleteClassRoom(id);
-                if (res) {
-                    setCreatedClassrooms(createdClassrooms.filter(classroom => classroom.classroomId != id));
-                } else {
-                    console.log("can't delete classroom")
-                }
-            }
+                return classroom;
+            }));
+        } else {
+            console.log("can't rename");
+        }
+    }
+
+    const handleDelete = async () => {
+        const res = await deleteClassRoom(id);
+        if (res) {
+            setCreatedClassrooms(createdClassrooms.filter(classroom => classroom.classroomId != id));
+        } else {
+            console.log("can't delete classroom")
         }
     }
 
 
-    const [visible, setVisible] = useState(false);
-    const openMenu = () => setVisible(true);
-    const closeMenu = () => setVisible(false);
-    // const [isInfoVisible, setInfoVisible] = useState(false);
+
+    const [isMenuVisible, setMenuVisible] = useState(false);
+    const openMenu = () => setMenuVisible(true);
+    const closeMenu = () => setMenuVisible(false);
 
     return (
         <View style={styles.container}>
             <View style={{ alignSelf: 'flex-end' }}>
                 <Menu
-                    key={visible ? 'open' : 'closed'}
-                    visible={visible}
+                    key={isMenuVisible ? 'open' : 'closed'}
+                    visible={isMenuVisible}
                     onDismiss={closeMenu}
                     anchorPosition='bottom'
                     anchor={
@@ -66,8 +80,8 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                     contentStyle={styles.menuContentStyle}
                 >
 
-                    <Menu.Item title={dropDownOptions.rename.name} onPress={() => { closeMenu(); dropDownOptions.rename.action("renamed") }} titleStyle={styles.menuTitleStyle} />
-                    <Menu.Item title={dropDownOptions.delete.name} onPress={() => { closeMenu(); dropDownOptions.delete.action() }} titleStyle={styles.menuTitleStyle} />
+                    <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                    <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
 
                 </Menu>
             </View>
@@ -77,24 +91,22 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                     <Text>{name}</Text>
                 </View>
             </Pressable>
-            {/* {isInfoVisible ? <Modal
 
-                visible={isInfoVisible}
-                transparent
-                animationType='fade'
-            >
-                <View style={styles.infoContainer}>
-                    <View style={styles.info}>
-                        <IconButton
-                            icon='close'
-                            onPress={() => setInfoVisible(false)}
-                            style={styles.closeIcon}
-                        />
-                        <Text>Name :  {name}</Text>
-                        <Text>Created at : {new Date(createdAt).toLocaleDateString()}</Text>
-                    </View>
-                </View>
-            </Modal> : null} */}
+            {
+                isDeleteConfirmModalVisible ?
+                    <ConfirmModal message={"Do you really want delete classroom?"}
+                        visible={isDeleteConfirmModalVisible} onCancel={onDeleteCancel} onConfirm={onDeleteConfirm} />
+                    : null
+            }
+
+            {
+                isRenameModalVisible ?
+                    <InputModal placeholder={"New class name"} visible={isRenameModalVisible}
+                        onConfirm={onConfirmRenameClassroom} onCancel={onCancelRenameClassroom}
+                        onValueChange={setNewClassName} />
+                    : null
+            }
+
         </View>
     );
 }
@@ -121,7 +133,6 @@ async function deleteClassRoom(classroomId) {
 
 
 async function renameClass(id, newName) {
-
     try {
         const result = await api.post('/api/rename-classroom', { classroomName: newName }, {
             headers: {
