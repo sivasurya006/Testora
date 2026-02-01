@@ -30,13 +30,13 @@ export default function AuthContextProvider({ children }) {
     //     };
     //     checkIsLoggedIn();
     //   }, []);
-    
-    async function signUp(userName,userEmail,userPassword) {
+
+    async function signUp(userName, userEmail, userPassword) {
         setLoading(true);
-        try{
-            const res = await api.post('/signup',{userName,userEmail,userPassword},{
-                headers : {
-                    'Content-Type' : 'application/json'
+        try {
+            const res = await api.post('/signup', { userName, userEmail, userPassword }, {
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             });
             if (!res.data.success) {
@@ -44,21 +44,21 @@ export default function AuthContextProvider({ children }) {
                 console.log("Signup error:", errorText);
                 return { success: false, error: errorText };
             }
-            router.replace('/');  
-             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */}
-             if(Platform.OS != 'web'){
-                await SecureStore.setItemAsync("token",res.data.token);
-               // TODO implement logger  console.log('token added')
-           }
-           return { success: true };         
-        }catch(err){
-             // TODO implement logger (sign up failed)
-             console.log("catch called")
-             if(err.status == 409){
-                return { success: false, error: "User already exist" , status : 409};
-             }
-             return { success: false, error: e.message};
-        }finally{
+            router.replace('/');
+            {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
+            if (Platform.OS != 'web') {
+                await SecureStore.setItemAsync("token", res.data.token);
+                // TODO implement logger  console.log('token added')
+            }
+            return { success: true };
+        } catch (err) {
+            // TODO implement logger (sign up failed)
+            console.log("catch called")
+            if (err.status == 409) {
+                return { success: false, error: "User already exist", status: 409 };
+            }
+            return { success: false, error: e.message };
+        } finally {
             setLoading(false)
         }
     }
@@ -68,8 +68,8 @@ export default function AuthContextProvider({ children }) {
     async function signIn(userEmail, userPassword) {
         setLoading(true);
         try {
-            const res = await api.post("/signin" ,{ userEmail, userPassword }, {
-                'Content-Type' : 'application'
+            const res = await api.post("/signin", { userEmail, userPassword }, {
+                'Content-Type': 'application'
             });
 
             if (!res.data.success) {
@@ -78,16 +78,16 @@ export default function AuthContextProvider({ children }) {
                 return { success: false, error: errorText };
             }
             router.replace('/');
-            {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */}
-            if(Platform.OS != 'web'){
-                 await SecureStore.setItemAsync("token",res.data.token);
+            {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
+            if (Platform.OS != 'web') {
+                await SecureStore.setItemAsync("token", res.data.token);
                 // TODO implement logger  console.log('token added')
             }
             return { success: true };
         } catch (e) {
             // TODO implement logger (sign in failed)
             console.log("catch called")
-            return { success: false, error: e.message};
+            return { success: false, error: e.message };
         } finally {
             setLoading(false);
         }
@@ -95,11 +95,11 @@ export default function AuthContextProvider({ children }) {
 
     function signOut() {
         setLoggedIn(false);
-        router.replace('/signin'); 
+        router.replace('/signin');
     }
 
     return (
-        <AuthContext.Provider value={{ isLoading ,signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut }}>
             {children}
         </AuthContext.Provider>
     );
