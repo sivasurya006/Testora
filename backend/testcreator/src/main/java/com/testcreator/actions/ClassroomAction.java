@@ -163,7 +163,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 		
-		if(classroomIdHeader == null) {
+		if(classroomIdHeader == null || classroomIdHeader.isBlank()) {
 			setError(new ApiError("ClassroomId not provided", 400));
 			return INPUT;
 		}
