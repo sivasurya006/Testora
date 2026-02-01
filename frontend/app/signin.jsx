@@ -15,7 +15,7 @@ export default function Signin() {
     const [focused, setFocused] = useState(false);
     const authContext = useContext(AuthContext);
     const [email, setEmail] = useState("");
-    const [errorMessage,setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
 
 
@@ -27,7 +27,7 @@ export default function Signin() {
         if (password.trim().length == 0) {
             setErrorMessage("Please enter password");
             return;
-        }   
+        }
         const result = await authContext.signIn(email, password);
         if (result.success) {
             console.log("Successfully logged in");
@@ -75,7 +75,7 @@ export default function Signin() {
                     )}
                 </Pressable>
 
-                { errorMessage ? <Text style={{color:'red'}}>{errorMessage}</Text> : null }
+                {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
 
                 <Text style={styles.navLinkText}>Don't have an account?{' '}
                     <Link style={styles.link} href="signup">sign up</Link>
