@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import api from '../../util/api';
-import EmptyClassroom from '../../src/components/EmptyClassroom';
-import Classroom from '../../src/components/Classroom';
+import api from '../../../util/api';
+import EmptyClassroom from '../../../src/components/EmptyClassroom';
+import Classroom from '../../../src/components/Classroom';
 import { MaterialIcons } from '@expo/vector-icons';
-import Colors from '../../styles/Colors';
+import Colors from '../../../styles/Colors';
 
 export default function JoinedClassrooms() {
 

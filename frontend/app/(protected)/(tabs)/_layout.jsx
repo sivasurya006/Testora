@@ -1,12 +1,12 @@
 import { Redirect, Tabs } from 'expo-router'
 import { useContext } from 'react'
 import { ActivityIndicator, Platform, StatusBar, View, useWindowDimensions } from 'react-native'
-import { AuthContext } from '../../util/AuthContext'
+import { AuthContext } from '../../../util/AuthContext'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
-import Colors from '../../styles/Colors'
-import Header from '../../src/components/Header'
+import Colors from '../../../styles/Colors'
+import Header from '../../../src/components/Header'
 
 export default function ProtectedLayout() {
 
