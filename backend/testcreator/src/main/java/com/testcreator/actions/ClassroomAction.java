@@ -1,5 +1,6 @@
 package com.testcreator.actions;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -120,7 +121,14 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 		
-		this.classroomId =  Integer.parseInt(request.getHeader("X-ClassroomId"));
+		String classroomIdHeader = request.getHeader("X-ClassroomId");
+		
+		if(classroomIdHeader == null) {
+			setError(new  ApiError("ClassroomId not provided", 400));
+			return INPUT;
+		}
+		
+		this.classroomId =  Integer.parseInt(classroomIdHeader);
 		
 		if(classroomId <= 0) {
 			setError(new ApiError("Invalid classroom id", 400));
@@ -147,6 +155,49 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			setError(new ApiError("Server error", 500));
 		}
 		return ERROR;
+	}
+	
+	public String renameClassroom() {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		
+		String classroomIdHeader = request.getHeader("X-ClassroomId");
+		
+		if(classroomIdHeader == null) {
+			setError(new ApiError("ClassroomId not provided", 400));
+			return INPUT;
+		}
+		
+		this.classroomId =  Integer.parseInt(classroomIdHeader);
+		
+		if(classroomId <= 0) {
+			setError(new ApiError("Invalid classroom id", 400));
+			return INPUT;
+		}
+		
+		if(this.classroomName == null || this.classroomName.trim().length() == 0) {
+			setError(new ApiError("Invalid classroom name", 400));
+			return INPUT;
+		}
+		
+		try {
+			ClassroomService classroomService = new ClassroomService();
+			if(classroomService.updateClassroomName(userId, classroomId, classroomName)) {
+				this.successDto = new SuccessDto("Classroom renamed sucessfully", 200, true);
+			}else {
+				this.successDto = new SuccessDto("Classroom not renamed", 422, false);
+			}
+			return SUCCESS;
+		}catch(UnauthorizedException e) {
+			setError(new ApiError("Authendication failed", 401));
+			return LOGIN;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			setError(new ApiError("Server error", 500));
+		}
+		return ERROR;
+		
+		
 	}
 	
 	
