@@ -1,11 +1,11 @@
 import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import api from '../../util/api'
+import api from '../../../util/api'
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import Colors from '../../styles/Colors';
-import EmptyClassroom from '../../src/components/EmptyClassroom';
-import Classroom from '../../src/components/Classroom';
-import InputModal from '../../src/components/modals/InputModal';
+import Colors from '../../../styles/Colors';
+import EmptyClassroom from '../../../src/components/EmptyClassroom';
+import Classroom from '../../../src/components/Classroom';
+import InputModal from '../../../src/components/modals/InputModal';
 
 
 export default function Index() {
