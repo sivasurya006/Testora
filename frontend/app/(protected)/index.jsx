@@ -1,10 +1,11 @@
 import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import api from '../../util/api'
-import { FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 import EmptyClassroom from '../../src/components/EmptyClassroom';
 import Classroom from '../../src/components/Classroom';
+import InputModal from '../../src/components/modals/InputModal';
 
 
 export default function Index() {
@@ -15,14 +16,19 @@ export default function Index() {
     const [classroomName, setClassroomName] = useState("");
     const [isLoading, setLoading] = useState(false);
 
+    const onConfirmCreateClassModal = async () => {
+        if (classroomName.trim().length == 0) return;
+        await handleCreateClassroom();
+        setCreateModalVisible(false);
+    }
+
+    const onCancelCreateClassModal = () => setCreateModalVisible(false);
+
     useEffect(() => {
         getAllCreatedClassrooms(setCreatedClassrooms);
     }, [])
 
     async function handleCreateClassroom() {
-
-        if (classroomName.trim().length == 0) return;
-
         try {
             setLoading(true);
             const result = await api.post('/api/create-classroom', { classroomName }, {
@@ -36,7 +42,6 @@ export default function Index() {
                 throw new Error("request failed");
             }
             setClassroomName("");
-            setCreateModalVisible(false);
         } catch (err) {
             console.log(err);
         } finally {
@@ -56,36 +61,45 @@ export default function Index() {
                 keyExtractor={item => item.classroomId}
                 renderItem={({ item }) => (
                     <Classroom id={item.classroomId} name={item.classroomName}
-                     createdAt={item.createdAt} createdBy={item.createdBy} 
-                     setClassroomID={setSelectedClassroomId}
-                     setCreatedClassrooms={setCreatedClassrooms} 
-                     createdClassrooms={createdClassrooms}/>
+                        createdAt={item.createdAt} createdBy={item.createdBy}
+                        setClassroomID={setSelectedClassroomId}
+                        setCreatedClassrooms={setCreatedClassrooms}
+                        createdClassrooms={createdClassrooms} />
                 )}
             /> : null}
             {createModalVisible ?
 
-                <Modal
+
+                <InputModal placeholder={"Class name"}
                     visible={createModalVisible}
-                    // onRequestClose={() => setCreateModalVisible(!createModalVisible)}
-                    transparent
-                    animationType='fade'
-                >
+                    onValueChange={setClassroomName}
+                    onConfirm={onConfirmCreateClassModal}
+                    onCancel={onCancelCreateClassModal} />
 
-                    <View style={styles.createModal}>
-                        <View style={{ backgroundColor: Colors.shadeGray, padding: 30 }}>
-                            <TextInput placeholder='Class name' onChangeText={(text) => setClassroomName(text)} />
-                            <View style={{ flexDirection: 'row' }}>
-                                <Button title='close' onPress={() => setCreateModalVisible(false)}></Button>
-                                <Button title='create' onPress={() => handleCreateClassroom()}></Button>
-                            </View>
-                        </View>
-                    </View>
+                // <Modal
+                //     visible={createModalVisible}
+                //     onRequestClose={() => setCreateModalVisible(!createModalVisible)}
+                //     transparent
+                //     animationType='fade'
+                // >
 
-                </Modal>
+                //     <View style={styles.createModal}>
+                //         <View style={styles.createModalContent}>
+                //             <TextInput style={styles.inputBox} placeholder='Class name' onChangeText={(text) => setClassroomName(text)} />
+                //             <View style={{ flexDirection: 'row' }}>
+                //                 <Pressable onPress={() => setCreateModalVisible(false)}>
+                //                     <Text>Cancel</Text>
+                //                 </Pressable>
+                //                 <Pressable onPress={handleCreateClassroom}>
+                //                     <Text>Create</Text>
+                //                 </Pressable>
+                //             </View>
+                //         </View>
+                //     </View>
+
+                // </Modal>
 
                 : null}
-
-            {/* <Button title='open' onPress={() => setCreateModalVisible(true)}/> */}
         </React.Fragment >
     )
 }
@@ -95,18 +109,13 @@ const styles = StyleSheet.create({
 
     addButton: {
         backgroundColor: Colors.primaryColor,
-        width: 80,
-        padding: 7,
+        width: 90,
+        padding: 10,
         borderRadius: 8,
         marginRight: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    // searchBar: {
-    //     padding: 8,
-    //     borderWidth: 2,
-    //     width : '40%',
-    //     flexDirection : 'row',
-    //     alignItems : 'center',
-    // },
     topBar: {
         flexDirection: 'row',
         margin: 20,
@@ -116,20 +125,31 @@ const styles = StyleSheet.create({
     topBarHeader: {
         fontSize: 18
     },
-    createModal:{
+    createModal: {
         flex: 1,
-        alignItems: 'center', 
-        justifyContent: 'center' 
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    createModalContent: {
+        backgroundColor: Colors.white,
+        boxShadow: Colors.blackBoxShadow,
+        padding: 30,
+        borderRadius: 8
+    },
+    inputBox: {
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 8,
     }
 })
 
 async function getAllCreatedClassrooms(setCreatedClassrooms) {
     try {
         const result = await api.get('/api/created-classrooms');
-       
+
         if (result?.status == 200) {
             setCreatedClassrooms(result.data);
-        }else{
+        } else {
             console.log(`can't fetch created classrooms`);
         }
     } catch (err) {
@@ -142,7 +162,7 @@ function TopBar({ setCreateModalVisible }) {
         <View style={styles.topBar}>
             <Text style={styles.topBarHeader}>My Classrooms</Text>
             <Pressable style={styles.addButton} onPress={() => setCreateModalVisible(true)}>
-                <Text style={{ color: Colors.white }}>Create <FontAwesome name='plus' size={16} color={Colors.white} /> </Text>
+                <Text style={{ color: Colors.white, fontSize: 15 }}>Create <AntDesign name='plus' size={16} color={Colors.white} /> </Text>
             </Pressable>
         </View>
     );

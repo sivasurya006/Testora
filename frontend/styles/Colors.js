@@ -11,5 +11,6 @@ export default {
     black : '#000000',
     shadeGray : "#999",
     white : '#ffffff',
-    charcoal : '#36454F'
+    charcoal : '#36454F',
+    blackBoxShadow : '0px 4px 10px rgba(0,0,0,0.13)'
 }
