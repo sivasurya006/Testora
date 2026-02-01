@@ -10,7 +10,7 @@ import InputModal from './modals/InputModal';
 
 
 
-export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms }) {
+export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms , isMenuNeed}) {
 
 
     const [isDeleteConfirmModalVisible, setDeleteModalVisible] = useState(false);
@@ -63,28 +63,32 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
 
     return (
         <View style={styles.container}>
-            <View style={{ alignSelf: 'flex-end' }}>
-                <Menu
-                    key={isMenuVisible ? 'open' : 'closed'}
-                    visible={isMenuVisible}
-                    onDismiss={closeMenu}
-                    anchorPosition='bottom'
-                    anchor={
-                        <IconButton
-                            icon="dots-vertical"
-                            onPress={openMenu}
-                            iconColor='black'
-                        />
-                    }
-
-                    contentStyle={styles.menuContentStyle}
-                >
-
-                    <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
-                    <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
-
-                </Menu>
-            </View>
+            {
+                isMenuNeed ? (
+                    <View style={{ alignSelf: 'flex-end' }}>
+                    <Menu
+                        key={isMenuVisible ? 'open' : 'closed'}
+                        visible={isMenuVisible}
+                        onDismiss={closeMenu}
+                        anchorPosition='bottom'
+                        anchor={
+                            <IconButton
+                                icon="dots-vertical"
+                                onPress={openMenu}
+                                iconColor='black'
+                            />
+                        }
+    
+                        contentStyle={styles.menuContentStyle}
+                    >
+    
+                        <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                        <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+    
+                    </Menu>
+                </View>
+                ) : null
+            }
             <Pressable onPress={() => setClassroomID(id)}>
                 <View style={styles.classContainer}>
                     <MaterialCommunityIcons name="google-classroom" size={30} />

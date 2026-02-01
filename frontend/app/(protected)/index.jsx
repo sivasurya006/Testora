@@ -22,6 +22,10 @@ export default function Index() {
         setCreateModalVisible(false);
     }
 
+    useEffect(() => {
+        console.log(selectedClassroomId);
+    },[selectedClassroomId])
+
     const onCancelCreateClassModal = () => setCreateModalVisible(false);
 
     useEffect(() => {
@@ -57,8 +61,7 @@ export default function Index() {
                 <React.Fragment>
                     <EmptyClassroom message="No classroom created" />
                 </React.Fragment>
-            ) : null}
-            {createdClassrooms.length != 0 ? <FlatList
+            ) : <FlatList
                 // numColumns={2}
                 // horizontal={true}
                 data={createdClassrooms}
@@ -68,9 +71,11 @@ export default function Index() {
                         createdAt={item.createdAt} createdBy={item.createdBy}
                         setClassroomID={setSelectedClassroomId}
                         setCreatedClassrooms={setCreatedClassrooms}
-                        createdClassrooms={createdClassrooms} />
+                        createdClassrooms={createdClassrooms} 
+                        isMenuNeed={true}/>
                 )}
-            /> : null}
+            />
+            }
             {createModalVisible ?
 
 
@@ -84,28 +89,6 @@ export default function Index() {
     )
 }
 
-
-const styles = StyleSheet.create({
-
-    addButton: {
-        backgroundColor: Colors.primaryColor,
-        width: 90,
-        padding: 10,
-        borderRadius: 8,
-        marginRight: 10,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    topBar: {
-        flexDirection: 'row',
-        margin: 20,
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    topBarHeader: {
-        fontSize: 18
-    },
-})
 
 async function getAllCreatedClassrooms(setCreatedClassrooms) {
     try {
@@ -123,15 +106,58 @@ async function getAllCreatedClassrooms(setCreatedClassrooms) {
 
 function TopBar({ setCreateModalVisible }) {
     return (
-        <View style={styles.topBar}>
-            <Text style={styles.topBarHeader}>My Classrooms</Text>
-            <Pressable style={styles.addButton} onPress={() => setCreateModalVisible(true)}>
-                <Text style={{ color: Colors.white, fontSize: 15 }}>Create <AntDesign name='plus' size={16} color={Colors.white} /> </Text>
-            </Pressable>
-        </View>
+      <View style={styles.topBar}>
+        <Text style={styles.topBarHeader}>My Classrooms</Text>
+  
+        <Pressable
+          style={styles.addButton}
+          onPress={() => setCreateModalVisible(true)}
+        >
+          <View style={styles.addButtonContent}>
+            <Text style={styles.addButtonText}>Create</Text>
+            <AntDesign name="plus" size={16} color={Colors.white} />
+          </View>
+        </Pressable>
+      </View>
     );
-}
+  }
+  
 
+
+  const styles = StyleSheet.create({
+    topBar: {
+      flexDirection: 'row',
+      margin: 20,
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+  
+    topBarHeader: {
+      fontSize: 18,
+    },
+  
+    addButton: {
+      backgroundColor: Colors.primaryColor,
+      width: 90,
+      padding: 10,
+      borderRadius: 8,
+      marginRight: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  
+    addButtonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+  
+    addButtonText: {
+      color: Colors.white,
+      fontSize: 15,
+      marginRight: 6,
+    },
+  });
+  
 
 {/* <View style={styles.searchBar}>
 <FontAwesome name='search' size={16}/>
