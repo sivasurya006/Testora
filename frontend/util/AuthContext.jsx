@@ -8,7 +8,7 @@ export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
     const [isLoading, setLoading] = useState(false);
-
+    // console.log(typeof AuthContext.Provider)
     {/**
         This effect run for check the current user is Logged in after refresh
     */}
@@ -44,7 +44,9 @@ export default function AuthContextProvider({ children }) {
                 console.log("Signup error:", errorText);
                 return { success: false, error: errorText };
             }
-            router.replace('/');
+            console.log("hi")
+            // router.replace('/');
+
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
@@ -54,10 +56,11 @@ export default function AuthContextProvider({ children }) {
         } catch (err) {
             // TODO implement logger (sign up failed)
             console.log("catch called")
+
             if (err.status == 409) {
                 return { success: false, error: "User already exist", status: 409 };
             }
-            return { success: false, error: e.message };
+            return { success: false, error: err.message };
         } finally {
             setLoading(false)
         }
@@ -77,7 +80,9 @@ export default function AuthContextProvider({ children }) {
                 console.log("Signin error:", errorText);
                 return { success: false, error: errorText };
             }
-            router.replace('/');
+            console.log("hi")
+
+            // router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
@@ -94,8 +99,10 @@ export default function AuthContextProvider({ children }) {
     }
 
     function signOut() {
+        console.log("hi")
+
         setLoggedIn(false);
-        router.replace('/signin');
+        // router.replace('/signin');
     }
 
     return (

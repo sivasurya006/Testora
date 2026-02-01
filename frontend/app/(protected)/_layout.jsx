@@ -10,26 +10,27 @@ import Header from '../../src/components/Header'
 
 export default function ProtectedLayout() {
 
-    const {width} = useWindowDimensions();
-    const isLargeScreen =  width > 768;
+    const { width } = useWindowDimensions();
+    const isLargeScreen = width > 768;
 
     const authContext = useContext(AuthContext);
 
     if (authContext.isLoading) {
-        return( 
+        return (
             <View style={{
-                flex : 1,
-                justifyContent : 'center',
-                alignItems : 'center'    
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
             }}>
                 <ActivityIndicator size={24} />
             </View>
-         )
+        )
     }
+
     {/** For authentication check we don't need separate api. 
     Bcz we handle it on server (if any unauthorized request happens server respond with 401)
  check api.interceptors.response  */}
-    
+
     // if (!authContext.isLoggedIn) {
     //     return <Redirect href='/signin' />
     // }
@@ -40,53 +41,53 @@ export default function ProtectedLayout() {
     // }
 
     return (
-        <SafeAreaView style={{flex:1}}>
-            <Header/>
+        <SafeAreaView style={{ flex: 1 }}>
+            <Header />
             <Tabs screenOptions={{
                 tabBarPosition: isLargeScreen ? "left" : 'bottom',
                 headerShown: false,
                 tabBarStyle: Platform.select({
                     web: {
-                        minWidth : 60,                    
-                        backgroundColor : Colors.secondaryColor
+                        minWidth: 60,
+                        backgroundColor: Colors.secondaryColor
                     },
-                    android : {
-                      height : 60  ,
-                      backgroundColor : Colors.secondaryColor
+                    android: {
+                        height: 60,
+                        backgroundColor: Colors.secondaryColor
                     },
-                    ios : {
-                        height : 60,
-                        backgroundColor : Colors.secondaryColor
+                    ios: {
+                        height: 60,
+                        backgroundColor: Colors.secondaryColor
                     }
                 }),
-                tabBarShowLabel : false,
-                tabBarActiveTintColor : Colors.primaryColor,
-                tabBarInactiveTintColor : Colors.white,
-                tabBarItemStyle : {
-                    paddingTop : 5
+                tabBarShowLabel: false,
+                tabBarActiveTintColor: Colors.primaryColor,
+                tabBarInactiveTintColor: Colors.white,
+                tabBarItemStyle: {
+                    paddingTop: 5
                 },
-                tabBarActiveBackgroundColor : isLargeScreen ? '#ffffff20' : 'transparent'
+                tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
             }}>
                 <Tabs.Screen name='index' options={{
-                    tabBarIcon : ({color}) => (
+                    tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons
-                        name="account-school"
-                        size={30}
-                        color={color}
-                      />
+                            name="account-school"
+                            size={30}
+                            color={color}
+                        />
                     )
                 }} />
-                
+
                 <Tabs.Screen name='joinedClassrooms' options={{
                     tabBarIcon: ({ color }) => (
                         <MaterialIcons name="school" size={30} color={color} />
                     ),
                 }} />
 
-                <Tabs.Screen 
+                <Tabs.Screen
                     name='profile' options={{
-                        tabBarIcon : ({color}) => (
-                            <MaterialIcons name='account-circle' size={30} color={color}/>
+                        tabBarIcon: ({ color }) => (
+                            <MaterialIcons name='account-circle' size={30} color={color} />
                         )
                     }}
                 />
@@ -94,4 +95,6 @@ export default function ProtectedLayout() {
             </Tabs>
         </SafeAreaView>
     )
+
 }
+
