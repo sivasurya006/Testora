@@ -5,12 +5,22 @@ import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
 export const AuthContext = createContext();
-
+console.log(AuthContext);
 export default function AuthContextProvider({ children }) {
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useSt           
 
-    {/**
-        This effect run for check the current user is Logged in after refresh
+
+
+
+
+
+
+
+
+
+
+    
+        This effect rAuthContextun for check the current user is Logged in after refresh
     */}
 
     {/** For authentication check we don't need separate api. 
