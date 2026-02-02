@@ -65,5 +65,7 @@ public class Queries {
 	// Create new Question
 	public static final String insertQuestion = "insert into Questions (test_id,type,question_text,marks) values (?,?,?,?)"; 
 	
+	/* ============ Classroom users ===============*/
 	
+	public static final String selectClassroomUser = "select u.user_id, u.name, u.email, u.registered_at , cu.joined_at , cu.classroom_id , cu.role from Users u join Classroom_Users cu on u.user_id = cu.user_id  where cu.classroom_id = ? and cu.user_id = ?";
 } 

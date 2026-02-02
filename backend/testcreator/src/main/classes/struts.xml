@@ -2,16 +2,19 @@
 <struts>
 
 
-	<package name="classroom" namespace="/api" extends="json-default">
-		
+	<package name="classroom" namespace="/api"
+		extends="json-default">
+
 		<interceptors>
-			<interceptor name="authInterceptor" class="com.testcreator.interceptors.AuthenticationInterceptor"/>
-			<interceptor name="jsonExceptionInterceptor" class="com.testcreator.interceptors.JsonApiExceptionInterceptor"/>
-			
+			<interceptor name="authInterceptor"
+				class="com.testcreator.interceptors.AuthenticationInterceptor" />
+			<interceptor name="jsonExceptionInterceptor"
+				class="com.testcreator.interceptors.JsonApiExceptionInterceptor" />
+
 			<interceptor-stack name="apiStack">
-				<interceptor-ref name="jsonExceptionInterceptor"/>
+				<interceptor-ref name="jsonExceptionInterceptor" />
 				<interceptor-ref name="json" />
-				<interceptor-ref name="authInterceptor" />  
+				<interceptor-ref name="authInterceptor" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 		</interceptors>
@@ -32,80 +35,120 @@
 				<param name="statusCode">400</param>
 			</result>
 			<result name="login" type="json">
-        		<param name="root">error</param>
-        		<param name="statusCode">401</param>
-    		</result>	
-    		<result name="notFound" type="json">
-        		<param name="root">error</param>
-        		<param name="statusCode">404</param>
-    		</result>	
+				<param name="root">error</param>
+				<param name="statusCode">401</param>
+			</result>
+			<result name="notFound" type="json">
+				<param name="root">error</param>
+				<param name="statusCode">404</param>
+			</result>
 		</global-results>
-		
-		
+
+
 		<global-exception-mappings>
-			<exception-mapping result="invalidJson" exception="org.apache.struts2.json.JSONException"/>
+			<exception-mapping result="invalidJson"
+				exception="org.apache.struts2.json.JSONException" />
 		</global-exception-mappings>
-		
-	
+
+
 		<action name="create-classroom"
-			class="com.testcreator.actions.ClassroomAction" method="createClassroom">
-			<result name="success" type="json" >
+			class="com.testcreator.actions.ClassroomAction"
+			method="createClassroom">
+			<result name="success" type="json">
 				<param name="root">classroomDto</param>
 			</result>
 		</action>
-		
-		<action name="created-classrooms" 
-				class="com.testcreator.actions.ClassroomAction" method="allCreatedClassrooms">
+
+		<action name="created-classrooms"
+			class="com.testcreator.actions.ClassroomAction"
+			method="allCreatedClassrooms">
 			<result name="success" type="json">
 				<param name="root">createdClassrooms</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-		
+
 		<action name="joined-classrooms"
-		  class="com.testcreator.actions.ClassroomAction" method="allJoinedClassrooms">
-		  	<result name="success" type="json">
+			class="com.testcreator.actions.ClassroomAction"
+			method="allJoinedClassrooms">
+			<result name="success" type="json">
 				<param name="root">joinedClassrooms</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-		
-		<action name="delete-classroom" 
-			class="com.testcreator.actions.ClassroomAction" method="deleteClassroom"> 
+
+		<action name="delete-classroom"
+			class="com.testcreator.actions.ClassroomAction"
+			method="deleteClassroom">
 			<result name="success" type="json">
 				<param name="root">successDto</param>
 			</result>
 		</action>
-		
-		<action name="rename-classroom" 
-			class="com.testcreator.actions.ClassroomAction" method="renameClassroom"> 
+
+		<action name="rename-classroom"
+			class="com.testcreator.actions.ClassroomAction"
+			method="renameClassroom">
 			<result name="success" type="json">
 				<param name="root">successDto</param>
 			</result>
 		</action>
-		
+
 		<!-- currently not needed -->
-		<action name="isLoggedin" class="com.testcreator.actions.AuthAction" method="isValidToken">
+		<action name="isLoggedin"
+			class="com.testcreator.actions.AuthAction" method="isValidToken">
 			<result name="success" type="json">
 				<param name="root">status</param>
 			</result>
 		</action>
-		
-		
+
+
 	</package>
-	
-	<package name="authentication" namespace="/" extends="json-default">
+
+
+	<package name="tests" namespace="/api/tests"
+		extends="classroom">
+
+
 		<interceptors>
-			<interceptor name="jsonExceptionInterceptor" class="com.testcreator.interceptors.JsonApiExceptionInterceptor"/>
+
+			<interceptor name="classroomIdInterceptor"
+				class="com.testcreator.interceptors.ClassroomIdInterceptor" />
+
+
+			<interceptor-stack name="testActionStack">
+				<interceptor-ref name="apiStack" />
+				<interceptor-ref name="classroomIdInterceptor" />
+			</interceptor-stack>
+
+		</interceptors>
+
+		<default-interceptor-ref name="testActionStack"/>
+
+		<action name="create-test"
+			class="com.testcreator.actions.TestAction" method="createTest">
+			<result name="success" type="json">
+				<param name="root">testDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+		</action>
+
+	</package>
+
+	<package name="authentication" namespace="/"
+		extends="json-default">
+		<interceptors>
+			<interceptor name="jsonExceptionInterceptor"
+				class="com.testcreator.interceptors.JsonApiExceptionInterceptor" />
 			<interceptor-stack name="authenticationStack">
 				<interceptor-ref name="jsonExceptionInterceptor" />
-				<interceptor-ref name="json"/>
-				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="json" />
+				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 		</interceptors>
-	
-		<default-interceptor-ref name="authenticationStack"/>
-	
+
+		<default-interceptor-ref
+			name="authenticationStack" />
+
 		<global-results>
 			<result name="invalidJson" type="json">
 				<param name="root">error</param>
@@ -123,30 +166,33 @@
 				<param name="root">error</param>
 				<param name="statusCode">409</param>
 			</result>
-			 <result name="login" type="json">
-        		<param name="root">error</param>
-        		<param name="statusCode">401</param>
-    		</result>	
+			<result name="login" type="json">
+				<param name="root">error</param>
+				<param name="statusCode">401</param>
+			</result>
 		</global-results>
-		
+
 		<global-exception-mappings>
-			<exception-mapping result="invalidJson" exception="org.apache.struts2.json.JSONException"/>
+			<exception-mapping result="invalidJson"
+				exception="org.apache.struts2.json.JSONException" />
 		</global-exception-mappings>
-		
-		<action name="signin" class="com.testcreator.actions.UserAction" method="signin">
+
+		<action name="signin"
+			class="com.testcreator.actions.UserAction" method="signin">
 			<result name="success" type="json">
 				<param name="root">authDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-		
-		<action name="signup" class="com.testcreator.actions.UserAction" method="signup">
+
+		<action name="signup"
+			class="com.testcreator.actions.UserAction" method="signup">
 			<result name="success" type="json">
 				<param name="root">authDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-		
+
 	</package>
-	
+
 </struts>

@@ -6,6 +6,7 @@ public class ClassroomUser {
 	private final User user;
 	private final Instant joinedAt;
 	private final UserRole role;
+	private int classroomId;
 	
 	public ClassroomUser(User user, Instant joinedAt, UserRole role) {
 		this.user = user;
@@ -13,6 +14,20 @@ public class ClassroomUser {
 		this.role = role;
 	}
 	
+	
+	
+	public int getClassroomId() {
+		return classroomId;
+	}
+
+
+
+	public void setClassroomId(int classroomId) {
+		this.classroomId = classroomId;
+	}
+
+
+
 	public User getUser() {
 		return user;
 	}

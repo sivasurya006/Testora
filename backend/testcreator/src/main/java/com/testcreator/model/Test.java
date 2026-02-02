@@ -1,17 +1,9 @@
-package com.testcreator.dto;
+package com.testcreator.model;
 
-<<<<<<< HEAD
-public class TestDto {
-
-=======
-import com.testcreator.model.TestStatus;
-
-public class TestDto {
+public class Test {
 	private int testId;
 	private int creatorId;
-	private String creatorName;
 	private int classroomId;
-	private String classroomName;
 	private String testTitle;
 	private long createdAt;
 	private boolean isTimedTest;
@@ -20,9 +12,6 @@ public class TestDto {
 	private int maximumAttempts;
 	
 	
-	
-	
-
 	public int getTestId() {
 		return testId;
 	}
@@ -35,23 +24,11 @@ public class TestDto {
 	public void setCreatorId(int creatorId) {
 		this.creatorId = creatorId;
 	}
-	public String getCreatorName() {
-		return creatorName;
-	}
-	public void setCreatorName(String creatorName) {
-		this.creatorName = creatorName;
-	}
 	public int getClassroomId() {
 		return classroomId;
 	}
 	public void setClassroomId(int classroomId) {
 		this.classroomId = classroomId;
-	}
-	public String getClassroomName() {
-		return classroomName;
-	}
-	public void setClassroomName(String classroomName) {
-		this.classroomName = classroomName;
 	}
 	public String getTestTitle() {
 		return testTitle;
@@ -89,5 +66,4 @@ public class TestDto {
 	public void setMaximumAttempts(int maximumAttempts) {
 		this.maximumAttempts = maximumAttempts;
 	}
->>>>>>> 06e32fee8ad72c61396418bc5e175e53a77f0f20
 }
