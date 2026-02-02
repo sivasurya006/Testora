@@ -5,7 +5,8 @@ public class ClassroomDto {
 	private String classroomName;
 	private long createdAt;
 	private int createdBy;
-	private Long joinedAt;   
+	private Long joinedAt;
+	private String creatorName;
 	
 	/*
 	 * Long Wrapper class => In struts.xml we use excludeNullProperties
@@ -56,6 +57,14 @@ public class ClassroomDto {
 
 	public void setJoinedAt(long joinedAt) {
 		this.joinedAt = joinedAt;
+	}
+	
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
+	}
+	
+	public String getCreatorName() {
+		return creatorName;
 	}
 	
 	

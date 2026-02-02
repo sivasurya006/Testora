@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput, TouchableOpacity , ActivityIndicator } from "react-native"
+import { View, Text, Pressable, TextInput, TouchableOpacity, ActivityIndicator } from "react-native"
 import { Link } from "expo-router"
 import AuthformStyles from '../styles/AuthformStyles'
 import { useContext, useState } from "react";
@@ -18,34 +18,34 @@ export default function Signup() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
-    const [errorMessage,setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     async function handleSignup() {
-        if(!isValidName(name)){
+        if (!isValidName(name)) {
             setErrorMessage("Please enter name")
             return;
         }
-        if(!isValidEmail(email)){
+        if (!isValidEmail(email)) {
             setErrorMessage("Please enter valid email");
             return;
         }
-        if(!isStrongPassword(password)){
+        if (!isStrongPassword(password)) {
             setErrorMessage("Password needs 8+ characters, with uppercase, lowercase, number, and symbol");
             return;
         }
-        if(password !== confirmPassword){
+        if (password !== confirmPassword) {
             setErrorMessage("Password and Confirm password  mismatch");
             return;
         }
 
-        const result = await authContext.signUp(name,email,password);
+        const result = await authContext.signUp(name, email, password);
 
         if (result.success) {
             console.log("Successfully logged in");
         } else {
-            if(result.status && result.status === 409){
+            if (result.status && result.status === 409) {
                 setErrorMessage("Account already registered with this email. Try to signin")
-                return;    
+                return;
             }
             console.log(result.error);
             setErrorMessage("Can't create an account. Try again");
@@ -92,7 +92,7 @@ export default function Signup() {
                         <Ionicons name={confirmPasswordVisible ? "eye-off" : "eye"} size={20} />
                     </TouchableOpacity>
                 </View>
-                <Pressable 
+                <Pressable
                     style={styles.primaryButton}
                     onPress={handleSignup}
                     disabled={authContext.isLoading}
@@ -104,7 +104,7 @@ export default function Signup() {
                     )}
                 </Pressable>
 
-                { errorMessage ? <Text style={{color:'red'}}>{errorMessage}</Text> : null }
+                {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
 
                 <Text style={styles.navLinkText}>Already have an account?{' '}
                     <Link href="signin" style={styles.link}>sign in</Link>

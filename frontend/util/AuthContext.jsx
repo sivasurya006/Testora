@@ -7,21 +7,29 @@ import * as SecureStore from "expo-secure-store";
 export const AuthContext = createContext();
 console.log(AuthContext);
 export default function AuthContextProvider({ children }) {
-    const [isLoading, setLoading] = useSt           
+    const [isLoading, setLoading] = useState(false);
 
-
-
-
-
-
-
-
-
-
-
-    
-        This effect rAuthContextun for check the current user is Logged in after refresh
+    {/**
+        This effect run for check the current user is Logged in after refresh
     */}
+
+    {/** For authentication check we don't need separate api. 
+        Bcz we handle it on server (if any unauthorized request happens server respond with 401) 
+        check api.interceptors.response in ./uti/api.js  */}
+
+    // useEffect(() => {
+    //     const checkIsLoggedIn = async () => {
+    //       try {
+    //         const res = await api.get('/api/isLoggedin');
+    //         setLoggedIn(res.data);
+    //       } catch (e) {
+    //         setLoggedIn(false);
+    //       } finally {
+    //         setLoading(false);
+    //       }
+    //     };
+    //     checkIsLoggedIn();
+    //   }, []);
 
     {/** For authentication check we don't need separate api. 
         Bcz we handle it on server (if any unauthorized request happens server respond with 401) 
@@ -54,7 +62,9 @@ export default function AuthContextProvider({ children }) {
                 console.log("Signup error:", errorText);
                 return { success: false, error: errorText };
             }
-            router.replace('/');
+            console.log("hi")
+            // router.replace('/');
+
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
@@ -64,10 +74,11 @@ export default function AuthContextProvider({ children }) {
         } catch (err) {
             // TODO implement logger (sign up failed)
             console.log("catch called")
+
             if (err.status == 409) {
                 return { success: false, error: "User already exist", status: 409 };
             }
-            return { success: false, error: e.message };
+            return { success: false, error: err.message };
         } finally {
             setLoading(false)
         }
@@ -87,7 +98,9 @@ export default function AuthContextProvider({ children }) {
                 console.log("Signin error:", errorText);
                 return { success: false, error: errorText };
             }
-            router.replace('/');
+            console.log("hi")
+
+            // router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
@@ -104,8 +117,10 @@ export default function AuthContextProvider({ children }) {
     }
 
     function signOut() {
+        console.log("hi")
+
         setLoggedIn(false);
-        router.replace('/signin');
+        // router.replace('/signin');
     }
 
     return (

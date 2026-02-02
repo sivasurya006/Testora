@@ -11,8 +11,12 @@ public class Queries {
 	// read classrooms
 	public static final String selectClassroomStudents = "select u.user_id , u.name , u.email , u.registered_at , cu.joined_at  from Users u join Classroom_Users cu on  u.user_id = cu.user_id where cu.classroom_id = ? and cu.role = 'student'";
 	public static final String selectClassroomTutors = "select u.user_id , u.name , u.email , u.registered_at  , cu.joined_at  from Users u join Classroom_Users cu on  u.user_id = cu.user_id where cu.classroom_id = ? and cu.role = 'tutor'";
-	public static final String selectCreatedClassrooms  = "select * from Classrooms where created_by = ?";
-	public static final String selectJoinedClassrooms = "select c.classroom_id , c.name , c.created_by, c.created_at  ,cu.joined_at from Classrooms c join Classroom_Users cu on c.classroom_id = cu.classroom_id where cu.user_id = ? and c.created_by != cu.user_id";
+	public static final String selectCreatedClassrooms  = "select c.* , u.name as creator_name from Classrooms c join Users u on c.created_by = u.user_id where created_by = ?";
+	
+	public static final String selectJoinedClassrooms = "select c.classroom_id , c.name , c.created_by, u.name as creator_name "
+														+ ",c.created_at  ,cu.joined_at from Classrooms c join Classroom_Users cu on c.classroom_id = cu.classroom_id"
+														+ " join Users u on c.created_by = u.user_id  where cu.user_id = ? and cu.role = 'student'";
+	
 	public static final String selectClassroomCreatedAt = "select created_at from Classrooms where classroom_id = ?";
 	public static final String selectClassroomByCreatedByAndClassroomId = "select * from Classrooms where classroom_id = ? and created_by = ?";
 	

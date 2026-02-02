@@ -34,7 +34,7 @@ public class CorsFilter extends HttpFilter implements Filter {
 	        response.setHeader("Access-Control-Allow-Credentials", "true");
 	    }
 
-	    response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
+	    response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, PATCH, DELETE, OPTIONS");
 	    response.setHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Client-Type, X-ClassroomId");
 
 	    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

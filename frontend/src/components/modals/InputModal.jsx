@@ -12,8 +12,8 @@ export default function InputModal({ placeholder, onValueChange , visible, onCon
         >
             <View style={styles.container}>
                 <View style={styles.modalContent}>
-                    <View style={styles.inputBox}>
-                        <TextInput onChangeText={onValueChange} placeholder={placeholder} />
+                    <View style={{}}>
+                        <TextInput style={styles.inputBox} onChangeText={onValueChange} placeholder={placeholder} />
                     </View>
                     <View style={styles.options}>
                         <Pressable style={[styles.cancelBtn,styles.optionBtn]} onPress={onCancel}>
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: 'white',
-        padding: 30,
+        paddingHorizontal: 30,
+        paddingVertical : 20,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 8,
@@ -61,5 +62,13 @@ const styles = StyleSheet.create({
     },
     cancelBtn: {
         backgroundColor: 'red'
+    },
+    inputBox: {
+        paddingVertical: 10,
+        paddingHorizontal : 10,
+        borderRadius: 8,
+        width : 200,
+        outlineWidth : 0,
+        borderWidth : 1,
     }
 })
