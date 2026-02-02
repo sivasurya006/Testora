@@ -15,7 +15,6 @@ export default function _layout() {
                 tabBarStyle: {
                     minWidth: 60
                 },
-                // tabBarShowLabel: false,
                 headerShown: false
             }}
         >
