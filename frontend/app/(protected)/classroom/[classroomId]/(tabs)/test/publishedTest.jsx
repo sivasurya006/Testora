@@ -1,10 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import CreatedTestList from '../../../../../../src/screens/CreatedTestList'
 
 export default function PublishedTest() {
   return (
-    <View>
-      <Text>published</Text>
-    </View>
+    <CreatedTestList filter={'published'}/>
   )
 }

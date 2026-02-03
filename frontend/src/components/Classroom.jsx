@@ -175,31 +175,10 @@ const styles = StyleSheet.create({
         rowGap: 25,
         borderRadius: 8,
     },
-    verticalDots: {
-        alignSelf: 'flex-end',
-    },
-    dropDownMenuContainer: {
-        position: 'relative',
-        alignSelf: 'flex-end',
-    },
-
     menuTitleStyle: {
         color: 'black'
     },
     menuContentStyle: {
-        backgroundColor: Colors.bgColor
-    },
-    closeIcon: {
-        color: 'black',
-        alignSelf: 'flex-end'
-    },
-    infoContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    info: {
-        width: 300,
         backgroundColor: Colors.bgColor
     }
 })

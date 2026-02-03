@@ -4,7 +4,7 @@ import { useWindowDimensions } from 'react-native';
 
 export default function TestsLayout() {
     const { width } = useWindowDimensions();
-    const isLargeScreen = width > 768;
+    const isLargeScreen = width > 821;
 
     return isLargeScreen ? (
         <Tabs screenOptions={{ tabBarPosition: 'top', headerShown: false, tabBarIcon: () => null }}>

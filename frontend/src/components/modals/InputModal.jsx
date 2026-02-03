@@ -19,7 +19,7 @@ export default function InputModal({ placeholder, onValueChange , visible, onCon
                         <Pressable style={[styles.cancelBtn,styles.optionBtn]} onPress={onCancel}>
                             <Text style={styles.optionText}>Cancel</Text>
                         </Pressable>
-                        <Pressable style={[styles.confirmBtn,styles.optionBtn]} onPress={onConfirm}>
+                        <Pressable style={[styles.confirmBtn,styles.optionBtn]} onPress={() => { console.log("confirmed"); onConfirm();}}>
                             <Text style={styles.optionText}>Confirm</Text>
                         </Pressable>
                     </View>

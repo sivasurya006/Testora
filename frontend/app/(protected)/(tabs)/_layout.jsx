@@ -11,7 +11,7 @@ import Header from '../../../src/components/Header'
 export default function ProtectedLayout() {
 
     const {width} = useWindowDimensions();
-    const isLargeScreen =  width > 768;
+    const isLargeScreen =  width > 821;
 
     const authContext = useContext(AuthContext);
 
