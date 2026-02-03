@@ -1,9 +1,7 @@
 package com.testcreator.dto;
 
-<<<<<<< HEAD
-public class TestDto {
 
-=======
+
 import com.testcreator.model.TestStatus;
 
 public class TestDto {
@@ -89,5 +87,6 @@ public class TestDto {
 	public void setMaximumAttempts(int maximumAttempts) {
 		this.maximumAttempts = maximumAttempts;
 	}
->>>>>>> 06e32fee8ad72c61396418bc5e175e53a77f0f20
+
 }
+

@@ -68,4 +68,8 @@ public class Queries {
 	/* ============ Classroom users ===============*/
 	
 	public static final String selectClassroomUser = "select u.user_id, u.name, u.email, u.registered_at , cu.joined_at , cu.classroom_id , cu.role from Users u join Classroom_Users cu on u.user_id = cu.user_id  where cu.classroom_id = ? and cu.user_id = ?";
+	
+//	======= getClassroom=========
+	
+	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
 } 

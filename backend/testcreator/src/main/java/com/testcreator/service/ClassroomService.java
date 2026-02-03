@@ -67,4 +67,8 @@ public class ClassroomService {
 		return classroomDao.renameClassroom(userId, classroomId, newName);
 	}
 	
+	public ClassroomDto getClassroom(int userId,int classroomId){
+		return classroomDao.getClassroom(userId,classroomId);
+	}
+	
 }

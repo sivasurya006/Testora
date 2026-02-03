@@ -61,8 +61,4 @@ public class TestAction extends JsonApiAction implements ServletRequestAware{
 		this.request = request;
 	}
 
-	@Override
-	public Test getModel() {
-		return test;
-	}
 }

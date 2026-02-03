@@ -100,6 +100,13 @@
 				<param name="root">status</param>
 			</result>
 		</action>
+		
+		<action name=classroom-details class="com.testcreator.actions.ClassroomAction" method="getClassroomDetails">
+		<result name="success" type="json">
+		     <param ame="root">classroomDto</param>
+		</result>
+		</action>
+		
 
 
 	</package>
@@ -131,7 +138,7 @@
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-
+		
 	</package>
 
 	<package name="authentication" namespace="/"

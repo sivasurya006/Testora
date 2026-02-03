@@ -1,21 +1,8 @@
-package com.testcreator.dao;
+
+	package com.testcreator.dao;
+
 
 import java.sql.Connection;
-<<<<<<< HEAD
-
-public class TestDao {
-	
-	
-	private Connection connection;
-
-	public TestDao(Connection connection) {
-		this.connection = connection;
-	}
-	public List<TestDto>  getAllTests(int classroomId){
-		List<TestDto>
-	}
-	
-=======
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,6 +53,6 @@ public class TestDao {
 		}
 		return testDto;
 	}
->>>>>>> 06e32fee8ad72c61396418bc5e175e53a77f0f20
+
 
 }
