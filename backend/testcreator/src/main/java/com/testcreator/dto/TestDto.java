@@ -1,10 +1,12 @@
 package com.testcreator.dto;
 
+import com.testcreator.model.CorrectionMethod;
 import com.testcreator.model.TestStatus;
 
 public class TestDto {
+	
 	private int testId;
-	private int creatorId;
+//	private int creatorId;
 	private String creatorName;
 	private int classroomId;
 	private String classroomName;
@@ -14,7 +16,7 @@ public class TestDto {
 	private int durationMinutes;
 	private TestStatus status;
 	private int maximumAttempts;
-	
+	private CorrectionMethod correctionMethod;
 	
 	
 	
@@ -25,12 +27,12 @@ public class TestDto {
 	public void setTestId(int testId) {
 		this.testId = testId;
 	}
-	public int getCreatorId() {
-		return creatorId;
-	}
-	public void setCreatorId(int creatorId) {
-		this.creatorId = creatorId;
-	}
+//	public int getCreatorId() {
+//		return creatorId;
+//	}
+//	public void setCreatorId(int creatorId) {
+//		this.creatorId = creatorId;
+//	}
 	public String getCreatorName() {
 		return creatorName;
 	}
@@ -85,4 +87,12 @@ public class TestDto {
 	public void setMaximumAttempts(int maximumAttempts) {
 		this.maximumAttempts = maximumAttempts;
 	}
+	public CorrectionMethod getCorrectionMethod() {
+		return correctionMethod;
+	}
+	public void setCorrectionMethod(CorrectionMethod correctionMethod) {
+		this.correctionMethod = correctionMethod;
+	}
+	
+	
 }

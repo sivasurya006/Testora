@@ -51,7 +51,11 @@ public class Queries {
 	public static final String insertTest = "insert into Tests (classroom_id,creator_id,title) values(?,?,?)";
 	
 	// Read Test
-	public static final String selectTests = "select * from Tests where classroom_id = ? ";
+	public static final String selectTests = "select * from Tests where classroom_id = ? order by created_at desc";
+	public static final String selectTestsWithLimit = "select * from Tests where classroom_id = ? order by created_at desc limit ? ";
+	public static final String selectTestByTestID = "select * from Tests where test_id = ?";
+	public static final String selectTestsByStatus = "select * from Tests where classroom_id = ? and status = ? order by created_at desc";
+	public static final String selectTestsByStatusWithLimit = "select * from Tests where classroom_id = ? and status = ? order by created_at desc limit ? ";
 	
 	// update Test
 	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximumAttempts = ? , status = 'published' where test_id = ?";

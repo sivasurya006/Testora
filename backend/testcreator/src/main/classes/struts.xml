@@ -122,7 +122,8 @@
 
 		</interceptors>
 
-		<default-interceptor-ref name="testActionStack"/>
+		<default-interceptor-ref
+			name="testActionStack" />
 
 		<action name="create-test"
 			class="com.testcreator.actions.TestAction" method="createTest">
@@ -130,6 +131,16 @@
 				<param name="root">testDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
+		</action>
+
+		<action name="get-created-tests"
+			class="com.testcreator.actions.TestAction" method="fetchCreatedTests">
+
+			<result name="success" type="json">
+				<param name="root">allTests</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+
 		</action>
 
 	</package>
