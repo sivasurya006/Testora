@@ -1,12 +1,24 @@
 package com.testcreator.dto;
 
+<<<<<<< HEAD
 
 
+=======
+<<<<<<< HEAD
+import com.testcreator.model.CorrectionMethod;
+=======
+<<<<<<< HEAD
+public class TestDto {
+
+=======
+>>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
+>>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 import com.testcreator.model.TestStatus;
 
 public class TestDto {
+	
 	private int testId;
-	private int creatorId;
+//	private int creatorId;
 	private String creatorName;
 	private int classroomId;
 	private String classroomName;
@@ -16,7 +28,7 @@ public class TestDto {
 	private int durationMinutes;
 	private TestStatus status;
 	private int maximumAttempts;
-	
+	private CorrectionMethod correctionMethod;
 	
 	
 	
@@ -27,12 +39,12 @@ public class TestDto {
 	public void setTestId(int testId) {
 		this.testId = testId;
 	}
-	public int getCreatorId() {
-		return creatorId;
-	}
-	public void setCreatorId(int creatorId) {
-		this.creatorId = creatorId;
-	}
+//	public int getCreatorId() {
+//		return creatorId;
+//	}
+//	public void setCreatorId(int creatorId) {
+//		this.creatorId = creatorId;
+//	}
 	public String getCreatorName() {
 		return creatorName;
 	}
@@ -87,6 +99,21 @@ public class TestDto {
 	public void setMaximumAttempts(int maximumAttempts) {
 		this.maximumAttempts = maximumAttempts;
 	}
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+	public CorrectionMethod getCorrectionMethod() {
+		return correctionMethod;
+	}
+	public void setCorrectionMethod(CorrectionMethod correctionMethod) {
+		this.correctionMethod = correctionMethod;
+	}
+	
+	
+=======
+>>>>>>> 06e32fee8ad72c61396418bc5e175e53a77f0f20
+>>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
+>>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 }
 
