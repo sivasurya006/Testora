@@ -20,14 +20,13 @@ import com.testcreator.service.ClassroomService;
 
 
 public class ClassroomAction extends JsonApiAction implements ServletContextAware {
-	private ServletContext servletContext;
 	
+	private ServletContext servletContext;
 	private String classroomName;
+	
 	private long createdAt;
 	private int classroomId;
 	
-
-
 	private ClassroomDto classroomDto;
 	private SuccessDto successDto;
 	

@@ -17,6 +17,8 @@ export default function Index() {
     const [classroomName, setClassroomName] = useState("");
     const [isLoading, setLoading] = useState(false);
 
+    
+
     const onConfirmCreateClassModal = async () => {
         if (classroomName.trim().length == 0) return;
         await handleCreateClassroom();
@@ -89,6 +91,7 @@ export default function Index() {
                     onConfirm={onConfirmCreateClassModal}
                     onCancel={onCancelCreateClassModal} />
                 : null}
+
         </React.Fragment >
     )
 }

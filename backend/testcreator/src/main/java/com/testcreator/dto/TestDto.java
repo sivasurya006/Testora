@@ -1,6 +1,13 @@
 package com.testcreator.dto;
 
+<<<<<<< HEAD
 import com.testcreator.model.CorrectionMethod;
+=======
+<<<<<<< HEAD
+public class TestDto {
+
+=======
+>>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
 import com.testcreator.model.TestStatus;
 
 public class TestDto {
@@ -87,6 +94,7 @@ public class TestDto {
 	public void setMaximumAttempts(int maximumAttempts) {
 		this.maximumAttempts = maximumAttempts;
 	}
+<<<<<<< HEAD
 	public CorrectionMethod getCorrectionMethod() {
 		return correctionMethod;
 	}
@@ -95,4 +103,7 @@ public class TestDto {
 	}
 	
 	
+=======
+>>>>>>> 06e32fee8ad72c61396418bc5e175e53a77f0f20
+>>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
 }

@@ -2,9 +2,9 @@ import axios from "axios";
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { router, useRouter } from "expo-router";
-
+console.log("hello")
 const api = axios.create({
-    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/' : "http://192.168.20.6:8080/testcreator/",
+    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/' : "http://10.152.158.146:8080/testcreator/",
     timeout: 10000,
     headers: {
         'X-Client-Type': Platform.OS == 'web' ? 'web' : 'mobile'
@@ -15,6 +15,8 @@ const api = axios.create({
 
 // console.log(api.interceptors)
 api.interceptors.request.use(async (config) => {
+    console.log("hoi");
+
     if (Platform.OS != 'web') {
         try {
             const token = await SecureStore.getItemAsync('token');
@@ -31,9 +33,10 @@ api.interceptors.request.use(async (config) => {
 
 
 
-api.interceptors.response.use(null, (error) => {
-    if (error.response.status === 401) {
+api.interceptors.response.use( null ,(error) => {
+    if (error.response?.status === 401) {
         router.replace('/signin');
+
     }
     throw error;
 });

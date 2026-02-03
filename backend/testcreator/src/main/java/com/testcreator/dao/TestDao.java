@@ -8,9 +8,27 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
+<<<<<<< HEAD
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.ParameterMetaData;
+=======
+<<<<<<< HEAD
+
+public class TestDao {
+	
+	
+	private Connection connection;
+
+	public TestDao(Connection connection) {
+		this.connection = connection;
+	}
+	public List<TestDto>  getAllTests(int classroomId){
+		List<TestDto>
+	}
+	
+=======
+>>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
@@ -90,6 +108,7 @@ public class TestDao {
 		}
 		return testDto;
 	}
+>>>>>>> 06e32fee8ad72c61396418bc5e175e53a77f0f20
 
 	public List<TestDto> getAllTests(int classroomId, int limit) throws SQLException {
 		List<TestDto> allTests = null;
