@@ -8,8 +8,12 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.struts2.ServletActionContext;
+
+import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.TestDto;
 import com.testcreator.model.CorrectionMethod;
+import com.testcreator.model.Option;
+import com.testcreator.model.QuestionType;
 import com.testcreator.model.TestStatus;
 import com.testcreator.util.DBConnectionMaker;
 import com.testcreator.util.Queries;
@@ -41,7 +45,7 @@ public class TestDao {
 				if (create.next()) {
 					int testId = create.getInt(1);
 					return getTestById(testId);
-				}else {
+				} else {
 					throw new SQLException("Can't get auto generated id");
 				}
 			}
@@ -64,7 +68,8 @@ public class TestDao {
 					testDto.setTestId(rs.getInt("test_id"));
 					testDto.setClassroomId(rs.getInt("classroom_id"));
 					testDto.setTestTitle(rs.getString("title"));
-					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
+					testDto.setCorrectionMethod(
+							CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
 					testDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					testDto.setTimedTest(rs.getBoolean("is_timed"));
 					testDto.setDurationMinutes(rs.getInt("duration_minutes"));
@@ -122,7 +127,8 @@ public class TestDao {
 					testDto.setTestId(rs.getInt("test_id"));
 					testDto.setClassroomId(rs.getInt("classroom_id"));
 					testDto.setTestTitle(rs.getString("title"));
-					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
+					testDto.setCorrectionMethod(
+							CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
 					testDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					testDto.setTimedTest(rs.getBoolean("is_timed"));
 					testDto.setDurationMinutes(rs.getInt("duration_minutes"));
@@ -136,4 +142,76 @@ public class TestDao {
 		return testDto;
 	}
 
+	public QuestionDto createNewQuetion(int testId, String questionText, QuestionType type, int marks,
+			List<Option> options) throws SQLException {
+		QuestionDto questionDto = null;
+		try (PreparedStatement ps = connection.prepareStatement(Queries.insertQuestion,
+				Statement.RETURN_GENERATED_KEYS)) {
+			ps.setInt(1, testId);
+			ps.setString(2, type.name().toLowerCase());
+			ps.setString(3, questionText);
+			ps.setInt(4, marks);
+
+			int affectedRows = ps.executeUpdate();
+			if (affectedRows == 0) {
+				throw new SQLException("Can't insert a question");
+			}
+
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					int questionId = rs.getInt(1);
+					questionDto = new QuestionDto();
+					questionDto.setId(questionId);
+					questionDto.setMarks(marks);
+					questionDto.setQuestionText(questionText);
+					questionDto.setType(type);
+					if (options != null) {
+						questionDto.setOptions(createNewOptions(questionId, options));
+					}
+				} else {
+					throw new SQLException("Can't get the generated question id");
+				}
+			}
+
+		}
+		return questionDto;
+	}
+
+	public List<Option> createNewOptions(int questionId, List<Option> options) throws SQLException {
+		List<Option> createdOptions = new LinkedList<Option>();
+		for (Option option : options) {
+			if (option.getOptionText() == null || option.getOptionText().isBlank() || option.getOptionMark() < 0) {
+				continue;
+			}
+			try (PreparedStatement ps = connection.prepareStatement(Queries.insertOption,
+					Statement.RETURN_GENERATED_KEYS)) {
+				ps.setInt(1, questionId);
+				ps.setString(2, option.getOptionText());
+				ps.setBoolean(3, option.isCorrect());
+				ps.setInt(4, option.getOptionMark());
+
+				int affectedRows = ps.executeUpdate();
+
+				if (affectedRows == 0) {
+					throw new SQLException("Can't insert an option");
+				}
+
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next()) {
+						Option createdOption = new Option();
+						createdOption.setOptionId(rs.getInt(1));
+						createdOption.setOptionText(option.getOptionText());
+						createdOption.setOptionMark(option.getOptionMark());
+						createdOption.setCorrect(option.isCorrect());
+
+						createdOptions.add(createdOption);
+					} else {
+						throw new SQLException("Can't get the generated option id");
+					}
+				}
+
+			}
+		}
+		return createdOptions;
+	}
 }

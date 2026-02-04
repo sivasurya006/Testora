@@ -12,10 +12,14 @@
 				class="com.testcreator.interceptors.JsonApiExceptionInterceptor" />
 
 			<interceptor-stack name="apiStack">
+				<interceptor-ref name="servletConfig" />
+				<interceptor-ref name="authInterceptor" />
+				<interceptor-ref name="modelDriven" />
 				<interceptor-ref name="jsonExceptionInterceptor" />
 				<interceptor-ref name="json" />
-				<interceptor-ref name="authInterceptor" />
-				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="params" />
+				<interceptor-ref name="validation" />
+				<interceptor-ref name="workflow" />
 			</interceptor-stack>
 		</interceptors>
 
@@ -56,6 +60,7 @@
 			method="createClassroom">
 			<result name="success" type="json">
 				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
 
@@ -113,6 +118,8 @@
 
 			<interceptor name="classroomIdInterceptor"
 				class="com.testcreator.interceptors.ClassroomIdInterceptor" />
+			<interceptor name="testIdInterceptor"
+				class="com.testcreator.interceptors.TestIdInterceptor" />
 
 
 			<interceptor-stack name="testActionStack">
@@ -141,6 +148,19 @@
 				<param name="excludeNullProperties">true</param>
 			</result>
 
+		</action>
+
+		<action name="create-question"
+			class="com.testcreator.actions.TestAction" method="createQuestion">
+
+			<result name="success" type="json">
+				<param name="root">questionDto</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
 		</action>
 
 	</package>

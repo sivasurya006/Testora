@@ -68,6 +68,7 @@ public class Queries {
 	
 	// Create new Question
 	public static final String insertQuestion = "insert into Questions (test_id,type,question_text,marks) values (?,?,?,?)"; 
+	public static final String insertOption = "insert into Options (question_id,option_text,is_correct,option_mark) values (?,?,?,?)";
 	
 	/* ============ Classroom users ===============*/
 	
