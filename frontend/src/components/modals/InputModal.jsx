@@ -9,6 +9,7 @@ export default function InputModal({ placeholder, onValueChange , visible, onCon
             transparent
             animationType='fade'
             onRequestClose={onCancel}
+            onRe
         >
             <View style={styles.container}>
                 <View style={styles.modalContent}>

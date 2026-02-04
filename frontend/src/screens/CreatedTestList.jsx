@@ -92,7 +92,6 @@ async function handleCreateTest(classroomId, testTitle) {
       }
     });
 
-    console.log("result ", result)
     if (result.status == 200) {
       return result.data;
     }
@@ -124,8 +123,6 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
         'X-ClassroomId': classroomId
       }
     });
-
-    console.log(result)
     if (result?.status == 200) {
       setCreatedTests(result.data);
     } else {

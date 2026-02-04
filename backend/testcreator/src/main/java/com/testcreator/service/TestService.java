@@ -5,9 +5,12 @@ import java.util.List;
 
 import com.testcreator.dao.ClassroomUsersDao;
 import com.testcreator.dao.TestDao;
+import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.TestDto;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.ClassroomUser;
+import com.testcreator.model.Option;
+import com.testcreator.model.QuestionType;
 import com.testcreator.model.TestStatus;
 import com.testcreator.model.UserRole;
 
@@ -80,6 +83,6 @@ public class TestService {
 		return getTestsByStatus(userId, classroomId, -1,status);
 	}
 	
-
+>>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 	
 }
