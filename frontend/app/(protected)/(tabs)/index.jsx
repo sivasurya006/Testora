@@ -89,6 +89,7 @@ export default function Index() {
                     onConfirm={onConfirmCreateClassModal}
                     onCancel={onCancelCreateClassModal} />
                 : null}
+
         </React.Fragment >
     )
 }

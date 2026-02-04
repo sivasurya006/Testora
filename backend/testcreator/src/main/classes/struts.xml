@@ -105,6 +105,13 @@
 				<param name="root">status</param>
 			</result>
 		</action>
+		
+		<action name=classroom-details class="com.testcreator.actions.ClassroomAction" method="getClassroomDetails">
+		<result name="success" type="json">
+		     <param ame="root">classroomDto</param>
+		</result>
+		</action>
+		
 
 
 	</package>
@@ -148,19 +155,6 @@
 				<param name="excludeNullProperties">true</param>
 			</result>
 
-		</action>
-
-		<action name="create-question"
-			class="com.testcreator.actions.TestAction" method="createQuestion">
-
-			<result name="success" type="json">
-				<param name="root">questionDto</param>
-			</result>
-			<result name="input" type="json">
-				<param name="root">fieldErrors</param>
-			</result>
-			<interceptor-ref name="testActionStack" />
-			<interceptor-ref name="testIdInterceptor" />
 		</action>
 
 	</package>

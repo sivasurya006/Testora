@@ -41,6 +41,8 @@ public class TestService {
 	}
 	
 	
+<<<<<<< HEAD
+=======
 	public List<TestDto> getAllTests(int userId,int classroomId,int limit) throws SQLException{
 		List<TestDto> allTests=  null;
 		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
@@ -84,6 +86,7 @@ public class TestService {
 		return getTestsByStatus(userId, classroomId, -1,status);
 	}
 	
+<<<<<<< HEAD
 	public QuestionDto createNewQuestion(int userId,int classroomId,int testId,String questionText,QuestionType type,int marks,List<Option> options) throws SQLException{
 		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
 		if(classroomUser == null) {
@@ -95,5 +98,8 @@ public class TestService {
 		}
 		return testDao.createNewQuetion(testId, questionText, type, marks,options);
 	}
+=======
+>>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
+>>>>>>> 967e0fb67e89d326813a141845e9081574ca5628
 	
 }

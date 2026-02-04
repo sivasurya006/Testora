@@ -182,10 +182,17 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
 	}
+<<<<<<< HEAD
 
 	@Override
 	public QuestionDto getModel() {
 		return questionDto;
 	}
 
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
+>>>>>>> 967e0fb67e89d326813a141845e9081574ca5628
 }

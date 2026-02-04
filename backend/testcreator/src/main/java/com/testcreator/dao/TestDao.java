@@ -1,6 +1,35 @@
-package com.testcreator.dao;
+
+	package com.testcreator.dao;
+
 
 import java.sql.Connection;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.ParameterMetaData;
+=======
+<<<<<<< HEAD
+
+public class TestDao {
+	
+	
+	private Connection connection;
+
+	public TestDao(Connection connection) {
+		this.connection = connection;
+	}
+	public List<TestDto>  getAllTests(int classroomId){
+		List<TestDto>
+	}
+	
+=======
+>>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
+>>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
+>>>>>>> 967e0fb67e89d326813a141845e9081574ca5628
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -142,6 +171,7 @@ public class TestDao {
 		return testDto;
 	}
 
+<<<<<<< HEAD
 	public QuestionDto createNewQuetion(int testId, String questionText, QuestionType type, int marks,
 			List<Option> options) throws SQLException {
 		QuestionDto questionDto = null;
@@ -151,6 +181,77 @@ public class TestDao {
 			ps.setString(2, type.name().toLowerCase());
 			ps.setString(3, questionText);
 			ps.setInt(4, marks);
+=======
+
+	public List<TestDto> getAllTests(int classroomId, int limit) throws SQLException {
+		List<TestDto> allTests = null;
+		String selectTestQuery = limit < 0 ? Queries.selectTests : Queries.selectTestsWithLimit;
+		try(PreparedStatement ps = connection.prepareStatement(selectTestQuery)){
+			ps.setInt(1, classroomId);
+			if(limit > 0) {
+				ps.setInt(2, limit);
+				System.out.println("setting limit : "+limit);
+			}
+			
+			try(ResultSet rs = ps.executeQuery()){
+				allTests = new LinkedList<TestDto>();	
+				while(rs.next()) {
+					TestDto testDto = new TestDto();
+//					test_id | classroom_id | creator_id | title  | correction_type | created_at          | is_timed | duration_minutes | status | maximumAttempts 
+					testDto.setTestId(rs.getInt("test_id"));
+					testDto.setClassroomId(rs.getInt("classroom_id"));
+//					testDto.setCreatorId(rs.getInt("creator_id"));
+					testDto.setTestTitle(rs.getString("title"));
+					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
+					testDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
+					testDto.setTimedTest(rs.getBoolean("is_timed"));
+					testDto.setDurationMinutes(rs.getInt("duration_minutes"));
+					testDto.setStatus(TestStatus.valueOf(rs.getString("status").toUpperCase()));
+					testDto.setMaximumAttempts(rs.getInt("maximumAttempts"));	
+					allTests.add(testDto);
+				}
+			}
+			
+		}
+		return allTests;
+	}
+	
+	
+	public List<TestDto> getTestsByStatus(int classroomId, int limit,TestStatus status) throws SQLException {
+		List<TestDto> allTests = null;
+		String selectTestQuery = limit < 0 ? Queries.selectTestsByStatus : Queries.selectTestsByStatusWithLimit;
+		try(PreparedStatement ps = connection.prepareStatement(selectTestQuery)){
+			ps.setInt(1, classroomId);
+			ps.setString(2, status.name().toLowerCase());
+			if(limit > 0) {
+				ps.setInt(3, limit);
+				System.out.println("setting limit : "+limit);
+			}
+			
+			try(ResultSet rs = ps.executeQuery()){
+				allTests = new LinkedList<TestDto>();	
+				while(rs.next()) {
+					TestDto testDto = new TestDto();
+//					test_id | classroom_id | creator_id | title  | correction_type | created_at          | is_timed | duration_minutes | status | maximumAttempts 
+					testDto.setTestId(rs.getInt("test_id"));
+					testDto.setClassroomId(rs.getInt("classroom_id"));
+//					testDto.setCreatorId(rs.getInt("creator_id"));
+					testDto.setTestTitle(rs.getString("title"));
+					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
+					testDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
+					testDto.setTimedTest(rs.getBoolean("is_timed"));
+					testDto.setDurationMinutes(rs.getInt("duration_minutes"));
+					testDto.setStatus(TestStatus.valueOf(rs.getString("status").toUpperCase()));
+					testDto.setMaximumAttempts(rs.getInt("maximumAttempts"));	
+					allTests.add(testDto);
+				}
+			}
+			
+		}
+		return allTests;
+	}
+	
+>>>>>>> 967e0fb67e89d326813a141845e9081574ca5628
 
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
