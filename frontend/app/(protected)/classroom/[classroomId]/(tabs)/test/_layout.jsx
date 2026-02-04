@@ -7,7 +7,7 @@ export default function TestsLayout() {
     const isLargeScreen = width > 821;
 
     return isLargeScreen ? (
-        <Tabs screenOptions={{ tabBarPosition: 'top', headerShown: false, tabBarIcon: () => null }}>
+        <Tabs initialRouteName='createTest' screenOptions={{ tabBarPosition: 'top', headerShown: false, tabBarIcon: () => null }}>
             <Tabs.Screen name="createTest" options={{ title: 'Create Test' }} />
             <Tabs.Screen name="correctionsTest" options={{ title: 'Corrections' }} />
             <Tabs.Screen name="publishedTest" options={{ title: 'Published' }} />
