@@ -106,7 +106,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware{
 		setError(new ApiError("server error",500));
 		return ERROR;
 	}
-
 	
 	public TestDto getTestDto() {
 		return testDto;
@@ -120,7 +119,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware{
 		return allTests;
 	}
 
-
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -130,8 +128,5 @@ public class TestAction extends JsonApiAction implements ServletRequestAware{
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
 	}
-<<<<<<< HEAD
 
-=======
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 }

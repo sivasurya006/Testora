@@ -75,5 +75,5 @@ public class Queries {
 	
 //	======= getClassroom=========
 	
-	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
+	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  and user_id = ? join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' group by c.classroom_id, c.name, u.name, c.created_at";
 } 

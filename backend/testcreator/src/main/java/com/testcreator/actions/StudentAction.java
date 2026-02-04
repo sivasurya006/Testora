@@ -23,6 +23,8 @@ public class StudentAction extends JsonApiAction implements ServletContextAware 
     private int classroomId;
 
     private List<String> studentNames;
+    
+    
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -42,6 +44,7 @@ public class StudentAction extends JsonApiAction implements ServletContextAware 
 			setError(new ApiError("Authentication failed", 401));
 			return ERROR;
 		}
+		
 		try {
 			StudentService StudentService = new StudentService();
 			StudentList sl =  (StudentList) StudentService.getStudentNamesByClassroomId(userId);
@@ -70,4 +73,5 @@ public class StudentAction extends JsonApiAction implements ServletContextAware 
     public void setClassroomId(int classroomId) {
         this.classroomId = classroomId;
     }
+    
 }

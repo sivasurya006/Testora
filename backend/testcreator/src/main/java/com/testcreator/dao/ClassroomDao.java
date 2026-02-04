@@ -250,27 +250,35 @@ public class ClassroomDao {
 	}
 
 	public ClassroomDto getClassroom(int userId, int classroomId) {
+		System.out.println("indao");
 		ClassroomDto classroomDto = null;
+
 		try {
 			PreparedStatement classroom = connection.prepareStatement(Queries.selectClassroom);
+			System.out.println("hi try");
 
-			classroom.setInt(1, userId);
-			classroom.setInt(2, classroomId);
+			classroom.setInt(1,userId);
+//			classroom.setInt(2, classroomId);
 			try (ResultSet rs = classroom.executeQuery()) {
+				
 				while (rs.next()) {
+					System.out.println("in while");
 
 					classroomDto = new ClassroomDto();
 					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					classroomDto.setClassroomName(rs.getString("classname"));
-					classroomDto.setCreatorName(rs.getString("username"));
-
+					classroomDto.setCreatorName(rs.getString("creatorname"));
+                     classroomDto.setTotalStudents(rs.getInt("studentCount"));
 				}
 			}
 		} catch (SQLException e) {
 			// TODO Implement logger
 			e.printStackTrace();
 		}
-
+       System.out.println(classroomDto.getClassroomName());
+       System.out.println(classroomDto.getCreatorName());
+       System.out.println(classroomDto.getCreatedAt());
+       System.out.println(classroomDto);
 		return classroomDto;
 	}
 }

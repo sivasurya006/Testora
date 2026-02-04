@@ -31,6 +31,7 @@ public class ClassroomUsersDao {
 		try(PreparedStatement ps = connection.prepareStatement(Queries.selectClassroomUser)){
 			ps.setInt(1, classroomId);
 			ps.setInt(2, userId);
+			
 			try(ResultSet rs = ps.executeQuery()){
 				if(rs.next()) {
 					User user = new User(rs.getString("name"), rs.getInt("user_id") , rs.getString("email"), rs.getTimestamp("registered_at").toInstant());

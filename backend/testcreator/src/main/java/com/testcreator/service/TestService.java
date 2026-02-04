@@ -36,10 +36,7 @@ public class TestService {
 		}
 		return testDto;
 	}
-	
-	
-<<<<<<< HEAD
-=======
+
 	public List<TestDto> getAllTests(int userId,int classroomId,int limit) throws SQLException{
 		List<TestDto> allTests=  null;
 		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
@@ -83,6 +80,6 @@ public class TestService {
 		return getTestsByStatus(userId, classroomId, -1,status);
 	}
 	
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
+
 	
 }

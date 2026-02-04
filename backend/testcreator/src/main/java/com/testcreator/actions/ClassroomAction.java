@@ -195,6 +195,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String getClassroomDetails() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		System.out.println(userId);
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {
@@ -209,15 +210,10 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			return INPUT;
 		}
 
-		if (this.classroomName == null || this.classroomName.trim().length() == 0) {
-			setError(new ApiError("Invalid classroom name", 400));
-			return INPUT;
-		}
-
 		try {
 			ClassroomService classroomService = new ClassroomService();
-			classroomService.getClassroom(userId, classroomId);
-
+			this.classroomDto = classroomService.getClassroom(userId, classroomId);
+			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			e.printStackTrace();
 		}
@@ -259,5 +255,5 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public List<ClassroomDto> getJoinedClassrooms() {
 		return joinedClassrooms;
 	}
-
+    
 }

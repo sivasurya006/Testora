@@ -7,12 +7,23 @@ public class ClassroomDto {
 	private int createdBy;
 	private Long joinedAt;
 	private String creatorName;
+	private int totalStudents;
 	
 	/*
 	 * Long Wrapper class => In struts.xml we use excludeNullProperties
 	 * Joined At only needed for /api/joined-classrooms
 	 * */
 	
+	public int getTotalStudents() {
+		return totalStudents;
+	}
+
+
+	public void setTotalStudents(int totalStudents) {
+		this.totalStudents = totalStudents;
+	}
+
+
 	public ClassroomDto() {}
 	
 	
@@ -42,9 +53,9 @@ public class ClassroomDto {
 	public void setCreatedAt(long createdAt) {
 		this.createdAt = createdAt;
 	}
-	public int getCreatedBy() {
-		return createdBy;
-	}
+//	public int getCreatedBy() {
+//		return createdBy;
+//	}
 	public void setCreatedBy(int createdBy) {
 		this.createdBy = createdBy;
 	}
