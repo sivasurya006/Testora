@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 import { IconButton, Menu } from 'react-native-paper';
+import { router } from 'expo-router';
 
 export default function Test({ data }) {
 
@@ -10,6 +11,12 @@ export default function Test({ data }) {
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
   const { width } = useWindowDimensions();
+
+
+  function handleEdit(){
+    console.log('edit')
+    router.push(`/classroom/${data.classroomId}/test/${data.testId}/edit`)
+  }
 
   return (
     <View style={styles.wrapper}>
@@ -39,6 +46,7 @@ export default function Test({ data }) {
             }
             contentStyle={styles.menuContentStyle}
           >
+            <Menu.Item title="Preview" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
             <Menu.Item title="Rename" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
             <Menu.Item title="Delete" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
           </Menu>
@@ -72,14 +80,14 @@ export default function Test({ data }) {
           </View>
 
           <View style={styles.btnContainer}>
-            <Pressable style={styles.btnInsideContainer}>
-              <Ionicons name={"eye"} size={20} />
-              <Text>Preview</Text>
+            <Pressable style={styles.btnInsideContainer} onPress={handleEdit}>
+            <Feather name="edit" size={20} color="black" />
+              <Text>Edit</Text>
             </Pressable>
           </View>
 
           {
-            width >= 430 ? (
+            width >= 890 ? (
               <View style={styles.createdAt}>
                 <Text style={styles.date}>{new Date(data.createdAt * 1000).toLocaleDateString()}</Text>
               </View>
