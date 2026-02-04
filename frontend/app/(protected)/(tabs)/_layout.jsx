@@ -10,13 +10,9 @@ import Header from '../../../src/components/Header'
 
 export default function ProtectedLayout() {
 
-<<<<<<< HEAD
-    const {width} = useWindowDimensions();
-    const isLargeScreen =  width > 821;
-=======
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 768;
->>>>>>> caf95c280d9e38cf2bbdd82ef61bec727d835b53
+
 
     const authContext = useContext(AuthContext);
 
@@ -47,66 +43,62 @@ export default function ProtectedLayout() {
 
 
     return (
-
         <SafeAreaView style={{ flex: 1 }}>
-            <Header />
+            {isLargeScreen ? <Header /> : null}
 
-            <SafeAreaView style={{ flex: 1 }}>
-                {isLargeScreen ? <Header /> : null}
-
-                <Tabs screenOptions={{
-                    tabBarPosition: isLargeScreen ? "left" : 'bottom',
-                    headerShown: false,
-                    tabBarStyle: Platform.select({
-                        web: {
-                            minWidth: 60,
-                            backgroundColor: Colors.secondaryColor
-                        },
-                        android: {
-                            height: 60,
-                            backgroundColor: Colors.secondaryColor
-                        },
-                        ios: {
-                            height: 60,
-                            backgroundColor: Colors.secondaryColor
-                        }
-                    }),
-                    tabBarShowLabel: false,
-                    tabBarActiveTintColor: Colors.primaryColor,
-                    tabBarInactiveTintColor: Colors.white,
-                    tabBarItemStyle: {
-                        paddingTop: 5
+            <Tabs screenOptions={{
+                tabBarPosition: isLargeScreen ? "left" : 'bottom',
+                headerShown: false,
+                tabBarStyle: Platform.select({
+                    web: {
+                        minWidth: 60,
+                        backgroundColor: Colors.secondaryColor
                     },
-                    tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
-                }}>
-                    <Tabs.Screen name='index' options={{
+                    android: {
+                        height: 60,
+                        backgroundColor: Colors.secondaryColor
+                    },
+                    ios: {
+                        height: 60,
+                        backgroundColor: Colors.secondaryColor
+                    }
+                }),
+                tabBarShowLabel: false,
+                tabBarActiveTintColor: Colors.primaryColor,
+                tabBarInactiveTintColor: Colors.white,
+                tabBarItemStyle: {
+                    paddingTop: 5
+                },
+                tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
+            }}>
+                <Tabs.Screen name='index' options={{
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons
+                            name="account-school"
+                            size={30}
+                            color={color}
+                        />
+                    )
+                }} />
+
+                <Tabs.Screen name='joinedClassrooms' options={{
+                    tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="school" size={30} color={color} />
+                    ),
+                }} />
+
+                <Tabs.Screen
+                    name='profile' options={{
                         tabBarIcon: ({ color }) => (
-                            <MaterialCommunityIcons
-                                name="account-school"
-                                size={30}
-                                color={color}
-                            />
+                            <MaterialIcons name='account-circle' size={30} color={color} />
                         )
-                    }} />
+                    }}
+                />
 
-                    <Tabs.Screen name='joinedClassrooms' options={{
-                        tabBarIcon: ({ color }) => (
-                            <MaterialIcons name="school" size={30} color={color} />
-                        ),
-                    }} />
+            </Tabs>
+        </SafeAreaView>
 
-                    <Tabs.Screen
-                        name='profile' options={{
-                            tabBarIcon: ({ color }) => (
-                                <MaterialIcons name='account-circle' size={30} color={color} />
-                            )
-                        }}
-                    />
-
-                </Tabs>
-            </SafeAreaView>
-            </SafeAreaView>
-            
-)}
+    )
+}
 
 

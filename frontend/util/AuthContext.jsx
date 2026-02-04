@@ -98,7 +98,6 @@ export default function AuthContextProvider({ children }) {
                 console.log("Signin error:", errorText);
                 return { success: false, error: errorText };
             }
-            console.log("hi")
 
             // router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }

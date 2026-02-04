@@ -2,15 +2,21 @@ import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import api from "../../../../util/api";
 import Colors from "../../../../styles/Colors";
+import { useGlobalSearchParams } from "expo-router";
 
-export default function Dashboard({ classroomId }) {
+export default function Dashboard() {
   const [stats, setStats] = useState({
     classroomName: "",
-    totalTests: 0,
-    totalStudents: 0,
-    recentPublished: [],
-    recentSubmitted: [],
+    createdAt: 0,
+    creatorName: "",
+
+    // totalTests: 0,
+    // totalStudents: 0,
+    // recentPublished: [],
+    // recentSubmitted: [],
   });
+  const { classroomId } = useGlobalSearchParams();
+
 
   useEffect(() => {
     fetchDashboardData();
@@ -18,13 +24,14 @@ export default function Dashboard({ classroomId }) {
 
   async function fetchDashboardData() {
     try {
-      const res = await api.get("/api/classroom-details", {
+      const res = await api.get("api/classroom-details", {
         headers: {
-           "X-Classroomid":classroomId
+          "X-Classroomid": classroomId
         }
       });
       if (res.status === 200) {
         setStats(res.data);
+        { console.log(res.data) }
       }
     } catch (err) {
       console.log(err);
@@ -32,9 +39,12 @@ export default function Dashboard({ classroomId }) {
   }
 
   return (
+    
     <View style={styles.container}>
       <Text>Classroom Name</Text>
       <Text style={styles.title}>{stats.classroomName}</Text>
+      <Text >{stats.createdAt}</Text>
+      <Text>{stats.creatorName}</Text>
 
       <View style={styles.cardRow}>
         <View style={styles.card}>
@@ -63,7 +73,6 @@ export default function Dashboard({ classroomId }) {
           )}
         </View>
 
-
         <View style={styles.bottomBox}>
           <Text style={styles.boxTitle}>Recently Submitted Tests</Text>
           {stats.recentSubmitted && stats.recentPublished.length > 0 ? (
@@ -80,6 +89,7 @@ export default function Dashboard({ classroomId }) {
       </View>
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
