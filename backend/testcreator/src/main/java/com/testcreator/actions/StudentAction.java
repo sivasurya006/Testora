@@ -1,20 +1,14 @@
 package com.testcreator.actions;
 
-import java.sql.Connection;
-import java.util.List;
 
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.util.ServletContextAware;
-
 import com.testcreator.dto.ApiError;
-import com.testcreator.model.Classroom;
 import com.testcreator.model.StudentList;
-import com.testcreator.service.ClassroomService;
 import com.testcreator.service.StudentService;
-import com.testcreator.util.DBConnectionMaker;
 
 public class StudentAction extends JsonApiAction implements ServletContextAware {
 

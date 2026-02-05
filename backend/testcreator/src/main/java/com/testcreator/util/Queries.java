@@ -70,11 +70,26 @@ public class Queries {
 	public static final String insertQuestion = "insert into Questions (test_id,type,question_text,marks) values (?,?,?,?)"; 
 	public static final String insertOption = "insert into Options (question_id,option_text,is_correct,option_mark) values (?,?,?,?)";
 	
+	
+	// Read Questions 
+	public static final String getQuestionWtthOptionsByQuestionId = "select * from Questions q join Options o on q.question_id = o.question_id where q.question_id = ?";
+	
+	
+
+	public static final String deleteQuestion = "delete from Questions where question_id = ?";
+	
+	public static final String deleteOption = "delete from Options where option_id = ?";
+	
+	
+	public static final String updateQuestion = "update Questions set question_text = ? , type = ? , marks = ? where question_id = ?";
+	public static final String getAllQuestionsWithOptions = "select * from Tests t left join Questions q on t.test_id = q.test_id left join Options o on q.question_id = o.question_id where t.test_id = ?";
+	
+	public static final String updateOptions = "update Options set option_text = ?, is_correct = ? , option_mark = ? where option_id = ?";
+	
 	/* ============ Classroom users ===============*/
 	
 	public static final String selectClassroomUser = "select u.user_id, u.name, u.email, u.registered_at , cu.joined_at , cu.classroom_id , cu.role from Users u join Classroom_Users cu on u.user_id = cu.user_id  where cu.classroom_id = ? and cu.user_id = ?";
 	
 //	======= getClassroom=========
-	
 	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
 } 
