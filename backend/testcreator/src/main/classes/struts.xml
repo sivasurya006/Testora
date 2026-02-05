@@ -139,9 +139,6 @@
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-<<<<<<< HEAD
-		
-=======
 
 		<action name="get-created-tests"
 			class="com.testcreator.actions.TestAction" method="fetchCreatedTests">
@@ -153,7 +150,6 @@
 
 		</action>
 
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 	</package>
 
 	<package name="authentication" namespace="/"
