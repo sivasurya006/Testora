@@ -40,9 +40,6 @@ public class TestService {
 		return testDto;
 	}
 	
-	
-<<<<<<< HEAD
-=======
 	public List<TestDto> getAllTests(int userId,int classroomId,int limit) throws SQLException{
 		List<TestDto> allTests=  null;
 		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
@@ -85,8 +82,7 @@ public class TestService {
 	public List<TestDto> getTestsByStatus(int userId,int classroomId,TestStatus status) throws SQLException{
 		return getTestsByStatus(userId, classroomId, -1,status);
 	}
-	
-<<<<<<< HEAD
+
 	public QuestionDto createNewQuestion(int userId,int classroomId,int testId,String questionText,QuestionType type,int marks,List<Option> options) throws SQLException{
 		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
 		if(classroomUser == null) {
@@ -98,8 +94,70 @@ public class TestService {
 		}
 		return testDao.createNewQuetion(testId, questionText, type, marks,options);
 	}
-=======
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
->>>>>>> 967e0fb67e89d326813a141845e9081574ca5628
 	
+	public QuestionDto getQuestionWithOption(int userId,int classroomId,int questionId) throws SQLException {
+		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
+		if(classroomUser == null) {
+			throw new UnauthorizedException("Classroom members only create questios");
+		}
+		
+		if(classroomUser.getRole() == UserRole.STUDENT) {
+			return testDao.getQuestionBtId(questionId,false);
+		}
+		
+		return testDao.getQuestionBtId(questionId,true);
+	}
+	
+	public boolean deleteQuestion(int userId,int classroomId,int questionId) throws SQLException {
+		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
+		if(classroomUser == null) {
+			throw new UnauthorizedException("Classroom members only create questios");
+		}
+		
+		if(classroomUser.getRole() == UserRole.STUDENT) {
+			throw new UnauthorizedException("tutors only edit questios");
+		}
+		
+		return testDao.deleteQuestion(questionId);
+	}
+	
+	
+	public boolean deleteOption(int userId,int classroomId,int optionId) throws SQLException {
+		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
+		if(classroomUser == null) {
+			throw new UnauthorizedException("Classroom members only create questios");
+		}
+		
+		if(classroomUser.getRole() == UserRole.STUDENT) {
+			throw new UnauthorizedException("tutors only edit questios");
+		}
+		
+		return testDao.deleteOption(optionId);
+	}
+	
+	public boolean updateQuestion(int userId, int classroomId , QuestionDto questionDto) throws SQLException {
+		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
+		if(classroomUser == null) {
+			throw new UnauthorizedException("Classroom members only create questios");
+		}
+		
+		if(classroomUser.getRole() == UserRole.STUDENT) {
+			throw new UnauthorizedException("tutors only edit questios");
+		}
+		
+		return testDao.updateQuestion(questionDto);
+	}
+	
+	public TestDto getAllTestQuestion(int userId, int classroomId , int testId) throws SQLException {
+		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
+		if(classroomUser == null) {
+			throw new UnauthorizedException("Classroom members only create questios");
+		}
+		
+		if(classroomUser.getRole() == UserRole.STUDENT) {
+			return testDao.getTestQuestions(testId,false);
+		}
+		
+		return testDao.getTestQuestions(testId,true);
+	}
 }

@@ -65,11 +65,5 @@ public class QuestionDto {
 	public void setQuestionText(String questionText) {
 		this.questionText = questionText;
 	}
-
-	@Override
-	public String toString() {
-		return "QuestionDto [id=" + id + ", type=" + type + ", marks=" + marks + ", questionText=" + questionText
-				+ ", options=" + options + "]";
-	}
-
+	
 }
