@@ -1,7 +1,7 @@
-import { View, Text, Pressable, StyleSheet, Modal ,Button } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Modal, Button, TextInput } from 'react-native'
 import React, { useState } from 'react'
-import Test from '../../../../../../../src/components/Test';
-import Colors from '../../../../../../../styles/Colors';
+import Colors from '../../../../../../styles/Colors';
+import LabeledInput from '../../../../../../src/components/LabledInput';
 
 
 export default function edit() {
@@ -23,23 +23,45 @@ export default function edit() {
 
             {
                 isAddQuesModalVisible ? (
-                   <Modal
-                    visible={isAddQuesModalVisible}
-                    transparent
-                    animationType='fade'
-                    onRequestClose={closeAddQuesModal}
-                   >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <View style={styles.modalHeader}>
-                                <Text>New Question</Text>
-                            </View>
-                            <View>
-                                <Button title='ADD' onPress={closeAddQuesModal}/>
+                    <Modal
+                        visible={isAddQuesModalVisible}
+                        transparent
+                        animationType='fade'
+                        onRequestClose={closeAddQuesModal}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <View style={styles.modalHeader}>
+                                    <Text>New Question</Text>
+                                </View>
+                                <View>
+                                    <View style={styles.questionTypeModal} >
+                                        <LabeledInput label={'Marks : '} placeholder={'5'} />
+                                    </View>
+                                    <View>
+                                        <Text>
+                                            Question :
+                                        </Text>
+                                        <TextInput
+                                            style={styles.textArea}
+                                            multiline={true}
+                                            numberOfLines={4}
+                                            placeholder="Type here..."
+                                        />
+                                    </View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        {
+                                            
+                                        }
+                                    </View>
+                                    <View style={{ flexDirection: 'row' , justifyContent:'space-between' }}>
+                                        <Button title='add option' onPress={closeAddQuesModal} />
+                                        <Button title='save' />  
+                                    </View>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                   </Modal>
+                    </Modal>
                 ) : null
             }
 
@@ -54,18 +76,28 @@ const styles = StyleSheet.create({
     modalHeader: {
 
     },
-    modalContainer : {
-        flex : 1,
-        justifyContent : 'center',
-        alignItems : 'center'
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    modalContent : {
+    modalContent: {
         backgroundColor: 'white',
         paddingHorizontal: 30,
-        paddingVertical : 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        paddingVertical: 20,
         borderRadius: 8,
-        boxShadow: Colors.blackBoxShadow
-    }
+        boxShadow: Colors.blackBoxShadow,
+        maxWidth: 600,
+        width: '100%'
+    },
+    questionTypeModal: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    textArea: {
+        height: 100,
+        borderColor: 'gray',
+        borderWidth: 1,
+        padding: 10,
+    },
 })
