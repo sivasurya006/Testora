@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import api from '../../../util/api';
 import EmptyClassroom from '../../../src/components/EmptyClassroom';
@@ -6,10 +6,15 @@ import Classroom from '../../../src/components/Classroom';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
 
+const classroom_width = 320;
+
 export default function JoinedClassrooms() {
 
   const [allJoinedClassrooms, setAllJoinedClassrooms] = useState([]);
   const [selectedClassroomId, setSelectedClassroomId] = useState(null);
+  const { width } = useWindowDimensions();
+
+  const numColumns = Math.floor(width / classroom_width);
 
   useEffect(() => {
     getAllJoinedClassrooms(setAllJoinedClassrooms);
@@ -25,10 +30,10 @@ export default function JoinedClassrooms() {
       {allJoinedClassrooms.length == 0 ? (
         <EmptyClassroom message={"No classrooms available"} />
       ) : <FlatList
-
+      numColumns={numColumns}
         data={allJoinedClassrooms}
         keyExtractor={item => item.classroomId}
-
+        key={numColumns}
         renderItem={({ item }) => (
           <Classroom id={item.classroomId} name={item.classroomName}
             createdAt={item.createdAt} createdBy={item.createdBy}

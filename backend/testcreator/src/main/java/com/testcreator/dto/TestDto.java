@@ -1,5 +1,7 @@
 package com.testcreator.dto;
 
+import java.util.List;
+
 import com.testcreator.model.CorrectionMethod;
 import com.testcreator.model.TestStatus;
 
@@ -17,10 +19,19 @@ public class TestDto {
 	private TestStatus status;
 	private int maximumAttempts;
 	private CorrectionMethod correctionMethod;
+	private List<QuestionDto> questions;
+	
+	
 	
 	
 	
 
+	public List<QuestionDto> getQuestions() {
+		return questions;
+	}
+	public void setQuestions(List<QuestionDto> questions) {
+		this.questions = questions;
+	}
 	public int getTestId() {
 		return testId;
 	}
@@ -87,15 +98,11 @@ public class TestDto {
 	public void setMaximumAttempts(int maximumAttempts) {
 		this.maximumAttempts = maximumAttempts;
 	}
-
 	public CorrectionMethod getCorrectionMethod() {
 		return correctionMethod;
 	}
 	public void setCorrectionMethod(CorrectionMethod correctionMethod) {
 		this.correctionMethod = correctionMethod;
 	}
-	
-	
-
 }
 

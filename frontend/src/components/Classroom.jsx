@@ -10,7 +10,7 @@ import InputModal from './modals/InputModal';
 
 
 
-export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms , isMenuNeed}) {
+export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms, isMenuNeed }) {
 
 
     const [isDeleteConfirmModalVisible, setDeleteModalVisible] = useState(false);
@@ -63,36 +63,48 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
 
     return (
         <View style={styles.container}>
-            {
-                isMenuNeed ? (
-                    <View style={{ alignSelf: 'flex-end' }}>
-                    <Menu
-                        key={isMenuVisible ? 'open' : 'closed'}
-                        visible={isMenuVisible}
-                        onDismiss={closeMenu}
-                        anchorPosition='bottom'
-                        anchor={
-                            <IconButton
-                                icon="dots-vertical"
-                                onPress={openMenu}
-                                iconColor='black'
-                            />
-                        }
-    
-                        contentStyle={styles.menuContentStyle}
-                    >
-    
-                        <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
-                        <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
-    
-                    </Menu>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View>
+                    <Text style={styles.className}>{name}</Text>
+                    <Text style={styles.createdAt}>
+                        Created on {new Date(createdAt*1000).toLocaleDateString()}
+                    </Text>
                 </View>
-                ) : null
-            }
+                {
+                    isMenuNeed ? (
+                        <View>
+                            <Menu
+                                key={isMenuVisible ? 'open' : 'closed'}
+                                visible={isMenuVisible}
+                                onDismiss={closeMenu}
+                                anchorPosition='bottom'
+                                anchor={
+                                    <IconButton
+                                        icon="dots-vertical"
+                                        onPress={openMenu}
+                                        iconColor='black'
+                                    />
+                                }
+
+                                contentStyle={styles.menuContentStyle}
+                            >
+
+                                <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                                <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+
+                            </Menu>
+                        </View>
+                    ) : null
+                }
+            </View>
             <Pressable onPress={() => setClassroomID(id)}>
                 <View style={styles.classContainer}>
-                    <MaterialCommunityIcons name="google-classroom" size={30} />
-                    <Text>{name}</Text>
+                    <MaterialCommunityIcons
+                        name="google-classroom"
+                        size={34}
+                        color={Colors.secondaryColor}
+                    />
+
                 </View>
             </Pressable>
 
@@ -157,30 +169,53 @@ async function renameClass(id, newName) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.white,
-        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.25)',
-        width: 300,
         alignSelf: 'center',
-        padding: 10,
-        borderRadius: 8,
-        margin: 5,
+        padding: 18,
+        borderRadius: 12,
+        margin: 8,
+        minWidth: 280,
+        maxWidth: 320,
+        flex: 1,
+        boxShadow: Colors.blackBoxShadow,
+        marginHorizontal: 10
     },
-    className: {
-        fontSize: 14,
-        alignSelf: 'center',
-        margin: 10
-    },
+
     classContainer: {
         alignItems: 'center',
-        padding: 50,
-        rowGap: 25,
+        justifyContent: 'center',
+        paddingVertical: 30,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        rowGap: 12,
+        marginTop : 10,
+        backgroundColor: Colors.bgColor,
+        borderWidth: 1,
+        borderColor: Colors.tagBg,
+    },
+
+    className: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: Colors.secondaryColor,
+        marginTop: 6,
+    },
+
+    menuTitleStyle: {
+        color: Colors.secondaryColor,
+        fontWeight: '500',
+    },
+
+    menuContentStyle: {
+        backgroundColor: Colors.white,
         borderRadius: 8,
     },
-    menuTitleStyle: {
-        color: 'black'
+    createdAt: {
+        fontSize: 12,
+        color: Colors.shadeGray,
+        marginTop: 2,
     },
-    menuContentStyle: {
-        backgroundColor: Colors.bgColor
-    }
-})
+    
+});
+
 
 

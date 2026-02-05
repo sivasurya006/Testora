@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform } from 'react-native'
+import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform, useWindowDimensions } from 'react-native'
 import React, { useEffect, useReducer, useState } from 'react'
 import api from '../../../util/api'
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
@@ -8,8 +8,15 @@ import Classroom from '../../../src/components/Classroom';
 import InputModal from '../../../src/components/modals/InputModal';
 import { useRouter } from 'expo-router';
 
+const classroom_width = 320; 
 
 export default function Index() {
+
+    const { width } = useWindowDimensions();
+
+    const numColumns = Math.floor(width / classroom_width);
+
+    console.log(numColumns)
 
     const [createdClassrooms, setCreatedClassrooms] = useState([]);
     const [selectedClassroomId, setSelectedClassroomId] = useState(null);
@@ -28,7 +35,7 @@ export default function Index() {
         if (!selectedClassroomId) return;
         console.log(selectedClassroomId);
         router.push(`/${selectedClassroomId}/`)
-    },[selectedClassroomId])
+    }, [selectedClassroomId])
 
     const onCancelCreateClassModal = () => setCreateModalVisible(false);
 
@@ -59,24 +66,24 @@ export default function Index() {
     }
 
     return (
-        <React.Fragment>
+        <View style={{marginHorizontal:10}}>
             <TopBar setCreateModalVisible={setCreateModalVisible} />
             {createdClassrooms.length == 0 ? (
                 <React.Fragment>
                     <EmptyClassroom message="No classroom created" />
                 </React.Fragment>
             ) : <FlatList
-                // numColumns={2}
-                // horizontal={true}
+                numColumns={numColumns}
                 data={createdClassrooms}
+                key={numColumns}
                 keyExtractor={item => item.classroomId}
                 renderItem={({ item }) => (
                     <Classroom id={item.classroomId} name={item.classroomName}
                         createdAt={item.createdAt} createdBy={item.createdBy}
                         setClassroomID={setSelectedClassroomId}
                         setCreatedClassrooms={setCreatedClassrooms}
-                        createdClassrooms={createdClassrooms} 
-                        isMenuNeed={true}/>
+                        createdClassrooms={createdClassrooms}
+                        isMenuNeed={true} />
                 )}
             />
             }
@@ -90,7 +97,7 @@ export default function Index() {
                     onCancel={onCancelCreateClassModal} />
                 : null}
 
-        </React.Fragment >
+        </View >
     )
 }
 
@@ -111,58 +118,58 @@ async function getAllCreatedClassrooms(setCreatedClassrooms) {
 
 function TopBar({ setCreateModalVisible }) {
     return (
-      <View style={styles.topBar}>
-        <Text style={styles.topBarHeader}>My Classrooms</Text>
-  
-        <Pressable
-          style={styles.addButton}
-          onPress={() => setCreateModalVisible(true)}
-        >
-          <View style={styles.addButtonContent}>
-            <Text style={styles.addButtonText}>Create</Text>
-            <AntDesign name="plus" size={16} color={Colors.white} />
-          </View>
-        </Pressable>
-      </View>
+        <View style={styles.topBar}>
+            <Text style={styles.topBarHeader}>My Classrooms</Text>
+
+            <Pressable
+                style={styles.addButton}
+                onPress={() => setCreateModalVisible(true)}
+            >
+                <View style={styles.addButtonContent}>
+                    <Text style={styles.addButtonText}>Create</Text>
+                    <AntDesign name="plus" size={16} color={Colors.white} />
+                </View>
+            </Pressable>
+        </View>
     );
-  }
-  
+}
 
 
-  const styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
     topBar: {
-      flexDirection: 'row',
-      margin: 20,
-      alignItems: 'center',
-      justifyContent: 'space-between',
+        flexDirection: 'row',
+        margin: 20,
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
-  
+
     topBarHeader: {
-      fontSize: 18,
+        fontSize: 18,
     },
-  
+
     addButton: {
-      backgroundColor: Colors.primaryColor,
-      width: 90,
-      padding: 10,
-      borderRadius: 8,
-      marginRight: 10,
-      alignItems: 'center',
-      justifyContent: 'center',
+        backgroundColor: Colors.primaryColor,
+        width: 90,
+        padding: 10,
+        borderRadius: 8,
+        marginRight: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-  
+
     addButtonContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-  
+
     addButtonText: {
-      color: Colors.white,
-      fontSize: 15,
-      marginRight: 6,
+        color: Colors.white,
+        fontSize: 15,
+        marginRight: 6,
     },
-  });
-  
+});
+
 
 {/* <View style={styles.searchBar}>
 <FontAwesome name='search' size={16}/>
