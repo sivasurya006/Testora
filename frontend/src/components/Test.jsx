@@ -15,7 +15,7 @@ export default function Test({ data }) {
 
   function handleEdit(){
     console.log('edit')
-    router.push(`/classroom/${data.classroomId}/test/${data.testId}/edit`)
+    router.push(`/${data.classroomId}/test/${data.testId}/edit`)
   }
 
   return (

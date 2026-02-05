@@ -250,12 +250,11 @@ public class ClassroomDao {
 	}
 
 	public ClassroomDto getClassroom(int userId, int classroomId) {
-		System.out.println("indao");
+		System.out.println("in Dto");
 		ClassroomDto classroomDto = null;
 
 		try {
 			PreparedStatement classroom = connection.prepareStatement(Queries.selectClassroom);
-			System.out.println("hi try");
 
 			classroom.setInt(1,userId);
 //			classroom.setInt(2, classroomId);
@@ -269,6 +268,7 @@ public class ClassroomDao {
 					classroomDto.setClassroomName(rs.getString("classname"));
 					classroomDto.setCreatorName(rs.getString("creatorname"));
                      classroomDto.setTotalStudents(rs.getInt("studentCount"));
+                     System.out.println(classroomDto);
 				}
 			}
 		} catch (SQLException e) {

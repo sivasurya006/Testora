@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet, Modal ,Button } from 'react-native'
 import React, { useState } from 'react'
-import Test from '../../../../../../../src/components/Test';
-import Colors from '../../../../../../../styles/Colors';
+import Colors from '../../../../../../styles/Colors';
+
 
 
 export default function edit() {

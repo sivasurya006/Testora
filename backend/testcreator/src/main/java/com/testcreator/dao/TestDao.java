@@ -1,13 +1,10 @@
+package com.testcreator.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
 import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.struts2.ServletActionContext;
@@ -55,69 +52,6 @@ public class TestDao {
 		}
 	}
 
-	public List<TestDto> getAllTests(int classroomId, int limit) throws SQLException {
-		List<TestDto> allTests = null;
-		String selectTestQuery = limit < 0 ? Queries.selectTests : Queries.selectTestsWithLimit;
-		try (PreparedStatement ps = connection.prepareStatement(selectTestQuery)) {
-			ps.setInt(1, classroomId);
-			if (limit > 0) {
-				ps.setInt(2, limit);
-			}
-
-			try (ResultSet rs = ps.executeQuery()) {
-				allTests = new LinkedList<TestDto>();
-				while (rs.next()) {
-					TestDto testDto = new TestDto();
-					testDto.setTestId(rs.getInt("test_id"));
-					testDto.setClassroomId(rs.getInt("classroom_id"));
-					testDto.setTestTitle(rs.getString("title"));
-					testDto.setCorrectionMethod(
-							CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
-					testDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
-					testDto.setTimedTest(rs.getBoolean("is_timed"));
-					testDto.setDurationMinutes(rs.getInt("duration_minutes"));
-					testDto.setStatus(TestStatus.valueOf(rs.getString("status").toUpperCase()));
-					testDto.setMaximumAttempts(rs.getInt("maximumAttempts"));
-					allTests.add(testDto);
-				}
-			}
-
-		}
-		return allTests;
-	}
-
-	public List<TestDto> getTestsByStatus(int classroomId, int limit, TestStatus status) throws SQLException {
-		List<TestDto> allTests = null;
-		String selectTestQuery = limit < 0 ? Queries.selectTestsByStatus : Queries.selectTestsByStatusWithLimit;
-		try (PreparedStatement ps = connection.prepareStatement(selectTestQuery)) {
-			ps.setInt(1, classroomId);
-			ps.setString(2, status.name().toLowerCase());
-			if (limit > 0) {
-				ps.setInt(3, limit);
-				System.out.println("setting limit : " + limit);
-			}
-
-			try (ResultSet rs = ps.executeQuery()) {
-				allTests = new LinkedList<TestDto>();
-				while (rs.next()) {
-					TestDto testDto = new TestDto();
-					testDto.setTestId(rs.getInt("test_id"));
-					testDto.setClassroomId(rs.getInt("classroom_id"));
-					testDto.setTestTitle(rs.getString("title"));
-					testDto.setCorrectionMethod(
-							CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
-					testDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
-					testDto.setTimedTest(rs.getBoolean("is_timed"));
-					testDto.setDurationMinutes(rs.getInt("duration_minutes"));
-					testDto.setStatus(TestStatus.valueOf(rs.getString("status").toUpperCase()));
-					testDto.setMaximumAttempts(rs.getInt("maximumAttempts"));
-					allTests.add(testDto);
-				}
-			}
-
-		}
-		return allTests;
-	}
 
 	public TestDto getTestById(int testId) throws SQLException {
 		TestDto testDto = null;
@@ -145,6 +79,8 @@ public class TestDao {
 		return testDto;
 	}
 
+
+	
 
 	public List<TestDto> getAllTests(int classroomId, int limit) throws SQLException {
 		List<TestDto> allTests = null;
@@ -214,5 +150,79 @@ public class TestDao {
 		return allTests;
 	}
 	
+	
+	public QuestionDto createNewQuetion(int testId, String questionText, QuestionType type, int marks,
+			List<Option> options) throws SQLException {
+		QuestionDto questionDto = null;
+		try (PreparedStatement ps = connection.prepareStatement(Queries.insertQuestion,
+				Statement.RETURN_GENERATED_KEYS)) {
+			ps.setInt(1, testId);
+			ps.setString(2, type.name().toLowerCase());
+			ps.setString(3, questionText);
+			ps.setInt(4, marks);
 
+
+			int affectedRows = ps.executeUpdate();
+			if (affectedRows == 0) {
+				throw new SQLException("Can't insert a question");
+			}
+
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					int questionId = rs.getInt(1);
+					questionDto = new QuestionDto();
+					questionDto.setId(questionId);
+					questionDto.setMarks(marks);
+					questionDto.setQuestionText(questionText);
+					questionDto.setType(type);
+					if (options != null) {
+						questionDto.setOptions(createNewOptions(questionId, options));
+					}
+				} else {
+					throw new SQLException("Can't get the generated question id");
+				}
+			}
+
+		}
+		return questionDto;
+	}
+
+	public List<Option> createNewOptions(int questionId, List<Option> options) throws SQLException {
+		List<Option> createdOptions = new LinkedList<Option>();
+		for (Option option : options) {
+			if (option.getOptionText() == null || option.getOptionText().isBlank() || option.getOptionMark() < 0) {
+				continue;
+			}
+			try (PreparedStatement ps = connection.prepareStatement(Queries.insertOption,
+					Statement.RETURN_GENERATED_KEYS)) {
+				ps.setInt(1, questionId);
+				ps.setString(2, option.getOptionText());
+				ps.setBoolean(3, option.isCorrect());
+				ps.setInt(4, option.getOptionMark());
+
+				int affectedRows = ps.executeUpdate();
+
+				if (affectedRows == 0) {
+					throw new SQLException("Can't insert an option");
+				}
+
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next()) {
+						Option createdOption = new Option();
+						createdOption.setOptionId(rs.getInt(1));
+						createdOption.setOptionText(option.getOptionText());
+						createdOption.setOptionMark(option.getOptionMark());
+						createdOption.setCorrect(option.isCorrect());
+
+						createdOptions.add(createdOption);
+					} else {
+						throw new SQLException("Can't get the generated option id");
+					}
+				}
+
+			}
+		}
+		return createdOptions;
+	}
 }
+    

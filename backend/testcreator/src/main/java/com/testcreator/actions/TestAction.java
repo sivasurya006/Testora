@@ -37,6 +37,8 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		
 		String testTitle = questionDto.getTestTitle();
 		
+		System.out.println(testTitle);
+		
 		if (testTitle == null || testTitle.isBlank()) {
 			setError(new ApiError("Invalid test title", 400));
 			return INPUT;
@@ -104,8 +106,56 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
-
 	
+
+    public void validateCreateQuestion() {
+        System.out.println("validate called");
+        System.out.println(questionDto);
+        if (questionDto == null || questionDto.getQuestionText() == null
+                || questionDto.getQuestionText().isBlank()) {
+            addFieldError("questionText", "Invalid question text");
+        }
+
+        if (questionDto.getMarks() < 0) {
+            addFieldError("marks", "Invalid question marks");
+        }
+
+        if (questionDto.getType() == null) {
+            addFieldError("type", "Invalid question type");
+        }
+        
+        System.out.println("validate ended");
+    }
+    
+    
+	public String createQuestion() {
+		System.out.println("execute called");
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+
+		try {
+			TestService testService = new TestService();
+			this.questionDto = testService.createNewQuestion(userId, classroomId, testId, questionDto.getQuestionText(),
+					questionDto.getType(), questionDto.getMarks(),questionDto.getOptions());
+			System.out.println("execute success");
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+
+	}
+
 	public TestDto getTestDto() {
 		return testDto;
 	}
@@ -134,8 +184,9 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
 	}
-<<<<<<< HEAD
+	@Override
+	public QuestionDto getModel() {
+		return questionDto;
+	}
 
-=======
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 }

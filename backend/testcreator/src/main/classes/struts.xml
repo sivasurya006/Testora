@@ -105,19 +105,13 @@
 				<param name="root">status</param>
 			</result>
 		</action>
-
-		<action name="classroom-details"
-			class="com.testcreator.actions.ClassroomAction"
-			method="getClassroomDetails">
-			<result name="success" type="json">
-				<param name="root">classroomDto</param>
-				<param name="excludeNullProperties">true</param>
-				<param name="excludeProperties">classroomId</param>
-
-
-			</result>
+		
+		<action name="classroom-details" class="com.testcreator.actions.ClassroomAction" method="getClassroomDetails">
+		<result name="success" type="json">
+		     <param name="root">classroomDto</param>
+		</result>
 		</action>
-
+		
 
 
 	</package>
@@ -163,7 +157,6 @@
 
 		</action>
 
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
 	</package>
 
 	<package name="authentication" namespace="/"

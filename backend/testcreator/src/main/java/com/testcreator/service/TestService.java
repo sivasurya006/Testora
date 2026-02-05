@@ -39,7 +39,7 @@ public class TestService {
 		}
 		return testDto;
 	}
-
+	
 	public List<TestDto> getAllTests(int userId,int classroomId,int limit) throws SQLException{
 		List<TestDto> allTests=  null;
 		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
@@ -82,7 +82,17 @@ public class TestService {
 	public List<TestDto> getTestsByStatus(int userId,int classroomId,TestStatus status) throws SQLException{
 		return getTestsByStatus(userId, classroomId, -1,status);
 	}
-	
->>>>>>> ea7601214d1ee30837bdfb5dc38173ea777576cd
+
+	public QuestionDto createNewQuestion(int userId,int classroomId,int testId,String questionText,QuestionType type,int marks,List<Option> options) throws SQLException{
+		ClassroomUser classroomUser = classroomUsersDao.getUser(classroomId, userId);
+		if(classroomUser == null) {
+			throw new UnauthorizedException("Classroom members only create questios");
+		}
+		
+		if(classroomUser.getRole() != UserRole.TUTOR) {
+			throw new UnauthorizedException("Tutors only create questions");
+		}
+		return testDao.createNewQuetion(testId, questionText, type, marks,options);
+	}
 	
 }

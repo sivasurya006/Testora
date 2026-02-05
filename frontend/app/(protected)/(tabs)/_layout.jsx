@@ -43,9 +43,6 @@ export default function ProtectedLayout() {
 
     return (
 
-        <SafeAreaView style={{ flex: 1 }}>
-            <Header />
-
             <SafeAreaView style={{ flex: 1 }}>
                 {isLargeScreen ? <Header /> : null}
 
@@ -99,7 +96,6 @@ export default function ProtectedLayout() {
                     />
 
                 </Tabs>
-            </SafeAreaView>
             </SafeAreaView>
             
 )}

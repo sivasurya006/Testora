@@ -255,5 +255,5 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public List<ClassroomDto> getJoinedClassrooms() {
 		return joinedClassrooms;
 	}
-    
+ 
 }

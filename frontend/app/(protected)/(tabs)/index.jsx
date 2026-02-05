@@ -27,7 +27,7 @@ export default function Index() {
     useEffect(() => {
         if (!selectedClassroomId) return;
         console.log(selectedClassroomId);
-        router.push(`/classroom/${selectedClassroomId}/`)
+        router.push(`/${selectedClassroomId}/`)
     },[selectedClassroomId])
 
     const onCancelCreateClassModal = () => setCreateModalVisible(false);

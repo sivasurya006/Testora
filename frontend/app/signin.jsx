@@ -1,5 +1,5 @@
 import { View, Text, Pressable, TextInput, ActivityIndicator, TouchableOpacity } from "react-native"
-import { Link } from "expo-router"
+import { Link, router } from "expo-router"
 import AuthformStyles from '../styles/AuthformStyles'
 import { useContext, useState } from "react";
 import { Ionicons } from "@expo/vector-icons"
@@ -30,7 +30,7 @@ export default function Signin() {
         }
         const result = await authContext.signIn(email, password);
         if (result.success) {
-            console.log("Successfully logged in");
+            router.push('/');
         } else {
             console.log(result.error);
             setErrorMessage("Invalid email or Password")
