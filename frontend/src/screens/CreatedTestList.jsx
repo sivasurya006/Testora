@@ -4,7 +4,7 @@ import Colors from "../../styles/Colors"
 import { AntDesign } from "react-native-vector-icons"
 import InputModal from "../components/modals/InputModal"
 import api from "../../util/api";
-import { useGlobalSearchParams } from 'expo-router'
+import { router, useGlobalSearchParams } from 'expo-router'
 import Test from '../components/Test'
 
 export default function CreatedTestList({ filter }) {
@@ -27,6 +27,13 @@ export default function CreatedTestList({ filter }) {
     const result = await handleCreateTest(classroomId, testName);
     if (result && filter != 'published') {
       setCreatedTest([result,...allCreatedTests]);
+      router.push({
+        pathname: '/[classroomId]/(tabs)/test/[testId]',
+        params: {
+          classroomId: classroomId, 
+          testId: result.testId,
+        },
+      })
     }
     onCancelTest();
   }

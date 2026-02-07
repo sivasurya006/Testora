@@ -1,5 +1,5 @@
 import { View, Text, Pressable, TextInput, TouchableOpacity, ActivityIndicator } from "react-native"
-import { Link } from "expo-router"
+import { Link, router } from "expo-router"
 import AuthformStyles from '../styles/AuthformStyles'
 import { useContext, useState } from "react";
 import { Ionicons } from "@expo/vector-icons"
@@ -41,7 +41,7 @@ export default function Signup() {
         const result = await authContext.signUp(name, email, password);
 
         if (result.success) {
-            console.log("Successfully logged in");
+            router.replace('/')
         } else {
             if (result.status && result.status === 409) {
                 setErrorMessage("Account already registered with this email. Try to signin")
