@@ -30,7 +30,7 @@ export default function Signin() {
         }
         const result = await authContext.signIn(email, password);
         if (result.success) {
-            router.push('/')
+            router.replace('/')
         } else {
             console.log(result.error);
             setErrorMessage("Invalid email or Password")

@@ -9,7 +9,7 @@ create table Users (
     user_id int primary key auto_increment,
     name varchar(50) not null,
     email varchar(100) unique not null,
-    password varchar(255) not null,
+    password_hash varchar(255) not null,
     registered_at timestamp default current_timestamp
 );
 
@@ -43,10 +43,17 @@ create table Tests (
     is_timed boolean default false,
     duration_minutes int,
     status enum ('draft','published') default 'draft',
-    maximumAttempts int default 0, 
-    corrected_by int,
+    maximum_attempts int default 0, 
+    corrected_by int null,
     
     unique (creator_id,title,classroom_id),
+    
+    check (
+  		(is_timed = false and duration_minutes is null)
+  		or
+  		(is_timed = true and duration_minutes > 0)
+	),
+	
 
     foreign key (classroom_id) references Classrooms(classroom_id) on delete cascade,
     foreign key (creator_id) references Users(user_id) on delete cascade,
@@ -56,7 +63,7 @@ create table Tests (
 create table Questions (
     question_id int primary key auto_increment,
     test_id int not null,
-    type enum('mcq','single','boolean','fill_blank') not null,
+    type enum('mcq','single','boolean','fill_blank','matching') not null,
     question_text text not null,
     marks int default 0,
 
@@ -79,14 +86,13 @@ create table Attempts (
     test_id int not null,
     user_id int not null,
     
-    started_at timestamp,
+    started_at timestamp default current_timestamp,
     submitted_at timestamp,
+    
+    unique (test_id, user_id, attempt_id),
 
     status enum('started','submitted','evaluated') default 'started',
     marks decimal(6,2) default 0,
-
-    unique (test_id, user_id, attempt_id),
-
 
     foreign key (test_id) references Tests(test_id) on delete cascade,
     foreign key (user_id) references Users(user_id) on delete cascade
@@ -114,13 +120,37 @@ create table Answer_Options (
     option_id int not null,
 
     primary key (answer_id, option_id),
-
     foreign key (answer_id) references Answers(answer_id) on delete cascade,
     foreign key (option_id) references Options(option_id) on delete cascade
 );
 
 
+create table Fill_In_Blank_Answers(
+	blank_id int primary key auto_increment,
+	question_id int not null,
+	blank_idx  int not null,
+	blank_text text not null,
+	is_caseSensitive boolean default false,
+	foreign key (question_id) references Questions(question_id) on delete cascade
+);
 
+create table Matching_Answers(
+	match_id int primary key auto_increment,
+	question_id int not null,
+	left_side_text text not null,
+	right_side_text text not null,
+	foreign key (question_id) references Questions(question_id) on delete cascade
+);
+
+
+
+ create index idx_attempt_status on Attempts(status);
+ create index idx_attempt_test on Attempts(test_id);
+ create index idx_answers_attempt on Answers(attempt_id);
+ create index idx_tests_classroom on Tests(classroom_id);
+ create index idx_questions_test on Questions(test_id);
+ create index idx_options_question on Options(question_id);
+ create index idx_answers_question on Answers(question_id);
 
 
 
@@ -177,8 +207,6 @@ create table Answer_Options (
 -- | Markup Language      |
 -- +----------------------+
 
--- create index idx_attempt_status on Attempts(status);
--- create index idx_attempt_test on Attempts(test_id);
--- create index idx_answers_attempt on Answers(attempt_id);
+
 
 -- Question 2 type single id = 3

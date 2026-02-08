@@ -66,12 +66,10 @@ export default function Index() {
     }
 
     return (
-        <View style={{ marginHorizontal: 10 }}>
+        <View style={{flex:1,marginHorizontal:10}}>
             <TopBar setCreateModalVisible={setCreateModalVisible} />
             {createdClassrooms.length == 0 ? (
-                <React.Fragment>
-                    <EmptyClassroom message="No classroom created" />
-                </React.Fragment>
+                <EmptyClassroom message="No classroom created" />
             ) : <FlatList
                 numColumns={numColumns}
                 data={createdClassrooms}

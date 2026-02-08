@@ -15,7 +15,7 @@ public class TestDto {
 	private String testTitle;
 	private long createdAt;
 	private boolean isTimedTest;
-	private int durationMinutes;
+	private Integer durationMinutes;
 	private TestStatus status;
 	private int maximumAttempts;
 	private CorrectionMethod correctionMethod;

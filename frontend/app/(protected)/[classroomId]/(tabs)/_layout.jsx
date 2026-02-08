@@ -3,15 +3,15 @@ import React from 'react'
 import { Tabs } from 'expo-router'
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"
 import Colors from '../../../../styles/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function _layout() {
-
+export default function ClassroomLayout() {
     
-
     const {width} = useWindowDimensions();
     const isLargeScreen =  width > 821;
 
     return (
+        <SafeAreaView style={{flex:1}}>
         <Tabs
             screenOptions={{
                 tabBarPosition: isLargeScreen ? 'left' : 'bottom',
@@ -34,7 +34,7 @@ export default function _layout() {
                 tabBarActiveTintColor: Colors.primaryColor,
                 tabBarInactiveTintColor: Colors.white,
                 tabBarItemStyle: {
-                    paddingTop: 5
+                    paddingTop: 7
                 },
                 tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
             }}
@@ -64,5 +64,6 @@ export default function _layout() {
                 )
             }} />
         </Tabs>
+        </SafeAreaView>
     )
 }

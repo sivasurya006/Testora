@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 
-const LabeledInput = ({ label, value, onChangeText, placeholder }) => {
+const LabeledInput = ({ label, value, onChangeText, placeholder , customInputStyles , inputType }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
+        style={[styles.input , customInputStyles]}
+        onChangeText={text => onChangeText(text)}
         value={value}
         placeholder={placeholder}
+        inputMode={inputType}
       />
     </View>
   );
@@ -23,7 +24,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
     marginBottom: 5,
   },
   input: {
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
+    borderRadius : 5
   },
 });
 

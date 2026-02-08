@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         margin: 8,
         minWidth: 280,
-        maxWidth: 320,
+        maxWidth: 280,
         flex: 1,
         boxShadow: Colors.blackBoxShadow,
         marginHorizontal: 10

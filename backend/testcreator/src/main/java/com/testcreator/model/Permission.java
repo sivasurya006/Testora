@@ -1,0 +1,5 @@
+package com.testcreator.model;
+
+public enum Permission {
+	CLASSROOM_STUDENT, CLASSROOM_TUTOR, CLASSROOM_MEMBER
+}
