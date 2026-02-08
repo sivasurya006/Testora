@@ -1,4 +1,5 @@
 package com.testcreator.dao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -317,11 +318,11 @@ public class TestDao {
 			}
 		}
 	}
-	
-	
-	public TestDto getTestQuestions(int testId,boolean showAnswers) throws SQLException {
+
+	public TestDto getTestQuestions(int testId, boolean showAnswers) throws SQLException {
 
 		TestDto testDto = null;
+		
 
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getAllQuestionsWithOptions)) {
 
@@ -349,11 +350,10 @@ public class TestDao {
 						testDto.setTimedTest(rs.getBoolean("is_timed"));
 						testDto.setDurationMinutes(rs.getInt("duration_minutes"));
 						testDto.setMaximumAttempts(rs.getInt("maximumAttempts"));
-						if(showAnswers) {
+						if (showAnswers) {
 							testDto.setStatus(TestStatus.valueOf(rs.getString("status").toUpperCase()));
 							testDto.setCorrectionMethod(
-								CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase())
-							);
+									CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
 						}
 						testDto.setQuestions(new LinkedList<>());
 					}
@@ -370,9 +370,7 @@ public class TestDao {
 							questionDto.setId(questionId);
 							questionDto.setQuestionText(rs.getString("question_text"));
 							questionDto.setMarks(rs.getInt("marks"));
-							questionDto.setType(
-								QuestionType.valueOf(rs.getString("type").toUpperCase())
-							);
+							questionDto.setType(QuestionType.valueOf(rs.getString("type").toUpperCase()));
 							questionDto.setOptions(new LinkedList<>());
 
 							questionMap.put(questionId, questionDto);
@@ -385,7 +383,7 @@ public class TestDao {
 							Option option = new Option();
 							option.setOptionId(optionId);
 							option.setOptionText(rs.getString("option_text"));
-							if(showAnswers) {
+							if (showAnswers) {
 								option.setCorrect(rs.getBoolean("is_correct"));
 								option.setOptionMark(rs.getInt("option_mark"));
 							}
@@ -399,6 +397,26 @@ public class TestDao {
 		return testDto;
 	}
 
+	public TestDto getTestCount(int userId) {
+		TestDto testDto = null;
+		try (PreparedStatement ps = connection.prepareStatement(Queries.selectTestCount)) {
+			ps.setInt(1, userId);
+			try (ResultSet rs = ps.executeQuery()) {
+
+				while (rs.next()) {
+					testDto = new TestDto();
+					testDto.setTestCount(rs.getInt("testCount"));
+//   					System.out.println(testDto);
+//   					System.out.println(testDto.getTestCount());
+					
+				}
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return testDto;
+	}
 
 }
-    

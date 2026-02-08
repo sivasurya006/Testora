@@ -10,7 +10,8 @@
 				class="com.testcreator.interceptors.AuthenticationInterceptor" />
 			<interceptor name="jsonExceptionInterceptor"
 				class="com.testcreator.interceptors.JsonApiExceptionInterceptor" />
-
+			<interceptor name="classroomIdInterceptor"
+				class="com.testcreator.interceptors.ClassroomIdInterceptor" />
 			<interceptor-stack name="apiStack">
 				<interceptor-ref name="servletConfig" />
 				<interceptor-ref name="authInterceptor" />
@@ -21,6 +22,7 @@
 				<interceptor-ref name="validation" />
 				<interceptor-ref name="workflow" />
 			</interceptor-stack>
+
 		</interceptors>
 
 		<default-interceptor-ref name="apiStack" />
@@ -47,7 +49,6 @@
 				<param name="statusCode">404</param>
 			</result>
 		</global-results>
-
 
 		<global-exception-mappings>
 			<exception-mapping result="invalidJson"
@@ -106,7 +107,7 @@
 			</result>
 		</action>
 
-		<action name="classroom-details"
+		<action name="classroomdetails"
 			class="com.testcreator.actions.ClassroomAction"
 			method="getClassroomDetails">
 			<result name="success" type="json">
@@ -114,10 +115,15 @@
 			</result>
 		</action>
 
+		<action name="classroomdetail"
+			class="com.testcreator.actions.TestAction" method="getTestCount">
+			<result name="success" type="json">
+				<param name="root">TestDto</param>
+			</result>
+		</action>
 
 
 	</package>
-
 
 	<package name="tests" namespace="/api/tests"
 		extends="classroom">
@@ -129,7 +135,6 @@
 				class="com.testcreator.interceptors.ClassroomIdInterceptor" />
 			<interceptor name="testIdInterceptor"
 				class="com.testcreator.interceptors.TestIdInterceptor" />
-
 
 			<interceptor-stack name="testActionStack">
 				<interceptor-ref name="apiStack" />
@@ -172,7 +177,6 @@
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
 
-
 		<action name="get-question"
 			class="com.testcreator.actions.TestAction"
 			method="fetchQuestionWithOption">
@@ -209,8 +213,8 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-		
-		
+
+
 		<action name="get-all-questions"
 			class="com.testcreator.actions.TestAction" method="fetchTestQuestion">
 

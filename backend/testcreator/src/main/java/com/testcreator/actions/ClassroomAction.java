@@ -133,7 +133,6 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			ClassroomService classroomService = new ClassroomService();
 			if (classroomService.deleteClassRoom(userId, classroomId)) {
 				this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
-				System.out.println("success");
 				return SUCCESS;
 			} else {
 				this.successDto = new SuccessDto("Classroom not deleted", 422, false);
@@ -195,7 +194,6 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String getClassroomDetails() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-		System.out.println(userId);
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {
@@ -219,6 +217,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		}
 		return ERROR;
 	}
+	
 
 	public SuccessDto getSuccessDto() {
 		return successDto;
