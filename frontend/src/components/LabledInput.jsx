@@ -7,7 +7,7 @@ const LabeledInput = ({ label, value, onChangeText, placeholder , customInputSty
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={[styles.input , customInputStyles]}
-        onChangeText={onChangeText}
+        onChangeText={text => onChangeText(text)}
         value={value}
         placeholder={placeholder}
         inputMode={inputType}
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
+    borderRadius : 5
   },
 });
 

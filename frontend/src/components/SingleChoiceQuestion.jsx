@@ -7,7 +7,8 @@ import MenuDropdown from './MenuDropdown';
 
 export default function SingleChoiceQuestion({mode,question,options,questionNumber,onEdit,onDelete}) {
     const [selected, setSelected] = useState(options.find((opt) => opt.isCorrect || null));
-    const correctAnswer = options.find((opt) => opt.isCorrect ).optionText || "Not given"
+    const correctAnswer = options.find((opt) => opt.isCorrect )?.optionText || "Not given"
+
 
     if (mode === 'edit') {
         return (
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
         borderBottomColor : 'black'
     },
     answerRow :{
-        gap : 20
+        gap : 20,
     },
     correctAnswerText : {
         color : 'green',
