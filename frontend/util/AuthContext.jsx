@@ -6,7 +6,9 @@ import * as SecureStore from "expo-secure-store";
 
 export const AuthContext = createContext();
 console.log(AuthContext);
+console.log("context")
 export default function AuthContextProvider({ children }) {
+
     const [isLoading, setLoading] = useState(false);
 
     {/**
@@ -57,11 +59,13 @@ export default function AuthContextProvider({ children }) {
                     'Content-Type': 'application/json'
                 }
             });
+
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signup error:", errorText);
                 return { success: false, error: errorText };
             }
+
             console.log("hi")
             // router.replace('/');
 
@@ -70,10 +74,12 @@ export default function AuthContextProvider({ children }) {
                 await SecureStore.setItemAsync("token", res.data.token);
                 // TODO implement logger  console.log('token added')
             }
+
             return { success: true };
+
         } catch (err) {
             // TODO implement logger (sign up failed)
-            console.log("catch called")
+            console.log("catch calledd")
 
             if (err.status == 409) {
                 return { success: false, error: "User already exist", status: 409 };
@@ -84,10 +90,10 @@ export default function AuthContextProvider({ children }) {
         }
     }
 
-
-
     async function signIn(userEmail, userPassword) {
+
         setLoading(true);
+
         try {
             const res = await api.post("/signin", { userEmail, userPassword }, {
                 'Content-Type': 'application'
@@ -123,8 +129,11 @@ export default function AuthContextProvider({ children }) {
     }
 
     return (
+
         <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut }}>
             {children}
         </AuthContext.Provider>
+
     );
+
 }

@@ -12,7 +12,6 @@ export default function Test({ data }) {
   const closeMenu = () => setMenuVisible(false);
   const { width } = useWindowDimensions();
 
-
   function handleEdit(){
     console.log('edit')
     router.push(`/${data.classroomId}/test/${data.testId}/edit`)
@@ -46,6 +45,7 @@ export default function Test({ data }) {
             }
             contentStyle={styles.menuContentStyle}
           >
+            
             <Menu.Item title="Preview" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
             <Menu.Item title="Rename" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
             <Menu.Item title="Delete" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />

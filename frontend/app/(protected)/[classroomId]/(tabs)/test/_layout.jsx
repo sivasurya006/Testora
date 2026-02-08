@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Drawer } from 'expo-router/drawer';
+// import { Drawer } from 'expo-router/drawer';
 import { useWindowDimensions } from 'react-native';
 import Colors from '../../../../../styles/Colors';
 

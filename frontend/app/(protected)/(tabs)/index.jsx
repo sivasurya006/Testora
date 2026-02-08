@@ -8,7 +8,7 @@ import Classroom from '../../../src/components/Classroom';
 import InputModal from '../../../src/components/modals/InputModal';
 import { useRouter } from 'expo-router';
 
-const classroom_width = 320; 
+const classroom_width = 320;
 
 export default function Index() {
 
@@ -66,7 +66,7 @@ export default function Index() {
     }
 
     return (
-        <View style={{marginHorizontal:10}}>
+        <View style={{ marginHorizontal: 10 }}>
             <TopBar setCreateModalVisible={setCreateModalVisible} />
             {createdClassrooms.length == 0 ? (
                 <React.Fragment>
@@ -133,8 +133,6 @@ function TopBar({ setCreateModalVisible }) {
         </View>
     );
 }
-
-
 
 const styles = StyleSheet.create({
     topBar: {
