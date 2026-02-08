@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: Colors.white,
         marginVertical: 10,
-        borderBottomWidth : 1,
-        borderBottomColor : 'black'
+        borderBottomWidth : 0.3,
+        borderBottomColor : 'gray'
     },
     answerRow :{
         gap : 20,

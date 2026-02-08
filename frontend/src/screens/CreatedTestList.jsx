@@ -32,6 +32,7 @@ export default function CreatedTestList({ filter }) {
         params: {
           classroomId: classroomId, 
           testId: result.testId,
+          title : testName,
         },
       })
     }

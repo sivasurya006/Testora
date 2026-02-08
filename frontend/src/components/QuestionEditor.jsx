@@ -40,8 +40,37 @@ export default function QuestionEditor({ onConfirm, onCancel }) {
     const [questionText, setQuestionText] = useState("");
     const [questionMark, setQuestionMark] = useState(0);
     const [questionOptions, setQuestionOptions] = useState([]);
+    const [ error, setError ] = useState("");
 
     const { width } = useWindowDimensions();
+    function validateInput(){
+        setError("")
+        if(questionText.trim() === ""){
+            setError("Question text cannot be empty");
+            return false;
+        }
+        if((selectedType.value === 'MCQ' || selectedType.value === 'SINGLE') && questionOptions.length < 2){
+            setError("At least 2 options are required for MCQ and Single choice questions");
+            return false;
+        }
+        if(questionOptions.filter(opt => opt.optionText.trim() !== "").length == 0){
+            setError("Option text cannot be empty");
+            return false;
+        }
+        if(( selectedType.value === 'MCQ' || selectedType.value === 'SINGLE') && questionOptions.find(opt => opt.isCorrect) === undefined){
+            setError("At least one correct option must be selected for MCQ and Single choice questions");
+            return false;
+        }
+        if(questionOptions.find(opt => opt.isCorrect).optionText.trim() === ""){
+            setError("Correct option text cannot be empty");
+            return false;
+        }
+        if(selectedType.value === 'BOOLEAN' && questionOptions.find(opt => opt.isCorrect) === undefined){
+            setError("Correct answer must be selected for Boolean questions");  
+            return false;
+        }
+        return true;
+    }
 
     return (
         <View style={[styles.modalContainer, width > 861 && { maxWidth: 800, margin: 'auto', width: '100%' }]}>
@@ -101,21 +130,32 @@ export default function QuestionEditor({ onConfirm, onCancel }) {
                             />
                         </View>
                     </View>
-
+                    {
+                        error !== "" && (
+                            <View>
+                                <Text style={{ color: 'red' , textAlign :'center' }}>{error}</Text>
+                            </View>
+                        )
+                    }
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 20, marginTop: 20, alignItems: 'center' }}>
                         <Pressable style={styles.cancelBtn} onPress={onCancel} >
                             <Text>Cancel</Text>
                         </Pressable>
 
-                        <Pressable style={styles.addBtn} onPress={() => onConfirm({
-                            question: {
-                                questionText,
-                                marks: questionMark
-                            },
-                            questionType: selectedType.value,
-                            options: questionOptions
-                        })}>
-                            <Text style={{ color: Colors.white }} >Add Question</Text>
+                        <Pressable style={styles.addBtn} onPress={() => {
+                            if (validateInput()) {
+                                onConfirm({
+                                    question: {
+                                        questionText,
+                                        marks: questionMark
+                                    },
+                                    questionType: selectedType.value,
+                                    options: questionOptions.filter(opt => opt.optionText.trim() !== "")
+                                })
+                            }
+                        }
+                        }>
+                            <Text style={{ color: Colors.white }}>Add Question</Text>
                         </Pressable>
                     </View>
                 </View>

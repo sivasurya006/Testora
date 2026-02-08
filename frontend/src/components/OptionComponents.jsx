@@ -9,10 +9,10 @@ const MCQComponent = ({ giveOptionMarks ,options ,setOptions }) => {
     
     useEffect(() => {
         setOptions([
-            { optionText: '', isCorrect: false , mark : 0 },
-            { optionText: '', isCorrect: false ,  mark : 0 },
-            { optionText: '', isCorrect: false ,  mark : 0 },
-            { optionText: '', isCorrect: false ,  mark : 0 },
+            { optionText: '', isCorrect: false , mark : '' },
+            { optionText: '', isCorrect: false ,  mark : '' },
+            { optionText: '', isCorrect: false ,  mark : '' },
+            { optionText: '', isCorrect: false ,  mark : '' },
         ]);
     },[]);
 
@@ -104,9 +104,9 @@ const MCQComponent = ({ giveOptionMarks ,options ,setOptions }) => {
 const SingleComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
     useEffect(() => {
         setOptions([
-            { optionText: '', isCorrect: false , mark : 0 },
-            { optionText: '', isCorrect: false ,  mark : 0 },
-            { optionText: '', isCorrect: false ,  mark : 0 },
+            { optionText: '', isCorrect: false , mark : '' },
+            { optionText: '', isCorrect: false ,  mark : '' },
+            { optionText: '', isCorrect: false ,  mark : '' },
         ]);
     },[]);
 
@@ -203,8 +203,8 @@ const SingleComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
 const BooleanComponent = ({ giveOptionMarks , options ,setOptions  }) => {
     useEffect(() => {
         setOptions([
-            { optionText: '', isCorrect: false , mark : 0 },
-            { optionText: '', isCorrect: false ,  mark : 0 },
+            { optionText: '', isCorrect: false , mark : '' },
+            { optionText: '', isCorrect: false ,  mark : '' },
         ]);
     },[]);
 

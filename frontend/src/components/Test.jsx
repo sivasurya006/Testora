@@ -15,7 +15,13 @@ export default function Test({ data }) {
 
   function handleEdit(){
     console.log('edit')
-    router.push(`/${data.classroomId}/test/${data.testId}/edit`)
+    router.push({
+      pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
+      params: {
+        classroomId: data.classroomId, 
+        testId: data.testId,
+      },
+    })
   }
 
   return (

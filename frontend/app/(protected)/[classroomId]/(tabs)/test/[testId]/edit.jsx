@@ -51,8 +51,8 @@ export default function Edit() {
                 {
                     allQuestions.length == 0 ? (
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
-                            <Pressable onPress={openAddQuesModal}>
-                                <Text>Create New Question</Text>
+                            <Pressable style={{ backgroundColor : Colors.primaryColor , padding : 16 , borderRadius : 8 }}  onPress={openAddQuesModal}>
+                                <Text style={{color : Colors.white}}  >Create New Question</Text>
                             </Pressable>
                         </View>
                     ) : (
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
         boxShadow: Colors.blackBoxShadow,
         width: "100%",
         borderRadius: 8,
-        padding: 30
     },
     addNew: {
         position: 'absolute',

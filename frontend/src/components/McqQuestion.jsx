@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         backgroundColor: Colors.white,
-        borderRadius: 8,
         marginVertical: 10,
-        elevation: 2,
+        borderBottomWidth : 0.3,
+        borderBottomColor : 'gray'
     },
     questionRow: {
         flexDirection: 'row',
