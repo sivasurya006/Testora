@@ -92,6 +92,6 @@ public class Queries {
 	
 //	======= getClassroom=========
 	
-	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  and user_id = ? join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' group by c.classroom_id, c.name, u.name, c.created_at ";
+	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  left join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' where u.user_id=? and c.classroom_id=? group by c.classroom_id, c.name, u.name, c.created_at";
 	public static final String selectTestCount="select count(t.test_id) as testCount  from Tests t join Classrooms c on t.classroom_id=c.classroom_id join Users u on u.user_id=t.creator_id where t.creator_id=?";
 } 

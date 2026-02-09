@@ -152,7 +152,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String renameClassroom() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-
+       
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {
@@ -194,6 +194,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String getClassroomDetails() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		System.out.println(userId);
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {

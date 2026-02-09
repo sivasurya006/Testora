@@ -258,7 +258,7 @@ public class ClassroomDao {
 			PreparedStatement classroom = connection.prepareStatement(Queries.selectClassroom);
 
 			classroom.setInt(1, userId);
-//			classroom.setInt(2, classroomId);
+			classroom.setInt(2, classroomId);
 			try  {
 				ResultSet rs = classroom.executeQuery();
 				while (rs.next()) {
