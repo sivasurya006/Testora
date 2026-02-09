@@ -104,4 +104,10 @@ public class TestService {
 		
 		return testDao.getTestQuestions(testId,true);
 	}
+	
+	public TestDto getTestCount(int userId) throws SQLException {
+			return testDao.getTestCount(userId);
+		
+	
+	}
 }

@@ -31,6 +31,7 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 		if(classroomIdHeader == null || classroomIdHeader.isBlank()) {
 			Object action = invocation.getAction();
 			if(action instanceof JsonApiAction jsonAction) {
+
 				jsonAction.setError(new ApiError("Classroom header not provided", 400));
 			}
 			
@@ -42,6 +43,7 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 		try {
 			int classroomId = Integer.parseInt(classroomIdHeader);
 			request.setAttribute("classroomId", classroomId);
+
 			return invocation.invoke();
 		}catch (NumberFormatException e) {
 			Object action = invocation.getAction();

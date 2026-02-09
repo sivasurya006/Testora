@@ -12,7 +12,6 @@ export default function Test({ data }) {
   const closeMenu = () => setMenuVisible(false);
   const { width } = useWindowDimensions();
 
-
   function handleEdit(){
     console.log('edit')
     router.push({

@@ -19,8 +19,6 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 	
-		
-		
 		HttpServletRequest request = (HttpServletRequest) ServletActionContext.getRequest();
 		
 		String clientType = request.getHeader("X-Client-Type");

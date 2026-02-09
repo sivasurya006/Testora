@@ -8,7 +8,7 @@ import Classroom from '../../../src/components/Classroom';
 import InputModal from '../../../src/components/modals/InputModal';
 import { useRouter } from 'expo-router';
 
-const classroom_width = 320; 
+const classroom_width = 320;
 
 export default function Index() {
 
@@ -131,8 +131,6 @@ function TopBar({ setCreateModalVisible }) {
         </View>
     );
 }
-
-
 
 const styles = StyleSheet.create({
     topBar: {
