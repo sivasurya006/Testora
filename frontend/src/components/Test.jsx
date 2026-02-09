@@ -3,36 +3,67 @@ import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 import { IconButton, Menu } from 'react-native-paper';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams } from 'expo-router';
+import ConfirmModal from './modals/ConfirmModal';
+import api from '../../util/api';
+import InputModal from './modals/InputModal';
 
-export default function Test({ data }) {
+export default function Test({ data, allTests, setAllTests }) {
 
   const [isMenuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
   const { width } = useWindowDimensions();
+  const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [ isInputModalVisible, setInputModalVisible] = useState(false);
+  const [ newTestName, setNewTestName] = useState(""); 
 
-  function handleEdit(){
+  const { classroomId } = useGlobalSearchParams();
+
+
+  function handleEdit() {
     console.log('edit')
     router.push({
       pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
       params: {
-        classroomId: data.classroomId, 
+        classroomId: data.classroomId,
         testId: data.testId,
         title: data.testTitle,
       },
     })
   }
 
-  function handlePublish(){ 
-   console.log('publish')
-   router.push({
+  function handlePublish() {
+    console.log('publish')
+    router.push({
       pathname: '/[classroomId]/(tabs)/test/[testId]/publish',
       params: {
-        classroomId: data.classroomId, 
+        classroomId: data.classroomId,
         testId: data.testId,
       },
-   }) 
+    })
+  }
+
+   async function handleRename() {
+    if(newTestName.trim().length == 0) return;
+    const success = await renameTest(classroomId,data.testId,newTestName);
+    if(success){
+      setAllTests(allTests.map(test => {
+        if( test.testId == data.testId){
+            test.testTitle = newTestName;
+        }
+        return test;
+      }));
+    }
+    setInputModalVisible(false);
+  }
+
+  async function handleDelete() {
+    const success = await deleteTest(classroomId, data.testId);
+    if (success) {
+      setAllTests(allTests.filter(test => test.testId !== data.testId));
+    }
+    setConfirmModalVisible(false)
   }
 
   return (
@@ -40,8 +71,10 @@ export default function Test({ data }) {
       <View style={styles.card}>
 
         <View style={styles.row}>
+
+
           <Ionicons name='clipboard-outline' size={20} color={Colors.primaryColor} />
-          <Text style={styles.title}>{data.testTitle}</Text>
+          <Text onPress={handleEdit} style={styles.title}>{data.testTitle}</Text>
 
           {data.status === "DRAFT" && (
             <View style={styles.draftBadge}>
@@ -64,8 +97,8 @@ export default function Test({ data }) {
             contentStyle={styles.menuContentStyle}
           >
             <Menu.Item title="Preview" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
-            <Menu.Item title="Rename" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
-            <Menu.Item title="Delete" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
+            <Menu.Item title="Rename" onPress={() => { closeMenu(); setInputModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+            <Menu.Item title="Delete" onPress={() => { closeMenu(); setConfirmModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
           </Menu>
         </View>
 
@@ -98,7 +131,7 @@ export default function Test({ data }) {
 
           <View style={styles.btnContainer}>
             <Pressable style={styles.btnInsideContainer} onPress={handleEdit}>
-            <Feather name="edit" size={20} color="black" />
+              <Feather name="edit" size={20} color="black" />
               <Text>Edit</Text>
             </Pressable>
           </View>
@@ -111,11 +144,79 @@ export default function Test({ data }) {
             ) : null
           }
 
+          {
+            isConfirmModalVisible ? (
+              <ConfirmModal message={'Are you sure, Delete the Test?'} onConfirm={handleDelete}
+                onCancel={() => setConfirmModalVisible(false)}
+                visible={isConfirmModalVisible}
+              />
+            ) : null
+          }
+
+          {
+            isInputModalVisible ? (
+              <InputModal
+                defaultValue={data.testTitle} 
+                placeholder={'New test name'}
+                onValueChange={setNewTestName}
+                onConfirm={handleRename}
+                visible={isInputModalVisible}
+                onCancel={() => setInputModalVisible(false)}
+              />
+            ) : null
+          }
+
         </View>
 
       </View>
     </View>
   );
+}
+
+async function deleteTest(classroomId, testId) {
+  try {
+    const result = await api.delete(`/api/tests/deleteTest`, {
+      headers: {
+        'X-ClassroomId': classroomId,
+        'X-TestId': testId
+      }
+    });
+    if (result.status == 200 && result.data.success) {
+      console.log('test deleted successfully');
+      return result.data.success;
+    } else {
+      console.log('test not deleted');
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return false;
+}
+
+
+async function renameTest(classroomId, testId, newTitle) {
+
+  try {
+    const result = await api.patch(`/api/tests/renameTest`, {
+      testTitle: newTitle
+    }, {
+      headers: {
+        'X-ClassroomId': classroomId,
+        'X-TestId': testId,
+      }
+    })
+
+
+    if (result.status == 200 && result.data.success) {
+      console.log('test renamed successfully');
+      return result.data.success;
+    }else{
+      console.log('test not renamed');
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return false;
 }
 
 const styles = StyleSheet.create({
