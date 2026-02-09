@@ -17,7 +17,9 @@ import com.testcreator.exception.QuestionNotFoundException;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.Context;
 import com.testcreator.model.Option;
+import com.testcreator.model.Permission;
 import com.testcreator.model.TestStatus;
+import com.testcreator.service.AccessService;
 import com.testcreator.service.TestService;
 
 public class TestAction extends JsonApiAction implements ServletRequestAware, ModelDriven<QuestionDto> {
@@ -248,6 +250,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			Context context = new Context();
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 			boolean deleted = testService.deleteQuestion(context,questionId);
 			if (deleted) {
 				this.successDto = new SuccessDto("Question successfully deleted", 200, deleted);
@@ -271,7 +274,82 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		return ERROR;
 
 	}
+	
+	public String deleteTest() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+		Context context = new Context();
+		context.setClasssroomId(classroomId);
+		context.setUserId(userId);
+		try {
+			TestService testService = new TestService();
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			boolean deleted = testService.deleteTest(testId);
+			if (deleted) {
+				this.successDto = new SuccessDto("Test successfully deleted", 200, deleted);
+			} else {
+				this.successDto = new SuccessDto("Test not deleted", 422, deleted);
+			}
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		setError(new ApiError("server error", 500));
+		return ERROR;
+		
+	}
 
+	
+	public String renameTest() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+		Context context = new Context();
+		context.setClasssroomId(classroomId);
+		context.setUserId(userId);
+		
+		String newName = questionDto.getTestTitle();
+		
+		if(newName == null || newName.isBlank()) {
+			setError(new ApiError("Invalid name ", 400));
+			return INPUT;
+		}
+		
+		try {
+			TestService testService = new TestService();
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			boolean deleted = testService.renameTest(testId,newName);
+			if (deleted) {
+				this.successDto = new SuccessDto("Test renamed successfully", 200, deleted);
+			} else {
+				this.successDto = new SuccessDto("Test not renamed", 422, deleted);
+			}
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		setError(new ApiError("server error", 500));
+		return ERROR;
+		
+	}
+	
 	public String deleteOption() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));

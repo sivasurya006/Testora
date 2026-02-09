@@ -39,7 +39,7 @@ public class Queries {
 	public static final String getUserByEmail = "select user_id, name, email, registered_at from Users where email = ?";
 	
 	// update User
-	public static final String updateUserPassword = "update Users set password = ? where user_id = ?";
+	public static final String updateUserPassword = "update Users set password_hash = ? where user_id = ?";
 	public static final String updateUserName = "update Users set name = ? where user_id = ?";
 	
 	// delete User 
@@ -59,10 +59,11 @@ public class Queries {
 	
 	// update Test
 	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximum_attempts = ? , status = 'published' where test_id = ?";
-	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximum_attempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?"; 
+	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximum_attempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?";
+	public static final String renameTest = "update Tests set title = ? where test_id = ?";
 	
 	// delete Test
-	public static final String deleteTest = "delete from Test where test_id =  ?";
+	public static final String deleteTest = "delete from Tests where test_id =  ?";
 	
 	/*=========== Questions and Options ==============*/
 	

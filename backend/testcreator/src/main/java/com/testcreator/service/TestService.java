@@ -38,6 +38,13 @@ public class TestService {
 		return testDao.getAllTests(context.getClasssroomId(),limit);
 	}
 	
+	public boolean deleteTest(int testId) throws SQLException {
+		return testDao.deleteTest(testId);
+	}
+	
+	public boolean renameTest(int testId,String newName) throws SQLException {
+		return testDao.renameTest(testId, newName);
+	}
 	
 	
 	// Fetch all Tests
@@ -71,7 +78,6 @@ public class TestService {
 	}
 	
 	public boolean deleteQuestion(Context context,int questionId) throws SQLException {
-		new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 		return testDao.deleteQuestion(questionId);
 	}
 	

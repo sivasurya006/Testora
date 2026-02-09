@@ -192,6 +192,24 @@
 			</result>
 		</action>
 
+		<action name="deleteTest"
+			class="com.testcreator.actions.TestAction" method="deleteTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+		
+		<action name="renameTest"
+			class="com.testcreator.actions.TestAction" method="renameTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
 		<action name="delete-option"
 			class="com.testcreator.actions.TestAction" method="deleteOption">
 			<result name="success" type="json">
@@ -210,8 +228,8 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-		
-		
+
+
 		<action name="getTestQuestions"
 			class="com.testcreator.actions.TestAction" method="fetchTestQuestion">
 

@@ -13,6 +13,7 @@ import com.testcreator.dto.ApiError;
 import com.testcreator.dto.ClassroomDto;
 import com.testcreator.dto.SuccessDto;
 import com.testcreator.exception.UnauthorizedException;
+import com.testcreator.exception.UserNotFoundException;
 import com.testcreator.model.Classroom;
 import com.testcreator.service.ClassroomService;
 
@@ -46,7 +47,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 		if (userId <= 0) {
 			setError(new ApiError("Authentication failed", 401));
-			return ERROR;
+			return LOGIN;
 		}
 		try {
 			ClassroomService classroomService = new ClassroomService();
@@ -64,8 +65,11 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			classroomDto.setCreatedBy(classroom.getcreatedBy());
 
 			return SUCCESS;
-		} catch (Exception e) {
-			// TODO implementLogger
+		}catch (UserNotFoundException e) {
+			setError(new ApiError("Authentication failed", 401));
+			return LOGIN;
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		setError(new ApiError("Can't create classroom", 500));
@@ -77,7 +81,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 		if (userId <= 0) {
 			setError(new ApiError("Authentication failed", 401));
-			return ERROR;
+			return LOGIN;
 		}
 		try {
 			ClassroomService classroomService = new ClassroomService();
@@ -96,7 +100,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 		if (userId <= 0) {
 			setError(new ApiError("Authentication failed", 401));
-			return ERROR;
+			return LOGIN;
 		}
 		try {
 			ClassroomService classroomService = new ClassroomService();

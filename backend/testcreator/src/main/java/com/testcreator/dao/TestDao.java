@@ -56,6 +56,21 @@ public class TestDao {
 			}
 		}
 	}
+	
+	public boolean deleteTest(int testId) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.deleteTest)){
+			ps.setInt(1, testId);
+		 	return ps.executeUpdate() > 0;
+		}
+	}
+	
+	public boolean renameTest(int testId,String newName) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.renameTest)){
+			ps.setString(1, newName);
+			ps.setInt(2, testId);
+			return ps.executeUpdate() == 1;
+		}
+	}
 
 	public TestDto getTestById(int testId) throws SQLException {
 		TestDto testDto = null;
