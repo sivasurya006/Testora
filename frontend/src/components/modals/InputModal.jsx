@@ -2,7 +2,7 @@ import { Modal, Pressable, StyleSheet, Text, TextInput, View, useWindowDimension
 import React from 'react'
 import Colors from '../../../styles/Colors'
 
-export default function InputModal({placeholder,onValueChange,visible,onConfirm,onCancel}) {
+export default function InputModal({placeholder,onValueChange,visible,onConfirm,onCancel, defaultValue}) {
 
     const { width } =  useWindowDimensions();
 
@@ -21,6 +21,7 @@ export default function InputModal({placeholder,onValueChange,visible,onConfirm,
             onChangeText={onValueChange}
             placeholder={placeholder}
             placeholderTextColor={Colors.shadeGray}
+            defaultValue={defaultValue}
           />
           <View style={styles.options}>
             <Pressable
@@ -47,7 +48,7 @@ export default function InputModal({placeholder,onValueChange,visible,onConfirm,
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.35)', 
+    //   backgroundColor: 'rgba(0,0,0,0.35)', 
       alignItems: 'center',
       justifyContent: 'center',
     },
