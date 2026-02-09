@@ -6,7 +6,7 @@ import { useGlobalSearchParams } from "expo-router";
 import Test from "../../../../src/components/Test";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
-
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 export default function Dashboard() {
@@ -39,7 +39,10 @@ export default function Dashboard() {
       const res = await api.get("api/classroomdetails", {
         headers: { "X-Classroomid": classroomId },
       });
-      if (res.status === 200) setStats(res.data);
+      if (res.status === 200) {
+        setStats(res.data);
+        console.log(res.data)
+      }
     } catch (err) {
       console.log(err);
     }
@@ -50,7 +53,11 @@ export default function Dashboard() {
       const res = await api.get("api/classroomdetail", {
         headers: { "X-Classroomid": classroomId },
       });
-      if (res.status === 200) setStates(res.data);
+      if (res.status === 200) {
+        setStates(res.data);
+        console.log(res.data,"dtata")
+
+      }
     } catch (err) {
       console.log(err);
     }
@@ -61,7 +68,10 @@ export default function Dashboard() {
       const res = await api.get("/api/tests/get-created-tests", {
         headers: { "X-ClassroomId": classroomId },
       });
-      if (res.status === 200) setTests(res.data);
+      if (res.status === 200) {
+        setTests(res.data);
+        console.log(res.data, "tsests")
+      }
     } catch (err) {
       console.log(err);
     }
@@ -83,19 +93,19 @@ export default function Dashboard() {
 
         <View style={styles.smallCard}>
           <Text style={styles.cardLabel}>Total Tests</Text>
-          <View style={styles.studenticon}>
-            <Fontisto name="persons" size={24} color="black" />
-
-            <Text style={styles.cardNumber}>{states.testCount}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <MaterialIcons name="assignment" size={24} color={Colors.primaryColor} />
+            <Text style={{ marginLeft: 8 }}>Tests: {states.testCount}</Text>
           </View>
-
 
         </View>
 
         <View style={styles.smallCard}>
-          <Text style={styles.cardLabel}>Total Students</Text>
-          {/* <Icon path={mdiClipboardTextMultipleOutline} size={1} /> */}
-          <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <MaterialIcons name="people" size={24} color={Colors.primaryColor} />
+            <Text style={{ marginLeft: 8 }}>Students:{stats.totalStudents} </Text>
+
+          </View>
         </View>
 
       </View>
@@ -168,7 +178,7 @@ const styles = StyleSheet.create({
 
   smallCard: {
     flex: 1,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",

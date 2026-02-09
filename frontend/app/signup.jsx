@@ -25,8 +25,8 @@ export default function Signup() {
             setErrorMessage("Please enter name")
             return;
         }
-        if (!isValidEmail(email)) {
-            setErrorMessage("Please enter valid email");
+        if (!isValidEmail(email) && 0)  {
+            setErrorMessage("Please enter valid emai");
             return;
         }
         if (!isStrongPassword(password)) {

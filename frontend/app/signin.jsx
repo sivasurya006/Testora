@@ -20,8 +20,8 @@ export default function Signin() {
 
 
     async function handleSignin() {
-        if (!isValidEmail(email)) {
-            setErrorMessage("Please enter valid email");
+        if (!isValidEmail(email) && 0) {
+            setErrorMessage("Please enter valid emai");
             return;
         }
         if (password.trim().length == 0) {

@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { router, useRouter } from "expo-router";
 console.log("hello")
 const api = axios.create({
-    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/' : "http://192.168.20.6:8080/testcreator/",
+    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/' : "http://10.188.240.146/testcreator/",
     timeout: 10000,
     headers: {
         'X-Client-Type': Platform.OS == 'web' ? 'web' : 'mobile'
@@ -12,8 +12,8 @@ const api = axios.create({
     withCredentials: Platform.OS == 'web' && true
 });
 
-
 // console.log(api.interceptors)
+
 api.interceptors.request.use(async (config) => {
     // console.log(config);
 
@@ -28,14 +28,14 @@ api.interceptors.request.use(async (config) => {
             console.log(err);
         }
     }
-    return config;
-});
 
+    return config;
+    
+});
 
 api.interceptors.response.use(null, (error) => {
     if (error.response?.status === 401) {
         router.replace('/signin');
-
     }
     throw error;
 });

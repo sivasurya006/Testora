@@ -45,7 +45,6 @@ export default function Test({ data }) {
             }
             contentStyle={styles.menuContentStyle}
           >
-            
             <Menu.Item title="Preview" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
             <Menu.Item title="Rename" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
             <Menu.Item title="Delete" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />

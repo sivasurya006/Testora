@@ -13,6 +13,7 @@ export default function JoinedClassrooms() {
   const [allJoinedClassrooms, setAllJoinedClassrooms] = useState([]);
   const [selectedClassroomId, setSelectedClassroomId] = useState(null);
   const { width } = useWindowDimensions();
+  const [createModalVisible, setCreateModalVisible] = useState(false);
 
   const numColumns = Math.floor(width / classroom_width);
 
@@ -26,11 +27,11 @@ export default function JoinedClassrooms() {
 
   return (
     <React.Fragment>
-      <TopBar />
+      <TopBar setCreateModalVisible={setCreateModalVisible}/>
       {allJoinedClassrooms.length == 0 ? (
         <EmptyClassroom message={"No classrooms available"} />
       ) : <FlatList
-      numColumns={numColumns}
+        numColumns={numColumns}
         data={allJoinedClassrooms}
         keyExtractor={item => item.classroomId}
         key={numColumns}
@@ -63,7 +64,7 @@ async function getAllJoinedClassrooms(setAllJoinedClassrooms) {
 }
 
 
-function TopBar() {
+function TopBar({ setCreateModalVisible }) {
   return (
     <View style={styles.topBar}>
       <Text style={styles.topBarHeader}>Joined Classrooms</Text>
@@ -84,8 +85,6 @@ function TopBar() {
     </View>
   );
 }
-
-
 
 
 const styles = StyleSheet.create({
@@ -120,4 +119,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginRight: 6,
   },
+
 });
