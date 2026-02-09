@@ -20,7 +20,9 @@ export default function McqQuestion({ mode, question, options, questionNumber, o
                         {options.map((opt, i) => {
                             const isChecked = checked.includes(opt);
                             return (
-                                <View style={{flexDirection:'row' , alignItems : 'center'}}>
+                                <View 
+                                key={i}
+                                style={{flexDirection:'row' , alignItems : 'center'}}>
                                     <RadioButton 
                                         value={opt.optionText}
                                         status={isChecked ? 'checked' : 'unchecked'}

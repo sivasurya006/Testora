@@ -44,7 +44,7 @@ export default function ConfirmModal({ message, visible, onConfirm, onCancel }) 
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.35)',
+    //   backgroundColor: 'rgba(0,0,0,0.35)',
       alignItems: 'center',
       justifyContent: 'center',
     },
