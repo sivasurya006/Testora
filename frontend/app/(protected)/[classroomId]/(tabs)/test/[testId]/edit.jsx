@@ -1,11 +1,13 @@
 import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Colors from '../../../../../../styles/Colors';
 import QuestionEditor from '../../../../../../src/components/QuestionEditor';
 import { Modal, Portal } from 'react-native-paper'
 import SingleChoiceQuestion from '../../../../../../src/components/SingleChoiceQuestion';
 import McqQuestion from '../../../../../../src/components/McqQuestion';
 import BooleanQuestion from '../../../../../../src/components/BooleanQuestion';
+import api from '../../../../../../util/api';
+import { useGlobalSearchParams } from 'expo-router';
 
 
 // {
@@ -31,15 +33,35 @@ import BooleanQuestion from '../../../../../../src/components/BooleanQuestion';
 
 export default function Edit() {
 
+    const { classroomId, testId } = useGlobalSearchParams();
+
     const [allQuestions, setAllQuestions] = useState([]);
 
     const [isAddQuesModalVisible, setAddQuesModalVisible] = useState(false);
     const openAddQuesModal = () => setAddQuesModalVisible(true);
     const closeAddQuesModal = () => setAddQuesModalVisible(false);
 
-    function addQuestion(question) {
-        setAllQuestions([...allQuestions, question])
-        console.log(question)
+    useEffect(() => {
+
+        
+
+        const fetchQuestions = async function(){
+
+            console.log(classroomId , testId);
+
+            const questions = await getAllTestQuestion(classroomId, testId);
+            setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
+        }
+        fetchQuestions();        
+    },[]);
+
+
+    async function addQuestion(question) {
+        console.log(makeQuestionPayload(question))
+        const newQuestion = await createNewQuestion(makeQuestionPayload(question), classroomId, testId);
+        console.log(newQuestion)
+        if (!newQuestion) return;
+        setAllQuestions([...allQuestions, makeResultToQuestion(newQuestion)]);
     }
 
     function deleteQuestion(question) {
@@ -52,8 +74,8 @@ export default function Edit() {
                 {
                     allQuestions.length == 0 ? (
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
-                            <Pressable style={{ backgroundColor : Colors.primaryColor , padding : 16 , borderRadius : 8 }}  onPress={openAddQuesModal}>
-                                <Text style={{color : Colors.white}}  >Create New Question</Text>
+                            <Pressable style={{ backgroundColor: Colors.primaryColor, padding: 16, borderRadius: 8 }} onPress={openAddQuesModal}>
+                                <Text style={{ color: Colors.white }}  >Create New Question</Text>
                             </Pressable>
                         </View>
                     ) : (
@@ -71,6 +93,8 @@ export default function Edit() {
                                                 questionNumber={index + 1}
                                                 onEdit={openAddQuesModal}
                                                 onDelete={openAddQuesModal}
+                                                setAllQuestions={setAllQuestions}
+                                                allQuestions={allQuestions}
                                             />
                                         );
                                     case "MCQ":
@@ -82,9 +106,11 @@ export default function Edit() {
                                                 questionNumber={index + 1}
                                                 onEdit={openAddQuesModal}
                                                 onDelete={openAddQuesModal}
+                                                setAllQuestions={setAllQuestions}
+                                                allQuestions={allQuestions}
                                             />
                                         )
-                                    case 'BOOLEAN' : {
+                                    case 'BOOLEAN': {
                                         return (
                                             <BooleanQuestion
                                                 mode="edit"
@@ -93,6 +119,8 @@ export default function Edit() {
                                                 questionNumber={index + 1}
                                                 onEdit={openAddQuesModal}
                                                 onDelete={openAddQuesModal}
+                                                setAllQuestions={setAllQuestions}
+                                                allQuestions={allQuestions}
                                             />
                                         )
                                     }
@@ -162,3 +190,79 @@ const styles = StyleSheet.create({
         fontWeight: '900',
     },
 })
+
+
+async function createNewQuestion(question, classroomId, testId) {
+    try {
+        const result = await api.post('/api/tests/createQuestion', { ...question }, {
+            headers: {
+                "X-ClassroomId": classroomId,
+                "X-TestId": testId
+            }
+        })
+        if (result?.status == 200) {
+            console.log("question created successfully");
+            console.log(result.data);
+            return result.data;
+        } else {
+            console.log("can't create question");
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+
+function makeQuestionPayload(input) {
+    return {
+        marks: Number(input.question.marks),
+        questionText: input.question.questionText,
+        type: input.questionType,
+        options: input.options.map((opt, index) => ({
+            optionText: opt.optionText,
+            correct: opt.isCorrect,
+            optionMark: opt.mark ? Number(opt.mark) : 0
+        }))
+    };
+}
+
+
+function makeResultToQuestion(result) {
+    return {
+        question: {
+            questionId: result.id,
+            questionText: result.questionText,
+            marks: String(result.marks)
+        },
+        questionType: result.type,
+        options: result.options.map(opt => ({
+            optionText: opt.optionText,
+            isCorrect: opt.correct ? true : false,
+            mark: opt.optionMark ? String(opt.optionMark) : ""
+        }))
+    };
+}
+
+async function getAllTestQuestion(classroomId, testId) {
+    try {
+        const result = await api.get('/api/tests/getTestQuestions', {
+            headers: {
+                "X-ClassroomId": classroomId,
+                "X-TestId": testId
+            }
+        });
+
+        if (result?.status == 200) {
+            console.log(result.data);
+            console.log("questions fetched successfully");
+            return result.data;
+        } else {
+            console.log("can't fetch questions");
+            return [];
+        }
+    }catch(err){
+        console.log(err);
+        return [];
+    }   
+  }
