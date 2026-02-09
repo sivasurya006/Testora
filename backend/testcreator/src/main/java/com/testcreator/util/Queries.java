@@ -31,10 +31,10 @@ public class Queries {
 	/* ============ Users ===========*/
 	
 	// Create User
-	public static final String insertUser = "insert into Users (name,email,password) values (?,?,?)";
+	public static final String insertUser = "insert into Users (name,email,password_hash) values (?,?,?)";
 	
 	//read User
-	public static final String getUserPassword = "select password from Users where email = ?";
+	public static final String getUserPassword = "select password_hash from Users where email = ?";
 	public static final String getUserById = "select user_id, name, email, registered_at from Users where user_id = ?";
 	public static final String getUserByEmail = "select user_id, name, email, registered_at from Users where email = ?";
 	
@@ -58,8 +58,8 @@ public class Queries {
 	public static final String selectTestsByStatusWithLimit = "select * from Tests where classroom_id = ? and status = ? order by created_at desc limit ? ";
 	
 	// update Test
-	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximumAttempts = ? , status = 'published' where test_id = ?";
-	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximumAttempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?"; 
+	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximum_attempts = ? , status = 'published' where test_id = ?";
+	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximum_attempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?"; 
 	
 	// delete Test
 	public static final String deleteTest = "delete from Test where test_id =  ?";
@@ -91,7 +91,7 @@ public class Queries {
 	public static final String selectClassroomUser = "select u.user_id, u.name, u.email, u.registered_at , cu.joined_at , cu.classroom_id , cu.role from Users u join Classroom_Users cu on u.user_id = cu.user_id  where cu.classroom_id = ? and cu.user_id = ?";
 	
 //	======= getClassroom=========
-	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
+//	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
 	
 	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  and user_id = ? join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' group by c.classroom_id, c.name, u.name, c.created_at";
 } 

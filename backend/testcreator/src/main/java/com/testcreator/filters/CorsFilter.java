@@ -35,7 +35,7 @@ public class CorsFilter extends HttpFilter implements Filter {
 	    }
 
 	    response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, PATCH, DELETE, OPTIONS");
-	    response.setHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Client-Type, X-ClassroomId");
+	    response.setHeader("Access-Control-Allow-Headers","Content-Type, Authorization, X-Client-Type, X-ClassroomId, X-TestId, X-QuestionId");
 
 	    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
 	        response.setStatus(HttpServletResponse.SC_OK);

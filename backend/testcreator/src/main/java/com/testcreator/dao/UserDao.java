@@ -93,6 +93,7 @@ public class UserDao {
 			ps.setString(1, email);
 			try(ResultSet rs = ps.executeQuery()){
 				if(rs.next()) {
+					System.out.println("Exists");
 					return true;
 				}
 			}

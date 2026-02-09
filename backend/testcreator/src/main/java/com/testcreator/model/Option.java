@@ -3,9 +3,9 @@ package com.testcreator.model;
 public class Option {
 
 	private String optionText;
-	private int optionMark;
+	private Integer optionMark;
 	private int optionId;
-	private boolean correct;
+	private Boolean correct;
 	
 	public int getOptionId() {
 		return optionId;
@@ -13,10 +13,10 @@ public class Option {
 	public void setOptionId(int optionId) {
 		this.optionId = optionId;
 	}
-	public boolean isCorrect() {
+	public Boolean getCorrect() {
 		return correct;
 	}
-	public void setCorrect(boolean correct) {
+	public void setCorrect(Boolean correct) {
 		this.correct = correct;
 	}
 	public String getOptionText() {
@@ -25,10 +25,10 @@ public class Option {
 	public void setOptionText(String optionText) {
 		this.optionText = optionText;
 	}
-	public int getOptionMark() {
+	public Integer getOptionMark() {
 		return optionMark;
 	}
-	public void setOptionMark(int optionMark) {
+	public void setOptionMark(Integer optionMark) {
 		this.optionMark = optionMark;
 	}
 	@Override

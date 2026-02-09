@@ -26,6 +26,7 @@ create table Classroom_Users (
     user_id int,
     role enum ('tutor','student') not null,
     joined_at timestamp default current_timestamp,
+    unique_key varchar(255) not null,
 
     primary key (classroom_id, user_id),
 
