@@ -345,11 +345,6 @@ public class TestDao {
 			}
 		}
 	}
-<<<<<<< HEAD
-
-	public TestDto getTestQuestions(int testId, boolean showAnswers) throws SQLException {
-=======
->>>>>>> e092c5e632b983be09b6a160f4b45c6c691edfd2
 
 	public TestDto getTestQuestions(int testId, boolean showAnswers) throws SQLException {
 
