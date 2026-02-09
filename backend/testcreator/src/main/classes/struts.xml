@@ -235,7 +235,6 @@
 
 
 		<action name="getTestQuestions"
->>>>>>> e092c5e632b983be09b6a160f4b45c6c691edfd2
 			class="com.testcreator.actions.TestAction" method="fetchTestQuestion">
 
 			<result name="success" type="json">
