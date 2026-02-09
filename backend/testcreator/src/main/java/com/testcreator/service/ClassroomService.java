@@ -68,8 +68,6 @@ public class ClassroomService {
 	}
 	
 	public ClassroomDto getClassroom(int userId,int classroomId){
-
-          System.out.println(classroomDao.getClassroom(userId,classroomId));
 		return classroomDao.getClassroom(userId,classroomId);
 		
 

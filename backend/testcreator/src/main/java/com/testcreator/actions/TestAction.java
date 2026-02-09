@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.opensymphony.xwork2.ModelDriven;
@@ -23,7 +24,7 @@ import com.testcreator.service.AccessService;
 import com.testcreator.service.TestService;
 
 public class TestAction extends JsonApiAction implements ServletRequestAware, ModelDriven<QuestionDto> {
-	
+
 	private TestDto testDto;
 	private QuestionDto questionDto = new QuestionDto();
 	private SuccessDto successDto;
@@ -75,7 +76,9 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		context.setClasssroomId(classroomId);
 		context.setUserId(userId);
 		try {
+			
 			TestService testService = new TestService();
+			
 			if (limit > 0) {
 				if (status != null) {
 					System.out.println("Status :" + status);
@@ -88,7 +91,11 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 				} else {
 					this.allTests = testService.getAllTests(context, limit);
 				}
-			} else {
+				
+			} 
+			
+			else {
+				
 				if (status != null) {
 					System.out.println("Status :" + status);
 					try {
@@ -101,7 +108,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 					this.allTests = testService.getAllTests(context);
 				}
 			}
-			System.out.println(allTests);
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));
@@ -492,6 +498,27 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		System.out.println("execute ended");
 		setError(new ApiError("server error", 500));
 		return ERROR;
+	}
+
+	public String getTestCount() {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		try {
+			TestService testService = new TestService();
+			this.testDto = testService.getTestCount(userId);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			return LOGIN;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+
 	}
 
 	public TestDto getTestDto() {

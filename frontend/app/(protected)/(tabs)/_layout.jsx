@@ -12,7 +12,6 @@ export default function ProtectedLayout() {
 
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
-
     const authContext = useContext(AuthContext);
 
     if (authContext.isLoading) {
@@ -100,5 +99,8 @@ export default function ProtectedLayout() {
 
     )
 }
+
+
+
 
 

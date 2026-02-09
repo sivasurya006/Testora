@@ -3,6 +3,69 @@ import React from 'react'
 import { Tabs } from 'expo-router'
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"
 import Colors from '../../../../styles/Colors';
+<<<<<<< HEAD
+
+export default function _layout() {
+
+    
+
+    const {width} = useWindowDimensions();
+    const isLargeScreen =  width > 821;
+
+    return (
+        <Tabs
+            screenOptions={{
+                tabBarPosition: isLargeScreen ? 'left' : 'bottom',
+                tabBarStyle: Platform.select({
+                    web: {
+                        minWidth: 230,
+                        backgroundColor: Colors.secondaryColor,
+                    },
+                    android: {
+                        height: 60,
+                        backgroundColor: Colors.secondaryColor
+                    },
+                    ios: {
+                        height: 60,
+                        backgroundColor: Colors.secondaryColor
+                    }
+                }),
+                headerShown: false,
+                tabBarShowLabel : isLargeScreen,
+                tabBarActiveTintColor: Colors.primaryColor,
+                tabBarInactiveTintColor: Colors.white,
+                tabBarItemStyle: {
+                    paddingTop: 5
+                },
+                tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
+            }}
+        >
+            <Tabs.Screen name='dashboard' options={{
+                title: 'Dashboard' ,
+                tabBarIcon : ({color}) => (
+                    <MaterialCommunityIcons name="view-dashboard" size={24} color= {color} />
+                )
+            }} />
+            <Tabs.Screen name='test' options={{
+                title: 'Tests' ,
+                tabBarIcon : ({color}) => (
+                    <FontAwesome name="book" size={24} color={color}/>
+                )
+            }} />
+            <Tabs.Screen name='students' options={{
+                title: 'Students',
+                tabBarIcon : ({color}) => (
+                    <MaterialIcons name="groups" size={24} color={color} />
+                )
+            }} />
+            <Tabs.Screen name='settings' options={{
+                title: 'Settings' ,
+                tabBarIcon : ({color}) => (
+                    <Ionicons name="settings-sharp" size={24} color={color} />
+                )
+            }} />
+        </Tabs>
+=======
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ClassroomTabBar } from '../../../../src/components/ClassroomTobBar';
 
@@ -67,5 +130,6 @@ export default function ClassroomLayout() {
                 }} />
             </Tabs>
         </SafeAreaView>
+>>>>>>> e092c5e632b983be09b6a160f4b45c6c691edfd2
     )
 }
