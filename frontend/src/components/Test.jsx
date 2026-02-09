@@ -20,8 +20,20 @@ export default function Test({ data }) {
       params: {
         classroomId: data.classroomId, 
         testId: data.testId,
+        title: data.testTitle,
       },
     })
+  }
+
+  function handlePublish(){ 
+   console.log('publish')
+   router.push({
+      pathname: '/[classroomId]/(tabs)/test/[testId]/publish',
+      params: {
+        classroomId: data.classroomId, 
+        testId: data.testId,
+      },
+   }) 
   }
 
   return (
@@ -79,7 +91,7 @@ export default function Test({ data }) {
           </View>
 
           <View style={styles.btnContainer}>
-            <Pressable style={styles.btnInsideContainer}>
+            <Pressable style={styles.btnInsideContainer} onPress={handlePublish} >
               <Entypo name="paper-plane" size={20} color="black" />
               <Text>Publish</Text>
             </Pressable>

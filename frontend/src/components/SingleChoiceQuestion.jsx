@@ -5,7 +5,7 @@ import Colors from '../../styles/Colors'
 import QuestionRow from './QuestionRow';
 import MenuDropdown from './MenuDropdown';
 
-export default function SingleChoiceQuestion({mode,question,options,questionNumber,onEdit,onDelete}) {
+export default function SingleChoiceQuestion({mode,question,options,questionNumber,onEdit,onDelete, setAllQuestions , allQuestions}) {
     const [selected, setSelected] = useState(options.find((opt) => opt.isCorrect || null));
     const correctAnswer = options.find((opt) => opt.isCorrect )?.optionText || "Not given"
 
@@ -13,7 +13,7 @@ export default function SingleChoiceQuestion({mode,question,options,questionNumb
     if (mode === 'edit') {
         return (
             <View style={styles.container}>
-                <QuestionRow onDelete={onDelete} onEdit={onEdit} question={question} questionNumber={questionNumber}/>
+                <QuestionRow onDelete={onDelete} onEdit={onEdit} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions}  />
                 <View style={styles.answerRow}>
                     <MenuDropdown options={options} selected={selected} setSelected={setSelected} backgroundColor={Colors.white}/>
                     <View>

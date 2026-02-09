@@ -6,7 +6,7 @@ import { FontAwesome6 } from '@expo/vector-icons'
 
 export function ClassroomTabBar(props) {
     return (
-        <Pressable style={{ backgroundColor: Colors.secondaryColor }} onPress={() => router.push('/')}>
+        <View style={{ backgroundColor: Colors.secondaryColor }}>
             <View
                 style={{
                     height: 64,
@@ -19,11 +19,13 @@ export function ClassroomTabBar(props) {
                 }}
             >
                 {/* <FontAwesome6 name='school' size={22} color={Colors.white} style={{}} /> */}
-                <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
-                    Test Creator
-                </Text>
+                <Pressable onPress={() => router.push('/')}>
+                    <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
+                        Test Creator
+                    </Text>
+                </Pressable>
             </View>
             <BottomTabBar {...props} />
-        </Pressable>
+        </View>
     )
 }
