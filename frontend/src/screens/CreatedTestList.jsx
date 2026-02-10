@@ -25,16 +25,17 @@ export default function CreatedTestList({ filter }) {
   const onCreateTest = async () => {
     if (testName.trim().length === 0) return;
     const result = await handleCreateTest(classroomId, testName);
+    console.log("result ",result)
     if (result && filter != 'published') {
-      setCreatedTest([result,...allCreatedTests]);
       router.push({
-        pathname: '/[classroomId]/(tabs)/test/[testId]',
+        pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
         params: {
           classroomId: classroomId, 
           testId: result.testId,
-          title : testName,
+          title : result.testTitle,
         },
       })
+      setCreatedTest([result,...allCreatedTests]);
     }
     onCancelTest();
   }
@@ -68,7 +69,7 @@ export default function CreatedTestList({ filter }) {
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
-          <Test data={item} />
+          <Test allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
         )}
         ListEmptyComponent={
           <Text style={styles.emptyText}>No tests found</Text>

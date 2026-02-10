@@ -15,8 +15,7 @@ const api = axios.create({
 // console.log(api.interceptors)
 
 api.interceptors.request.use(async (config) => {
-    // console.log(config);
-
+   
     if (Platform.OS != 'web') {
         try {
             const token = await SecureStore.getItemAsync('token');

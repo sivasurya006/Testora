@@ -52,8 +52,10 @@ export default function Edit() {
             const questions = await getAllTestQuestion(classroomId, testId);
             setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
         }
-        fetchQuestions();        
-    },[]);
+        if(testId){
+            fetchQuestions();
+        }        
+    },[testId]);
 
 
     async function addQuestion(question) {
