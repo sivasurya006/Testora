@@ -52,7 +52,6 @@ export default function AuthContextProvider({ children }) {
 
     async function signUp(userName, userEmail, userPassword) {
         setLoading(true);
-        
         try {
             const res = await api.post('/signup', { userName, userEmail, userPassword }, {
                 headers: {
@@ -66,6 +65,7 @@ export default function AuthContextProvider({ children }) {
                 return { success: false, error: errorText };
             }
 
+            console.log("hi")
             // router.replace('/');
 
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
@@ -78,19 +78,16 @@ export default function AuthContextProvider({ children }) {
 
         } catch (err) {
             // TODO implement logger (sign up failed)
-            console.log("catch called")
+            console.log("catch calledd")
 
             if (err.status == 409) {
                 return { success: false, error: "User already exist", status: 409 };
             }
-
             return { success: false, error: err.message };
         } finally {
             setLoading(false)
         }
     }
-
-    
 
     async function signIn(userEmail, userPassword) {
 

@@ -121,7 +121,7 @@ export default function Test({ data }) {
 const styles = StyleSheet.create({
   wrapper: {
     marginVertical: 8,
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
   },
 
   card: {
