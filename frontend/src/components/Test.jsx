@@ -20,7 +20,6 @@ export default function Test({ data, allTests, setAllTests }) {
 
   const { classroomId } = useGlobalSearchParams();
 
-
   function handleEdit() {
     console.log('edit')
     router.push({

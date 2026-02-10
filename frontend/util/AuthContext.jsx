@@ -65,8 +65,7 @@ export default function AuthContextProvider({ children }) {
                 return { success: false, error: errorText };
             }
 
-            console.log("hi")
-            // router.replace('/');
+            router.replace('/');
 
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
@@ -104,7 +103,7 @@ export default function AuthContextProvider({ children }) {
                 return { success: false, error: errorText };
             }
 
-            // router.replace('/');
+            router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
@@ -121,10 +120,9 @@ export default function AuthContextProvider({ children }) {
     }
 
     function signOut() {
-        console.log("hi")
 
         setLoggedIn(false);
-        // router.replace('/signin');
+        router.replace('/signin');
     }
 
     return (

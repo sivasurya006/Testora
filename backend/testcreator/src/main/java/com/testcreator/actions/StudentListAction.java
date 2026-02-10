@@ -10,7 +10,7 @@ import com.testcreator.dto.ApiError;
 import com.testcreator.model.StudentList;
 import com.testcreator.service.StudentService;
 
-public class StudentAction extends JsonApiAction implements ServletContextAware {
+public class StudentListAction extends JsonApiAction implements ServletContextAware {
 
     private ServletContext servletContext;
 
