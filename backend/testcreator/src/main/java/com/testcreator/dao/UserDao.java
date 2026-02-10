@@ -60,7 +60,7 @@ public class UserDao {
 			getPassword.setString(1 ,email);
 			try(ResultSet rs = getPassword.executeQuery()){
 				if(rs.next()) {
-					return rs.getString("password");
+					return rs.getString("password_hash");
 				}
 			}
 		} catch (SQLException e) {

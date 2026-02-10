@@ -102,11 +102,11 @@ public class TestDto {
 		this.isTimedTest = isTimedTest;
 	}
 	
-	public int getDurationMinutes() {
+	public Integer getDurationMinutes() {
 		return durationMinutes;
 	}
 	
-	public void setDurationMinutes(int durationMinutes) {
+	public void setDurationMinutes(Integer durationMinutes) {
 		this.durationMinutes = durationMinutes;
 	}
 	

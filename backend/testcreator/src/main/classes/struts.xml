@@ -115,13 +115,13 @@
 			</result>
 		</action>
 
-		<action name="classroomdetail"
+		<action name="classroomcount"
 			class="com.testcreator.actions.TestAction" method="getTestCount">
 			<result name="success" type="json">
-				<param name="root">TestDto</param>
+				<param name="root">testDto</param>
 			</result>
 		</action>
-
+              
 
 	</package>
 
@@ -196,6 +196,24 @@
 			</result>
 		</action>
 
+		<action name="deleteTest"
+			class="com.testcreator.actions.TestAction" method="deleteTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+		
+		<action name="renameTest"
+			class="com.testcreator.actions.TestAction" method="renameTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
 		<action name="delete-option"
 			class="com.testcreator.actions.TestAction" method="deleteOption">
 			<result name="success" type="json">
@@ -214,15 +232,9 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-<<<<<<< HEAD
 
 
-		<action name="get-all-questions"
-=======
-		
-		
 		<action name="getTestQuestions"
->>>>>>> e092c5e632b983be09b6a160f4b45c6c691edfd2
 			class="com.testcreator.actions.TestAction" method="fetchTestQuestion">
 
 			<result name="success" type="json">

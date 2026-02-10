@@ -39,7 +39,7 @@ public class Queries {
 	public static final String getUserByEmail = "select user_id, name, email, registered_at from Users where email = ?";
 	
 	// update User
-	public static final String updateUserPassword = "update Users set password = ? where user_id = ?";
+	public static final String updateUserPassword = "update Users set password_hash = ? where user_id = ?";
 	public static final String updateUserName = "update Users set name = ? where user_id = ?";
 	
 	// delete User 
@@ -59,10 +59,11 @@ public class Queries {
 	
 	// update Test
 	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximum_attempts = ? , status = 'published' where test_id = ?";
-	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximum_attempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?"; 
+	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximum_attempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?";
+	public static final String renameTest = "update Tests set title = ? where test_id = ?";
 	
 	// delete Test
-	public static final String deleteTest = "delete from Test where test_id =  ?";
+	public static final String deleteTest = "delete from Tests where test_id =  ?";
 	
 	/*=========== Questions and Options ==============*/
 	
@@ -91,10 +92,9 @@ public class Queries {
 	public static final String selectClassroomUser = "select u.user_id, u.name, u.email, u.registered_at , cu.joined_at , cu.classroom_id , cu.role from Users u join Classroom_Users cu on u.user_id = cu.user_id  where cu.classroom_id = ? and cu.user_id = ?";
 	
 //	======= getClassroom=========
-<<<<<<< HEAD
-=======
+
 //	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
->>>>>>> e092c5e632b983be09b6a160f4b45c6c691edfd2
+
 	
 	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  left join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' where u.user_id=? and c.classroom_id=? group by c.classroom_id, c.name, u.name, c.created_at";
 	public static final String selectTestCount="select count(t.test_id) as testCount  from Tests t join Classrooms c on t.classroom_id=c.classroom_id join Users u on u.user_id=t.creator_id where t.creator_id=?";
