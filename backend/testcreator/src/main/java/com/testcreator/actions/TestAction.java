@@ -409,27 +409,38 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		System.out.println("validate called");
 		if (questionDto == null || questionDto.getQuestionText() == null || questionDto.getQuestionText().isBlank()) {
 			addFieldError("questionText", "Invalid question text");
+			System.out.println("qu txt error");
+		}
+		
+		if(questionDto.getId() <= 0) {
+			addFieldError("marks", "Invalid question id");
+			System.out.println("qu id error");
 		}
 
 		if (questionDto.getMarks() < 0) {
 			addFieldError("marks", "Invalid question marks");
+			System.out.println("qu mark error");
 		}
 
 		if (questionDto.getType() == null) {
 			addFieldError("type", "Invalid question type");
+			System.out.println("qu type error");
 		}
-
 		if (questionDto.getOptions() != null) {
+			
 			for (Option option : questionDto.getOptions()) {
 
 				if (option.getOptionId() < 0) {
 					addFieldError("options.optionId", "Invalid option id");
+					System.out.println("op id error");
 				}
 				if (option.getOptionText() == null || option.getOptionText().isBlank()) {
 					addFieldError("options.optionText", "Invalid option text");
+					System.out.println("op text error");
 				}
 				if (option.getOptionMark() < 0) {
 					addFieldError("options.optionMark", "Invalid option mark");
+					System.out.println("op mark error");
 				}
 			}
 		}
@@ -447,11 +458,12 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			Context context = new Context();
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 			boolean updated = testService.updateQuestion(context, questionDto);
 			if (updated) {
-				this.successDto = new SuccessDto("Option successfully updated", 200, updated);
+				this.successDto = new SuccessDto("Question successfully updated", 200, updated);
 			} else {
-				this.successDto = new SuccessDto("Option not updated", 422, updated);
+				this.successDto = new SuccessDto("Question not updated", 422, updated);
 			}
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
@@ -481,8 +493,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			TestService testService = new TestService();
 			System.out.println(classroomId + " " + userId + " " + testId);
 			this.testDto = testService.getAllTestQuestion(userId, classroomId, testId);
-			System.out.println(testDto.getQuestions());
-			System.out.println("execute success");
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));
