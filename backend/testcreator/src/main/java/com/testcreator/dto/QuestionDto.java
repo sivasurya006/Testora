@@ -11,12 +11,23 @@ public class QuestionDto {
 	private String questionText;
 	private List<Option> options;
 	private String testTitle;
+	private TestDto test;
 
 	public List<Option> getOptions() {
 		return options;
 	}
 	
-	
+	public TestDto getTest() {
+		return test;
+	}
+
+
+
+	public void setTest(TestDto test) {
+		this.test = test;
+	}
+
+
 
 	public String getTestTitle() {
 		return testTitle;

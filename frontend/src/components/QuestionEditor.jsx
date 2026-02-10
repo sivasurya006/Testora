@@ -16,6 +16,9 @@ const options = [
     { optionText: 'Matching', value: "MATCHING" }
 ]
 
+function getOptionIndex(type) {
+    return options.findIndex(opt => opt.value === type);
+}
 
 // {
 //     mode: "edit",
@@ -33,56 +36,61 @@ const options = [
 
 
 
-export default function QuestionEditor({ onConfirm, onCancel }) {
+export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuestion }) {
+
+    console.log('default question ', defaultQuestion)
 
     const [giveOptionMarks, setGiveOptionMarks] = useState(false);
-    const [selectedType, setSelectedType] = useState(options[0]);
+    const [selectedType, setSelectedType] = useState(mode === 'editQuestion' ?
+        getOptionIndex(defaultQuestion.type) : options[0]);
     const [questionText, setQuestionText] = useState("");
     const [questionMark, setQuestionMark] = useState(0);
     const [questionOptions, setQuestionOptions] = useState([]);
-    const [ error, setError ] = useState("");
+    const [error, setError] = useState("");
 
     const { width } = useWindowDimensions();
-    function validateInput(){
+    function validateInput() {
         setError("")
-        if(questionText.trim() === ""){
+        if (questionText.trim() === "") {
             setError("Question text cannot be empty");
             return false;
         }
-        if((selectedType.value === 'MCQ' || selectedType.value === 'SINGLE') && questionOptions.length < 2){
+        if ((selectedType.value === 'MCQ' || selectedType.value === 'SINGLE') && questionOptions.length < 2) {
             setError("At least 2 options are required for MCQ and Single choice questions");
             return false;
         }
-        if(questionOptions.filter(opt => opt.optionText.trim() !== "").length == 0){
+        if (questionOptions.filter(opt => opt.optionText.trim() !== "").length == 0) {
             setError("Option text cannot be empty");
             return false;
         }
-        if(( selectedType.value === 'MCQ' || selectedType.value === 'SINGLE') && questionOptions.find(opt => opt.isCorrect) === undefined){
+        if ((selectedType.value === 'MCQ' || selectedType.value === 'SINGLE') && questionOptions.find(opt => opt.correct) === undefined) {
             setError("At least one correct option must be selected for MCQ and Single choice questions");
             return false;
         }
-        if(questionOptions.find(opt => opt.isCorrect) === undefined){
+        if (questionOptions.find(opt => opt.correct) === undefined) {
             setError("At least one correct option must be selected");
             return false;
         }
-        if(questionOptions.find(opt => opt.isCorrect).optionText.trim() === ""){
+        if (questionOptions.find(opt => opt.correct).optionText.trim() === "") {
             setError("Correct option text cannot be empty");
             return false;
         }
-        if(selectedType.value === 'BOOLEAN' && questionOptions.find(opt => opt.isCorrect) === undefined){
-            setError("Correct answer must be selected for Boolean questions");  
+        if (selectedType.value === 'BOOLEAN' && questionOptions.find(opt => opt.correct) === undefined) {
+            setError("Correct answer must be selected for Boolean questions");
             return false;
         }
         return true;
     }
 
+    const isEditMode = mode === 'editQuestion';
+    defaultQuestion = isEditMode ? defaultQuestion : {};
     return (
         <View style={[styles.modalContainer, width > 861 && { maxWidth: 800, margin: 'auto', width: '100%' }]}>
             <View style={styles.modalContent}>
 
 
                 <View style={styles.modalHeader}>
-                    <Text style={styles.modalHeadText} >New Question</Text>
+                    <Text style={styles.modalHeadText} >{isEditMode ? 'Edit ' : "New "} Question</Text>
                 </View>
                 <View>
                     <View style={styles.questionTypeModal} >
@@ -90,11 +98,17 @@ export default function QuestionEditor({ onConfirm, onCancel }) {
                             <View>
                                 <MenuDropdown options={options} backgroundColor={Colors.white} selected={selectedType} setSelected={setSelectedType} />
                             </View>
-                            <LabeledInput onChangeText={setQuestionMark} label={'Marks : '} placeholder={'0'} customInputStyles={{ width: 50 }} inputType={'numeric'} />
+                            <LabeledInput onChangeText={setQuestionMark} label={'Marks : '} placeholder={'0'}
+                                customInputStyles={{ width: 50 }}
+                                inputType={'numeric'}
+                                defaultValue={isEditMode ? String(defaultQuestion.marks) : "0"}
+                            />
                         </View>
                     </View>
                     <View>
-                        <LabeledTextArea onChangeText={setQuestionText} placeholder={'Type here'} label={'Question : '} isFillBlank={selectedType.value === 'FILL_BLANKS'} />
+                        <LabeledTextArea onChangeText={setQuestionText} placeholder={'Type here'} label={'Question : '}
+                            defaultValue={isEditMode ? defaultQuestion.questionText : ""}
+                            isFillBlank={selectedType.value === 'FILL_BLANKS'} />
                     </View>
                     <ScrollView
                         showsVerticalScrollIndicator={false}
@@ -106,19 +120,19 @@ export default function QuestionEditor({ onConfirm, onCancel }) {
                                 switch (selectedType.value) {
                                     case 'MCQ':
                                         return (
-                                            <MCQComponent options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
+                                            <MCQComponent defaultOptions={defaultQuestion.options} options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
                                         );
                                     case 'SINGLE':
                                         return (
-                                            <SingleComponent options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
+                                            <SingleComponent  defaultOptions={defaultQuestion.options} options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
                                         );
                                     case 'BOOLEAN':
                                         return (
-                                            <BooleanComponent options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
+                                            <BooleanComponent defaultOptions={defaultQuestion.options} options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
                                         );
                                     default:
                                         return (
-                                            <FillBlankComponent options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
+                                            <FillBlankComponent defaultOptions={defaultQuestion.options}  options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
                                         );
                                 }
                             })()
@@ -137,7 +151,7 @@ export default function QuestionEditor({ onConfirm, onCancel }) {
                     {
                         error !== "" && (
                             <View>
-                                <Text style={{ color: 'red' , textAlign :'center' }}>{error}</Text>
+                                <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
                             </View>
                         )
                     }
@@ -160,7 +174,7 @@ export default function QuestionEditor({ onConfirm, onCancel }) {
                             }
                         }
                         }>
-                            <Text style={{ color: Colors.white }}>Add Question</Text>
+                            <Text style={{ color: Colors.white }}>{isEditMode ? 'Update ' : 'Add '} Question</Text>
                         </Pressable>
                     </View>
                 </View>

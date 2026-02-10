@@ -1,10 +1,10 @@
 import { Pressable, StyleSheet, Text, View, TextInput, FlatList, Platform } from 'react-native'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Colors from "../../styles/Colors"
 import { AntDesign } from "react-native-vector-icons"
 import InputModal from "../components/modals/InputModal"
 import api from "../../util/api";
-import { router, useGlobalSearchParams } from 'expo-router'
+import { router, useFocusEffect, useGlobalSearchParams } from 'expo-router'
 import Test from '../components/Test'
 
 export default function CreatedTestList({ filter }) {
@@ -18,9 +18,11 @@ export default function CreatedTestList({ filter }) {
 
   const { classroomId } = useGlobalSearchParams();
 
-  useEffect(() => {
-    getAllCreatedTests(setCreatedTest, classroomId, filter)
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      getAllCreatedTests(setCreatedTest, classroomId, filter);
+    }, [classroomId, filter])
+  );
 
   const onCreateTest = async () => {
     if (testName.trim().length === 0) return;
@@ -66,7 +68,7 @@ export default function CreatedTestList({ filter }) {
 
       <FlatList
         data={allCreatedTests}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => item.testId.toString()}
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
           <Test allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />

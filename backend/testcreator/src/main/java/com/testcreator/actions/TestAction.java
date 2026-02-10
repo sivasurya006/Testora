@@ -46,11 +46,11 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			setError(new ApiError("Invalid test title", 400));
 			return INPUT;
 		}
-		
+
 		Context context = new Context();
 		context.setClasssroomId(classroomId);
 		context.setUserId(userId);
-		
+
 		try {
 			TestService testService = new TestService();
 			this.testDto = testService.createNewTest(context, testTitle);
@@ -76,9 +76,9 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		context.setClasssroomId(classroomId);
 		context.setUserId(userId);
 		try {
-			
+
 			TestService testService = new TestService();
-			
+
 			if (limit > 0) {
 				if (status != null) {
 					System.out.println("Status :" + status);
@@ -91,11 +91,11 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 				} else {
 					this.allTests = testService.getAllTests(context, limit);
 				}
-				
-			} 
-			
+
+			}
+
 			else {
-				
+
 				if (status != null) {
 					System.out.println("Status :" + status);
 					try {
@@ -150,8 +150,8 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 				}
 			}
 		}
-		
-		if(hasFieldErrors()) {
+
+		if (hasFieldErrors()) {
 			System.out.println("fieald errors");
 		}
 
@@ -211,7 +211,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		}
 		try {
 			TestService testService = new TestService();
-			this.questionDto = testService.getQuestionWithOption(userId, classroomId,userId);
+			this.questionDto = testService.getQuestionWithOption(userId, classroomId, questionId);
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));
@@ -257,7 +257,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
 			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
-			boolean deleted = testService.deleteQuestion(context,questionId);
+			boolean deleted = testService.deleteQuestion(context, questionId);
 			if (deleted) {
 				this.successDto = new SuccessDto("Question successfully deleted", 200, deleted);
 			} else {
@@ -280,7 +280,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		return ERROR;
 
 	}
-	
+
 	public String deleteTest() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
@@ -308,13 +308,12 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
-		
+
 	}
 
-	
 	public String renameTest() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
@@ -322,18 +321,18 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		Context context = new Context();
 		context.setClasssroomId(classroomId);
 		context.setUserId(userId);
-		
+
 		String newName = questionDto.getTestTitle();
-		
-		if(newName == null || newName.isBlank()) {
+
+		if (newName == null || newName.isBlank()) {
 			setError(new ApiError("Invalid name ", 400));
 			return INPUT;
 		}
-		
+
 		try {
 			TestService testService = new TestService();
 			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
-			boolean deleted = testService.renameTest(testId,newName);
+			boolean deleted = testService.renameTest(testId, newName);
 			if (deleted) {
 				this.successDto = new SuccessDto("Test renamed successfully", 200, deleted);
 			} else {
@@ -350,12 +349,12 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
-		
+
 	}
-	
+
 	public String deleteOption() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
@@ -382,7 +381,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			Context context = new Context();
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
-			boolean deleted = testService.deleteOption(userId, context,optionId);
+			boolean deleted = testService.deleteOption(userId, context, optionId);
 			if (deleted) {
 				this.successDto = new SuccessDto("Option successfully deleted", 200, deleted);
 			} else {
@@ -448,7 +447,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			Context context = new Context();
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
-			boolean updated = testService.updateQuestion(context,questionDto);
+			boolean updated = testService.updateQuestion(context, questionDto);
 			if (updated) {
 				this.successDto = new SuccessDto("Option successfully updated", 200, updated);
 			} else {
@@ -480,8 +479,8 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 		try {
 			TestService testService = new TestService();
-			System.out.println(classroomId+" "+userId+" "+testId);
-			this.testDto = testService.getAllTestQuestion(userId, classroomId,testId);
+			System.out.println(classroomId + " " + userId + " " + testId);
+			this.testDto = testService.getAllTestQuestion(userId, classroomId, testId);
 			System.out.println(testDto.getQuestions());
 			System.out.println("execute success");
 			return SUCCESS;
@@ -500,6 +499,90 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		return ERROR;
 	}
 
+	public void validatePublishTest() {
+		if (questionDto == null || questionDto.getTest() == null) {
+			addFieldError("test", "Invalid test details");
+			return;
+		}
+	
+		this.testDto = questionDto.getTest();
+		System.out.println(testDto.getTimedTest());
+		if (testDto.getTimedTest() == null ||  ( testDto.getTimedTest() && testDto.getDurationMinutes() <= 0) ) {
+			addFieldError("test.durationMinutes", "Invalid duration minutes");
+			return;
+		}
+
+		if (testDto.getMaximumAttempts() < 0) {
+			addFieldError("test.maximumAttempts", "Invalid attempts count");
+		}
+		
+	}
+
+	public String publishTest() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			TestService testService = new TestService();
+			testDto.setTestId(testId);
+			boolean published = testService.publishTest(testDto);
+			if (published) {
+				this.successDto = new SuccessDto("Test Published successfully", 200, published);
+			} else {
+				this.successDto = new SuccessDto("Test not published", 422, published);
+			}	
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+
+	public String unPublishTest() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			TestService testService = new TestService();
+			boolean unPublished = testService.unPublishTest(testId);
+			if (unPublished) {
+				this.successDto = new SuccessDto("Test unPublished successfully", 200, unPublished);
+			} else {
+				this.successDto = new SuccessDto("Test not unPublished", 422, unPublished);
+			}	
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+	
 	public String getTestCount() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
@@ -507,6 +590,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		try {
 			TestService testService = new TestService();
 			this.testDto = testService.getTestCount(userId);
+			System.out.println(testDto.getTestCount());
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));

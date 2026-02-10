@@ -33,6 +33,14 @@ public class TestService {
 		return testDao.createTest(context.getClasssroomId(), context.getUserId(), title);
 	}
 	
+	public boolean publishTest(TestDto testDto) throws SQLException {
+		return testDao.publishTest(testDto);
+	}
+	
+	public boolean unPublishTest(int testId) throws SQLException {
+		return testDao.unPublishTest(testId);
+	}
+	
 	public List<TestDto> getAllTests(Context context,int limit) throws SQLException{
 		new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 		return testDao.getAllTests(context.getClasssroomId(),limit);

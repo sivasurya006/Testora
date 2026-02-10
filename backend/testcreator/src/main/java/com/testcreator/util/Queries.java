@@ -59,9 +59,9 @@ public class Queries {
 	
 	// update Test
 	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximum_attempts = ? , status = 'published' where test_id = ?";
-	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ? , duration_minutes = ? , maximum_attempts = ?  , is_timed = 1  , status = 'published'  where test_id = ?";
+	public static final String updateTestOptionsAndPublish_Timed = "update Tests set correction_type = ?  , maximum_attempts = ? , duration_minutes = ? , is_timed = 1  , status = 'published'  where test_id = ?";
 	public static final String renameTest = "update Tests set title = ? where test_id = ?";
-	
+	public static final String unPublishTest = "update Tests set status='draft' where test_id = ?";
 	// delete Test
 	public static final String deleteTest = "delete from Tests where test_id =  ?";
 	
@@ -83,7 +83,7 @@ public class Queries {
 	
 	
 	public static final String updateQuestion = "update Questions set question_text = ? , type = ? , marks = ? where question_id = ?";
-	public static final String getAllQuestionsWithOptions = "select * from Tests t left join Questions q on t.test_id = q.test_id left join Options o on q.question_id = o.question_id where t.test_id = ?";
+	public static final String getAllQuestionsWithOptions = "select * from Questions q left join Options o on q.question_id = o.question_id where q.test_id = ?";
 	
 	public static final String updateOptions = "update Options set option_text = ?, is_correct = ? , option_mark = ? where option_id = ?";
 	

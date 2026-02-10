@@ -4,7 +4,7 @@ import { Checkbox, IconButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 
-export default function McqQuestion({ mode, question, options, questionNumber, onEdit, onDelete , setAllQuestions , allQuestions }) {
+export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions , allQuestions }) {
 
     const [checked, setChecked] = useState([]);
 
@@ -21,7 +21,7 @@ export default function McqQuestion({ mode, question, options, questionNumber, o
 
         return (
             <View style={styles.container}>
-                <QuestionRow onDelete={onDelete} onEdit={onEdit} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions}/>
+                <QuestionRow question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions}/>
                 <View style={styles.optionsList}>
                     {options.map((opt, i) => {
                         const isChecked = checked.includes(opt);

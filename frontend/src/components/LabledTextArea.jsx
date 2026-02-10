@@ -1,7 +1,10 @@
 import { Text, StyleSheet, TextInput } from 'react-native';
 import React from 'react';
 
-export default function LabeledTextArea({label, placeholder, onChangeText, numberOfLines = 1, customInputStyles, customTextStyles,isFillBlank = false}) {
+export default function LabeledTextArea({label, placeholder, onChangeText, numberOfLines = 1, customInputStyles, 
+  customTextStyles,isFillBlank = false,
+  defaultValue
+  }) {
   return (
     <>
       <Text style={[styles.label, customTextStyles]}>
@@ -13,6 +16,7 @@ export default function LabeledTextArea({label, placeholder, onChangeText, numbe
         onChangeText={text => onChangeText(text)}
         numberOfLines={numberOfLines}
         placeholder={placeholder}
+        defaultValue={defaultValue}
       />
     </>
   );

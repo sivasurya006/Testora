@@ -55,7 +55,7 @@ export default function Dashboard() {
       });
       if (res.status === 200) {
         setStates(res.data);
-        console.log(res.data,"dtata")
+        console.log(res.data)
 
       }
     } catch (err) {
@@ -70,7 +70,6 @@ export default function Dashboard() {
       });
       if (res.status === 200) {
         setTests(res.data);
-        console.log(res.data, "tsests")
       }
     } catch (err) {
       console.log(err);

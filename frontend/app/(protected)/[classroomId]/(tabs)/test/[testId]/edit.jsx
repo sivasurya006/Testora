@@ -36,29 +36,12 @@ export default function Edit() {
     const { classroomId, testId } = useGlobalSearchParams();
 
     const [allQuestions, setAllQuestions] = useState([]);
-
     const [isAddQuesModalVisible, setAddQuesModalVisible] = useState(false);
     const openAddQuesModal = () => setAddQuesModalVisible(true);
     const closeAddQuesModal = () => setAddQuesModalVisible(false);
 
-    useEffect(() => {
-
-        
-
-        const fetchQuestions = async function(){
-
-            console.log(classroomId , testId);
-
-            const questions = await getAllTestQuestion(classroomId, testId);
-            setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
-        }
-        if(testId){
-            fetchQuestions();
-        }        
-    },[testId]);
-
-
     async function addQuestion(question) {
+        console.log('question to add ', question)
         console.log(makeQuestionPayload(question))
         const newQuestion = await createNewQuestion(makeQuestionPayload(question), classroomId, testId);
         console.log(newQuestion)
@@ -66,9 +49,15 @@ export default function Edit() {
         setAllQuestions([...allQuestions, makeResultToQuestion(newQuestion)]);
     }
 
-    function deleteQuestion(question) {
-        setAllQuestions(allQuestions.filter(ques => ques !== question));
-    }
+    useEffect(() => {
+        const fetchQuestions = async function () {
+            const questions = await getAllTestQuestion(classroomId, testId);
+            setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
+        }
+        if (testId) {
+            fetchQuestions();
+        }
+    }, [testId]);
 
     return (
         <View style={styles.container}>
@@ -93,8 +82,6 @@ export default function Edit() {
                                                 question={item.question}
                                                 options={item.options}
                                                 questionNumber={index + 1}
-                                                onEdit={openAddQuesModal}
-                                                onDelete={openAddQuesModal}
                                                 setAllQuestions={setAllQuestions}
                                                 allQuestions={allQuestions}
                                             />
@@ -106,8 +93,6 @@ export default function Edit() {
                                                 question={item.question}
                                                 options={item.options}
                                                 questionNumber={index + 1}
-                                                onEdit={openAddQuesModal}
-                                                onDelete={openAddQuesModal}
                                                 setAllQuestions={setAllQuestions}
                                                 allQuestions={allQuestions}
                                             />
@@ -119,8 +104,6 @@ export default function Edit() {
                                                 question={item.question}
                                                 options={item.options}
                                                 questionNumber={index + 1}
-                                                onEdit={openAddQuesModal}
-                                                onDelete={openAddQuesModal}
                                                 setAllQuestions={setAllQuestions}
                                                 allQuestions={allQuestions}
                                             />
@@ -193,6 +176,45 @@ const styles = StyleSheet.create({
     },
 })
 
+async function getAllTestQuestion(classroomId, testId) {
+    try {
+        const result = await api.get('/api/tests/getTestQuestions', {
+            headers: {
+                "X-ClassroomId": classroomId,
+                "X-TestId": testId
+            }
+        });
+
+        if (result?.status == 200) {
+            console.log(result.data);
+            console.log("questions fetched successfully");
+            return result.data;
+        } else {
+            console.log("can't fetch questions");
+            return [];
+        }
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
+}
+
+function makeResultToQuestion(result) {
+    return {
+        question: {
+            questionId: result.id,
+            questionText: result.questionText,
+            marks: String(result.marks)
+        },
+        questionType: result.type,
+        options: result.options.map(opt => ({
+            optionId: opt.optionId,
+            optionText: opt.optionText,
+            isCorrect: opt.correct ? true : false,
+            mark: opt.optionMark ? String(opt.optionMark) : ""
+        }))
+    };
+}
 
 async function createNewQuestion(question, classroomId, testId) {
     try {
@@ -217,54 +239,15 @@ async function createNewQuestion(question, classroomId, testId) {
 
 
 function makeQuestionPayload(input) {
-    return {
+    const payload = {
         marks: Number(input.question.marks),
         questionText: input.question.questionText,
         type: input.questionType,
-        options: input.options.map((opt, index) => ({
+        options: input.options.map((opt) => ({
             optionText: opt.optionText,
-            correct: opt.isCorrect,
-            optionMark: opt.mark ? Number(opt.mark) : 0
+            correct: opt.correct ? true : false,
+            optionMark: opt.optionMark ? Number(opt.mark) : 0
         }))
     };
+    return payload
 }
-
-
-function makeResultToQuestion(result) {
-    return {
-        question: {
-            questionId: result.id,
-            questionText: result.questionText,
-            marks: String(result.marks)
-        },
-        questionType: result.type,
-        options: result.options.map(opt => ({
-            optionText: opt.optionText,
-            isCorrect: opt.correct ? true : false,
-            mark: opt.optionMark ? String(opt.optionMark) : ""
-        }))
-    };
-}
-
-async function getAllTestQuestion(classroomId, testId) {
-    try {
-        const result = await api.get('/api/tests/getTestQuestions', {
-            headers: {
-                "X-ClassroomId": classroomId,
-                "X-TestId": testId
-            }
-        });
-
-        if (result?.status == 200) {
-            console.log(result.data);
-            console.log("questions fetched successfully");
-            return result.data;
-        } else {
-            console.log("can't fetch questions");
-            return [];
-        }
-    }catch(err){
-        console.log(err);
-        return [];
-    }   
-  }
