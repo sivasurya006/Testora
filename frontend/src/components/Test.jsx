@@ -15,8 +15,10 @@ export default function Test({ data, allTests, setAllTests }) {
   const closeMenu = () => setMenuVisible(false);
   const { width } = useWindowDimensions();
   const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
-  const [ isInputModalVisible, setInputModalVisible] = useState(false);
-  const [ newTestName, setNewTestName] = useState(""); 
+  const [isInputModalVisible, setInputModalVisible] = useState(false);
+  const [newTestName, setNewTestName] = useState("");
+
+  const isPublished = data.status === 'PUBLISHED';
 
   const { classroomId } = useGlobalSearchParams();
 
@@ -39,22 +41,35 @@ export default function Test({ data, allTests, setAllTests }) {
       params: {
         classroomId: data.classroomId,
         testId: data.testId,
+        test: data.testTitle
       },
     })
   }
 
-   async function handleRename() {
-    if(newTestName.trim().length == 0) return;
-    const success = await renameTest(classroomId,data.testId,newTestName);
-    if(success){
+  async function handleRename() {
+    if (newTestName.trim().length == 0) return;
+    const success = await renameTest(classroomId, data.testId, newTestName);
+    if (success) {
       setAllTests(allTests.map(test => {
-        if( test.testId == data.testId){
-            test.testTitle = newTestName;
+        if (test.testId == data.testId) {
+          test.testTitle = newTestName;
         }
         return test;
       }));
     }
     setInputModalVisible(false);
+  }
+
+  async function handleUnPublish() {
+    const success = await unPublishTest(classroomId, data.testId);
+    if (success) {
+      setAllTests(allTests.map(test => {
+        if (test.testId == data.testId) {
+          test.status = 'DRAFT';
+        }
+        return test;
+      }));
+    }
   }
 
   async function handleDelete() {
@@ -75,9 +90,9 @@ export default function Test({ data, allTests, setAllTests }) {
           <Ionicons name='clipboard-outline' size={20} color={Colors.primaryColor} />
           <Text onPress={handleEdit} style={styles.title}>{data.testTitle}</Text>
 
-          {data.status === "DRAFT" && (
+          {(
             <View style={styles.draftBadge}>
-              <Text style={styles.draftText}>Draft</Text>
+              <Text style={styles.draftText}>{data.status === "DRAFT" ? 'Draft' : 'Published'}</Text>
             </View>
           )}
           <Menu
@@ -102,29 +117,37 @@ export default function Test({ data, allTests, setAllTests }) {
         </View>
 
         <View style={styles.infoRow}>
-          <View style={styles.infoItem}>
-            <MaterialCommunityIcons name="timer-outline" size={16} />
-            <Text style={styles.infoText}>
-              {data.timedTest ? `${data.durationMinutes} min` : 'Untimed'}
-            </Text>
-          </View>
+          <View style={[styles.infoRow, { width: 280 }]}>
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons name="timer-outline" size={16} />
+              <Text style={styles.infoText}>
+                {data.timedTest ? `${data.durationMinutes} min` : 'Untimed'}
+              </Text>
+            </View>
 
-          <View style={styles.infoItem}>
-            <Feather name="repeat" size={16} />
-            <Text style={styles.infoText}>
-              {data.maximumAttempts == 0 ? 'Unlimited' : data.maximumAttempts}
-            </Text>
-          </View>
+            <View style={styles.infoItem}>
+              <Feather name="repeat" size={16} />
+              <Text style={styles.infoText}>
+                {data.maximumAttempts == 0 ? 'Unlimited' : data.maximumAttempts}
+              </Text>
+            </View>
 
-          <View style={styles.infoItem}>
-            <MaterialCommunityIcons name="check-decagram-outline" size={16} />
-            <Text style={styles.infoText}>{data.correctionMethod}</Text>
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons name="check-decagram-outline" size={16} />
+              <Text style={styles.infoText}>{data.correctionMethod}</Text>
+            </View>
           </View>
 
           <View style={styles.btnContainer}>
-            <Pressable style={styles.btnInsideContainer} onPress={handlePublish} >
-              <Entypo name="paper-plane" size={20} color="black" />
-              <Text>Publish</Text>
+            <Pressable style={styles.btnInsideContainer} onPress={ isPublished ? handleUnPublish : handlePublish} >
+              {
+                data.status == 'DRAFT' ? (
+                  <Entypo name="paper-plane" size={20} color="black" />
+                ) :  (
+                  <Entypo name="back-in-time" size={20} color="black" />
+                )
+              }              
+              <Text> {data.status == 'DRAFT' ? 'Publish' : 'Un publish'} </Text>
             </Pressable>
           </View>
 
@@ -155,7 +178,7 @@ export default function Test({ data, allTests, setAllTests }) {
           {
             isInputModalVisible ? (
               <InputModal
-                defaultValue={data.testTitle} 
+                defaultValue={data.testTitle}
                 placeholder={'New test name'}
                 onValueChange={setNewTestName}
                 onConfirm={handleRename}
@@ -192,6 +215,27 @@ async function deleteTest(classroomId, testId) {
   return false;
 }
 
+async function unPublishTest(classroomId,testId){
+    try {
+      const result = await api.patch(`/api/tests/unPublishTest`, {
+      }, {
+        headers: {
+          'X-ClassroomId': classroomId,
+          'X-TestId': testId,
+        },
+      });
+      if (result.status === 200) {
+        console.log('Test unpublished successfully');
+        return true;
+      } else {
+        console.log('Failed to unpublish test');
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+}
 
 async function renameTest(classroomId, testId, newTitle) {
 
@@ -209,7 +253,7 @@ async function renameTest(classroomId, testId, newTitle) {
     if (result.status == 200 && result.data.success) {
       console.log('test renamed successfully');
       return result.data.success;
-    }else{
+    } else {
       console.log('test not renamed');
     }
   } catch (err) {
@@ -280,11 +324,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bgColor
   },
   btnContainer: {
-    // marginLeft: 'auto',
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderWidth: 0.5,
-    width: 120,
+    width: 130,
     alignItems: 'center',
     justifyContent: 'center',
   },

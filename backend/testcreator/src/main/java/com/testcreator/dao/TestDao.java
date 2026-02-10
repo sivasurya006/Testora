@@ -56,16 +56,41 @@ public class TestDao {
 			}
 		}
 	}
-	
-	public boolean deleteTest(int testId) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.deleteTest)){
-			ps.setInt(1, testId);
-		 	return ps.executeUpdate() > 0;
+
+	public boolean publishTest(TestDto input) throws SQLException {
+		boolean isTimed = input.getTimedTest() != null && input.getTimedTest();
+		
+		String query = isTimed ? Queries.updateTestOptionsAndPublish_Timed
+				: Queries.updateTestOptionsAndPublish_NotTimed;
+		
+		try(PreparedStatement ps = connection.prepareStatement(query)){
+			ps.setString(1, input.getCorrectionMethod().name().toLowerCase());
+			ps.setInt(2, input.getMaximumAttempts());
+			if(isTimed) {
+				ps.setInt(3, input.getDurationMinutes());
+			}
+			ps.setInt( isTimed ? 4 : 3, input.getTestId());
+			return ps.executeUpdate() == 1;
 		}
 	}
 	
-	public boolean renameTest(int testId,String newName) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.renameTest)){
+	
+	public boolean unPublishTest(int testId) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.unPublishTest)){
+			ps.setInt(1, testId);
+			return ps.executeUpdate() == 1;
+ 		}
+	}
+
+	public boolean deleteTest(int testId) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement(Queries.deleteTest)) {
+			ps.setInt(1, testId);
+			return ps.executeUpdate() > 0;
+		}
+	}
+
+	public boolean renameTest(int testId, String newName) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement(Queries.renameTest)) {
 			ps.setString(1, newName);
 			ps.setInt(2, testId);
 			return ps.executeUpdate() == 1;
@@ -191,15 +216,15 @@ public class TestDao {
 					questionDto.setQuestionText(questionText);
 					questionDto.setType(type);
 					if (options != null) {
-						switch (questionDto.getType()) {						
-						case SINGLE : 
-						case MCQ : 
-						case BOOLEAN : {
+						switch (questionDto.getType()) {
+						case SINGLE:
+						case MCQ:
+						case BOOLEAN: {
 							questionDto.setOptions(createNewOptions(questionId, options));
 							break;
 						}
 						default:
-							throw new IllegalArgumentException("Unexpected value: " + questionDto.getType()) ;
+							throw new IllegalArgumentException("Unexpected value: " + questionDto.getType());
 						}
 					}
 				} else {
@@ -213,7 +238,7 @@ public class TestDao {
 
 	public QuestionDto getQuestionBtId(int questionId, boolean showAnswers) throws SQLException {
 		QuestionDto questionDto = null;
-
+		System.out.println(questionId+" "+showAnswers);
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getQuestionWtthOptionsByQuestionId)) {
 			ps.setInt(1, questionId);
 			try (ResultSet rs = ps.executeQuery()) {
@@ -348,15 +373,12 @@ public class TestDao {
 
 	public TestDto getTestQuestions(int testId, boolean showAnswers) throws SQLException {
 
-		
-		
 		TestDto testDto = null;
-		
 
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getAllQuestionsWithOptions)) {
 
-			System.out.println(testId+" test Id");
-			
+			System.out.println(testId + " test Id");
+
 			ps.setInt(1, testId);
 
 			try (ResultSet rs = ps.executeQuery()) {
@@ -364,10 +386,6 @@ public class TestDao {
 				Map<Integer, QuestionDto> questionMap = new LinkedHashMap<>();
 
 				while (rs.next()) {
-					
-					
-
-					// ---------- Test ----------
 					if (testDto == null) {
 						testDto = new TestDto();
 						if (!showAnswers) {
@@ -376,33 +394,11 @@ public class TestDao {
 								throw new UnauthorizedException("Test is not published");
 							}
 						}
-						testDto.setTestId(rs.getInt("test_id"));
-						testDto.setClassroomId(rs.getInt("classroom_id"));
-						testDto.setTestTitle(rs.getString("title"));
-						testDto.setCreatedAt(rs.getTimestamp("created_at").getTime());
-						testDto.setTimedTest(rs.getBoolean("is_timed"));
-						testDto.setDurationMinutes(rs.getInt("duration_minutes"));
-						testDto.setMaximumAttempts(rs.getInt("maximum_attempts"));
-						if (showAnswers) {
-							testDto.setStatus(TestStatus.valueOf(rs.getString("status").toUpperCase()));
-							testDto.setCorrectionMethod(
-									CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
-						}
-
 						testDto.setQuestions(new LinkedList<>());
 					}
-					
-					System.out.println(testDto.getTestTitle());
-
 					int questionId = rs.getInt("question_id");
-
-					System.out.println("Hello "+questionId);
-					
 					if (questionId > 0) {
-						
-						// ---------- Question ----------
 						QuestionDto questionDto = questionMap.get(questionId);
-
 						if (questionDto == null) {
 							questionDto = new QuestionDto();
 							questionDto.setId(questionId);
@@ -410,19 +406,19 @@ public class TestDao {
 							questionDto.setMarks(rs.getInt("marks"));
 							questionDto.setType(QuestionType.valueOf(rs.getString("type").toUpperCase()));
 							questionDto.setOptions(new LinkedList<>());
-
 							questionMap.put(questionId, questionDto);
 							testDto.getQuestions().add(questionDto);
 						}
-
-						// ---------- Option ----------
 						int optionId = rs.getInt("option_id");
 						if (optionId > 0) {
 							Option option = new Option();
 							option.setOptionId(optionId);
 							option.setOptionText(rs.getString("option_text"));
 							if (showAnswers) {
-								option.setCorrect(rs.getBoolean("is_correct"));
+								boolean isCorrect = rs.getBoolean("is_correct");
+								if(isCorrect) {
+									option.setCorrect(isCorrect);
+								}
 								option.setOptionMark(rs.getInt("option_mark"));
 							}
 							questionDto.getOptions().add(option);
@@ -444,9 +440,9 @@ public class TestDao {
 				while (rs.next()) {
 					testDto = new TestDto();
 					testDto.setTestCount(rs.getInt("testCount"));
-   					System.out.println("in testDao");
-   					System.out.println(testDto.getTestCount());
-					
+//   					System.out.println(testDto);
+//   					System.out.println(testDto.getTestCount());
+
 				}
 			}
 

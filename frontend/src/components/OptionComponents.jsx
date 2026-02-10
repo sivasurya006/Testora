@@ -5,30 +5,35 @@ import { Checkbox } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 
 
-const MCQComponent = ({ giveOptionMarks ,options ,setOptions }) => {
-    
+const MCQComponent = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
+
     useEffect(() => {
-        setOptions([
-            { optionText: '', isCorrect: false , mark : '' },
-            { optionText: '', isCorrect: false ,  mark : '' },
-            { optionText: '', isCorrect: false ,  mark : '' },
-            { optionText: '', isCorrect: false ,  mark : '' },
-        ]);
-    },[]);
+        if (defaultOptions && defaultOptions.length > 0) {
+            setOptions(defaultOptions);
+        }
+        else {
+            setOptions([
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+            ]);
+        }
+    }, []);
 
     const toggleCorrect = index => {
         const newOptions = [...options];
-        newOptions[index].isCorrect = !newOptions[index].isCorrect;
+        newOptions[index].correct = !newOptions[index].correct;
         setOptions(newOptions);
     };
 
     const addOption = () => {
-        setOptions([...options, { optionText: '', isCorrect: false }]);
+        setOptions([...options, { optionText: '', correct: false }]);
     }
 
     const insertOption = index => {
         const newOptions = [...options];
-        newOptions.splice(index + 1, 0, { optionText: '', isCorrect: false })
+        newOptions.splice(index + 1, 0, { optionText: '', correct: false })
         setOptions(newOptions);
     };
 
@@ -60,10 +65,10 @@ const MCQComponent = ({ giveOptionMarks ,options ,setOptions }) => {
                             <TextInput
                                 placeholder={`0`}
                                 inputMode='numeric'
-                                value={opt.mark}
+                                value={opt.optionMark}
                                 onChangeText={text => {
                                     const newOptions = [...options];
-                                    newOptions[idx].mark = text;
+                                    newOptions[idx].optionMark = text;
                                     setOptions(newOptions);
                                 }}
                                 style={[styles.input, { width: 80 }]}
@@ -72,7 +77,7 @@ const MCQComponent = ({ giveOptionMarks ,options ,setOptions }) => {
                     }
 
                     <Checkbox
-                        status={opt.isCorrect ? 'checked' : 'unchecked'}
+                        status={opt.correct ? 'checked' : 'unchecked'}
                         onPress={() => toggleCorrect(idx)}
                         color="green"
                     />
@@ -101,31 +106,35 @@ const MCQComponent = ({ giveOptionMarks ,options ,setOptions }) => {
 };
 
 
-const SingleComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
+const SingleComponent = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
     useEffect(() => {
-        setOptions([
-            { optionText: '', isCorrect: false , mark : '' },
-            { optionText: '', isCorrect: false ,  mark : '' },
-            { optionText: '', isCorrect: false ,  mark : '' },
-        ]);
-    },[]);
+        if (defaultOptions && defaultOptions.length > 0) {
+            setOptions(defaultOptions);
+        } else {
+            setOptions([
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+                { optionId: '', optionText: '', correct: false, optionMark: '' },
+            ])
+        }
+    }, []);
 
     const addOption = () => {
-        setOptions([...options, { optionText: '', isCorrect: false }]);
+        setOptions([...options, { optionText: '', correct: false }]);
     }
 
     const toggleCorrect = index => {
         const newOptions = options.map(opt => {
-            opt.isCorrect = false
+            opt.correct = false
             return opt;
         });
-        newOptions[index].isCorrect = !newOptions[index].isCorrect;
+        newOptions[index].correct = !newOptions[index].correct;
         setOptions(newOptions);
     };
 
     const insertOption = index => {
         const newOptions = [...options];
-        newOptions.splice(index + 1, 0, { optionText: '', isCorrect: false })
+        newOptions.splice(index + 1, 0, { optionText: '', correct: false })
         setOptions(newOptions);
     };
 
@@ -157,10 +166,10 @@ const SingleComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
                             <TextInput
                                 placeholder={`0`}
                                 inputMode='numeric'
-                                value={opt.mark}
+                                value={opt.optionMark}
                                 onChangeText={text => {
                                     const newOptions = [...options];
-                                    newOptions[idx].mark = text;
+                                    newOptions[idx].optionMark = text;
                                     setOptions(newOptions);
                                 }}
                                 style={[styles.input, { width: 80 }]}
@@ -169,7 +178,7 @@ const SingleComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
                     }
 
                     <Checkbox
-                        status={opt.isCorrect ? 'checked' : 'unchecked'}
+                        status={opt.correct ? 'checked' : 'unchecked'}
                         onPress={() => toggleCorrect(idx)}
                         color="green"
                     />
@@ -200,18 +209,22 @@ const SingleComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
     );
 };
 
-const BooleanComponent = ({ giveOptionMarks , options ,setOptions  }) => {
+const BooleanComponent = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
     useEffect(() => {
-        setOptions([
-            { optionText: '', isCorrect: false , mark : '' },
-            { optionText: '', isCorrect: false ,  mark : '' },
-        ]);
-    },[]);
+        if (defaultOptions && defaultOptions.length > 0) {
+            setOptions(defaultOptions);
+        } else {
+            setOptions([
+                { optionId: '', optionText: 'True', correct: false, optionMark: '' },
+                { optionId: '', optionText: 'False', correct: false, optionMark: '' },
+            ]);
+        }
+    }, []);
 
     const setCorrect = index => {
         const newOptions = options.map((opt, idx) => ({
             ...opt,
-            isCorrect: idx === index,
+            correct: idx === index,
         }));
         setOptions(newOptions);
     };
@@ -238,10 +251,10 @@ const BooleanComponent = ({ giveOptionMarks , options ,setOptions  }) => {
                             <TextInput
                                 placeholder={`0`}
                                 inputMode='numeric'
-                                value={opt.mark}
+                                value={opt.optionMark}
                                 onChangeText={text => {
                                     const newOptions = [...options];
-                                    newOptions[idx].mark = text;
+                                    newOptions[idx].optionMark = text;
                                     setOptions(newOptions);
                                 }}
                                 style={[styles.input, { width: 80 }]}
@@ -250,7 +263,7 @@ const BooleanComponent = ({ giveOptionMarks , options ,setOptions  }) => {
                     }
 
                     <Checkbox
-                        status={opt.isCorrect ? 'checked' : 'unchecked'}
+                        status={opt.correct ? 'checked' : 'unchecked'}
                         onPress={() => setCorrect(idx)}
                         color="green"
                     />
@@ -261,7 +274,7 @@ const BooleanComponent = ({ giveOptionMarks , options ,setOptions  }) => {
 };
 
 
-const FillBlankComponent = ({ giveOptionMarks ,options ,setOptions  }) => {
+const FillBlankComponent = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
     const [answers, setAnswers] = useState(['']);
 
     const updateAnswer = (index, text) => {

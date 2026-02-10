@@ -14,20 +14,20 @@ public class TestDto {
 	private String classroomName;
 	private String testTitle;
 	private long createdAt;
-	private boolean isTimedTest;
+	private Boolean timedTest;
 	private Integer durationMinutes;
 	private TestStatus status;
 	private int maximumAttempts;
 	private CorrectionMethod correctionMethod;
 	private List<QuestionDto> questions;
-	private int testCount;
+	private Integer testCount;
 	
 	
-	public int getTestCount() {
+	public Integer getTestCount() {
 		return testCount;
 	}
 	
-	public void setTestCount(int testCount) {
+	public void setTestCount(Integer testCount) {
 		this.testCount = testCount;
 	}
 	
@@ -94,12 +94,12 @@ public class TestDto {
 		this.createdAt = createdAt;
 	}
 	
-	public boolean isTimedTest() {
-		return isTimedTest;
+	public Boolean getTimedTest() {
+		return timedTest;
 	}
 	
-	public void setTimedTest(boolean isTimedTest) {
-		this.isTimedTest = isTimedTest;
+	public void setTimedTest(Boolean isTimedTest) {
+		this.timedTest = isTimedTest;
 	}
 	
 	public Integer getDurationMinutes() {

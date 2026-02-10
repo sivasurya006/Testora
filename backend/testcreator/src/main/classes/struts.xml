@@ -119,9 +119,12 @@
 			class="com.testcreator.actions.TestAction" method="getTestCount">
 			<result name="success" type="json">
 				<param name="root">testDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
-              
+
+
+
 
 	</package>
 
@@ -178,15 +181,13 @@
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
 
-		<action name="get-question"
+		<action name="getQuestion"
 			class="com.testcreator.actions.TestAction"
 			method="fetchQuestionWithOption">
 			<result name="success" type="json">
 				<param name="root">questionDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
-			<interceptor-ref name="testActionStack" />
-			<interceptor-ref name="testIdInterceptor" />
 		</action>
 
 		<action name="deleteQuestion"
@@ -204,11 +205,35 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-		
+
 		<action name="renameTest"
 			class="com.testcreator.actions.TestAction" method="renameTest">
 			<result name="success" type="json">
 				<param name="root">successDto</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+		
+		<action name="publishTest"
+			class="com.testcreator.actions.TestAction" method="publishTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+		
+		<action name="unPublishTest"
+			class="com.testcreator.actions.TestAction" method="unPublishTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
 			</result>
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />

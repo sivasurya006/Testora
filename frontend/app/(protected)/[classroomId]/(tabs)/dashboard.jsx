@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import api from "../../../../util/api";
 import Colors from "../../../../styles/Colors";
-import { useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { useFocusEffect, useGlobalSearchParams, usePathname } from "expo-router";
 import Test from "../../../../src/components/Test";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // import { SafeAreaView } from "react-native-safe-area-context";
 export default function Dashboard() {
   const { classroomId } = useGlobalSearchParams();
+  const path = usePathname();
   const [stats, setStats] = useState({
     classroomName: "",
     createdAt: 0,
@@ -30,14 +31,14 @@ export default function Dashboard() {
   const recentlyPublished = tests;
   const recentlySubmitted = stests;
 
-
   useFocusEffect(
     useCallback(() => {
       fetchDashboardData();
       fetchDashboardDatas();
       fetchDashboardTests();
-    }, [])
-  )
+    },[])
+  );
+
 
   async function fetchDashboardData() {
     try {
@@ -69,13 +70,12 @@ export default function Dashboard() {
   }
 
   async function fetchDashboardTests() {
-    try {//
-      const res = await api.get("/api/tests/get-created-tests?limit=5", {
+    try {
+      const res = await api.get("/api/tests/get-created-tests?limit=5&status=published", {
         headers: { "X-ClassroomId": classroomId },
       });
       if (res.status === 200) {
         setTests(res.data);
-        console.log(res.data, "tsests")
       }
     } catch (err) {
       console.log(err);
@@ -139,7 +139,7 @@ export default function Dashboard() {
               <FlatList
                 data={recentlyPublished}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <Test data={item} />}
+                renderItem={({ item }) => <Test allTests={tests} setAllTests={setTests}  data={item} />}
               />
             ) : (
               <Text>No published tests yet</Text>
