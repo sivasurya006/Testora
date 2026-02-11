@@ -173,19 +173,6 @@ const styles = StyleSheet.create({
     height: 40,
   },
 
-  filterButton: {
-    paddingHorizontal: 10,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: Colors.lightGray,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  filterText: {
-    fontSize: 12,
-  },
-
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',

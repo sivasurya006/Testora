@@ -21,10 +21,10 @@ console.log({ ...MD3LightTheme.colors })
 export default function RootLayout() {
 
   const [loaded] = useFonts({
-    InterRegular: require('../assests/fonts/Inter_18pt-Regular.ttf'),
-    InterMedium: require('../assests/fonts/Inter_18pt-Medium.ttf'),
-    InterSemiBold: require('../assests/fonts/Inter_18pt-SemiBold.ttf'),
-    InterBold: require('../assests/fonts/Inter_18pt-Bold.ttf'),
+    InterRegular: require('../assets/fonts/Inter_18pt-Regular.ttf'),
+    InterMedium: require('../assets/fonts/Inter_18pt-Medium.ttf'),
+    InterSemiBold: require('../assets/fonts/Inter_18pt-SemiBold.ttf'),
+    InterBold: require('../assets/fonts/Inter_18pt-Bold.ttf'),
   });
 
   if (!loaded) return null;

@@ -3,6 +3,7 @@ import { BottomTabBar } from '@react-navigation/bottom-tabs'
 import Colors from '../../styles/Colors'
 import { router } from 'expo-router'
 import { FontAwesome6 } from '@expo/vector-icons'
+import { fonts } from '../../styles/fonts'
 
 export function ClassroomTabBar(props) {
     return (
@@ -20,7 +21,7 @@ export function ClassroomTabBar(props) {
             >
                 {/* <FontAwesome6 name='school' size={22} color={Colors.white} style={{}} /> */}
                 <Pressable onPress={() => router.push('/')}>
-                    <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>
+                    <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', textAlign: 'center', fontStyle : fonts.medium}}>
                         Test Creator
                     </Text>
                 </Pressable>

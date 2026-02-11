@@ -48,7 +48,7 @@ export default function InputModal({placeholder,onValueChange,visible,onConfirm,
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-    //   backgroundColor: 'rgba(0,0,0,0.35)', 
+      backgroundColor: 'rgba(0,0,0,0.35)', 
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -59,11 +59,7 @@ const styles = StyleSheet.create({
       paddingVertical: 20,
       borderRadius: 12,
       alignItems: 'center',
-      shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.13,
-      shadowRadius: 10,
-      elevation: 6,
+      maxWidth: 400,
     },
   
     inputBox: {
