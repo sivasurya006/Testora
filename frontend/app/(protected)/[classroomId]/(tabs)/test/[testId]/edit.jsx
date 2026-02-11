@@ -185,7 +185,7 @@ async function getAllTestQuestion(classroomId, testId) {
             }
         });
 
-        if (result?.status == 200) {
+        if (result?.status == 200 && result.data) {
             console.log(result.data);
             console.log("questions fetched successfully");
             return result.data;

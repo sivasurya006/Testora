@@ -39,7 +39,6 @@ export default function ProtectedLayout() {
     //     return <Redirect href='/signin' />
     // }
 
-
     return (
 
         <SafeAreaView style={{ flex: 1 }}>

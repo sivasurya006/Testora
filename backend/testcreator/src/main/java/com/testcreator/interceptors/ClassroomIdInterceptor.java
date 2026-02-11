@@ -22,12 +22,13 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 	public String intercept(ActionInvocation invocation) throws Exception {
 		
 		
-		
+		System.out.println("hie");
+
 		
 		HttpServletRequest request = ServletActionContext.getRequest();
 		
-		
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
+		System.out.println(classroomIdHeader);
 		if(classroomIdHeader == null || classroomIdHeader.isBlank()) {
 			Object action = invocation.getAction();
 			if(action instanceof JsonApiAction jsonAction) {
@@ -43,7 +44,7 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 		try {
 			int classroomId = Integer.parseInt(classroomIdHeader);
 			request.setAttribute("classroomId", classroomId);
-
+    System.out.println(classroomId);
 			return invocation.invoke();
 		}catch (NumberFormatException e) {
 			Object action = invocation.getAction();

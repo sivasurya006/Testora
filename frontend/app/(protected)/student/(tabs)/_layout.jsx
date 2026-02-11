@@ -8,24 +8,16 @@ import Colors from '../../../../styles/Colors'
 import Header from '../../../../src/components/Header'
 import { AuthContext } from '../../../../util/AuthContext'
 
-export default function ProtectedLayout() {
+export default function StudentLayout() {
     const { width } = useWindowDimensions()
-    const isLargeScreen = width > 821
-    const authContext = useContext(AuthContext);
+    const isLargeScreen = width > 812
 
 
-    if (authContext.isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size={24} />
-            </View>
-        )
-    }
+   
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {isLargeScreen ? <Header /> : null}
-
+          
             <Tabs
                 screenOptions={{
                     tabBarPosition: isLargeScreen ? 'left' : 'bottom',

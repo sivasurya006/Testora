@@ -36,7 +36,7 @@ export default function Dashboard() {
       fetchDashboardData();
       fetchDashboardDatas();
       fetchDashboardTests();
-    },[])
+    }, [])
   );
 
 
@@ -47,7 +47,7 @@ export default function Dashboard() {
       });
       if (res.status === 200) {
         setStats(res.data);
-        console.log(res.data, "hi")
+        console.log(res.data, "details")
       }
     } catch (err) {
       console.log(err);
@@ -61,7 +61,7 @@ export default function Dashboard() {
       });
       if (res.status === 200) {
         setStates(res.data);
-        console.log(res.data, "count")
+        console.log(res.data, "testcount")
 
       }
     } catch (err) {
@@ -76,9 +76,12 @@ export default function Dashboard() {
       });
       if (res.status === 200) {
         setTests(res.data);
+        console.log(res.data, "rendertest")
       }
     } catch (err) {
       console.log(err);
+      console.log(res.data, "can not rendertest")
+
     }
   }
   const { width } = useWindowDimensions();
@@ -139,7 +142,7 @@ export default function Dashboard() {
               <FlatList
                 data={recentlyPublished}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <Test allTests={tests} setAllTests={setTests}  data={item} />}
+                renderItem={({ item }) => <Test allTests={tests} setAllTests={setTests} data={item} />}
               />
             ) : (
               <Text>No published tests yet</Text>

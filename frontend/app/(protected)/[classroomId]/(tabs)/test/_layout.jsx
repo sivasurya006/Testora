@@ -54,7 +54,7 @@ export default function TestsLayout() {
                     },
                     drawerActiveBackgroundColor: 'rgba(251, 123, 1, 0.12)',
                     drawerContentContainerStyle: {
-                        // paddingTop : 0
+                        paddingTop : 0
                     },
                 }}
             >

@@ -134,8 +134,7 @@
 
 		<interceptors>
 
-			<interceptor name="classroomIdInterceptor"
-				class="com.testcreator.interceptors.ClassroomIdInterceptor" />
+
 			<interceptor name="testIdInterceptor"
 				class="com.testcreator.interceptors.TestIdInterceptor" />
 
@@ -214,7 +213,7 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-		
+
 		<action name="publishTest"
 			class="com.testcreator.actions.TestAction" method="publishTest">
 			<result name="success" type="json">
@@ -226,7 +225,7 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-		
+
 		<action name="unPublishTest"
 			class="com.testcreator.actions.TestAction" method="unPublishTest">
 			<result name="success" type="json">
@@ -329,6 +328,30 @@
 				<param name="root">authDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
+		</action>
+
+	</package>
+
+	<package name="studentPortal" namespace="/studenttest" extends="classroom">
+
+		<interceptors>
+			<interceptor-stack name="studentStack">
+				<interceptor-ref name="apiStack"/>
+				<interceptor-ref name="classroomIdInterceptor"/>
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="studentStack" />
+
+		<action name="getStudentTests"
+			class="com.testcreator.actions.StudentTestAction"
+			method="getNewTests">
+
+			<result name="success" type="json">
+				<param name="root">testDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+
 		</action>
 
 	</package>
