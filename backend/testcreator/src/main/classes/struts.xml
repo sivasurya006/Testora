@@ -246,16 +246,15 @@
 			</result>
 		</action>
 
-		<action name="update-question"
+		<action name="updateQuestion"
 			class="com.testcreator.actions.TestAction" method="updateQuestion">
 			<result name="success" type="json">
 				<param name="root">successDto</param>
 			</result>
 			<result name="input" type="json">
 				<param name="root">fieldErrors</param>
+				<param name="statusCode">400</param>
 			</result>
-			<interceptor-ref name="testActionStack" />
-			<interceptor-ref name="testIdInterceptor" />
 		</action>
 
 
