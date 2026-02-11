@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import Colors from '../../../styles/Colors'
 import Header from '../../../src/components/Header'
+import { fonts } from '../../../styles/fonts'
 
 export default function ProtectedLayout() {
 
@@ -50,6 +51,7 @@ export default function ProtectedLayout() {
                 headerShown: false,
                 tabBarStyle: Platform.select({
                     web: {
+                        paddingTop : 30,
                         minWidth: 230,
                         backgroundColor: Colors.secondaryColor
                     },
@@ -63,37 +65,45 @@ export default function ProtectedLayout() {
                     }
                 }),
                 tabBarShowLabel: isLargeScreen,
+                tabBarLabelStyle : {
+                    fontSize: 16,
+                    fontFamily : fonts.regular
+                },
                 tabBarActiveTintColor: Colors.primaryColor,
                 tabBarInactiveTintColor: Colors.white,
                 tabBarItemStyle: {
-                    paddingTop: 5
+                    paddingTop: 5,
                 },
                 tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
             }}>
                 <Tabs.Screen name='index' options={{
-                    title: 'My Classrooms',
+                    title: 'Created Classrooms',
                     tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons
-                            name="account-school"
-                            size={30}
-                            color={color}
-                        />
-                    )
+                        // <MaterialCommunityIcons
+                        //     name="account-school"
+                        //     size={30}
+                        //     color={color}
+                        // />
+                        <MaterialIcons name="cast-for-education" size={24} color={color} />
+                    ),
                 }} />
 
                 <Tabs.Screen name='joinedClassrooms' options={{
-                    title: 'Joined Classrooms',
+                    title: 'Enrolled Classrooms',
                     tabBarIcon: ({ color }) => (
-                        <MaterialIcons name="school" size={30} color={color} />
+                        // <MaterialIcons name="school" size={30} color={color} />
+                        // <MaterialCommunityIcons name="bookshelf" size={24} color={color} />
+                        <MaterialIcons name="menu-book" size={24} color={color} />
                     ),
                 }} />
 
                 <Tabs.Screen
                     name='profile' options={{
                         title: 'Profile',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialIcons name='account-circle' size={30} color={color} />
-                        )
+                        href: null,
+                        // tabBarIcon: ({ color }) => (
+                        //     <MaterialIcons name='account-circle' size={30} color={color} />
+                        // )
                     }}
                 />
 

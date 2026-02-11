@@ -4,6 +4,7 @@ import { Pressable, useWindowDimensions } from 'react-native';
 import Colors from '../../../../../styles/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { fonts } from '../../../../../styles/fonts';
 
 export default function TestsLayout() {
     const { width } = useWindowDimensions();
@@ -18,7 +19,11 @@ export default function TestsLayout() {
                     headerShown: false,
                     tabBarIcon: () => null,
                     tabBarStyle: {
-                        backgroundColor: Colors.secondaryColor,
+                        backgroundColor: Colors.thirdColor,
+                    },
+                    tabBarLabelStyle : {
+                        fontSize: 16,
+                        fontFamily : fonts.regular
                     },
                     tabBarActiveTintColor: Colors.primaryColor,
                     tabBarInactiveTintColor: Colors.white,

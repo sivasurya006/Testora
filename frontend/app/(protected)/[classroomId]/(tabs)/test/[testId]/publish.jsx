@@ -1,8 +1,9 @@
 import { View, Text, TextInput, StyleSheet, useWindowDimensions, Pressable } from 'react-native'
 import React, { use, useState } from 'react'
-import { Checkbox } from 'react-native-paper';
+import { Checkbox, Icon, IconButton, Menu, Portal, Tooltip } from 'react-native-paper';
 import { router, location, useGlobalSearchParams } from 'expo-router';
 import api from '../../../../../../util/api';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function Publish() {
 
@@ -18,6 +19,7 @@ export default function Publish() {
     const [correctionType, setCorrectionType] = React.useState('AUTO');
     const [testMinutes, setTestMinutes] = useState(0);
     const [maximumAttempts, setMaximumAttempts] = useState(0);
+    const [showInfo, setShowInfo] = useState(false);
 
     const { width } = useWindowDimensions();
 
@@ -33,7 +35,7 @@ export default function Publish() {
 
     async function handlePublish() {
         if (validateInput()) {
-            const success = await publishTest(testId , classroomId ,Boolean(isTimed),correctionType,Number(testMinutes),Number(maximumAttempts),);
+            const success = await publishTest(testId, classroomId, Boolean(isTimed), correctionType, Number(testMinutes), Number(maximumAttempts),);
             if (success) {
                 handleCancel();
             } else {
@@ -54,69 +56,86 @@ export default function Publish() {
 
     return (
         <View style={styles.container} >
-            <View style={[width > 861 ? styles.pageHeader : null, { marginVertical: 50 }]} >
-                <Text style={styles.header}>Publish Test</Text>
-            </View>
-            <View style={styles.pageContent}>
-                <View style={styles.contentWrapper}>
-                    <Text style={styles.label} >Title : </Text>
-                    <TextInput
-                        style={styles.inputBox}
-                        value={test}
-                    />
+            <View style={{backgroundColor:'white',padding : 20,alignItems : 'center',borderRadius : 8}} >
+                <View style={[width > 861 ? styles.pageHeader : null, { marginVertical: 50 }]} >
+                    <Text style={styles.header}>Publish Test</Text>
                 </View>
-                <View style={styles.contentWrapper}>
-                    <Text style={styles.label} >Correction Type : </Text>
-                    <Checkbox
-                        status={correctionOptions.auto ? 'checked' : 'unchecked'}
-                        onPress={() => { setCorrectionOptions({ auto: true, manual: false }); setCorrectionType('AUTO') }}
-                    />
-                    <Text style={styles.value} >Auto</Text>
-                    <Checkbox
-                        status={correctionOptions.manual ? 'checked' : 'unchecked'}
-                        onPress={() => { setCorrectionOptions({ auto: false, manual: true }); setCorrectionType('MANUAL') }}
-                    />
-                    <Text style={styles.value} >Manual</Text>
-                </View>
-                <View style={styles.contentWrapper}>
-                    <Text style={styles.label} >Is Timed : </Text>
-                    <Checkbox
-                        status={isTimed ? 'checked' : 'unchecked'}
-                        onPress={() => setIsTimed(!isTimed)}
-                    />
-                    {
-                        isTimed && (
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <TextInput
-                                    placeholder='30'
-                                    style={{ borderWidth: 1, borderColor: '#ccc', padding: 5, borderRadius: 5, width: 50, marginRight: 5 }}
-                                    keyboardType='numeric'
-                                    onChangeText={(text) => setTestMinutes(parseInt(text) || 0)}
+                <View style={styles.pageContent}>
+                    <View style={styles.contentWrapper}>
+                        <Text style={styles.label} >Title : </Text>
+                        <TextInput
+                            style={styles.inputBox}
+                            value={test}
+                        />
+                    </View>
+                    <View style={styles.contentWrapper}>
+                        <Text style={styles.label} >Correction Type : </Text>
+                        <Checkbox
+                            status={correctionOptions.auto ? 'checked' : 'unchecked'}
+                            onPress={() => { setCorrectionOptions({ auto: true, manual: false }); setCorrectionType('AUTO') }}
+                        />
+                        <Text style={styles.value} >Auto</Text>
+                        <Checkbox
+                            status={correctionOptions.manual ? 'checked' : 'unchecked'}
+                            onPress={() => { setCorrectionOptions({ auto: false, manual: true }); setCorrectionType('MANUAL') }}
+                        />
+                        <Text style={styles.value} >Manual</Text>
+                    </View>
+                    <View style={styles.contentWrapper}>
+                        <Text style={styles.label} >Is Timed : </Text>
+                        <Checkbox
+                            status={isTimed ? 'checked' : 'unchecked'}
+                            onPress={() => setIsTimed(!isTimed)}
+                        />
+                        {
+                            isTimed && (
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <TextInput
+                                        placeholder='30'
+                                        style={{ borderWidth: 1, borderColor: '#ccc', padding: 5, borderRadius: 5, width: 50, marginRight: 5 }}
+                                        keyboardType='numeric'
+                                        onChangeText={(text) => setTestMinutes(parseInt(text) || 0)}
+                                    />
+                                    <Text style={styles.value} >{' minutes'}</Text>
+                                </View>
+                            )
+                        }
+                    </View>
+                    <View style={styles.contentWrapper}>
+                        <Text style={styles.label} >Maximum Attempts : </Text>
+                        <TextInput
+                            defaultValue='0'
+                            style={{ borderWidth: 1, borderColor: '#ccc', padding: 5, borderRadius: 5, width: 50 }}
+                            keyboardType='numeric'
+                            onChangeText={(text) => setMaximumAttempts(parseInt(text) || 0)}
+                        />
+                        <Menu
+                            visible={showInfo}
+                            onDismiss={() => setShowInfo(false)}
+                            anchor={
+                                <IconButton
+                                    icon="information"
+                                    size={18}
+                                    onPress={() => setShowInfo(true)}
+                                    onHoverIn={() => !showInfo && setShowInfo(true)}
+                                    onHoverOut={() => showInfo && setShowInfo(false)}
                                 />
-                                <Text style={styles.value} >{' minutes'}</Text>
-                            </View>
-                        )
-                    }
-                </View>
-                <View style={styles.contentWrapper}>
-                    <Text style={styles.label} >Maximum Attempts : </Text>
-                    <TextInput
-                        defaultValue='0'
-                        style={{ borderWidth: 1, borderColor: '#ccc', padding: 5, borderRadius: 5, width: 50 }}
-                        keyboardType='numeric'
-                        onChangeText={(text) => setMaximumAttempts(parseInt(text) || 0)}
-                    />
-                    <Text style={styles.value} >{' (0 for unlimited)'}</Text>
-                </View>
+                            }
+                            anchorPosition='bottom'
+                        >
+                            <Menu.Item title="0 for unlimited" />
+                        </Menu>
+                    </View>
 
-            </View>
-            <View style={{ flexDirection: 'row', gap: 50 }} >
-                <Pressable style={styles.cancelBtn} onPress={handleCancel} >
-                    <Text style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Cancel</Text>
-                </Pressable>
-                <Pressable style={styles.publishBtn} onPress={handlePublish} >
-                    <Text style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Publish Test</Text>
-                </Pressable>
+                </View>
+                <View style={{ flexDirection: 'row', gap: 50 }} >
+                    <Pressable style={styles.cancelBtn} onPress={handleCancel} >
+                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Cancel</Text>
+                    </Pressable>
+                    <Pressable style={styles.publishBtn} onPress={handlePublish} >
+                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Publish Test</Text>
+                    </Pressable>
+                </View>
             </View>
         </View>
     )
@@ -151,20 +170,20 @@ async function publishTest(testId, classroomId, timedTest, correctionMethod, dur
 
 const styles = StyleSheet.create({
     pageHeader: {
-        paddingVertical: 20,
-        borderBottomColor: '#ddd',
-        borderBottomWidth: 1,
-        marginBottom: 20,
+        // paddingVertical: 20,
+        // borderBottomColor: '#ddd',
+        // borderBottomWidth: 1,
+        // marginBottom: 20,
     },
     header: {
         fontSize: 16,
-        marginTop: 10,
+        // marginTop: 10,
         fontWeight: 600,
         textAlign: 'center',
     },
     pageContent: {
-        paddingHorizontal: 20,
-        gap: 20
+        // paddingHorizontal: 20,
+        gap: 20,
     },
     label: {
         fontSize: 16,
@@ -200,6 +219,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.35)',
     },
     inputBox: {
         // borderWidth: 1,

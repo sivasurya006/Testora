@@ -5,6 +5,7 @@ import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
+import { fonts } from '../../../styles/fonts';
 
 const classroom_width = 320;
 
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
 
   topBarHeader: {
     fontSize: 18,
+    fontFamily : fonts.semibold
   },
 
   joinBtn: {

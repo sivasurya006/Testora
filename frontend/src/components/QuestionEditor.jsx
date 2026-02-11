@@ -12,8 +12,8 @@ const options = [
     { optionText: 'Multi choice options', value: 'MCQ' },
     { optionText: 'Single choice', value: 'SINGLE' },
     { optionText: 'Boolean', value: 'BOOLEAN' },
-    { optionText: 'Fill in the blanks', value: "FILL_BLANKS" },
-    { optionText: 'Matching', value: "MATCHING" }
+    // { optionText: 'Fill in the blanks', value: "FILL_BLANKS" },
+    // { optionText: 'Matching', value: "MATCHING" }
 ]
 
 function getOptionIndex(type) {

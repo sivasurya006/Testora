@@ -5,6 +5,7 @@ import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@e
 import Colors from '../../../../styles/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ClassroomTabBar } from '../../../../src/components/ClassroomTobBar';
+import { fonts } from '../../../../styles/fonts';
 export default function ClassroomLayout() {
 
     const { width } = useWindowDimensions();
@@ -31,7 +32,10 @@ export default function ClassroomLayout() {
                         }
                     }),
                     headerShown: false,
-                    tabBarShowLabel: isLargeScreen,
+                    tabBarShowLabel: isLargeScreen,  tabBarLabelStyle : {
+                        fontSize: 16,
+                        fontFamily : fonts.regular
+                    },
                     tabBarActiveTintColor: Colors.primaryColor,
                     tabBarInactiveTintColor: Colors.white,
                     tabBarItemStyle: {
@@ -43,19 +47,19 @@ export default function ClassroomLayout() {
                 <Tabs.Screen name='dashboard' options={{
                     title: 'Dashboard',
                     tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons name="view-dashboard" size={24} color={color} />
+                        <MaterialCommunityIcons name="view-dashboard" size={22} color={color} />
                     )
                 }} />
                 <Tabs.Screen name='test' options={{
                     title: 'Tests',
                     tabBarIcon: ({ color }) => (
-                        <FontAwesome name="book" size={24} color={color} />
+                        <FontAwesome name="book" size={22} color={color} />
                     )
                 }} />
                 <Tabs.Screen name='students' options={{
                     title: 'Students',
                     tabBarIcon: ({ color }) => (
-                        <MaterialIcons name="groups" size={24} color={color} />
+                        <MaterialIcons name="groups" size={22} color={color} />
                     )
                 }} />
                 <Tabs.Screen name='settings' options={{

@@ -1,6 +1,7 @@
 export default {
     primaryColor : "#fb7b01",
     secondaryColor : "#061b31",
+    thirdColor : "#081f36",
     bgColor : "#f5f4f8",
     linkColor : "#7998D8",
     tagBg : "#EAF5E8",
