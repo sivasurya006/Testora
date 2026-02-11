@@ -59,27 +59,26 @@ public class TestDao {
 
 	public boolean publishTest(TestDto input) throws SQLException {
 		boolean isTimed = input.getTimedTest() != null && input.getTimedTest();
-		
+
 		String query = isTimed ? Queries.updateTestOptionsAndPublish_Timed
 				: Queries.updateTestOptionsAndPublish_NotTimed;
-		
-		try(PreparedStatement ps = connection.prepareStatement(query)){
+
+		try (PreparedStatement ps = connection.prepareStatement(query)) {
 			ps.setString(1, input.getCorrectionMethod().name().toLowerCase());
 			ps.setInt(2, input.getMaximumAttempts());
-			if(isTimed) {
+			if (isTimed) {
 				ps.setInt(3, input.getDurationMinutes());
 			}
-			ps.setInt( isTimed ? 4 : 3, input.getTestId());
+			ps.setInt(isTimed ? 4 : 3, input.getTestId());
 			return ps.executeUpdate() == 1;
 		}
 	}
-	
-	
+
 	public boolean unPublishTest(int testId) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.unPublishTest)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.unPublishTest)) {
 			ps.setInt(1, testId);
 			return ps.executeUpdate() == 1;
- 		}
+		}
 	}
 
 	public boolean deleteTest(int testId) throws SQLException {
@@ -238,7 +237,7 @@ public class TestDao {
 
 	public QuestionDto getQuestionBtId(int questionId, boolean showAnswers) throws SQLException {
 		QuestionDto questionDto = null;
-		System.out.println(questionId+" "+showAnswers);
+		System.out.println(questionId + " " + showAnswers);
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getQuestionWtthOptionsByQuestionId)) {
 			ps.setInt(1, questionId);
 			try (ResultSet rs = ps.executeQuery()) {
@@ -259,7 +258,10 @@ public class TestDao {
 					Option option = new Option();
 					option.setOptionId(rs.getInt("option_id"));
 					if (showAnswers) {
-						option.setCorrect(rs.getBoolean("is_correct"));
+						boolean isCorrect = rs.getBoolean("is_correct");
+						if (isCorrect) {
+							option.setCorrect(isCorrect);
+						}
 					}
 					option.setOptionMark(rs.getInt("option_mark"));
 					option.setOptionText(rs.getString("option_text"));
@@ -269,7 +271,10 @@ public class TestDao {
 						Option opt = new Option();
 						opt.setOptionId(rs.getInt("option_id"));
 						if (showAnswers) {
-							option.setCorrect(rs.getBoolean("is_correct"));
+							boolean isCorrect = rs.getBoolean("is_correct");
+							if (isCorrect) {
+								opt.setCorrect(isCorrect);
+							}
 							opt.setOptionMark(rs.getInt("option_mark"));
 						}
 						opt.setOptionText(rs.getString("option_text"));
@@ -280,6 +285,8 @@ public class TestDao {
 				}
 			}
 		}
+
+		System.out.println(questionDto);
 
 		return questionDto;
 	}
@@ -353,16 +360,18 @@ public class TestDao {
 
 				// update Options set option_text = ?, is_correct = ? , option_mark = ? where
 				// option_id = ?
-				for (Option option : questionDto.getOptions()) {
+				if (questionDto.getOptions() != null) {
+					for (Option option : questionDto.getOptions()) {
 
-					try (PreparedStatement optionUpdate = connection.prepareStatement(Queries.updateOptions)) {
-						optionUpdate.setString(1, option.getOptionText());
-						optionUpdate.setBoolean(2, option.getCorrect());
-						optionUpdate.setInt(3, option.getOptionMark());
-						optionUpdate.setInt(4, option.getOptionId());
-						optionUpdate.executeUpdate();
+						try (PreparedStatement optionUpdate = connection.prepareStatement(Queries.updateOptions)) {
+							optionUpdate.setString(1, option.getOptionText());
+							optionUpdate.setBoolean(2, option.getCorrect());
+							optionUpdate.setInt(3, option.getOptionMark());
+							optionUpdate.setInt(4, option.getOptionId());
+							optionUpdate.executeUpdate();
+						}
+
 					}
-
 				}
 				return true;
 			} else {
@@ -416,7 +425,7 @@ public class TestDao {
 							option.setOptionText(rs.getString("option_text"));
 							if (showAnswers) {
 								boolean isCorrect = rs.getBoolean("is_correct");
-								if(isCorrect) {
+								if (isCorrect) {
 									option.setCorrect(isCorrect);
 								}
 								option.setOptionMark(rs.getInt("option_mark"));

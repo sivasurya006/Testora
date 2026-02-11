@@ -96,7 +96,6 @@ public class TestService {
 	}
 	
 	public boolean updateQuestion(Context context ,QuestionDto questionDto) throws SQLException {
-		new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 		return testDao.updateQuestion(questionDto);
 	}
 	
