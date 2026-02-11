@@ -27,7 +27,6 @@ public class TestService {
 		this.classroomUsersDao = new ClassroomUsersDao();
 	}
 	
-	
 	public TestDto createNewTest(Context context,String title) throws SQLException {
 		new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 		return testDao.createTest(context.getClasssroomId(), context.getUserId(), title);

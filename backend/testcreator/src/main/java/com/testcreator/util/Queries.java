@@ -24,7 +24,6 @@ public class Queries {
 	public static final String updateClassRoomName = "update Classrooms set name = ? where classroom_id = ?"; 
 	
 	
-	
 	//delete classrooms
 	public static final String deleteClassroom = "delete from Classrooms where classroom_id = ? and created_by = ?";
 	
@@ -98,4 +97,5 @@ public class Queries {
 	
 	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  left join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' where u.user_id=? and c.classroom_id=? group by c.classroom_id, c.name, u.name, c.created_at";
 	public static final String selectTestCount="select count(t.test_id) as testCount  from Tests t join Classrooms c on t.classroom_id=c.classroom_id join Users u on u.user_id=t.creator_id where t.creator_id=?";
+	public static final String selectStudentTests="select t.title as testTitle, t.is_timed, t.duration_minutes, t.maximum_attempts , t.correction_type, u.name as creatorName from Tests t join Users u on u.user_id=t.creator_id left join Attempts a on a.test_id=t.test_id where t.status= 'published' and t.creator_id=?";
 } 

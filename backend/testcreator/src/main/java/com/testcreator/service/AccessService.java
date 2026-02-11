@@ -14,11 +14,9 @@ public class AccessService {
 	
 	private final ClassroomUsersDao classroomUserDao;
 	
-	
 	public AccessService() throws SQLException {
 		classroomUserDao = new ClassroomUsersDao();
 	}
-	
 	
 	public void require(Permission permission, Context context) throws SQLException { 
 		if(!hasPermission(permission, context)) {
@@ -27,7 +25,9 @@ public class AccessService {
 	}
 	
 	private boolean hasPermission(Permission permission,Context context) throws SQLException {
+		
 		switch (permission) {
+		
 		case CLASSROOM_STUDENT: {
 			ClassroomUser classroomUser = classroomUserDao.getUser(context.getClasssroomId(), context.getUserId());
 			return classroomUser != null && classroomUser.getRole() == UserRole.STUDENT;
@@ -40,6 +40,7 @@ public class AccessService {
 			ClassroomUser classroomUser = classroomUserDao.getUser(context.getClasssroomId(), context.getUserId());
 			return classroomUser != null;
 		}
+		
 		default:
 			return false;
 		}
