@@ -27,17 +27,17 @@ export default function CreatedTestList({ filter }) {
   const onCreateTest = async () => {
     if (testName.trim().length === 0) return;
     const result = await handleCreateTest(classroomId, testName);
-    console.log("result ",result)
+    console.log("result ", result)
     if (result && filter != 'published') {
       router.push({
         pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
         params: {
-          classroomId: classroomId, 
+          classroomId: classroomId,
           testId: result.testId,
-          title : result.testTitle,
+          title: result.testTitle,
         },
       })
-      setCreatedTest([result,...allCreatedTests]);
+      setCreatedTest([result, ...allCreatedTests]);
     }
     onCancelTest();
   }
@@ -93,7 +93,6 @@ export default function CreatedTestList({ filter }) {
 }
 
 
-
 async function handleCreateTest(classroomId, testTitle) {
   try {
     const result = await api.post('/api/tests/create-test', { testTitle }, {
@@ -124,7 +123,7 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
     case 'draft':
       status = 'draft';
       break;
-    default :
+    default:
       status = '';
       break;
   }
@@ -136,6 +135,7 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
     });
     if (result?.status == 200) {
       setCreatedTests(result.data);
+      console.log("createed tst data", result.data)
     } else {
       console.log(`can't fetch created classrooms`);
     }
@@ -148,7 +148,7 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal : 16
+    paddingHorizontal: 16
   },
 
   topBar: {
