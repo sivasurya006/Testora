@@ -90,15 +90,9 @@ export default function Test({ data }) {
           </View>
 
           <View style={styles.btnContainer}>
-            <Pressable style={styles.btnInsideContainer} onPress={ isPublished ? handleUnPublish : handlePublish} >
-              {
-                data.status == 'DRAFT' ? (
-                  <Entypo name="paper-plane" size={20} color="black" />
-                ) :  (
-                  <Entypo name="back-in-time" size={20} color="black" />
-                )
-              }              
-              <Text> {data.status == 'DRAFT' ? 'Publish' : 'UnPublish'} </Text>
+            <Pressable style={styles.btnInsideContainer} onPress={handlePublish} >
+              <Entypo name="paper-plane" size={20} color="black" />
+              <Text>Publish</Text>
             </Pressable>
           </View>
 
