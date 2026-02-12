@@ -46,7 +46,7 @@ export default function JoinClassroom() {
       const result = await api.post('/join/classroomConfirm', { code });
       if (result?.status === 200) {
         console.log('Classroom joined successfully');
-        router.replace(`student/${result.data.classroomId}/tests`);
+        router.replace(`student/${result.data.classroomId}/test`);
       } else {
         setError("Failed to join classroom");
       }
