@@ -4,9 +4,11 @@ public class Queries {
 	
 	/* ========== Classroom ============= */
 	// create classrooms
-	public static final String  insertClassroom = "insert into Classrooms (created_by,name) values (?,?)";
+	public static final String  insertClassroom = "insert into Classrooms (created_by,name,public_code) values (?,?,?)";
 	public static final String insertUserClassroomRelationship = "insert into Classroom_Users (classroom_id,user_id,role) values (?,?,?)";
-	
+	public static final String selectClassByPublicCode = "select 1 from Classrooms where public_code = ?";
+	public static final String getClassPublicCode = "select public_code from Classrooms where classroom_id = ?";
+	public static final String updateClassPublicCode = "update Classrooms set public_code = ? where classroom_id = ?";
 	
 	// read classrooms
 	public static final String selectClassroomStudents = "select u.user_id , u.name , u.email , u.registered_at , cu.joined_at  from Users u join Classroom_Users cu on  u.user_id = cu.user_id where cu.classroom_id = ? and cu.role = 'student'";
@@ -19,6 +21,8 @@ public class Queries {
 	
 	public static final String selectClassroomCreatedAt = "select created_at from Classrooms where classroom_id = ?";
 	public static final String selectClassroomByCreatedByAndClassroomId = "select * from Classrooms where classroom_id = ? and created_by = ?";
+	public static final String selectClassroomPublicDetais = " select u.name as creator_name  , c.name from Classrooms c join Users u on c.created_by = u.user_id where c.public_code = ?";
+	public static final String getClassrommIdByCode = " select classroom_id  from Classrooms where public_code = ?";
 	
 	//update classrooms
 	public static final String updateClassRoomName = "update Classrooms set name = ? where classroom_id = ?"; 

@@ -15,7 +15,7 @@ export default function Index() {
 
     const { width } = useWindowDimensions();
 
-    const numColumns = Math.floor(width / classroom_width);
+    const numColumns = Math.floor((width - 230) / classroom_width);
 
     console.log(numColumns)
 
@@ -87,8 +87,6 @@ export default function Index() {
             />
             }
             {createModalVisible ?
-
-
                 <InputModal placeholder={"Class name"}
                     visible={createModalVisible}
                     onValueChange={setClassroomName}

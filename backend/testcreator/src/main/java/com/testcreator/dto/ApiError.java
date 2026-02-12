@@ -3,6 +3,7 @@ package com.testcreator.dto;
 public class ApiError {
 	private String message;
 	private int statusCode;
+	private String redirectURI;
 	
 	public ApiError(String message, int statusCode) {
 		super();
@@ -21,6 +22,14 @@ public class ApiError {
 	}
 	public void setStatusCode(int statusCode) {
 		this.statusCode = statusCode;
+	}
+	
+	public String getRedirectURI() {
+		return redirectURI;
+	}
+	
+	public void setRedirectURI(String redirectURI) {
+		this.redirectURI = redirectURI;
 	}
 	
 	

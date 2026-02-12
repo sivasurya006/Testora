@@ -1,12 +1,29 @@
 package com.testcreator.dao;
 
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.Instant;
-
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.security.SecureRandom;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
+import java.sql.Ref;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.util.List;
 
 import com.testcreator.dto.ClassroomDto;
@@ -16,8 +33,10 @@ import com.testcreator.model.Classroom;
 import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.User;
 import com.testcreator.model.UserRole;
+import com.testcreator.util.ClassroomCodeGenerator;
 import com.testcreator.util.Queries;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 
 public class ClassroomDao {
@@ -39,8 +58,15 @@ public class ClassroomDao {
 
 				insertClassroom.setInt(1, createdBy);
 				insertClassroom.setString(2, name);
+				
+				String classCode;
+				do {
+					classCode = ClassroomCodeGenerator.generateId(7);
+				}while(isClassCodeExists(classCode));
+				
+				
+				insertClassroom.setString(3,classCode);
 				insertClassroom.executeUpdate();
-
 				int classroomId;
 				try (ResultSet rs = insertClassroom.getGeneratedKeys()) {
 					if (rs.next()) {
@@ -88,7 +114,7 @@ public class ClassroomDao {
 		return classroom;
 	}
 
-	public boolean addStudent(int classroomId, int userId) {
+	public boolean addStudent(int classroomId, int userId) throws SQLException {
 
 		try (PreparedStatement insertClassroomUserRel = connection
 				.prepareStatement(Queries.insertUserClassroomRelationship)) {
@@ -96,12 +122,9 @@ public class ClassroomDao {
 			insertClassroomUserRel.setInt(2, userId);
 			insertClassroomUserRel.setString(3, UserRole.STUDENT.name().toLowerCase());
 			return insertClassroomUserRel.executeUpdate() > 0;
-		} catch (SQLException e) {
-			// TODO: implement logger
-		}
-
-		return false;
+		} 
 	}
+	
 
 	public List<ClassroomDto> getAllCreatedClassrooms(int createdBy) {
 		List<ClassroomDto> classrooms = new LinkedList<>();
@@ -160,9 +183,9 @@ public class ClassroomDao {
 			try (ResultSet rs = getStudents.executeQuery()) {
 				while (rs.next()) {
 					User user = new User(rs.getString("name"), rs.getInt("user_id"), rs.getString("email"),
-							rs.getTimestamp("registered_at").toInstant());
+							rs.getTimestamp("registered_at").toInstant().getEpochSecond());
 					Instant joinedAt = rs.getTimestamp("joined_at").toInstant();
-					students.add(new ClassroomUser(user, joinedAt, UserRole.STUDENT));
+					students.add(new ClassroomUser(user, joinedAt.getEpochSecond(), UserRole.STUDENT));
 				}
 			}
 		} catch (SQLException e) {
@@ -170,6 +193,7 @@ public class ClassroomDao {
 			e.printStackTrace();
 		}
 
+		System.out.println(students);
 		return students;
 	}
 
@@ -180,9 +204,9 @@ public class ClassroomDao {
 			try (ResultSet rs = getStudents.executeQuery()) {
 				while (rs.next()) {
 					User user = new User(rs.getString("name"), rs.getInt("user_id"), rs.getString("email"),
-							rs.getTimestamp("registered_at").toInstant());
+							rs.getTimestamp("registered_at").toInstant().getEpochSecond());
 					Instant joinedAt = rs.getTimestamp("joined_at").toInstant();
-					tutors.add(new ClassroomUser(user, joinedAt, UserRole.TUTOR));
+					tutors.add(new ClassroomUser(user, joinedAt.getEpochSecond(), UserRole.TUTOR));
 				}
 			}
 		} catch (SQLException e) {
@@ -248,6 +272,49 @@ public class ClassroomDao {
 			}
 		}
 	}
+	
+	public String getClassroomCode(int classroomId) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.getClassPublicCode)){
+			ps.setInt(1, classroomId);
+			try(ResultSet rs = ps.executeQuery()){
+				if(rs.next()) {
+					return rs.getString(1);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public String changeClassroomCode(int classroomId) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.updateClassPublicCode)){
+			String classCode;
+			do {
+				classCode = ClassroomCodeGenerator.generateId(7);
+			}while(isClassCodeExists(classCode));
+			ps.setString(1, classCode);
+			ps.setInt(2, classroomId);
+			if(ps.executeUpdate() > 0) {
+				return classCode;
+			}
+		}
+		return null;
+	}
+	
+	
+	public ClassroomDto getClassroomPublicDetails(String code) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.selectClassroomPublicDetais)){
+			ps.setString(1, code);
+			try(ResultSet rs = ps.executeQuery()){
+				if(rs.next()) {
+					ClassroomDto classroomDto = new ClassroomDto();
+					classroomDto.setClassroomName(rs.getString("name"));
+					classroomDto.setCreatorName(rs.getString("creator_name"));
+					return classroomDto;
+				}
+			}
+		}
+		return null;
+	}
 
 	public ClassroomDto getClassroom(int userId, int classroomId) {
 
@@ -278,5 +345,29 @@ public class ClassroomDao {
 			e.printStackTrace();
 		}
 		return classroomDto;
+	}
+	
+	public int getClassroomId(String code) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.getClassrommIdByCode)){
+			ps.setString(1, code);
+			try(ResultSet rs = ps.executeQuery()){
+				if(rs.next()) {
+					return rs.getInt("classroom_id");
+				}
+			}
+		}
+		return 0;
+	}
+	
+	private boolean isClassCodeExists(String code) throws SQLException {
+		try(PreparedStatement ps = connection.prepareStatement(Queries.selectClassByPublicCode)){
+			ps.setString(1, code);
+			if(ps.execute()) {
+				try(ResultSet rs = ps.getResultSet()){
+					return rs.next();
+				}
+			}
+			return false;
+		}
 	}
 }

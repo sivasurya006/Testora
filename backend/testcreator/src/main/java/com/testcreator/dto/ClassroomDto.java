@@ -1,25 +1,26 @@
 package com.testcreator.dto;
 
 public class ClassroomDto {
-	private long classroomId;
+	private Integer classroomId;
 	private String classroomName;
-	private long createdAt;
-	private int createdBy;
+	private Long createdAt;
+	private Integer createdBy;
 	private Long joinedAt;
 	private String creatorName;
-	private int totalStudents;
+	private Integer totalStudents;
+	private String code;
 	
 	/*
 	 * Long Wrapper class => In struts.xml we use excludeNullProperties
 	 * Joined At only needed for /api/joined-classrooms
 	 * */
 	
-	public int getTotalStudents() {
+	public Integer getTotalStudents() {
 		return totalStudents;
 	}
 
 
-	public void setTotalStudents(int totalStudents) {
+	public void setTotalStudents(Integer totalStudents) {
 		this.totalStudents = totalStudents;
 	}
 
@@ -27,7 +28,7 @@ public class ClassroomDto {
 	public ClassroomDto() {}
 	
 	
-	public ClassroomDto(long classroomId, String classroomName, long createdAt, int createdBy) {
+	public ClassroomDto(Integer classroomId, String classroomName, Long createdAt, Integer createdBy) {
 		this.classroomId = classroomId;
 		this.classroomName = classroomName;
 		this.createdAt = createdAt;
@@ -35,10 +36,10 @@ public class ClassroomDto {
 	}
 	
 	
-	public long getClassroomId() {
+	public Integer getClassroomId() {
 		return classroomId;
 	}
-	public void setClassroomId(long classroomId) {
+	public void setClassroomId(Integer classroomId) {
 		this.classroomId = classroomId;
 	}
 	public String getClassroomName() {
@@ -47,17 +48,17 @@ public class ClassroomDto {
 	public void setClassroomName(String classroomName) {
 		this.classroomName = classroomName;
 	}
-	public long getCreatedAt() {
+	public Long getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(long createdAt) {
+	public void setCreatedAt(Long createdAt) {
 		this.createdAt = createdAt;
 	}
-//	public int getCreatedBy() {
+//	public Integer getCreatedBy() {
 //		return createdBy;
 //	}
 	
-	public void setCreatedBy(int createdBy) {
+	public void setCreatedBy(Integer createdBy) {
 		this.createdBy = createdBy;
 	}
 
@@ -67,7 +68,7 @@ public class ClassroomDto {
 	}
 
 
-	public void setJoinedAt(long joinedAt) {
+	public void setJoinedAt(Long joinedAt) {
 		this.joinedAt = joinedAt;
 	}
 	
@@ -77,6 +78,16 @@ public class ClassroomDto {
 	
 	public String getCreatorName() {
 		return creatorName;
+	}
+
+
+	public String getCode() {
+		return code;
+	}
+
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 	
 	

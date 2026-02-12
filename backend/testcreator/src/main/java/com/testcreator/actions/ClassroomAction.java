@@ -7,20 +7,28 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.util.ServletContextAware;
 
+import com.testcreator.dao.ClassroomDao;
 import com.testcreator.dto.ApiError;
 import com.testcreator.dto.ClassroomDto;
 import com.testcreator.dto.SuccessDto;
+import com.testcreator.exception.ClassroomNotNoundException;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.exception.UserNotFoundException;
 import com.testcreator.model.Classroom;
+import com.testcreator.model.ClassroomUser;
+import com.testcreator.model.Context;
+import com.testcreator.model.Permission;
+import com.testcreator.service.AccessService;
 import com.testcreator.service.ClassroomService;
 
-public class ClassroomAction extends JsonApiAction implements ServletContextAware {
+public class ClassroomAction extends JsonApiAction implements ServletContextAware, ServletRequestAware {
 
 	private ServletContext servletContext;
 	private String classroomName;
+	private HttpServletRequest request;
 
 	private long createdAt;
 	private int classroomId;
@@ -30,6 +38,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 
 	private List<ClassroomDto> joinedClassrooms;
 	private List<ClassroomDto> createdClassrooms;
+	private List<ClassroomUser> classroomUsers;
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
@@ -65,11 +74,10 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			classroomDto.setCreatedBy(classroom.getcreatedBy());
 
 			return SUCCESS;
-		}catch (UserNotFoundException e) {
+		} catch (UserNotFoundException e) {
 			setError(new ApiError("Authentication failed", 401));
 			return LOGIN;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		setError(new ApiError("Can't create classroom", 500));
@@ -156,7 +164,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String renameClassroom() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-       
+
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {
@@ -198,7 +206,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String getClassroomDetails() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-		System.out.println("user id:" +userId);
+		System.out.println("user id:" + userId);
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {
@@ -222,8 +230,95 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		}
 		return ERROR;
 	}
-	
 
+	public String inviteLink() {
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.classroomDto = new ClassroomDto();
+			this.classroomDto.setCode(new ClassroomService().getClassroomCode(classroomId));
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+
+	public String updateInviteLink() {
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.classroomDto = new ClassroomDto();
+			this.classroomDto.setCode(new ClassroomService().updateClassroomCode(classroomId));
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+
+	public String fetchClassroomStudents() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		
+		System.out.println(classroomId+" "+userId);
+		
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			
+			this.classroomUsers = new ClassroomService().getAllStudents(classroomId);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+	
 	public SuccessDto getSuccessDto() {
 		return successDto;
 	}
@@ -259,5 +354,14 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public List<ClassroomDto> getJoinedClassrooms() {
 		return joinedClassrooms;
 	}
- 
+	
+	public List<ClassroomUser> getClassroomUsers() {
+		return classroomUsers;
+	}
+
+	@Override
+	public void setServletRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
 }

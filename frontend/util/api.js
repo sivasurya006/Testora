@@ -15,7 +15,7 @@ const api = axios.create({
 // console.log(api.interceptors)
 
 api.interceptors.request.use(async (config) => {
-   
+
     if (Platform.OS != 'web') {
         try {
             const token = await SecureStore.getItemAsync('token');
@@ -29,12 +29,17 @@ api.interceptors.request.use(async (config) => {
     }
 
     return config;
-    
+
 });
 
 api.interceptors.response.use(null, (error) => {
     if (error.response?.status === 401) {
-        router.replace('/signin');
+        const redirect = error.response.data?.redirectURI;
+        let navLink = '/signin';
+        if (redirect) {
+            navLink += `?redirect=${redirect}`;
+        }
+        router.replace(navLink);
     }
     throw error;
 });

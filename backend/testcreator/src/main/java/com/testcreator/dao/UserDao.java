@@ -23,7 +23,7 @@ public class UserDao {
 			
 			try(ResultSet rs = getUserById.executeQuery()){
 				if(rs.next()) {
-					return new User(rs.getString("name"),rs.getInt("user_id"),rs.getString("email"),rs.getTimestamp("registered_at").toInstant());
+					return new User(rs.getString("name"),rs.getInt("user_id"),rs.getString("email"),rs.getTimestamp("registered_at").toInstant().getEpochSecond());
 				}
 			}
 			
@@ -76,7 +76,7 @@ public class UserDao {
 			
 			try(ResultSet rs = getUser.executeQuery()){
 				if(rs.next()) {
-					return new User(rs.getString("name"),rs.getInt("user_id"),rs.getString("email"),rs.getTimestamp("registered_at").toInstant());
+					return new User(rs.getString("name"),rs.getInt("user_id"),rs.getString("email"),rs.getTimestamp("registered_at").toInstant().getEpochSecond());
 				}
 			}
 			

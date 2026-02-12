@@ -1,5 +1,5 @@
 import { View, Text, Pressable, TextInput, TouchableOpacity, ActivityIndicator } from "react-native"
-import { Link, router } from "expo-router"
+import { Link, router, useGlobalSearchParams } from "expo-router"
 import AuthformStyles from '../styles/AuthformStyles'
 import { useContext, useState } from "react";
 import { Ionicons } from "@expo/vector-icons"
@@ -19,6 +19,7 @@ export default function Signup() {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const { redirect } = useGlobalSearchParams();
 
     async function handleSignup() {
         if (!isValidName(name)) {
@@ -41,7 +42,11 @@ export default function Signup() {
         const result = await authContext.signUp(name, email, password);
 
         if (result.success) {
-            router.replace('/')
+            if(redirect){
+                router.replace(redirect);
+            }else{
+                router.replace('/')
+            }
         } else {
             if (result.status && result.status === 409) {
                 setErrorMessage("Account already registered with this email. Try to signin")
@@ -52,6 +57,9 @@ export default function Signup() {
         }
 
     }
+
+
+    const signinPageLink = redirect ? `/signin?redirect=${redirect}` : '/signin';
 
     return (
         <View style={styles.screenContainer}>
@@ -107,7 +115,7 @@ export default function Signup() {
                 {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
 
                 <Text style={styles.navLinkText}>Already have an account?{' '}
-                    <Link href="signin" style={styles.link}>sign in</Link>
+                    <Text onPress={() => router.replace(signinPageLink)} style={styles.link}>sign in</Text>
                 </Text>
 
             </View>

@@ -4,9 +4,9 @@ import { ActivityIndicator, Platform, View, useWindowDimensions } from 'react-na
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
-import Colors from '../../../../styles/Colors'
-import Header from '../../../../src/components/Header'
-import { AuthContext } from '../../../../util/AuthContext'
+import Colors from '../../../../../styles/Colors'
+import Header from '../../../../../src/components/Header'
+import { AuthContext } from '../../../../../util/AuthContext'
 
 export default function StudentLayout() {
     const { width } = useWindowDimensions()

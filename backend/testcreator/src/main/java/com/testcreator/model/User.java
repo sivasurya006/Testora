@@ -6,9 +6,9 @@ public class User {
 	private final String name;
 	private final int userId;
 	private final String email;
-	private final Instant registeredAt;
+	private final Long registeredAt;
 	
-	public User(String name, int userId, String email, Instant registeredAt) {
+	public User(String name, int userId, String email, Long registeredAt) {
 		this.name = name;
 		this.userId = userId;
 		this.email = email;
@@ -24,7 +24,7 @@ public class User {
 	public String getEmail() {
 		return email;
 	}
-	public Instant getregisteredAt() {
+	public Long getregisteredAt() {
 		return registeredAt;
 	}
 	

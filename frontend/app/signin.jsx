@@ -1,5 +1,5 @@
 import { View, Text, Pressable, TextInput, ActivityIndicator, TouchableOpacity } from "react-native"
-import { Link, router } from "expo-router"
+import { Link, router, useGlobalSearchParams } from "expo-router"
 import AuthformStyles from '../styles/AuthformStyles'
 import { useContext, useState } from "react";
 import { Ionicons } from "@expo/vector-icons"
@@ -17,7 +17,9 @@ export default function Signin() {
     const [email, setEmail] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
+    const { redirect } = useGlobalSearchParams();
 
+    const signUpPageLink = redirect ? `signup?redirect=${encodeURIComponent(redirect)}` : 'signup';
 
     async function handleSignin() {
         if (!isValidEmail(email) && 0) {
@@ -30,7 +32,11 @@ export default function Signin() {
         }
         const result = await authContext.signIn(email, password);
         if (result.success) {
-            router.replace('/')
+            if(redirect){
+                router.replace(redirect);
+            }else{
+                router.replace('/')
+            }
         } else {
             console.log(result.error);
             setErrorMessage("Invalid email or Password")
@@ -78,7 +84,7 @@ export default function Signin() {
                 {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
 
                 <Text style={styles.navLinkText}>Don't have an account?{' '}
-                    <Link style={styles.link} href="signup">sign up</Link>
+                    <Text onPress={() => router.replace(signUpPageLink)} style={styles.link} href={signUpPageLink}>sign up</Text>
                 </Text>
 
             </View>

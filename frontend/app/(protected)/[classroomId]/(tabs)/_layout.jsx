@@ -19,7 +19,7 @@ export default function ClassroomLayout() {
                     tabBarPosition: isLargeScreen ? 'left' : 'bottom',
                     tabBarStyle: Platform.select({
                         web: {
-                            minWidth: 230,
+                            minWidth: 300,
                             backgroundColor: Colors.secondaryColor,
                         },
                         android: {

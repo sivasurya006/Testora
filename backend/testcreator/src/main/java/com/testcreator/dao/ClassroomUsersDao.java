@@ -34,8 +34,8 @@ public class ClassroomUsersDao {
 			
 			try(ResultSet rs = ps.executeQuery()){
 				if(rs.next()) {
-					User user = new User(rs.getString("name"), rs.getInt("user_id") , rs.getString("email"), rs.getTimestamp("registered_at").toInstant());
-					classroomUser = new ClassroomUser(user, rs.getTimestamp("joined_at").toInstant(), UserRole.valueOf(rs.getString("role").toUpperCase()));
+					User user = new User(rs.getString("name"), rs.getInt("user_id") , rs.getString("email"), rs.getTimestamp("registered_at").toInstant().getEpochSecond());
+					classroomUser = new ClassroomUser(user, rs.getTimestamp("joined_at").toInstant().getEpochSecond(), UserRole.valueOf(rs.getString("role").toUpperCase()));
 					classroomUser.setClassroomId(rs.getInt("classroom_id"));
 				}else {
 					throw new ClassroomNotNoundException("can't find the classroom");

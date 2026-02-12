@@ -14,6 +14,7 @@ import com.testcreator.dto.ClassroomDto;
 import com.testcreator.exception.DatabaseConnectionException;
 import com.testcreator.exception.UserNotFoundException;
 import com.testcreator.model.Classroom;
+import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.User;
 import com.testcreator.util.DBConnectionMaker;
 
@@ -49,6 +50,14 @@ public class ClassroomService {
 		return classroomDao.createNewClassRoom(user.getUserId(), name);	
 	}
 	
+	public String getClassroomCode(int classroomId) throws SQLException {
+		return classroomDao.getClassroomCode(classroomId);
+	}
+	
+	public String updateClassroomCode(int classroomId) throws SQLException {
+		return classroomDao.changeClassroomCode(classroomId);
+	}
+	
 	public List<ClassroomDto> getAllCreatedClassrooms(int userId){
 		return classroomDao.getAllCreatedClassrooms(userId);
 	}
@@ -71,6 +80,30 @@ public class ClassroomService {
 		return classroomDao.getClassroom(userId,classroomId);
 		
 
+	}
+	
+	public ClassroomDto getClassroomPublicDetails(String classroomCode) throws SQLException {
+		return classroomDao.getClassroomPublicDetails(classroomCode);
+	}
+	
+	public int addStudent(String publicCode,int userId) throws SQLException{
+		int classroomId = classroomDao.getClassroomId(publicCode);
+		if(classroomId > 0) {
+			try {
+				classroomDao.addStudent(classroomId, userId);
+			} catch (SQLException e) {
+				if(e.getErrorCode() == 1062) {
+					return classroomId;
+				}else {
+					throw new SQLException(e);
+				}
+			}
+		}
+		return classroomId;
+	}
+	
+	public List<ClassroomUser> getAllStudents(int classroomId){
+		return classroomDao.getAllStudents(classroomId);
 	}
 	
 }

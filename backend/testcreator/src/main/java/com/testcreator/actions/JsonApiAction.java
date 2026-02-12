@@ -7,6 +7,7 @@ import com.testcreator.dto.ApiError;
 public class JsonApiAction extends ActionSupport{
 	protected ApiError error;
 	protected final String NOT_FOUND = "notFound";
+	protected final String REDIRECT = "redirect";
 		
 	
 	public ApiError getError() {

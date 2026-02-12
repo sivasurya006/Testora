@@ -31,22 +31,27 @@
 			<result name="invalidJson" type="json">
 				<param name="root">error</param>
 				<param name="statusCode">400</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 			<result name="error" type="json">
 				<param name="root">error</param>
 				<param name="statusCode">400</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 			<result name="input" type="json">
 				<param name="root">error</param>
 				<param name="statusCode">400</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 			<result name="login" type="json">
 				<param name="root">error</param>
 				<param name="statusCode">401</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 			<result name="notFound" type="json">
 				<param name="root">error</param>
 				<param name="statusCode">404</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</global-results>
 
@@ -115,12 +120,44 @@
 			</result>
 		</action>
 
+		<action name="students"
+			class="com.testcreator.actions.ClassroomAction"
+			method="fetchClassroomStudents">
+			<result name="success" type="json">
+				<param name="root">classroomUsers</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="apiStack" />
+			<interceptor-ref name="classroomIdInterceptor" />
+		</action>
+
 		<action name="classroomcount"
 			class="com.testcreator.actions.TestAction" method="getTestCount">
 			<result name="success" type="json">
 				<param name="root">testDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
+		</action>
+
+		<action name="inviteLink"
+			class="com.testcreator.actions.ClassroomAction" method="inviteLink">
+			<result name="success" type="json">
+				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="apiStack" />
+			<interceptor-ref name="classroomIdInterceptor" />
+		</action>
+
+		<action name="updateInviteLink"
+			class="com.testcreator.actions.ClassroomAction"
+			method="updateInviteLink">
+			<result name="success" type="json">
+				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="apiStack" />
+			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
 
 
@@ -155,6 +192,8 @@
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
+
+
 
 		<action name="get-created-tests"
 			class="com.testcreator.actions.TestAction" method="fetchCreatedTests">
@@ -266,6 +305,42 @@
 			</result>
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
+	</package>
+
+	<package name="joinEndPoints" namespace="/join"
+		extends="classroom">
+
+
+		<action name="classroom"
+			class="com.testcreator.actions.JoinClassroomAction"
+			method="getClassroom">
+			<result name="success" type="json">
+				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+			</result>
+		</action>
+
+
+		<action name="classroomConfirm"
+			class="com.testcreator.actions.JoinClassroomAction"
+			method="joinClassroom">
+			<result name="success" type="json">
+				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<result name="redirect" type="json">
+				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
+				<param name="statusCode">301</param>
+			</result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+			</result>
 		</action>
 
 	</package>
