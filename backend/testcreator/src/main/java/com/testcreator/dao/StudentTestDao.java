@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -15,9 +17,8 @@ import com.testcreator.util.Queries;
 
 public class StudentTestDao {
 
-	
 	private Connection connection;
-
+    List<TestDto> tests=new LinkedList<TestDto>();
 	public StudentTestDao() throws SQLException {
 		try {
 			this.connection = DBConnectionMaker.getInstance(ServletActionContext.getServletContext()).getConnection();
@@ -25,31 +26,37 @@ public class StudentTestDao {
 			throw new SQLException("Driver not found");
 		}
 	}
-	
-	
-	public TestDto getNewTests(int classroomId,int userId) throws SQLException {
-		TestDto testDto = null;
+
+	public List<TestDto> getNewTests(int classroomId, int userId) throws SQLException {
+		TestDto testDto;
 		try (PreparedStatement selectTest = connection.prepareStatement(Queries.selectStudentTests)) {
-			selectTest.setInt(1,userId);
+			selectTest.setInt(1, userId);
+			System.out.println("userid" + userId);
 			try (ResultSet rs = selectTest.executeQuery()) {
-				if (rs.next()) {
+				while(rs.next()) {
 					testDto = new TestDto();
 					testDto.setTestTitle(rs.getString("testTitle"));
 					testDto.setCorrectionMethod(
 							CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
-				
-					testDto.setMaximumAttempts(rs.getInt("maximum_attempts"));
+					int maxAttempts = rs.getInt("maximum_attempts");
+					System.out.println("maxattemp"+maxAttempts);
+					int attemptCount = (rs.getInt("attemptCount"));
+					int remainingAttempts = maxAttempts - attemptCount;
+					testDto.setRemainingAttempts(remainingAttempts);
+					System.out.println(remainingAttempts);
+					testDto.setMaximumAttempts(maxAttempts);
 					testDto.setCreatorName(rs.getString("creatorName"));
-					if(rs.getBoolean("is_timed")) {
+					testDto.setAttemptCount(attemptCount);
+					if (rs.getBoolean("is_timed")) {
 						testDto.setDurationMinutes(rs.getInt("duration_minutes"));
 					}
+					System.out.println("attemot"+testDto.getMaximumAttempts());
+					this.tests.add(testDto);
+                     
 
-					
-				} else {
-					throw new SQLException("Can't get create test");
 				}
 			}
 		}
-		return testDto;
+		return tests;
 	}
 }

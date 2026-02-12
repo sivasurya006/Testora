@@ -7,14 +7,17 @@ public class Context {
 	public int getClasssroomId() {
 		return classsroomId;
 	}
+	
 	public void setClasssroomId(int classsroomId) {
 		this.classsroomId = classsroomId;
 	}
 	public int getUserId() {
 		return userId;
 	}
+	
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
+	
 }

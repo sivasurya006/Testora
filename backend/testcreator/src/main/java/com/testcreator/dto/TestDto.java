@@ -19,10 +19,28 @@ public class TestDto {
 	private TestStatus status;
 	private int maximumAttempts;
 	private CorrectionMethod correctionMethod;
+	
+	public Integer getRemainingAttempts() {
+		return remainingAttempts;
+	}
+
+	public void setRemainingAttempts(Integer remainingAttempts) {
+		this.remainingAttempts = remainingAttempts;
+	}
+
 	private List<QuestionDto> questions;
 	private Integer testCount;
+	private Integer attemptCount;
+	private Integer remainingAttempts;
 	
-	
+	public Integer getAttemptCount() {
+		return attemptCount;
+	}
+
+	public void setAttemptCount(Integer attemptCount) {
+		this.attemptCount = attemptCount;
+	}
+
 	public Integer getTestCount() {
 		return testCount;
 	}
