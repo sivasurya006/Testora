@@ -80,7 +80,6 @@ export default function Dashboard() {
       }
     } catch (err) {
       console.log(err);
-      console.log(res.data, "can not rendertest")
 
     }
   }

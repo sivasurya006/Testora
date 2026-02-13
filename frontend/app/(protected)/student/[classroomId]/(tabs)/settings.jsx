@@ -4,7 +4,7 @@ export default function Dashboard() {
 
     return (
         <View>
-            <Text>dashboard</Text>
+            <Text>settings</Text>
         </View>
     )
 }

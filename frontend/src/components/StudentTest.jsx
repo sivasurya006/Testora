@@ -1,20 +1,19 @@
 import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
-import Colors from '../../../../styles/Colors';
+import Colors from '../../styles/Colors';
 import { IconButton, Menu } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 
-export default function Test({ data }) {
+export default function StudentTest({ data }) {
 
     const [isMenuVisible, setMenuVisible] = useState(false);
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
     const { width } = useWindowDimensions();
-
-
+ 
     function handleStart() {
         router.push({
             pathname: '/[classroomId]/(tabs)/test/[testId]/start',
@@ -36,6 +35,7 @@ export default function Test({ data }) {
     }
 
     const remaining = data.remainingAttempts;
+
     return (
         <View style={styles.wrapper}>
             <View style={styles.card}>
@@ -44,10 +44,10 @@ export default function Test({ data }) {
                     <Ionicons name='clipboard-outline' size={20} color={Colors.primaryColor} />
                     <Text style={styles.title}>{data.testTitle}</Text>
 
-                    {remaining===maximumAttempts && (
+                    {remaining ===0 && (
                         <View style={styles.newBadge}>
-                        <Text style={styles.newText}>New</Text>
-                      </View>
+                            <Text style={styles.newText}>New</Text>
+                        </View>
                     )}
                     {remaining > 0 ? (
                         <View style={styles.attemptBadge}>
@@ -56,8 +56,8 @@ export default function Test({ data }) {
                             </Text>
                         </View>
                     ) : (<View style={styles.finishedBadge}>
-                            <Text style={styles.finishedText}>Finished</Text>
-                        </View> )}
+                        <Text style={styles.finishedText}>Finished</Text>
+                    </View>)}
 
                     <Menu
                         key={isMenuVisible ? 'visible' : 'invisible'}
@@ -101,14 +101,14 @@ export default function Test({ data }) {
                         <View style={styles.btnContainer}>
                             <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
                                 <Entypo name="controller-play" size={20} color="black" />
-                                <Text>Start</Text>
+                                <Text>ReAttempt</Text>
                             </Pressable>
                         </View>
                     ) : (
                         <View style={styles.btnContainer}>
                             <Pressable style={styles.btnInsideContainer} onPress={handleStrategy}>
-                                <Feather name="bar-chart-2" size={20} color="black" />
-                                <Text>Strategy</Text>
+                                <Entypo name="controller-play" size={20} color="black" />
+                                <Text>Start</Text>
                             </Pressable>
                         </View>
                     )}
@@ -232,13 +232,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#424242',
     },
-    newBadge:{
+    newBadge: {
         backgroundColor: '#E0E0E0',
         paddingHorizontal: 8,
         paddingVertical: 2,
         borderRadius: 6,
     },
-    newText:{
+    newText: {
         fontSize: 12,
         color: '#424242',
     },
