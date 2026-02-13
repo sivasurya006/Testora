@@ -8,6 +8,7 @@ public class JsonApiAction extends ActionSupport{
 	protected ApiError error;
 	protected final String NOT_FOUND = "notFound";
 	protected final String REDIRECT = "redirect";
+	protected final String FORBIDDEN = "forbidden";
 		
 	
 	public ApiError getError() {

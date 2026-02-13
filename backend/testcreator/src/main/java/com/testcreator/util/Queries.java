@@ -108,9 +108,10 @@ public class Queries {
 	
 	// Student Test Questions And Answers
 	
-	public static final String getTestQuestionsWithAttempt = "select title , is_timed , duration_minutes , attempt_id , q.question_id ,"
-			+ " q.type , question_text , option_id , option_text from Tests t join Attempts a on a.test_id = t.test_id "
+	public static final String getTestQuestionsWithAttempt = "select title , is_timed , duration_minutes, q.question_id ,"
+			+ " q.type , question_text , option_id , option_text from Tests t "
 			+ "left join Questions q on q.test_id = t.test_id left join Options o on q.question_id = o.question_id where t.test_id = ?";
 	
 	public static final String newAttempt = "insert Attempts (test_id,user_id) values (?,?)";
+	public static final String getMaxAndUserAttempts = "select maximum_attempts , count(attempt_id) as user_attempts  from Tests t left join Attempts a on t.test_id = a.test_id where t.test_id = ? and user_id = ?";
 } 

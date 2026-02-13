@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { fonts } from '../../../styles/fonts';
+import { RadioButton } from 'react-native-paper';
 
 export default function BooleanOption({ options }) {
 
