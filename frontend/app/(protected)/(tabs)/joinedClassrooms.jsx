@@ -28,7 +28,7 @@ export default function JoinedClassrooms() {
 
   return (
     <React.Fragment>
-      <TopBar setCreateModalVisible={setCreateModalVisible}/>
+      <TopBar setCreateModalVisible={setCreateModalVisible} />
       {allJoinedClassrooms.length == 0 ? (
         <EmptyClassroom message={"No classrooms available"} />
       ) : <FlatList
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 
   topBarHeader: {
     fontSize: 18,
-    fontFamily : fonts.semibold
+    fontFamily: fonts.semibold
   },
 
   joinBtn: {

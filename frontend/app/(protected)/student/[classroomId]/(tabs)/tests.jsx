@@ -24,16 +24,23 @@ export default function CreatedTestList() {
             )
             .filter(t => {
 
-                if (selectedFilter === "NEW") {
-                    return t.attemptCount === 0 && t.maximumAttempts > 0;
+                if (selectedFilter === "new") {
+                    return t.attemptCount === 0 && t.maximumAttempts === 0;
                 }
 
-                if (selectedFilter === "REMAINING") {
-                    return t.remainingAttempts > 0;
+                if (selectedFilter === "remaining") {
+                    return t.attemptCount != 0 && t.attemptCount != t.maximumAttempts;
                 }
 
-                if (selectedFilter === "FINISHED") {
+                if (selectedFilter === "finished") {
                     return t.remainingAttempts === 0 && t.maximumAttempts > 0;
+                }
+                if (selectedFilter === "attempted") {
+                    return t.attemptCount === 0 && t.maximumAttempts > 0;
+
+                }
+                if (selectedFilter === "all") {
+                    return true;
                 }
 
                 return true;
@@ -49,7 +56,7 @@ export default function CreatedTestList() {
 
     return (
         <View style={{ flex: 1 }}>
-    
+
             <View style={styles.searchRow}>
                 <TextInput
                     placeholder="Search tests"
@@ -57,68 +64,78 @@ export default function CreatedTestList() {
                     onChangeText={setSearch}
                     style={styles.searchInput}
                 />
-    
-                <Pressable onPress={() => setShowFilters(!showFilters)}>
+
+                {/* <Pressable onPress={() => setShowFilters(!showFilters)}
+                >
                     <AntDesign name="filter" size={22} color="black" />
-                </Pressable>
+                </Pressable> */}
             </View>
-    
-            {showFilters && (
-                <View style={styles.dropdownMenu}>
-                    <Pressable
-                        style={styles.menuItem}
-                        onPress={() => {
-                            setSelectedFilter("NEW");
-                            setShowFilters(false);
-                        }}
-                    >
-                        <Text>New</Text>
-                    </Pressable>
-    
-                    <Pressable
-                        style={styles.menuItem}
-                        onPress={() => {
-                            setSelectedFilter("REMAINING");
-                            setShowFilters(false);
-                        }}
-                    >
-                        <Text>Remaining</Text>
-                    </Pressable>
-    
-                    <Pressable
-                        style={styles.menuItem}
-                        onPress={() => {
-                            setSelectedFilter("FINISHED");
-                            setShowFilters(false);
-                        }}
-                    >
-                        <Text>Finished</Text>
-                    </Pressable>
-    
-                    <Pressable
-                        style={styles.menuItem}
-                        onPress={() => {
-                            setSelectedFilter("ALL");
-                            setShowFilters(false);
-                        }}
-                    >
-                        <Text>All</Text>
-                    </Pressable>
-                </View>
-            )}
-    
+
+
+            <View style={styles.menu}>
+                <Pressable
+                    style={styles.menuItem}
+                    onPress={() => {
+                        setSearch("");
+                        setSelectedFilter("all");
+                        setShowFilters(false);
+                    }}
+                >
+                    <Text>All</Text>
+                </Pressable>
+                <Pressable
+                    style={styles.menuItem}
+                    onPress={() => {
+                        setSearch("");
+                        setSelectedFilter("new");
+                        setShowFilters(false);
+                    }}
+                >
+                    <Text>New</Text>
+                </Pressable>
+
+                <Pressable
+                    style={styles.menuItem}
+                    onPress={() => {
+                        setSearch("");
+
+                        setSelectedFilter("remaining");
+                        setShowFilters(false);
+                    }}
+                >
+                    <Text>Attempted</Text>
+                </Pressable>
+
+                <Pressable
+                    style={styles.menuItem}
+                    onPress={() => {
+                        setSearch("");
+
+                        setSelectedFilter("finished");
+                        setShowFilters(false);
+                    }}
+                >
+                    <Text>Finished</Text>
+                </Pressable>
+
+
+            </View>
+
+
             <FlatList
                 data={filteredTests}
+                extraData={filteredTests}
+
                 keyExtractor={(item) => item.testId.toString()}
                 renderItem={({ item }) => <StudentTest data={item} />}
                 ListEmptyComponent={
                     <Text style={styles.emptyText}>No tests found</Text>
                 }
             />
-    
+
         </View>
     );
-    
+
 
 }
 
@@ -138,6 +155,7 @@ async function getAllPublishedTests(setPublishedTest, classroomId) {
             setPublishedTest(result.data);
             console.log(result.data);
         } else {
+            Publish
             console.log(`can't fetch created classrooms`);
         }
     } catch (err) {
@@ -152,6 +170,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: "black"
     },
+    menu: {
+        flexDirection: "row"
+    },
     searchRow: {
         padding: 16,
         backgroundColor: Colors.white,
@@ -159,7 +180,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between"
     },
-    
+
     searchInput: {
         borderWidth: 1,
         borderColor: '#ccc',
@@ -187,11 +208,11 @@ const styles = StyleSheet.create({
     },
     dropdownMenu: {
         position: "absolute",
-        top: 70,  
+        top: 70,
         right: 20,
         backgroundColor: "#fff",
         borderRadius: 8,
-        elevation: 5,  
+        elevation: 5,
         shadowColor: "#000",
         shadowOpacity: 0.2,
         shadowOffset: { width: 0, height: 2 },
@@ -199,11 +220,11 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         zIndex: 100
     },
-    
+
     menuItem: {
         paddingVertical: 10,
         paddingHorizontal: 20
     },
-    
+
 
 })
