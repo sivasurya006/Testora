@@ -39,7 +39,6 @@ export default function Dashboard() {
     }, [])
   );
 
-
   async function fetchDashboardData() {
     try {
       const res = await api.get("/api/classroomdetails", {
@@ -83,6 +82,7 @@ export default function Dashboard() {
 
     }
   }
+
   const { width } = useWindowDimensions();
   const iconSize = width <= 200 ? 24 : width <= 812 ? 20 : 28;
   const icon = width <= 200 ? 24 : width <= 812 ? 20 : 38;
@@ -101,7 +101,6 @@ export default function Dashboard() {
               Created At: {stats.createdAt ? new Date(stats.createdAt * 1000).toLocaleDateString() : "-"}
             </Text>
           </View>
-
 
           <View style={[styles.sCard, width <= 812 && { flexDirection: "row", gap: 12, width: 180, height: 100 }]}>
 
@@ -166,6 +165,7 @@ export default function Dashboard() {
         </View>
       </ScrollView>
     </SafeAreaView >
+    
   );
 }
 
