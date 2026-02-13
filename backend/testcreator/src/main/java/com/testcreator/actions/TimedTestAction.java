@@ -10,6 +10,7 @@ import com.testcreator.dto.ApiError;
 import com.testcreator.dto.SuccessDto;
 import com.testcreator.dto.student.StartTestDto;
 import com.testcreator.exception.ClassroomNotNoundException;
+import com.testcreator.exception.MaximumAttemptsException;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.Context;
 import com.testcreator.model.Permission;
@@ -39,6 +40,7 @@ public class TimedTestAction extends JsonApiAction implements ServletRequestAwar
 			
 			accessService.require(Permission.PUBLISHED_TEST, context);
 			accessService.require(Permission.CLASSROOM_MEMBER, context);
+			accessService.require(Permission.ATTEMPTS_REMAINING, context);
 			
 			startTestDto = service.startTest(userId, testId);
 			startTestDto.setWsUrl("ws://localhost:8080/testcreator/ws/timedtest?attemptId="
@@ -48,6 +50,9 @@ public class TimedTestAction extends JsonApiAction implements ServletRequestAwar
 			setError(new ApiError("Authentication failed", 401));
 			e.printStackTrace();
 			return LOGIN;
+		}catch (MaximumAttemptsException e) {
+			setError(new ApiError("Maximum attempts reached for this test.", 403));
+			return FORBIDDEN;
 		} catch (ClassroomNotNoundException | IllegalArgumentException e) {
 			setError(new ApiError("No record match", 404));
 			return NOT_FOUND;

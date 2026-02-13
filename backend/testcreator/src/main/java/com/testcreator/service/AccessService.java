@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import com.testcreator.dao.ClassroomUsersDao;
 import com.testcreator.dao.TestDao;
+import com.testcreator.exception.MaximumAttemptsException;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.Context;
@@ -21,10 +22,13 @@ public class AccessService {
 	
 	public void require(Permission permission, Context context) throws SQLException { 
 		if(!hasPermission(permission, context)) {
+			if(permission == Permission.ATTEMPTS_REMAINING) {
+				throw new MaximumAttemptsException();
+			}
 			throw new UnauthorizedException();
 		}
 	}
-	
+
 	private boolean hasPermission(Permission permission,Context context) throws SQLException {
 		
 		switch (permission) {
@@ -44,8 +48,21 @@ public class AccessService {
 		case PUBLISHED_TEST : {
 			return new TestDao().isPublished(context.getTestId());
 		}
+		case ATTEMPTS_REMAINING : {
+			return hasRemainingAttempts(context);
+		}
 		default:
 			return false;
 		}
+	}
+	
+	private boolean hasRemainingAttempts(Context context) throws SQLException {
+		Context attemptsDetais = new TestDao().getMaxAndUserAttempts(context.getTestId(),context.getUserId());
+		if(attemptsDetais == null) {
+			return false;
+		}
+		int userAtempts = attemptsDetais.getUserTestAttempts();
+		int maxAttempts = attemptsDetais.getMaximumTestAttempts();
+		return maxAttempts == 0 || userAtempts < maxAttempts;
 	}
 }
