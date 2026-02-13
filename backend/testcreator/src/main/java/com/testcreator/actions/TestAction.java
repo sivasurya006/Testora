@@ -211,7 +211,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		}
 		try {
 			TestService testService = new TestService();
-			this.questionDto = testService.getQuestionWithOption(userId, classroomId,userId);
+			this.questionDto = testService.getQuestionWithOption(userId, classroomId,questionId);
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));
