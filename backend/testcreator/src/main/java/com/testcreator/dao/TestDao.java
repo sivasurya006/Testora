@@ -19,6 +19,7 @@ import com.testcreator.dto.student.TestOptionDto;
 import com.testcreator.dto.student.TestQuestionDto;
 import com.testcreator.exception.QuestionNotFoundException;
 import com.testcreator.exception.UnauthorizedException;
+import com.testcreator.model.Context;
 import com.testcreator.model.CorrectionMethod;
 import com.testcreator.model.Option;
 import com.testcreator.model.QuestionType;
@@ -468,11 +469,22 @@ public class TestDao {
 	
 	public StartTestQuestionsDto startTest(int userId,int testId) throws SQLException {
 		StartTestQuestionsDto test = null;
-		try(PreparedStatement newAttempt = connection.prepareStatement(Queries.newAttempt)){
+		try(PreparedStatement newAttempt = connection.prepareStatement(Queries.newAttempt, Statement.RETURN_GENERATED_KEYS )){
 			newAttempt.setInt(1, testId);
 			newAttempt.setInt(2, userId);
 			int rowsAffected = newAttempt.executeUpdate();
 			if(rowsAffected == 1) {
+				
+				int attemptId;
+				
+				try(ResultSet attemptRs = newAttempt.getGeneratedKeys()){
+					if(attemptRs.next()) {
+						attemptId = attemptRs.getInt(1);
+					}else {
+						throw new SQLException("Can't create new attempt");
+					}
+				}
+				
 				try(PreparedStatement getQuestions = connection.prepareStatement(Queries.getTestQuestionsWithAttempt)){
 					getQuestions.setInt(1, testId);
 					try(ResultSet rs = getQuestions.executeQuery()){
@@ -486,7 +498,7 @@ public class TestDao {
 									test.setTimed(1);
 									test.setDuration(rs.getInt("duration_minutes"));
 								}
-								test.setAttemptId(rs.getInt("attempt_id"));
+								test.setAttemptId(attemptId);
 								test.setQuestions(new LinkedList<TestQuestionDto>());
 							}
 							int questionId = rs.getInt("question_id");
@@ -521,5 +533,24 @@ public class TestDao {
 	        }
 	    }
 	}
+
+	public Context getMaxAndUserAttempts(int testId, int userId) throws SQLException {
+		Context context = null;
+		try(PreparedStatement ps = connection.prepareStatement(Queries.getMaxAndUserAttempts)){
+			ps.setInt(1, testId);
+			ps.setInt(2, userId);
+			
+			try(ResultSet rs = ps.executeQuery()){
+				if(rs.next()) {
+					context = new Context();
+					context.setMaximumTestAttempts(rs.getInt("maximum_attempts"));
+					context.setUserTestAttempts(rs.getInt("user_attempts"));
+				}
+			}
+		}
+		return context;
+	}
+	
+	
 
 }

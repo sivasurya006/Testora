@@ -5,6 +5,8 @@ public class Context {
 	private int classsroomId;
 	private int userId;
 	private int testId;
+	private int maximumTestAttempts;
+	private int userTestAttempts;
 	
 	public int getClasssroomId() {
 		return classsroomId;
@@ -25,6 +27,22 @@ public class Context {
 	}
 	public void setTestId(int testId) {
 		this.testId = testId;
+	}
+
+	public int getMaximumTestAttempts() {
+		return maximumTestAttempts;
+	}
+
+	public void setMaximumTestAttempts(int maximumTestAttempts) {
+		this.maximumTestAttempts = maximumTestAttempts;
+	}
+
+	public int getUserTestAttempts() {
+		return userTestAttempts;
+	}
+
+	public void setUserTestAttempts(int userTestAttempts) {
+		this.userTestAttempts = userTestAttempts;
 	}
 	
 

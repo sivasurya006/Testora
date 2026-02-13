@@ -2,5 +2,5 @@ package com.testcreator.model;
 
 public enum Permission {
 	CLASSROOM_STUDENT, CLASSROOM_TUTOR, CLASSROOM_MEMBER,
-	PUBLISHED_TEST
+	PUBLISHED_TEST , ATTEMPTS_REMAINING
 }
