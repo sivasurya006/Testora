@@ -53,6 +53,11 @@
 				<param name="statusCode">404</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
+			<result name="forbidden" type="json">
+				<param name="root">error</param>
+				<param name="statusCode">403</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
 		</global-results>
 
 		<global-exception-mappings>
