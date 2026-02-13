@@ -6,9 +6,25 @@ import { fonts } from '../../../styles/fonts'
 
 export default function TestHeader({ data }) {
 
-    console.log(data)
+    const [timeLeft, setTimeLeft] = useState(data.duration * 60);
 
-    const [timeLeft, setTimeLeft] = useState(data.duration * 60)
+    // useEffect(() => {
+
+    //     setTimeLeft(data.duration * 60);
+
+    //     const timer = setInterval(() => {
+    //         setTimeLeft(prev => {
+    //             if (prev <= 1) {
+    //                 clearInterval(timer);
+    //                 return 0;
+    //             }
+    //             return prev - 1;
+    //         });
+    //     }, 1000);
+
+    //     return () => clearInterval(timer);
+    // }, [data]);
+
 
     useEffect(() => {
         if (timeLeft <= 0) return
@@ -17,6 +33,7 @@ export default function TestHeader({ data }) {
         }, 1000)
         return () => clearInterval(timer)
     }, [timeLeft])
+
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60)
@@ -42,15 +59,19 @@ export default function TestHeader({ data }) {
 
             {/* Timer  */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15, width: '30%', justifyContent: 'space-around' }}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 15}}>
-                    <Ionicons name='timer-outline' size={30} />
-                    <Text style={[
-                        styles.timer,
-                        timeLeft <= 60 && { color: 'red' }
-                    ]}>
-                        {formatTime(timeLeft)}
-                    </Text>
-                </View>
+                {
+                    data.duration ? (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
+                            <Ionicons name='timer-outline' size={30} />
+                            <Text style={[
+                                styles.timer,
+                                timeLeft <= 60 && { color: 'red' }
+                            ]}>
+                                {formatTime(timeLeft)}
+                            </Text>
+                        </View>
+                    ) : null
+                }
                 <Pressable style={styles.primaryButton}>
                     <Text style={styles.primaryButtonText}>Submit</Text>
                 </Pressable>
