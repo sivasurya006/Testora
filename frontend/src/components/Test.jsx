@@ -8,7 +8,7 @@ import ConfirmModal from './modals/ConfirmModal';
 import api from '../../util/api';
 import InputModal from './modals/InputModal';
 
-export default function Test({ allTests,data,setAllTests }) {
+export default function Test({ data, allTests, setAllTests }) {
 
   const [isMenuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
