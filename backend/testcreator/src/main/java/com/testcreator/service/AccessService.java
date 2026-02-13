@@ -6,6 +6,7 @@ import com.testcreator.model.UserRole;
 import java.sql.SQLException;
 
 import com.testcreator.dao.ClassroomUsersDao;
+import com.testcreator.dao.TestDao;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.Context;
@@ -40,7 +41,9 @@ public class AccessService {
 			ClassroomUser classroomUser = classroomUserDao.getUser(context.getClasssroomId(), context.getUserId());
 			return classroomUser != null;
 		}
-		
+		case PUBLISHED_TEST : {
+			return new TestDao().isPublished(context.getTestId());
+		}
 		default:
 			return false;
 		}

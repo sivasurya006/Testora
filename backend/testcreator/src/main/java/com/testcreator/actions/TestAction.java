@@ -509,6 +509,91 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
+	
+	
+	public void validatePublishTest() {
+		if (questionDto == null || questionDto.getTest() == null) {
+			addFieldError("test", "Invalid test details");
+			return;
+		}
+	
+		this.testDto = questionDto.getTest();
+		System.out.println(testDto.getTimedTest());
+		if (testDto.getTimedTest() == null ||  ( testDto.getTimedTest() && testDto.getDurationMinutes() <= 0) ) {
+			addFieldError("test.durationMinutes", "Invalid duration minutes");
+			return;
+		}
+
+		if (testDto.getMaximumAttempts() < 0) {
+			addFieldError("test.maximumAttempts", "Invalid attempts count");
+		}
+		
+	}
+
+	public String publishTest() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			TestService testService = new TestService();
+			testDto.setTestId(testId);
+			boolean published = testService.publishTest(testDto);
+			if (published) {
+				this.successDto = new SuccessDto("Test Published successfully", 200, published);
+			} else {
+				this.successDto = new SuccessDto("Test not published", 422, published);
+			}	
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+
+	public String unPublishTest() {
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+		try {
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			TestService testService = new TestService();
+			boolean unPublished = testService.unPublishTest(testId);
+			if (unPublished) {
+				this.successDto = new SuccessDto("Test unPublished successfully", 200, unPublished);
+			} else {
+				this.successDto = new SuccessDto("Test not unPublished", 422, unPublished);
+			}	
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
 
 	public String getTestCount() {
 		HttpServletRequest request = ServletActionContext.getRequest();

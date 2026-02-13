@@ -14,6 +14,9 @@ import org.apache.struts2.ServletActionContext;
 
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.student.StartTestQuestionsDto;
+import com.testcreator.dto.student.TestOptionDto;
+import com.testcreator.dto.student.TestQuestionDto;
 import com.testcreator.exception.QuestionNotFoundException;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.CorrectionMethod;
@@ -460,6 +463,63 @@ public class TestDao {
 			e.printStackTrace();
 		}
 		return testDto;
+	}
+	
+	
+	public StartTestQuestionsDto startTest(int userId,int testId) throws SQLException {
+		StartTestQuestionsDto test = null;
+		try(PreparedStatement newAttempt = connection.prepareStatement(Queries.newAttempt)){
+			newAttempt.setInt(1, testId);
+			newAttempt.setInt(2, userId);
+			int rowsAffected = newAttempt.executeUpdate();
+			if(rowsAffected == 1) {
+				try(PreparedStatement getQuestions = connection.prepareStatement(Queries.getTestQuestionsWithAttempt)){
+					getQuestions.setInt(1, testId);
+					try(ResultSet rs = getQuestions.executeQuery()){
+						Map<Integer,TestQuestionDto> questionMap = new LinkedHashMap<>();
+						while (rs.next()) {
+							if(test == null) {
+								test = new StartTestQuestionsDto();
+								test.setTitle(rs.getString("title"));
+								boolean isTimed = rs.getBoolean("is_timed");
+								if(isTimed) {
+									test.setTimed(1);
+									test.setDuration(rs.getInt("duration_minutes"));
+								}
+								test.setAttemptId(rs.getInt("attempt_id"));
+								test.setQuestions(new LinkedList<TestQuestionDto>());
+							}
+							int questionId = rs.getInt("question_id");
+							TestQuestionDto question = questionMap.get(questionId);
+							if(question == null) {
+								question = new TestQuestionDto();
+								question.setQuestionId(rs.getInt("question_id"));
+								question.setType(QuestionType.valueOf(rs.getString("type").toUpperCase()));
+								question.setQuestionText(rs.getString("question_text"));
+								question.setOptions(new LinkedList<TestOptionDto>());
+								questionMap.put(questionId, question);
+								test.getQuestions().add(question);
+							}
+							TestOptionDto option = new TestOptionDto();
+							option.setOptionId(rs.getInt("option_id"));
+							option.setOptionText(rs.getString("option_text"));
+							question.getOptions().add(option);
+						}
+					}
+				}
+			}
+		}
+		return test;
+	}
+	
+	public boolean isPublished(int testId) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement(Queries.isTestPublished)) {
+	        ps.setInt(1, testId);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            return rs.next(); // true if row exists
+	        }
+	    }
 	}
 
 }
