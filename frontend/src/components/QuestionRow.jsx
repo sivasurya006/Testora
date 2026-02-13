@@ -17,6 +17,7 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
     const closeEditModal = () => setEditModalVisible(false);
 
     async function handleEdit() {
+        console.log(classroomId,question.questionId)
         const details = await getQuestionDetails(classroomId, question.questionId);
         if (details) {
             setDefaultQuestionDetails(details);
@@ -80,7 +81,6 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
                 ) : null
             }
             {
-                isEditModalVisible ? (
                     <Portal>
                         <Modal
                             visible={isEditModalVisible}
@@ -92,7 +92,7 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
                             <QuestionEditor mode={'editQuestion'} defaultQuestion={defaultQuestionDetails}  onCancel={closeEditModal} onConfirm={editQuestionHandler} />
                         </Modal>
                     </Portal>
-                ) : null
+                
             }
 
         </View>
