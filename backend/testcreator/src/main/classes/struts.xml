@@ -406,12 +406,13 @@
 
 	</package>
 
-	<package name="studentPortal" namespace="/studenttest" extends="classroom">
+	<package name="studentPortal" namespace="/studenttest"
+		extends="classroom">
 
 		<interceptors>
 			<interceptor-stack name="studentStack">
-				<interceptor-ref name="apiStack"/>
-				<interceptor-ref name="classroomIdInterceptor"/>
+				<interceptor-ref name="apiStack" />
+				<interceptor-ref name="classroomIdInterceptor" />
 			</interceptor-stack>
 		</interceptors>
 
@@ -428,6 +429,33 @@
 
 		</action>
 
+	</package>
+
+	<package name="timedtest" namespace="/timedtest"
+		extends="studentPortal">
+
+		<interceptors>
+
+
+			<interceptor name="testIdInterceptor"
+				class="com.testcreator.interceptors.TestIdInterceptor" />
+
+			<interceptor-stack name="timedTestStack">
+				<interceptor-ref name="studentStack" />
+				<interceptor-ref name="testIdInterceptor" />
+			</interceptor-stack>
+
+		</interceptors>
+
+		<default-interceptor-ref
+			name="timedTestStack" />
+
+		<action name="start"
+			class="com.testcreator.actions.TimedTestAction" method="startTest">
+			<result name="success" type="json">
+				<param name="root">startTestDto</param>
+			</result>
+		</action>
 	</package>
 
 </struts>

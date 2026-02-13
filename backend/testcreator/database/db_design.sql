@@ -18,6 +18,7 @@ create table Classrooms (
     created_by int not null,
     name varchar(50) not null,
     created_at timestamp default current_timestamp,
+    public_code char(7) unique not null,
     foreign key (created_by) references Users(user_id) on delete cascade
 );
 
@@ -105,7 +106,7 @@ create table Answers (
     attempt_id int not null,
     question_id int not null,
     
-    written_answer text,
+    option_id int,
     is_correct boolean,
     
     given_marks decimal(6,2),
@@ -113,35 +114,36 @@ create table Answers (
     unique (attempt_id, question_id),
 
     foreign key (attempt_id) references Attempts(attempt_id) on delete cascade,
-    foreign key (question_id) references Questions(question_id) on delete cascade
+    foreign key (question_id) references Questions(question_id) on delete cascade,
+    foreign key (option_id) references Options(option_id) on delete set null
 );
 
-create table Answer_Options (
-    answer_id int not null,
-    option_id int not null,
+--create table Answer_Options (
+--    answer_id int not null,
+--    option_id int not null,
+--
+--    primary key (answer_id, option_id),
+--    foreign key (answer_id) references Answers(answer_id) on delete cascade,
+--    foreign key (option_id) references Options(option_id) on delete cascade
+--);
 
-    primary key (answer_id, option_id),
-    foreign key (answer_id) references Answers(answer_id) on delete cascade,
-    foreign key (option_id) references Options(option_id) on delete cascade
-);
 
-
-create table Fill_In_Blank_Answers(
-	blank_id int primary key auto_increment,
-	question_id int not null,
-	blank_idx  int not null,
-	blank_text text not null,
-	is_caseSensitive boolean default false,
-	foreign key (question_id) references Questions(question_id) on delete cascade
-);
-
-create table Matching_Answers(
-	match_id int primary key auto_increment,
-	question_id int not null,
-	left_side_text text not null,
-	right_side_text text not null,
-	foreign key (question_id) references Questions(question_id) on delete cascade
-);
+--create table Fill_In_Blank_Answers(
+--	blank_id int primary key auto_increment,
+--	question_id int not null,
+--	blank_idx  int not null,
+--	blank_text text not null,
+--	is_caseSensitive boolean default false,
+--	foreign key (question_id) references Questions(question_id) on delete cascade
+--);
+--
+--create table Matching_Answers(
+--	match_id int primary key auto_increment,
+--	question_id int not null,
+--	left_side_text text not null,
+--	right_side_text text not null,
+--	foreign key (question_id) references Questions(question_id) on delete cascade
+--);
 
 
 

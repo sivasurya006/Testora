@@ -59,6 +59,8 @@ public class Queries {
 	public static final String selectTestByTestID = "select * from Tests where test_id = ?";
 	public static final String selectTestsByStatus = "select * from Tests where classroom_id = ? and status = ? order by created_at desc";
 	public static final String selectTestsByStatusWithLimit = "select * from Tests where classroom_id = ? and status = ? order by created_at desc limit ? ";
+	public static final String isTestPublished = "select 1 from Tests where test_id = ? and status = 'published'";
+
 	
 	// update Test
 	public static final String updateTestOptionsAndPublish_NotTimed = "update Tests set correction_type = ? , maximum_attempts = ? , status = 'published' where test_id = ?";
@@ -101,5 +103,14 @@ public class Queries {
 	
 	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  left join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' where u.user_id=? and c.classroom_id=? group by c.classroom_id, c.name, u.name, c.created_at";
 	public static final String selectTestCount="select count(t.test_id) as testCount  from Tests t join Classrooms c on t.classroom_id=c.classroom_id join Users u on u.user_id=t.creator_id where t.creator_id=?";
-	public static final String selectStudentTests="select  t.title as testTitle, t.is_timed, t.duration_minutes, t.creator_id, t.maximum_attempts,  t.correction_type, u.name as creatorName, COUNT(a.test_id) as attemptCount from Tests t join Users u    on  u.user_id = t.creator_id left join Attempts a    on a.test_id = t.test_id  and  a.user_id=? group by  t.test_id,  t.title,    t.is_timed,   t.duration_minutes,   t.maximum_attempts,  t.correction_type,  u.name;";
+	public static final String selectStudentTests="select t.title as testTitle, t.is_timed, t.duration_minutes, t.maximum_attempts , t.correction_type, u.name as creatorName from Tests t join Users u on u.user_id=t.creator_id left join Attempts a on a.test_id=t.test_id where t.status= 'published' and t.creator_id=?";
+	
+	
+	// Student Test Questions And Answers
+	
+	public static final String getTestQuestionsWithAttempt = "select title , is_timed , duration_minutes , attempt_id , q.question_id ,"
+			+ " q.type , question_text , option_id , option_text from Tests t join Attempts a on a.test_id = t.test_id "
+			+ "left join Questions q on q.test_id = t.test_id left join Options o on q.question_id = o.question_id where t.test_id = ?";
+	
+	public static final String newAttempt = "insert Attempts (test_id,user_id) values (?,?)";
 } 
