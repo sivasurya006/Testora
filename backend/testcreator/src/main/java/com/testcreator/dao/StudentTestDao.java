@@ -27,18 +27,18 @@ public class StudentTestDao {
 		}
 	}
 	
-
 	public List<TestDto> getNewTests(int classroomId, int userId) throws SQLException {
 		TestDto testDto;
 		try (PreparedStatement selectTest = connection.prepareStatement(Queries.selectStudentTests)) {
 			selectTest.setInt(1, userId);
+			selectTest.setInt(2, classroomId);
 			System.out.println("userid" + userId);
 			try (ResultSet rs = selectTest.executeQuery()) {
 				while(rs.next()) {
 					testDto = new TestDto();
+					testDto.setTestId(rs.getInt("testIds"));
 					testDto.setTestTitle(rs.getString("testTitle"));
-					testDto.setCorrectionMethod(
-							CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
+					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
 					int maxAttempts = rs.getInt("maximum_attempts");
 					System.out.println("maxattemp"+maxAttempts);
 					int attemptCount = (rs.getInt("attemptCount"));
@@ -54,7 +54,6 @@ public class StudentTestDao {
 					System.out.println("attemot"+testDto.getMaximumAttempts());
 					this.tests.add(testDto);
                      
-
 				}
 			}
 		}
