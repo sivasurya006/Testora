@@ -350,7 +350,7 @@
 
 	</package>
 
-	<package name="authentication" namespace="/api/"
+	<package name="authentication" namespace="/api"
 		extends="json-default">
 		<interceptors>
 			<interceptor name="jsonExceptionInterceptor"

@@ -58,7 +58,7 @@ export default function AuthContextProvider({ children }) {
                     'Content-Type': 'application/json'
                 }
             });
-
+            if(!res) return
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signup error:", errorText);
@@ -79,7 +79,7 @@ export default function AuthContextProvider({ children }) {
             // TODO implement logger (sign up failed)
             console.log("catch calledd")
 
-            if (err.status == 409) {
+            if (err.response?.status == 409) {
                 return { success: false, error: "User already exist", status: 409 };
             }
             return { success: false, error: err.message };
@@ -96,13 +96,13 @@ export default function AuthContextProvider({ children }) {
             const res = await api.post("/signin", { userEmail, userPassword }, {
                 'Content-Type': 'application'
             });
-
+            if(!res) return
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signin error:", errorText);
                 return { success: false, error: errorText };
             }
-
+            console.log("catch called")
             router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
