@@ -50,7 +50,6 @@ export default function CreatedTestList() {
     return (
         <View style={{ flex: 1 }}>
     
-            {/* Search + Filter Icon */}
             <View style={styles.searchRow}>
                 <TextInput
                     placeholder="Search tests"
@@ -64,7 +63,6 @@ export default function CreatedTestList() {
                 </Pressable>
             </View>
     
-            {/* Dropdown Menu */}
             {showFilters && (
                 <View style={styles.dropdownMenu}>
                     <Pressable
@@ -109,7 +107,6 @@ export default function CreatedTestList() {
                 </View>
             )}
     
-            {/* List */}
             <FlatList
                 data={filteredTests}
                 keyExtractor={(item) => item.testId.toString()}
