@@ -13,7 +13,7 @@ export default function StudentTest({ data }) {
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
     const { width } = useWindowDimensions();
- 
+
     function handleStart() {
         router.push({
             pathname: '/[classroomId]/(tabs)/test/[testId]/start',
@@ -44,19 +44,25 @@ export default function StudentTest({ data }) {
                     <Ionicons name='clipboard-outline' size={20} color={Colors.primaryColor} />
                     <Text style={styles.title}>{data.testTitle}</Text>
 
-                    {remaining ===0 && (
-                        <View style={styles.newBadge}>
-                            <Text style={styles.newText}>New</Text>
+                    {data.maximumAttempts === data.attemptCount && data.maximumAttempts != 0 && (
+                        <View style={styles.finishedBadge}>
+                            <Text style={styles.finishedText}>Finished</Text>
                         </View>
                     )}
-                    {remaining > 0 ? (
+                    {remaining > 0 && data.maximumAttempts != data.remainingAttempts && (
                         <View style={styles.attemptBadge}>
                             <Text style={styles.attemptText}>
                                 {remaining} Attempts Left
                             </Text>
                         </View>
-                    ) : (<View style={styles.finishedBadge}>
-                        <Text style={styles.finishedText}>Finished</Text>
+
+                    )}
+                    {data.maximumAttempts === data.remainingAttempts && (<View style={styles.newBadge}>
+                        <Text style={styles.newText}>New</Text>
+                    </View>)}
+
+                    {data.attemptCount > 0 && data.maximumAttempts === 0 && (<View style={styles.newBadge}>
+                        <Text style={styles.newText}>Attempted</Text>
                     </View>)}
 
                     <Menu
