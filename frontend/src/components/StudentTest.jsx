@@ -103,7 +103,7 @@ export default function StudentTest({ data }) {
                         <Text style={styles.infoText}>{data.correctionMethod}</Text>
                     </View>
 
-                    {data.attemptCount!=0 ? (
+                    {data.attemptCount!=0? (
                         <View style={styles.btnContainer}>
                             <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
                                 <Entypo name="controller-play" size={20} color="black" />

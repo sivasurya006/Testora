@@ -2,7 +2,7 @@
 <struts>
 
 
-	<package name="classroom" namespace="/api"
+	<package name="classroom" namespace="/api/api"
 		extends="json-default">
 
 		<interceptors>
@@ -170,7 +170,7 @@
 
 	</package>
 
-	<package name="tests" namespace="/api/tests"
+	<package name="tests" namespace="/api/api/tests"
 		extends="classroom">
 
 
@@ -314,7 +314,7 @@
 
 	</package>
 
-	<package name="joinEndPoints" namespace="/join"
+	<package name="joinEndPoints" namespace="/api/join"
 		extends="classroom">
 
 
@@ -350,7 +350,7 @@
 
 	</package>
 
-	<package name="authentication" namespace="/"
+	<package name="authentication" namespace="/api"
 		extends="json-default">
 		<interceptors>
 			<interceptor name="jsonExceptionInterceptor"
@@ -411,7 +411,7 @@
 
 	</package>
 
-	<package name="studentPortal" namespace="/studenttest"
+	<package name="studentPortal" namespace="/api/studenttest"
 		extends="classroom">
 
 		<interceptors>
@@ -436,7 +436,7 @@
 
 	</package>
 
-	<package name="timedtest" namespace="/timedtest"
+	<package name="timedtest" namespace="/api/timedtest"
 		extends="studentPortal">
 
 		<interceptors>

@@ -36,7 +36,7 @@ public class StudentTestDao {
 			try (ResultSet rs = selectTest.executeQuery()) {
 				while(rs.next()) {
 					testDto = new TestDto();
-					testDto.setTestId(rs.getInt("testIds"));
+					testDto.setTestId(rs.getInt("testId"));
 					testDto.setTestTitle(rs.getString("testTitle"));
 					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
 					int maxAttempts = rs.getInt("maximum_attempts");

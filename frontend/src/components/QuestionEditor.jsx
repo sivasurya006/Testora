@@ -11,7 +11,7 @@ import { Checkbox } from 'react-native-paper'
 const options = [
     { optionText: 'Multi choice options', value: 'MCQ' },
     { optionText: 'Single choice', value: 'SINGLE' },
-    { optionText: 'Boolean', value: 'BOOLEAN' },
+    { optionText: 'True / False', value: 'BOOLEAN' },
     // { optionText: 'Fill in the blanks', value: "FILL_BLANKS" },
     // { optionText: 'Matching', value: "MATCHING" }
 ]

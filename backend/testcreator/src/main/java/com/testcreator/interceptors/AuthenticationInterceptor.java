@@ -27,7 +27,7 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 		String requestURI = request.getRequestURI()+"?"+request.getQueryString();
 		
 		if (requestURI.startsWith("/testcreator")) {
-			requestURI = requestURI.substring("/testcreator".length());
+			requestURI = requestURI.substring("/testcreator/api".length());
 		}
 		
 		boolean haveRedirect = requestURI.contains("/join");
