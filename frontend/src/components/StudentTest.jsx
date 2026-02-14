@@ -137,6 +137,7 @@ export default function StudentTest({ data }) {
 
 
 const styles = StyleSheet.create({
+    
     wrapper: {
         marginVertical: 8,
         marginHorizontal: 16,
