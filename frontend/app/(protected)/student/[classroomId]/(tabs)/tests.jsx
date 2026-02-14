@@ -8,7 +8,7 @@ import { router, useFocusEffect, useGlobalSearchParams } from 'expo-router'
 import Test from '../../../../../src/components/StudentTest'
 import StudentTest from '../../../../../src/components/StudentTest'
 
-export default function CreatedTestList() {
+export default function StudentTestLists() {
 
     const [allPublishedTests, setPublishedTest] = useState([]);
     const { classroomId } = useGlobalSearchParams();
@@ -152,7 +152,7 @@ async function getAllPublishedTests(setPublishedTest, classroomId) {
             }
         });
         if (result?.status == 200) {
-            setPublishedTest(result.data);
+            setPublishedTest(result.data.reverse());
             console.log(result.data);
         } else {
             Publish

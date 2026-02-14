@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,9 +21,14 @@ import com.testcreator.dto.student.TestOptionDto;
 import com.testcreator.dto.student.TestQuestionDto;
 import com.testcreator.exception.QuestionNotFoundException;
 import com.testcreator.exception.UnauthorizedException;
+import com.testcreator.model.Answer;
+import com.testcreator.model.Attempt;
+import com.testcreator.model.AttemptStatus;
 import com.testcreator.model.Context;
 import com.testcreator.model.CorrectionMethod;
 import com.testcreator.model.Option;
+import com.testcreator.model.Question;
+import com.testcreator.model.QuestionAnswer;
 import com.testcreator.model.QuestionType;
 import com.testcreator.model.TestStatus;
 import com.testcreator.util.DBConnectionMaker;
@@ -36,6 +43,10 @@ public class TestDao {
 		} catch (ClassNotFoundException e) {
 			throw new SQLException("Driver not found");
 		}
+	}
+	
+	public TestDao(Connection connection) {
+		this.connection = connection;
 	}
 
 	public TestDto createTest(int classroomId, int creatorId, String title) throws SQLException {
@@ -465,36 +476,37 @@ public class TestDao {
 		}
 		return testDto;
 	}
-	
-	
-	public StartTestQuestionsDto startTest(int userId,int testId) throws SQLException {
+
+	public StartTestQuestionsDto startTest(int userId, int testId) throws SQLException {
 		StartTestQuestionsDto test = null;
-		try(PreparedStatement newAttempt = connection.prepareStatement(Queries.newAttempt, Statement.RETURN_GENERATED_KEYS )){
+		try (PreparedStatement newAttempt = connection.prepareStatement(Queries.newAttempt,
+				Statement.RETURN_GENERATED_KEYS)) {
 			newAttempt.setInt(1, testId);
 			newAttempt.setInt(2, userId);
 			int rowsAffected = newAttempt.executeUpdate();
-			if(rowsAffected == 1) {
-				
+			if (rowsAffected == 1) {
+
 				int attemptId;
-				
-				try(ResultSet attemptRs = newAttempt.getGeneratedKeys()){
-					if(attemptRs.next()) {
+
+				try (ResultSet attemptRs = newAttempt.getGeneratedKeys()) {
+					if (attemptRs.next()) {
 						attemptId = attemptRs.getInt(1);
-					}else {
+					} else {
 						throw new SQLException("Can't create new attempt");
 					}
 				}
-				
-				try(PreparedStatement getQuestions = connection.prepareStatement(Queries.getTestQuestionsWithAttempt)){
+
+				try (PreparedStatement getQuestions = connection
+						.prepareStatement(Queries.getTestQuestionsWithAttempt)) {
 					getQuestions.setInt(1, testId);
-					try(ResultSet rs = getQuestions.executeQuery()){
-						Map<Integer,TestQuestionDto> questionMap = new LinkedHashMap<>();
+					try (ResultSet rs = getQuestions.executeQuery()) {
+						Map<Integer, TestQuestionDto> questionMap = new LinkedHashMap<>();
 						while (rs.next()) {
-							if(test == null) {
+							if (test == null) {
 								test = new StartTestQuestionsDto();
 								test.setTitle(rs.getString("title"));
 								boolean isTimed = rs.getBoolean("is_timed");
-								if(isTimed) {
+								if (isTimed) {
 									test.setTimed(1);
 									test.setDuration(rs.getInt("duration_minutes"));
 								}
@@ -503,7 +515,7 @@ public class TestDao {
 							}
 							int questionId = rs.getInt("question_id");
 							TestQuestionDto question = questionMap.get(questionId);
-							if(question == null) {
+							if (question == null) {
 								question = new TestQuestionDto();
 								question.setQuestionId(rs.getInt("question_id"));
 								question.setType(QuestionType.valueOf(rs.getString("type").toUpperCase()));
@@ -523,25 +535,25 @@ public class TestDao {
 		}
 		return test;
 	}
-	
+
 	public boolean isPublished(int testId) throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(Queries.isTestPublished)) {
-	        ps.setInt(1, testId);
+			ps.setInt(1, testId);
 
-	        try (ResultSet rs = ps.executeQuery()) {
-	            return rs.next(); // true if row exists
-	        }
-	    }
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
+			}
+		}
 	}
 
 	public Context getMaxAndUserAttempts(int testId, int userId) throws SQLException {
 		Context context = null;
-		try(PreparedStatement ps = connection.prepareStatement(Queries.getMaxAndUserAttempts)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getMaxAndUserAttempts)) {
 			ps.setInt(1, testId);
 			ps.setInt(2, userId);
-			
-			try(ResultSet rs = ps.executeQuery()){
-				if(rs.next()) {
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
 					context = new Context();
 					context.setMaximumTestAttempts(rs.getInt("maximum_attempts"));
 					context.setUserTestAttempts(rs.getInt("user_attempts"));
@@ -550,7 +562,175 @@ public class TestDao {
 		}
 		return context;
 	}
-	
-	
+
+	public boolean saveAnswer(int attemptId, Map<String, List<TestOptionDto>> answers) throws SQLException {
+
+		boolean success = false;
+		connection.setAutoCommit(false);
+
+		try (PreparedStatement ps = connection.prepareStatement(Queries.insertAnswer)) {
+
+			for (Map.Entry<String, List<TestOptionDto>> entry : answers.entrySet()) {
+
+				Integer questionId = Integer.parseInt(entry.getKey());
+				List<TestOptionDto> optionList = entry.getValue();
+				for (TestOptionDto optionDto : optionList) {
+
+					ps.setInt(1, attemptId);
+					ps.setInt(2, questionId);
+					ps.setInt(3, optionDto.getOptionId());
+
+					ps.addBatch();
+				}
+			}
+
+			int[] results = ps.executeBatch();
+
+			boolean allInserted = Arrays.stream(results).allMatch(r -> r > 0);
+
+			if (allInserted) {
+				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatus)) {
+					psUpdate.setInt(1, attemptId);
+					psUpdate.executeUpdate();
+				}
+				connection.commit();
+				success = true;
+			} else {
+				connection.rollback();
+			}
+
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
+		}
+
+		return success;
+	}
+
+	public Attempt getActiveAttempt(int testId, int userId) throws SQLException {
+
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getActveAttempt)) {
+			ps.setInt(1, testId);
+			ps.setInt(2, userId);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					Attempt attempt = new Attempt();
+					attempt.setAttemptId(rs.getInt("attempt_id"));
+					attempt.setTestId(rs.getInt("test_id"));
+					attempt.setUserId(rs.getInt("user_id"));
+					attempt.setStartedAt(rs.getTimestamp("started_at"));
+					attempt.setSubmittedAt(rs.getTimestamp("submitted_at"));
+					attempt.setStatus(AttemptStatus.valueOf(rs.getString("status").toUpperCase()));
+					attempt.setMarks(rs.getDouble("marks"));
+					System.out.println(attempt);
+					return attempt;
+				}
+			}
+		}
+
+		System.out.println("activity");
+
+		return null;
+	}
+
+	public int getTestDuration(int testId) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getDurationMinutes)) {
+			ps.setInt(1, testId);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					boolean isTimed = rs.getBoolean("is_timed");
+					if (!isTimed) {
+						return 0;
+					}
+					return rs.getInt("duration_minutes");
+				}
+			}
+		}
+		System.out.println("duration ");
+		return 0;
+	}
+
+	public List<Question> getQuestions(int testId) throws SQLException {
+
+		Map<Integer, Question> questionMap = new LinkedHashMap<>();
+
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getQuestions)) {
+			ps.setInt(1, testId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					int questionId = rs.getInt("question_id");
+					int marks = rs.getInt("marks");
+					String type = rs.getString("type");
+
+					Question question = questionMap.get(questionId);
+					if (question == null) {
+						question = new Question();
+						question.setQuestionId(questionId);
+						question.setMarks(marks);
+						question.setOptions(new ArrayList<>());
+						question.setType(QuestionType.valueOf(type.toUpperCase()));
+						questionMap.put(questionId, question);
+					}
+
+					int optionId = rs.getInt("option_id");
+					boolean isCorrect = rs.getInt("is_correct") == 1;
+					int optionMark = rs.getInt("option_mark");
+
+					Option option = new Option();
+					option.setOptionId(optionId);
+					option.setCorrect(isCorrect);
+					option.setOptionMark(optionMark);
+
+					question.getOptions().add(option);
+				}
+			}
+		}
+
+		return new ArrayList<>(questionMap.values());
+	}
+
+	public List<Answer> getAnswers(int attemptId) throws SQLException {
+		List<Answer> answers = new ArrayList<>();
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getAnswer)) {
+			ps.setInt(1, attemptId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Answer answer = new Answer();
+					answer.setQuestionId(rs.getInt("question_id"));
+					answer.setOptionId(rs.getInt("option_id"));
+					answer.setAnswerId(rs.getInt("answer_id"));
+					answers.add(answer);
+				}
+			}
+		}
+		System.out.println("submitted answers : "+answers);
+		return answers;
+	}
+
+	public boolean updateAnswers(List<QuestionAnswer> questionAnswers) throws SQLException {
+		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
+			for (QuestionAnswer qa : questionAnswers) {
+				List<Answer> answerList = qa.getAnswer();
+				if (answerList == null || answerList.isEmpty()) {
+					continue;
+				}
+				for (Answer a : answerList) {
+					ps.setBoolean(1, a.getCorrect() != null ? a.getCorrect() : false);
+					ps.setInt(2, a.getGivenMarks() != null ? a.getGivenMarks() : 0);
+					ps.setInt(3, a.getAnswerId());
+					
+					System.out.println("Updating");
+					
+					ps.addBatch();
+				}
+			}
+			
+			System.out.println("Updated");
+			
+			return Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0);
+		}
+	}
 
 }

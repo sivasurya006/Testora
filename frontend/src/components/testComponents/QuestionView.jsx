@@ -9,7 +9,36 @@ import { Dimensions, Platform } from 'react-native';
 const { width } = Dimensions.get('window');
 
 
-export default function QuestionView({ question }) {
+export default function QuestionView({ question, selectedAnswers, setSelectedAnswers }) {
+
+
+    function onSelect(option) {
+
+        if (question.type === 'MCQ') {
+            const prevQues = selectedAnswers[question.questionId] || [];
+            const exists = prevQues.find(o => o.optionId === option.optionId);
+            let updated;
+            if (exists) {
+                updated = prevQues.filter(o => o.optionId !== option.optionId);
+            } else {
+                updated = [...prevQues, option];
+            }
+
+            setSelectedAnswers({
+                ...selectedAnswers,
+                [question.questionId]: updated
+            });
+
+        } else {
+            setSelectedAnswers({
+                ...selectedAnswers,
+                [question.questionId]: option
+            });
+        }
+    }
+
+
+
     return (
         <View style={styles.questionViewContainer}>
             {/* Question */}
@@ -21,11 +50,11 @@ export default function QuestionView({ question }) {
             <View style={styles.optionContainer}>
                 {
                     question.type === 'MCQ' ? (
-                        <McqOptions options={question.options} />
+                        <McqOptions onSelect={onSelect} selected={selectedAnswers[question.questionId] || []} options={question.options} />
                     ) : question.type === 'SINGLE' ? (
-                        <SingleChoiceOptions options={question.options} />
+                        <SingleChoiceOptions onSelect={onSelect}  selected={selectedAnswers[question.questionId]} options={question.options} />
                     ) : (
-                        <BooleanOption options={question.options} />
+                        <BooleanOption onSelect={onSelect} options={question.options}  selected={selectedAnswers[question.questionId]} />
                     )
                 }
             </View>
@@ -50,7 +79,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',        // centers container (web + mobile)
         paddingHorizontal: width < 600 ? 12 : 24,  // responsive padding
     }
-    ,optionContainer: {
+    , optionContainer: {
 
     },
     questionText: {

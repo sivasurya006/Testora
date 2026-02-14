@@ -3,20 +3,18 @@ import React, { useState } from 'react'
 import { fonts } from '../../../styles/fonts';
 import { RadioButton } from 'react-native-paper';
 
-export default function BooleanOption({ options }) {
-
-  const [selected,setSelected] = useState({});
-
+export default function BooleanOption({ options , selected , onSelect }) {
   return (
     <View style={styles.optionContainer} >
       {options.map((opt, i) => {
+         const isChecked = selected?.optionId === opt.optionId;
         return (
           <View
             key={i}
             style={{ flexDirection: 'row', alignItems: 'center' }}>
             <RadioButton
-              status={selected.optionId === opt.optionId ? 'checked' : 'unchecked'}
-              onPress={() => setSelected(opt)}
+              status={isChecked ? 'checked' : 'unchecked'}
+              onPress={() => onSelect(opt)}
             />
             <Text>{opt.optionText}</Text>
           </View>

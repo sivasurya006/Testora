@@ -10,20 +10,19 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import com.testcreator.actions.JsonApiAction;
 import com.testcreator.dto.ApiError;
 
-public class TestIdInterceptor extends AbstractInterceptor {
+public class AttemptIdInterceptor extends AbstractInterceptor {
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		
-		System.out.println("Test id interceptor");
 		
-		String testIdHeader = request.getHeader("X-TestId");
-		if(testIdHeader  == null || testIdHeader.isBlank()) {
+		String attemptIdHeader = request.getHeader("X-AttemptId");
+		if(attemptIdHeader  == null || attemptIdHeader.isBlank()) {
 			Object action = invocation.getAction();
 			if(action instanceof JsonApiAction jsonAction) {
-				jsonAction.setError(new ApiError("TestId header not provided", 400));
+				jsonAction.setError(new ApiError("AttemptId header not provided", 400));
 			}
 			
 			return Action.INPUT;
@@ -32,13 +31,13 @@ public class TestIdInterceptor extends AbstractInterceptor {
 		
 		
 		try {
-			int testId = Integer.parseInt(testIdHeader);
-			request.setAttribute("testId", testId);
+			int attemptId = Integer.parseInt(attemptIdHeader);
+			request.setAttribute("attemptId", attemptId);
 			return invocation.invoke();
 		}catch (NumberFormatException e) {
 			Object action = invocation.getAction();
 			if(action instanceof JsonApiAction jsonAction) {
-				jsonAction.setError(new ApiError("invalid test id", 400));
+				jsonAction.setError(new ApiError("invalid AttemptId id", 400));
 			}
 			e.printStackTrace();
 		}

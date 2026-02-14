@@ -3,27 +3,19 @@ import React, { useState } from 'react'
 import { Checkbox } from 'react-native-paper';
 import { fonts } from '../../../styles/fonts';
 
-export default function McqOptions({ options }) {
+export default function McqOptions({ options , selected , onSelect }) {
 
-    const [checked, setChecked] = useState([]);
-
-    const toggle = (opt) => {
-        if (checked.includes(opt)) {
-            return checked.filter(it => it !== opt);
-        }
-        return [...checked, opt];
-    };
 
     return (
         <View style={styles.optionContainer} >
             {options.map((opt, i) => {
-                const isChecked = checked.includes(opt);
+                const isChecked = selected.some(o => o.optionId === opt.optionId);
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} key={i}>
 
                         <Checkbox
                             status={isChecked ? 'checked' : 'unchecked'}
-                            onPress={() => setChecked(toggle(opt))}
+                            onPress={() => onSelect(opt)}
                         />
                         <Text
                             style={[styles.optionText]}

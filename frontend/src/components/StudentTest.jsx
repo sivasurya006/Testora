@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 import { IconButton, Menu } from 'react-native-paper';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 
@@ -14,25 +14,27 @@ export default function StudentTest({ data }) {
     const closeMenu = () => setMenuVisible(false);
     const { width } = useWindowDimensions();
 
+    const { classroomId , testId } = useGlobalSearchParams();
+
     function handleStart() {
-        router.push({
-            pathname: '/[classroomId]/(tabs)/test/[testId]/start',
+        router.replace({
+            pathname: 'student/[classroomId]/test/[testId]/start',
             params: {
-                classroomId: data.classroomId,
+                classroomId: classroomId,
                 testId: data.testId,
             },
         });
     }
 
-    function handleStrategy() {
-        router.push({
-            pathname: '/[classroomId]/(tabs)/test/[testId]/strategy',
-            params: {
-                classroomId: data.classroomId,
-                testId: data.testId,
-            },
-        });
-    }
+    // function handleStrategy() {
+    //     router.push({
+    //         pathname: '/[classroomId]/(tabs)/test/[testId]/strategy',
+    //         params: {
+    //             classroomId: data.classroomId,
+    //             testId: data.testId,
+    //         },
+    //     });
+    // }
 
     const remaining = data.remainingAttempts;
 
@@ -87,7 +89,7 @@ export default function StudentTest({ data }) {
                     <View style={styles.infoItem}>
                         <MaterialCommunityIcons name="timer-outline" size={16} />
                         <Text style={styles.infoText}>
-                            {data.timedTest ? `${data.durationMinutes} min` : 'Untimed'}
+                            {data.durationMinutes ? `${data.durationMinutes} min` : 'Untimed'}
                         </Text>
                     </View>
 
@@ -103,21 +105,21 @@ export default function StudentTest({ data }) {
                         <Text style={styles.infoText}>{data.correctionMethod}</Text>
                     </View>
 
-                    {data.attemptCount!=0? (
+                    {data.attemptCount!=0 && remaining > 0 ? (
                         <View style={styles.btnContainer}>
-                            <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
+                            <Pressable style={styles.btnInsideContainer} onPress={handleStart} >
                                 <Entypo name="controller-play" size={20} color="black" />
                                 <Text>ReAttempt</Text>
                             </Pressable>
                         </View>
-                    ) : (
+                    ) : remaining > 0 || data.maximumAttempts == 0 ? (
                         <View style={styles.btnContainer}>
-                            <Pressable style={styles.btnInsideContainer} onPress={handleStrategy}>
+                            <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
                                 <Entypo name="controller-play" size={20} color="black" />
                                 <Text>Start</Text>
                             </Pressable>
                         </View>
-                    )}
+                    ) : null}
 
                     {width >= 890 ? (
                         <View style={styles.createdAt}>

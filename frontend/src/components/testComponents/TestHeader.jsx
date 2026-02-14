@@ -3,10 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import Colors from '../../../styles/Colors'
 import { fonts } from '../../../styles/fonts'
+import ConfirmModal from '../modals/ConfirmModal'
+import { router, useGlobalSearchParams } from 'expo-router'
 
-export default function TestHeader({ data }) {
+export default function TestHeader({ data , onExit , onSubmit,onTimeEnd}) {
 
     const [timeLeft, setTimeLeft] = useState(data.duration * 60);
+    const [confirmModalVisible,setConfirmModalVisible] = useState(false);
+    const { classroomId } = useGlobalSearchParams();
 
     // useEffect(() => {
 
@@ -25,6 +29,9 @@ export default function TestHeader({ data }) {
     //     return () => clearInterval(timer);
     // }, [data]);
 
+    function handleCloseTest(){
+        setConfirmModalVisible(true);
+    }
 
     useEffect(() => {
         if (timeLeft <= 0) return
@@ -33,6 +40,8 @@ export default function TestHeader({ data }) {
         }, 1000)
         return () => clearInterval(timer)
     }, [timeLeft])
+
+   
 
 
     const formatTime = (seconds) => {
@@ -47,7 +56,7 @@ export default function TestHeader({ data }) {
             {/* exit test */}
             <Pressable
                 style={{ zIndex: 10 }}
-                onPress={() => console.log("clicked")}
+                onPress={handleCloseTest}
             >
                 <AntDesign name="close" size={24} color="black" />
             </Pressable>
@@ -72,11 +81,11 @@ export default function TestHeader({ data }) {
                         </View>
                     ) : null
                 }
-                <Pressable style={styles.primaryButton}>
+                <Pressable style={styles.primaryButton} onPress={onSubmit}>
                     <Text style={styles.primaryButtonText}>Submit</Text>
                 </Pressable>
             </View>
-
+            <ConfirmModal onConfirm={onExit} onCancel={() => setConfirmModalVisible(false)} visible={confirmModalVisible} message={"Exit test?\nIf you leave now, your current progress will not be saved."} />
         </View>
     )
 }

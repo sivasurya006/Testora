@@ -445,6 +445,9 @@
 			<interceptor name="testIdInterceptor"
 				class="com.testcreator.interceptors.TestIdInterceptor" />
 
+			<interceptor name="attemptIdInterceptor"
+				class="com.testcreator.interceptors.AttemptIdInterceptor" />
+
 			<interceptor-stack name="timedTestStack">
 				<interceptor-ref name="studentStack" />
 				<interceptor-ref name="testIdInterceptor" />
@@ -452,14 +455,22 @@
 
 		</interceptors>
 
-		<default-interceptor-ref
-			name="timedTestStack" />
-
 		<action name="start"
 			class="com.testcreator.actions.TimedTestAction" method="startTest">
 			<result name="success" type="json">
 				<param name="root">startTestDto</param>
 			</result>
+			<interceptor-ref name="timedTestStack"/>
+		</action>
+
+		<action name="submit" class="com.testcreator.actions.TestAnswerAction" method="submitAnswers">
+			
+			<result name="success" type="json">
+				<param name="root">corrected</param>
+			</result>
+			
+			<interceptor-ref name="timedTestStack"/>
+			<interceptor-ref name="attemptIdInterceptor"/>
 		</action>
 	</package>
 

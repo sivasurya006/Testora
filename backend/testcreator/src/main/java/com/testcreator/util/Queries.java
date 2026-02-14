@@ -114,4 +114,15 @@ public class Queries {
 	
 	public static final String newAttempt = "insert Attempts (test_id,user_id) values (?,?)";
 	public static final String getMaxAndUserAttempts = "select maximum_attempts , count(attempt_id) as user_attempts  from Tests t left join Attempts a on t.test_id = a.test_id where t.test_id = ? and user_id = ?";
+	
+	
+	public static final String insertAnswer = "insert into Answers (attempt_id,question_id,option_id) values (?,?,?)";
+	public static final String getActveAttempt = "select attempt_id, test_id, user_id, started_at, submitted_at, status, marks from Attempts where test_id = ? and user_id = ? order by started_at desc limit 1";
+	public static final String getDurationMinutes = "select duration_minutes, is_timed from Tests where test_id = ?";
+	
+	public static final String updateAttemptStatus = "update Attempts set status = 'submitted', submitted_at = now() where attempt_id = ?";
+	
+	public static final String getQuestions = " select q.question_id, q.type ,  o.option_id , o.is_correct , q.marks, o.option_mark from Questions q left join Options o on q.question_id = o.question_id where q.test_id = ?"; 
+	public static final String getAnswer = "select question_id , option_id , answer_id from Answers where attempt_id = ?";
+	public static final String updateAnswer = "update Answers set is_correct = ?, given_marks = ? where answer_id = ?";
 } 

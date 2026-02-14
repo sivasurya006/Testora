@@ -111,7 +111,7 @@ create table Answers (
     
     given_marks decimal(6,2),
     
-    unique (attempt_id, question_id),
+    unique (attempt_id, question_id,option_id),
 
     foreign key (attempt_id) references Attempts(attempt_id) on delete cascade,
     foreign key (question_id) references Questions(question_id) on delete cascade,

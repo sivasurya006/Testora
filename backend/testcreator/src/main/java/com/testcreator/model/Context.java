@@ -44,6 +44,12 @@ public class Context {
 	public void setUserTestAttempts(int userTestAttempts) {
 		this.userTestAttempts = userTestAttempts;
 	}
+
+	@Override
+	public String toString() {
+		return "Context [classsroomId=" + classsroomId + ", userId=" + userId + ", testId=" + testId
+				+ ", maximumTestAttempts=" + maximumTestAttempts + ", userTestAttempts=" + userTestAttempts + "]";
+	}
 	
 
 	

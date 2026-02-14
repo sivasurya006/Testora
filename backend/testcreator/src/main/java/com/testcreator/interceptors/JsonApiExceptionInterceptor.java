@@ -9,9 +9,12 @@ import com.testcreator.actions.JsonApiAction;
 import com.testcreator.dto.ApiError;
 
 public class JsonApiExceptionInterceptor extends AbstractInterceptor  {
-
+	
 	@Override
 	public String intercept(ActionInvocation actionInvocation) throws Exception {
+		
+		System.out.println("JsonApiExceptionInterceptor");
+		
 		try {
 			return actionInvocation.invoke();
 		}catch (JSONException e) {
