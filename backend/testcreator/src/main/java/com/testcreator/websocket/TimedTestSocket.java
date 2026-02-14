@@ -9,17 +9,17 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint(value = "/ws/timedtest")
+@ServerEndpoint("/ws/timedtest")
 public class TimedTestSocket {
 
     @OnOpen
     public void onOpen(Session session) throws IOException {
-        // Get session and WebSocket connection
+        System.out.println(session.getId());
     }
 
     @OnMessage
     public void onMessage(Session session, String message) throws IOException {
-        // Handle new messages
+        System.out.println(message);
     }
 
     @OnClose

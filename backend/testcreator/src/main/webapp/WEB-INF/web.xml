@@ -28,8 +28,8 @@
   	<param-value>/home/pirthi-zstk422/TRADESHOW/Final/backend/testcreator/config/app.properties</param-value>
   </context-param>
 
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
-  
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
 </web-app>

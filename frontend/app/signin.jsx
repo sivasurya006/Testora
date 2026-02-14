@@ -30,15 +30,19 @@ export default function Signin() {
             setErrorMessage("Please enter password");
             return;
         }
-        const result = await authContext.signIn(email, password);
-        if (result.success) {
-            if(redirect){
-                router.replace(redirect);
-            }else{
-                router.replace('/')
+        try{
+            const result = await authContext.signIn(email, password);
+            if (result.success) {
+                if(redirect){
+                    router.replace(redirect);
+                }else{
+                    router.replace('/')
+                }
+            } else {
+                console.log(result.error);
+                setErrorMessage("Invalid email or Password")
             }
-        } else {
-            console.log(result.error);
+        }catch(err){
             setErrorMessage("Invalid email or Password")
         }
     }

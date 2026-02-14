@@ -35,6 +35,9 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(null, (error) => {
     if (error.response?.status === 401) {
         const redirect = error.response.data?.redirectURI;
+        if(typeof error.response.data?.message === 'string' && error.response.data.message.includes("Invalid email or password")){
+            return;
+        } 
         let navLink = '/signin';
         if (redirect) {
             navLink += `?redirect=${redirect}`;
