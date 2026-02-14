@@ -8,7 +8,7 @@ import ConfirmModal from './modals/ConfirmModal';
 import api from '../../util/api';
 import InputModal from './modals/InputModal';
 
-export default function Test({ data, allTests, setAllTests }) {
+export default function Test({ data, allTests, setAllTests, isDashboard }) {
 
   const [isMenuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
@@ -87,7 +87,6 @@ export default function Test({ data, allTests, setAllTests }) {
 
         <View style={styles.row}>
 
-
           <Ionicons name='clipboard-outline' size={20} color={Colors.primaryColor} />
           <Text onPress={handleEdit} style={styles.title}>{data.testTitle}</Text>
 
@@ -138,26 +137,32 @@ export default function Test({ data, allTests, setAllTests }) {
               <Text style={styles.infoText}>{data.correctionMethod}</Text>
             </View>
           </View>
+          {isDashboard ?
+            <>
 
-          <View style={styles.btnContainer}>
-            <Pressable style={styles.btnInsideContainer} onPress={ isPublished ? handleUnPublish : handlePublish} >
-              {
-                data.status == 'DRAFT' ? (
-                  <Entypo name="paper-plane" size={20} color="black" />
-                ) :  (
-                  <Entypo name="back-in-time" size={20} color="black" />
-                )
-              }              
-              <Text> {data.status == 'DRAFT' ? 'Publish' : 'Un publish'} </Text>
-            </Pressable>
-          </View>
+              <View style={styles.btnContainer}>
+                <Pressable style={styles.btnInsideContainer} onPress={isPublished ? handleUnPublish : handlePublish} >
+                  {
+                    data.status == 'DRAFT' ? (
+                      <Entypo name="paper-plane" size={20} color="black" />
+                    ) : (
+                      <Entypo name="back-in-time" size={20} color="black" />
+                    )
+                  }
+                  <Text> {data.status == 'DRAFT' ? 'Publish' : 'Un publish'} </Text>
+                </Pressable>
+              </View>
 
-          <View style={styles.btnContainer}>
-            <Pressable style={styles.btnInsideContainer} onPress={handleEdit}>
-              <Feather name="edit" size={20} color="black" />
-              <Text>Edit</Text>
-            </Pressable>
-          </View>
+              <View style={styles.btnContainer}>
+                <Pressable style={styles.btnInsideContainer} onPress={handleEdit}>
+                  <Feather name="edit" size={20} color="black" />
+                  <Text>Edit</Text>
+                </Pressable>
+              </View>
+            </> : null
+          }
+
+
 
           {
             width >= 890 ? (
@@ -216,26 +221,26 @@ async function deleteTest(classroomId, testId) {
   return false;
 }
 
-async function unPublishTest(classroomId,testId){
-    try {
-      const result = await api.patch(`/api/tests/unPublishTest`, {
-      }, {
-        headers: {
-          'X-ClassroomId': classroomId,
-          'X-TestId': testId,
-        },
-      });
-      if (result.status === 200) {
-        console.log('Test unpublished successfully');
-        return true;
-      } else {
-        console.log('Failed to unpublish test');
-        return false;
-      }
-    } catch (error) {
-      console.log(error);
+async function unPublishTest(classroomId, testId) {
+  try {
+    const result = await api.patch(`/api/tests/unPublishTest`, {
+    }, {
+      headers: {
+        'X-ClassroomId': classroomId,
+        'X-TestId': testId,
+      },
+    });
+    if (result.status === 200) {
+      console.log('Test unpublished successfully');
+      return true;
+    } else {
+      console.log('Failed to unpublish test');
       return false;
     }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 }
 
 async function renameTest(classroomId, testId, newTitle) {

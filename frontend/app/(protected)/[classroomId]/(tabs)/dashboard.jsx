@@ -1,19 +1,17 @@
-import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import { StyleSheet, Text, View, FlatList, ScrollView, Dimensions } from "react-native";
+import React, { useCallback, useState } from "react";
 import api from "../../../../util/api";
 import Colors from "../../../../styles/Colors";
-import { useFocusEffect, useGlobalSearchParams, usePathname } from "expo-router";
+import { useFocusEffect, useGlobalSearchParams } from "expo-router";
 import Test from "../../../../src/components/Test";
-import Fontisto from '@expo/vector-icons/Fontisto';
-import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useWindowDimensions } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { ScrollView } from "react-native-gesture-handler";
-// import { SafeAreaView } from "react-native-safe-area-context";
-export default function Dashboard() {
+import { LineChart, PieChart } from "react-native-chart-kit";
+import { fonts } from "../../../../styles/fonts";
+
+export default function Dashboard({ }) {
   const { classroomId } = useGlobalSearchParams();
-  const path = usePathname();
+
   const [stats, setStats] = useState({
     classroomName: "",
     createdAt: 0,
@@ -26,15 +24,11 @@ export default function Dashboard() {
   });
 
   const [tests, setTests] = useState([]);
-  const [stests, setsTests] = useState([]);
-
-  const recentlyPublished = tests;
-  const recentlySubmitted = stests;
 
   useFocusEffect(
     useCallback(() => {
       fetchDashboardData();
-      fetchDashboardDatas();
+      fetchDashboardCount();
       fetchDashboardTests();
     }, [])
   );
@@ -44,25 +38,18 @@ export default function Dashboard() {
       const res = await api.get("/api/classroomdetails", {
         headers: { "X-ClassroomId": classroomId },
       });
-      if (res.status === 200) {
-        setStats(res.data);
-        console.log(res.data, "details")
-      }
+      if (res.status === 200) setStats(res.data);
     } catch (err) {
       console.log(err);
     }
   }
 
-  async function fetchDashboardDatas() {
+  async function fetchDashboardCount() {
     try {
       const res = await api.get("/api/classroomcount", {
         headers: { "X-ClassroomId": classroomId },
       });
-      if (res.status === 200) {
-        setStates(res.data);
-        console.log(res.data, "testcount")
-
-      }
+      if (res.status === 200) setStates(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -70,77 +57,139 @@ export default function Dashboard() {
 
   async function fetchDashboardTests() {
     try {
-      const res = await api.get("/api/tests/get-created-tests?limit=5&status=published", {
-        headers: { "X-ClassroomId": classroomId },
-      });
-      if (res.status === 200) {
-        setTests(res.data);
-        console.log(res.data, "rendertest")
-      }
+      const res = await api.get(
+        "/api/tests/get-created-tests?limit=5&status=published",
+        { headers: { "X-ClassroomId": classroomId } }
+      );
+      if (res.status === 200) setTests(res.data);
     } catch (err) {
       console.log(err);
-
     }
   }
 
-  const { width } = useWindowDimensions();
-  const iconSize = width <= 200 ? 24 : width <= 812 ? 20 : 28;
-  const icon = width <= 200 ? 24 : width <= 812 ? 20 : 38;
+  const screenWidth = Dimensions.get("window").width;
+
+  const pieData = [
+    {
+      name: "Submitted",
+      population: 35,
+      color: "#4CAF50",
+      legendFontColor: "#333",
+      legendFontSize: 14,
+    },
+    {
+      name: "Not Submitted",
+      population: 15,
+      color: "#F44336",
+      legendFontColor: "#333",
+      legendFontSize: 14,
+    },
+  ];
+  const array = [
+    { name: "Pirthika", score: 95 },
+    { name: "Arun", score: 90 },
+    { name: "Divya", score: 88 },
+    { name: "Divya", score: 88 },
+
+    { name: "Divya", score: 88 },
+
+  ];
+  const lineData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    datasets: [{ data: [25, 72, 69, 90, 70] }],
+  };
   return (
-
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
-
-        <View
-          style={[styles.top, width <= 812 && { flexDirection: "column", gap: 20 }]}>
-          <View style={styles.detailCard}>
-            <Text style={styles.title}>{stats.classroomName}</Text>
-            <Text style={styles.subText}>Creator: {stats.creatorName}</Text>
-
-            <Text style={styles.subText}>
-              Created At: {stats.createdAt ? new Date(stats.createdAt * 1000).toLocaleDateString() : "-"}
-            </Text>
-          </View>
-
-          <View style={[styles.sCard, width <= 812 && { flexDirection: "row", gap: 12, width: 180, height: 100 }]}>
-
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.Cards}>
+          <View style={styles.smallCardRow}>
             <View style={styles.smallCard}>
-              <View style={[{ flexDirection: 'column', alignItems: 'center', gap: 20 }, width <= 812 && { gap: 0 }]}>
-                <View style={styles.width}>
-                  <MaterialIcons name="assignment" size={iconSize} color={Colors.primaryColor} />
-                  <Text style={[{ marginLeft: 8, fontSize: 24 }, width <= 812 && { marginLeft: 8, fontSize: 20 }]}>Tests</Text>
-                </View>
-                <View>
-                  <Text style={styles.cardNumber}>{states.testCount}</Text>
-                </View>
+              <View>
+                <MaterialIcons name="assignment" size={34} color={Colors.primaryColor} />
 
+              </View>
+              <View style={styles.Count}>
+                <Text style={styles.cardTitle}>Total Tests</Text>
+                <Text style={styles.cardNumber}>{states.testCount}</Text>
               </View>
 
             </View>
 
-            <View style={[styles.smallCard]}>
-              <View style={[{ flexDirection: 'column', alignItems: 'center', gap: 20 }, width <= 812 && { gap: 0 }]}>
-                <View style={styles.width}>
-                  <MaterialIcons name="people" size={icon} color={Colors.primaryColor} />
-                  <Text style={[{ marginLeft: 8, fontSize: 24 }, width <= 812 && { marginLeft: 8, fontSize: 20 }]}>Students </Text>
-                </View>
-                <View>
-                  <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
-                </View>
+            <View style={styles.smallCard}>
+              <View>
+                <MaterialIcons name="people" size={34} color={Colors.primaryColor} />
+              </View>
+              <View style={styles.Count}>
+                <Text style={styles.cardTitle}>Total Students</Text>
+                <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.detailCard}>
+            <View style={styles.classroomDeatilTop}></View>
+            <View style={styles.ClassRoomCard}></View>
+            <View style={styles.classRoomDetailCard}>
+              <Text style={styles.title}>{stats.classroomName}</Text>
+              <View style={styles.creatorCard}>
+                <Text style={styles.subText}>
+                  Creator: </Text>
+                <Text style={styles.createdetail}>{stats.creatorName}</Text>
+              </View>
+              <View style={styles.creatorCard}>
+
+                <Text style={styles.subText}>
+                  Created At:{" "}</Text>
+                <Text>
+
+                  {stats.createdAt
+                    ? new Date(stats.createdAt * 1000).toLocaleDateString()
+                    : "-"}</Text>
+
 
               </View>
             </View>
 
           </View>
         </View>
-        <View style={[styles.testContainer, width <= 812 && { flexDirection: "column" }]}>
+
+        <View style={styles.graph1}>
+
+          <View style={styles.LineCard}>
+            <Text style={styles.sectionTitle}>Monthly Progress</Text>
+            <LineChart
+              data={lineData}
+              width={960}
+              height={400}
+              yAxisSuffix="%"
+              chartConfig={LineConfig}
+              bezier
+            />
+          </View>
+          <View style={styles.chartCard}>
+            <Text style={styles.sectionTitle}>Submission Status</Text>
+            <PieChart
+              data={pieData}
+              width={400}
+              height={220}
+              chartConfig={chartConfig}
+              accessor="population"
+              backgroundColor="transparent"
+              paddingLeft="15"
+            />
+          </View>
+        </View>
+
+
+        <View style={styles.bottom}>
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Recently Published</Text>
-            {recentlyPublished.length > 0 ? (
+            {tests.length > 0 ? (
               <FlatList
-                data={recentlyPublished}
+                data={tests}
+                contentContainerStyle={{ backgroundColor: Colors.bgColor }}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <Test allTests={tests} setAllTests={setTests} data={item} />}
+                renderItem={({ item }) => <Test data={item} isDashboard={false} />}
               />
             ) : (
               <Text>No published tests yet</Text>
@@ -148,139 +197,266 @@ export default function Dashboard() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recently Submitted</Text>
-            {recentlySubmitted.length > 0 ? (
-              <FlatList
-                data={recentlySubmitted}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <Test data={item} />}
-              />
-            ) : (
-              <View style={styles.centerContainer}>
-                <Text style={styles.submitted}>No submitted tests yet</Text>
+            <Text style={styles.sectionTitle}> Toppers</Text>
 
-              </View>
-            )}
+            <View style={styles.topperContainer}>
+              {array.map((item, index) => (
+                <View key={index} style={styles.topperCard}>
+                  <View style={styles.nameProfile}>
+                    <Text style={styles.profileText}>
+                      {item.name.substring(0, 2).toUpperCase()}
+                    </Text>
+                  </View>
+
+                  <View>
+                    <Text style={styles.topperName}>{item.name}</Text>
+                    <Text style={styles.topperScore}>Score: {item.score}</Text>
+
+                  </View>
+                  <View style={styles.progressIcon}>
+                    <MaterialIcons name="trending-up" size={20} color="green" />
+
+                  </View>
+
+                </View>
+              ))}
+
+
+            </View>
+
+
           </View>
+
+
+
         </View>
+
+
+
       </ScrollView>
-    </SafeAreaView >
-    
+    </SafeAreaView>
   );
 }
 
+const chartConfig = {
+  backgroundColor: "#fff",
+  backgroundGradientFrom: "#fff",
+  backgroundGradientTo: "#fff",
+  decimalPlaces: 0,
+  color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
+  labelColor: () => "#333",
+};
+const LineConfig = {
+  backgroundColor: "#fff",
+  backgroundGradientFrom: "#fff",
+  backgroundGradientTo: "#fff",
+  decimalPlaces: 0,
+  color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
+  labelColor: () => "#333",
+};
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
     backgroundColor: Colors.bgColor,
   },
-  width: {
-    width: 300,
+  bottom: {
+    flexDirection: "row",
+
+  },
+  creatorCard: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
 
   },
-  testContainer: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 20
-  },
 
-  sCard: {
-    flexDirection: "row",
-    gap: 12,
-    width: 420
-  },
-
-  top: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 16,
-  },
-
-  studenticon: {
-    flexDirection: "row",
+  classRoomDetailCard: {
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center"
+    marginTop: 100
   },
+  classroomDeatilTop: {
+    height: 120,
+    backgroundColor: "#DFE8FB",
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
 
-  topRow: {
+
+  },
+  topperContainer: {
+    marginTop: 10,
+    backgroundColor: Colors.white,
+    padding: 20
+  },
+  progressIcon: {
+    paddingHorizontal: 200
+  },
+  smallCardRow: {
     flexDirection: "row",
+    justifyContent: "space-between",
     gap: 12,
-    marginBottom: 16,
   },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  submitted: {
-    fontSize: 16,
-    color: '#777',
-  },
-
-  detailCard: {
-    width: "100%",
-    maxWidth: 800,
-    padding: 24,
-    borderRadius: 12,
-    height: 200,
-    justifyContent: "center",
-    backgroundColor: "#fff",
-
-  },
-  submitted: {
-
+  Count: {
+    paddingLeft: 30
   },
 
   smallCard: {
-    width: "100%",
-
-    maxWidth: 450,
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 36,
     borderRadius: 12,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#eee",
+    width: 485,
+    height: 150,
+    marginTop: 30,
+    flexDirection: "row",
+  },
 
+  topperCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F6F6F8",
+    padding: 46,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+    marginTop: 10,
+    height: 100,
+    gap: 20,
+    width: 560
+  },
+
+  nameProfile: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#E2E8F0",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 16,
+  },
+
+  profileText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    fontStyle: fonts.regular
+  },
+
+  topperInfo: {
+    paddingVertical: 4,
+  },
+
+  topperName: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+
+  topperScore: {
+    fontSize: 14,
+    marginTop: 10,
+
+  },
+
+
+  cardTitle: {
+    fontSize: 16,
+    marginTop: 8,
+
+  },
+
+  Cards: {
+    width: "100%",
+    gap: 20,
+    flexDirection: "row",
+    height: 150
+
+  },
+  graph1: {
+    flexDirection: "row",
+
+  },
+  cardNumber: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 4,
+  },
+
+  detailCard: {
+    marginTop: 20,
+    backgroundColor: "#fff",
+    // padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+    width: 560,
+    height: 400
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 30,
-    // width:10
+    marginBottom: 10,
   },
 
   subText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#555",
     marginBottom: 4,
   },
 
-  cardNumber: {
-    fontSize: 28,
-    fontWeight: "bold",
-    // color: "#fff",
-  },
-
-  cardLabel: {
-    fontSize: 10,
-    color: "#fff",
-    marginBottom: 6,
-  },
-
   section: {
-    flex: 1,
-    marginTop: 12,
+    width: "100%",
+    marginTop: 25,
+    width: 1000,
   },
 
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 22,
   },
 
+  chartCard: {
+    marginTop: 280,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 12,
+    // alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#eee",
+    width: 560,
+    height: 300,
+    // marginTop:
+    marginLeft: 25
+  },
+  LineCard: {
+    marginTop: 50,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+    width: 980,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+
+  ClassRoomCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    padding: 46,
+    borderRadius: "50%",
+    borderWidth: 1,
+    borderColor: "#eee",
+    marginTop: 10,
+    height: 100,
+    gap: 20,
+    width: 100
+  },
 
 });
