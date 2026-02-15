@@ -7,6 +7,8 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import Colors from '../../../../../styles/Colors'
 import Header from '../../../../../src/components/Header'
 import { AuthContext } from '../../../../../util/AuthContext'
+import { fonts } from '../../../../../styles/fonts'
+import { ClassroomTabBar } from '../../../../../src/components/ClassroomTobBar'
 
 export default function StudentLayout() {
     const { width } = useWindowDimensions()
@@ -16,48 +18,58 @@ export default function StudentLayout() {
    
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        // <SafeAreaView style={{ flex: 1 }}>
           
             <Tabs
+                 tabBar={isLargeScreen ? (props) => <ClassroomTabBar {...props} /> : undefined}
                 screenOptions={{
                     tabBarPosition: isLargeScreen ? 'left' : 'bottom',
                     headerShown: false,
                     tabBarStyle: Platform.select({
                         web: {
-                            minWidth: 70,
+                            minWidth: 300,
                             backgroundColor: Colors.secondaryColor,
                         },
                         android: {
-                            height: 60,
+                            // height: 60,
                             backgroundColor: Colors.secondaryColor,
                         },
                         ios: {
-                            height: 60,
+                            // height: 60,
                             backgroundColor: Colors.secondaryColor,
                         },
                     }),
-                    tabBarShowLabel: false,
-                    tabBarActiveTintColor: Colors.primaryColor,
-                    tabBarInactiveTintColor: Colors.white,
-                    tabBarItemStyle: { paddingTop: 5 },
+                    tabBarShowLabel: true
+                    , tabBarLabelStyle: {
+                        fontSize: isLargeScreen ? 16 : 12,
+                        fontFamily: fonts.semibold
+                    },
+                    tabBarActiveTintColor: Colors.white,
+                    tabBarInactiveTintColor: Colors.lightFont,
+                    tabBarItemStyle: {
+                        paddingTop: 7
+                    },
                     tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent',
                 }}
             >
 
-                <Tabs.Screen
+                {/* <Tabs.Screen
                     name="dashboard"
+                    
                     options={{
                         tabBarIcon: ({ color }) => (
                             <MaterialCommunityIcons name="view-dashboard" size={28} color={color} />
                         ),
+                        title : 'Dashboard'
                     }}
-                />
+                /> */}
 
                 <Tabs.Screen
                     name="tests"
                     options={{
+                        title : 'Tests',
                         tabBarIcon: ({ color }) => (
-                            <MaterialIcons name="assignment" size={28} color={color} />
+                            <MaterialIcons name="assignment" size={24} color={color} />
                         ),
                     }}
                 />
@@ -65,14 +77,15 @@ export default function StudentLayout() {
                 <Tabs.Screen
                     name="settings"
                     options={{
+                        title : 'Settings',
                         tabBarIcon: ({ color }) => (
-                            <MaterialIcons name="settings" size={28} color={color} />
+                            <MaterialIcons name="settings" size={24} color={color} />
                         ),
                     }}
                 />
 
             </Tabs>
 
-        </SafeAreaView>
+        // </SafeAreaView>
     )
 }

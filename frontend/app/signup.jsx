@@ -63,7 +63,7 @@ export default function Signup() {
 
     return (
         <View style={styles.screenContainer}>
-            <Text style={styles.appName}><Text style={styles.appFirstName}>Test</Text>{' '}<Text style={styles.appLastName}>Creator</Text></Text>
+            <Text style={styles.appName}><Text style={styles.appFirstName}>Testora</Text>{' '}<Text style={styles.appLastName}></Text></Text>
             <View style={styles.form}>
                 <TextInput style={styles.inputBox} placeholder="Name" onChangeText={(text) => setName(text)} />
                 <TextInput style={styles.inputBox} placeholder="Email" onChangeText={(text) => setEmail(text)} />

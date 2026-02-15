@@ -1,28 +1,24 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Platform, useWindowDimensions } from 'react-native'
 import React from 'react'
 import McqOptions from './McqOptions'
 import SingleChoiceOptions from './SingleChoiceOptions'
 import BooleanOption from './BooleanOptions'
 import { fonts } from '../../../styles/fonts'
-import { Dimensions, Platform } from 'react-native';
-
-const { width } = Dimensions.get('window');
-
 
 export default function QuestionView({ question, selectedAnswers, setSelectedAnswers }) {
 
+    const { width } = useWindowDimensions();
+    const isWeb = Platform.OS === 'web';
 
     function onSelect(option) {
 
         if (question.type === 'MCQ') {
             const prevQues = selectedAnswers[question.questionId] || [];
             const exists = prevQues.find(o => o.optionId === option.optionId);
-            let updated;
-            if (exists) {
-                updated = prevQues.filter(o => o.optionId !== option.optionId);
-            } else {
-                updated = [...prevQues, option];
-            }
+
+            const updated = exists
+                ? prevQues.filter(o => o.optionId !== option.optionId)
+                : [...prevQues, option];
 
             setSelectedAnswers({
                 ...selectedAnswers,
@@ -37,24 +33,40 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
         }
     }
 
-
-
     return (
-        <View style={styles.questionViewContainer}>
+        <View style={[
+            styles.questionViewContainer,
+            isWeb && styles.webContainer
+        ]}>
+
             {/* Question */}
-            <View style={styles.questionContainer} >
-                <Text style={styles.questionText}>{question.questionText}</Text>
+            <View style={styles.questionContainer}>
+                <Text style={styles.questionText}>
+                    {question.questionText}
+                </Text>
             </View>
 
             {/* Options */}
             <View style={styles.optionContainer}>
                 {
                     question.type === 'MCQ' ? (
-                        <McqOptions onSelect={onSelect} selected={selectedAnswers[question.questionId] || []} options={question.options} />
+                        <McqOptions
+                            onSelect={onSelect}
+                            selected={selectedAnswers[question.questionId] || []}
+                            options={question.options}
+                        />
                     ) : question.type === 'SINGLE' ? (
-                        <SingleChoiceOptions onSelect={onSelect}  selected={selectedAnswers[question.questionId]} options={question.options} />
+                        <SingleChoiceOptions
+                            onSelect={onSelect}
+                            selected={selectedAnswers[question.questionId]}
+                            options={question.options}
+                        />
                     ) : (
-                        <BooleanOption onSelect={onSelect} options={question.options}  selected={selectedAnswers[question.questionId]} />
+                        <BooleanOption
+                            onSelect={onSelect}
+                            options={question.options}
+                            selected={selectedAnswers[question.questionId]}
+                        />
                     )
                 }
             </View>
@@ -64,28 +76,29 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
 
 const styles = StyleSheet.create({
     questionViewContainer: {
-        flex: 1,
-        paddingTop: 130,
-        // paddingHorizontal : 35
-        // justifyContent : 'center'
-        // marginVertical : 'auto'
-        // width : '100%',
-        // maxWidth : 400,
+        width: '100%',
+        paddingVertical: 30,
+        paddingHorizontal: 15,
+    },
+
+    webContainer: {
+        maxWidth: 900,
+        alignSelf: 'center',
+        paddingHorizontal: 40,
     },
 
     questionContainer: {
-        width: '100%',
-        maxWidth: 1000,
-        alignSelf: 'center',        // centers container (web + mobile)
-        paddingHorizontal: width < 600 ? 12 : 24,  // responsive padding
-    }
-    , optionContainer: {
-
+        marginBottom: 30,
     },
+
     questionText: {
         textAlign: 'center',
-        fontSize: 25,
-        fontWeight: 600,
-        fontFamily: fonts.bold
-    }
+        fontSize: 24,
+        fontFamily: fonts.bold,
+        lineHeight: 32,
+    },
+
+    optionContainer: {
+        width: '100%',
+    },
 })

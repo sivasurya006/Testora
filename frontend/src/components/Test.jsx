@@ -8,7 +8,7 @@ import ConfirmModal from './modals/ConfirmModal';
 import api from '../../util/api';
 import InputModal from './modals/InputModal';
 
-export default function Test({ data, allTests, setAllTests, isDashboard }) {
+export default function Test({ data, allTests, setAllTests, isDashboard = true }) {
 
   const [isMenuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
@@ -26,7 +26,7 @@ export default function Test({ data, allTests, setAllTests, isDashboard }) {
   function handleEdit() {
     console.log('edit')
     router.push({
-      pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
+      pathname: '/[classroomId]/(tabs)/tests/[testId]/edit',
       params: {
         classroomId: data.classroomId,
         testId: data.testId,
@@ -38,7 +38,7 @@ export default function Test({ data, allTests, setAllTests, isDashboard }) {
   function handlePublish() {
     console.log('publish')
     router.push({
-      pathname: '/[classroomId]/(tabs)/test/[testId]/publish',
+      pathname: '/[classroomId]/(tabs)/tests/[testId]/publish',
       params: {
         classroomId: data.classroomId,
         testId: data.testId,

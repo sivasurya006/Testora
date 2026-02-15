@@ -4,6 +4,8 @@ import { Checkbox, Icon, IconButton, Menu, Portal, Tooltip } from 'react-native-
 import { router, location, useGlobalSearchParams } from 'expo-router';
 import api from '../../../../../../util/api';
 import { AntDesign } from '@expo/vector-icons';
+import Colors from '../../../../../../styles/Colors';
+import { AppBoldText, AppMediumText, AppRegularText } from '../../../../../../styles/fonts';
 
 export default function Publish() {
 
@@ -56,9 +58,9 @@ export default function Publish() {
 
     return (
         <View style={styles.container} >
-            <View style={{backgroundColor:'white',padding : 20,alignItems : 'center',borderRadius : 8}} >
-                <View style={[width > 861 ? styles.pageHeader : null, { marginVertical: 50 }]} >
-                    <Text style={styles.header}>Publish Test</Text>
+            <View style={styles.form} >
+                <View style={[width > 861 ? styles.pageHeader : null]} >
+                    <AppBoldText style={styles.header}>Publish Test</AppBoldText>
                 </View>
                 <View style={styles.pageContent}>
                     <View style={styles.contentWrapper}>
@@ -69,20 +71,20 @@ export default function Publish() {
                         />
                     </View>
                     <View style={styles.contentWrapper}>
-                        <Text style={styles.label} >Correction Type : </Text>
+                        <AppMediumText style={styles.label} >Correction Type : </AppMediumText>
                         <Checkbox
                             status={correctionOptions.auto ? 'checked' : 'unchecked'}
                             onPress={() => { setCorrectionOptions({ auto: true, manual: false }); setCorrectionType('AUTO') }}
                         />
-                        <Text style={styles.value} >Auto</Text>
+                        <AppRegularText style={styles.value} >Auto</AppRegularText>
                         <Checkbox
                             status={correctionOptions.manual ? 'checked' : 'unchecked'}
                             onPress={() => { setCorrectionOptions({ auto: false, manual: true }); setCorrectionType('MANUAL') }}
                         />
-                        <Text style={styles.value} >Manual</Text>
+                        <AppRegularText style={styles.value} >Manual</AppRegularText>
                     </View>
                     <View style={styles.contentWrapper}>
-                        <Text style={styles.label} >Is Timed : </Text>
+                        <AppMediumText style={styles.label} >Is Timed : </AppMediumText>
                         <Checkbox
                             status={isTimed ? 'checked' : 'unchecked'}
                             onPress={() => setIsTimed(!isTimed)}
@@ -96,13 +98,13 @@ export default function Publish() {
                                         keyboardType='numeric'
                                         onChangeText={(text) => setTestMinutes(parseInt(text) || 0)}
                                     />
-                                    <Text style={styles.value} >{' minutes'}</Text>
+                                    <AppRegularText style={styles.value} >{' minutes'}</AppRegularText>
                                 </View>
                             )
                         }
                     </View>
                     <View style={styles.contentWrapper}>
-                        <Text style={styles.label} >Maximum Attempts : </Text>
+                        <AppMediumText style={styles.label} >Maximum Attempts : </AppMediumText>
                         <TextInput
                             defaultValue='0'
                             style={{ borderWidth: 1, borderColor: '#ccc', padding: 5, borderRadius: 5, width: 50 }}
@@ -130,10 +132,10 @@ export default function Publish() {
                 </View>
                 <View style={{ flexDirection: 'row', gap: 50 }} >
                     <Pressable style={styles.cancelBtn} onPress={handleCancel} >
-                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Cancel</Text>
+                        <AppMediumText style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Cancel</AppMediumText>
                     </Pressable>
                     <Pressable style={styles.publishBtn} onPress={handlePublish} >
-                        <Text style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Publish Test</Text>
+                        <AppMediumText style={{ color: 'white', fontSize: 16, fontWeight: 600 }}>Publish</AppMediumText>
                     </Pressable>
                 </View>
             </View>
@@ -201,7 +203,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     cancelBtn: {
-        backgroundColor: 'red',
+        backgroundColor: '#ddd',
         padding: 10,
         borderRadius: 5,
         width: 100,
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     publishBtn: {
-        backgroundColor: 'green',
+        backgroundColor: Colors.primaryColor,
         padding: 10,
         borderRadius: 5,
         width: 120,
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.35)',
+        backgroundColor: Colors.bgColor,
     },
     inputBox: {
         // borderWidth: 1,
@@ -229,5 +231,16 @@ const styles = StyleSheet.create({
         width: 200,
         fontSize: 16,
         outlineWidth: 0,
+    },
+    form : {
+        backgroundColor:'white',
+        padding : 20,
+        alignItems : 'center',
+        borderRadius : 8,
+        shadowColor : Colors.thirdColor,
+        shadowOffset : {width:0,height:5},
+        // shadowOpacity : 0.4,
+        shadowRadius : 4,
+        elevation : 6
     },
 })

@@ -5,6 +5,7 @@ import { use, useState } from 'react';
 import { useGlobalSearchParams } from 'expo-router';
 import ConfirmModal from './modals/ConfirmModal';
 import QuestionEditor from './QuestionEditor';
+import { AppBoldText } from '../../styles/fonts';
 
 export default function QuestionRow({ question, questionNumber, setAllTestQuestions, allQuestions }) {
 
@@ -54,12 +55,12 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
 
     return (
         <View style={styles.questionRow}>
-            <Text style={styles.questionText}>
+            <AppBoldText style={styles.questionText}>
                 <Text style={styles.questionNumber}>
-                    {`${questionNumber}. `}
+                    {`Q${questionNumber}.  `}
                 </Text>
                 {question.questionText}
-            </Text>
+            </AppBoldText>
 
             <View style={styles.toolsRow}>
                 <IconButton icon="pencil" size={18} onPress={handleEdit} />
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     questionText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '600',
         flex: 1,
         marginRight: 8,

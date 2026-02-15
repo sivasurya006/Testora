@@ -49,7 +49,7 @@ export default function Signin() {
 
     return (
         <View style={styles.screenContainer}>
-            <Text style={styles.appName}><Text style={styles.appFirstName}>Test</Text>{' '}<Text style={styles.appLastName}>Creator</Text></Text>
+            <Text style={styles.appName}><Text style={styles.appFirstName}>Testora</Text>{' '}<Text style={styles.appLastName}></Text></Text>
             <View style={styles.form}>
                 <TextInput
                     autoComplete="email"

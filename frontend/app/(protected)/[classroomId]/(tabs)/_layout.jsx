@@ -12,7 +12,7 @@ export default function ClassroomLayout() {
     const isLargeScreen = width > 821;
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        // <SafeAreaView style={{ flex: 1 }}>
             <Tabs
                 tabBar={isLargeScreen ? (props) => <ClassroomTabBar {...props} /> : undefined}
                 screenOptions={{
@@ -23,18 +23,19 @@ export default function ClassroomLayout() {
                             backgroundColor: Colors.secondaryColor,
                         },
                         android: {
-                            height: 60,
+                            // height: 60,
                             backgroundColor: Colors.secondaryColor
                         },
                         ios: {
-                            height: 60,
+                            // height: 60,
                             backgroundColor: Colors.secondaryColor
                         }
                     }),
                     headerShown: false,
-                    tabBarShowLabel: isLargeScreen, tabBarLabelStyle: {
-                        fontSize: 16,
-                        fontFamily: fonts.regular
+                    tabBarShowLabel: true,
+                    tabBarLabelStyle: {
+                        fontSize: isLargeScreen ?  16 : 12,
+                        fontFamily: fonts.semibold
                     },
                     tabBarActiveTintColor: Colors.white,
                     tabBarInactiveTintColor: Colors.lightFont,
@@ -68,7 +69,14 @@ export default function ClassroomLayout() {
                         <Ionicons name="settings-sharp" size={24} color={color} />
                     )
                 }} />
+                 <Tabs.Screen name='tests' options={{
+                    title: 'Settings',
+                    href : null,
+                    tabBarIcon: ({ color }) => (
+                        <Ionicons name="settings-sharp" size={24} color={color} />
+                    )
+                }} />
             </Tabs>
-        </SafeAreaView>
+        // </SafeAreaView>
     )
 }
