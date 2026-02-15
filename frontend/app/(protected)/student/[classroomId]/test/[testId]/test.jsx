@@ -5,7 +5,7 @@ import TestFooter from '../../../../../../src/components/testComponents/TestFoot
 import QuestionView from '../../../../../../src/components/testComponents/QuestionView'
 import Colors from '../../../../../../styles/Colors'
 import api from '../../../../../../util/api'
-import { error } from 'console'
+// import { error } from 'console'
 import { useGlobalSearchParams } from 'expo-router'
 
 

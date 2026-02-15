@@ -4,7 +4,7 @@ import Colors from '../../../../styles/Colors';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { fonts } from '../../../../styles/fonts';
 import { Modal, Portal } from 'react-native-paper';
-import { text } from 'node:stream/consumers';
+// import { text } from 'node:stream/consumers';
 import api from '../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
