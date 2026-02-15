@@ -142,6 +142,8 @@
 				<param name="root">testDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
+			<interceptor-ref name="classroomIdInterceptor" />
+
 		</action>
 
 		<action name="inviteLink"
@@ -452,8 +454,7 @@
 
 		</interceptors>
 
-		<default-interceptor-ref
-			name="timedTestStack" />
+		<default-interceptor-ref name="timedTestStack" />
 
 		<action name="start"
 			class="com.testcreator.actions.TimedTestAction" method="startTest">

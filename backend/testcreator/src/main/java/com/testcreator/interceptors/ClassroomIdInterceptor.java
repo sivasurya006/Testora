@@ -44,7 +44,7 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 		try {
 			int classroomId = Integer.parseInt(classroomIdHeader);
 			request.setAttribute("classroomId", classroomId);
-    System.out.println(classroomId);
+    System.out.println("class"+classroomId);
 			return invocation.invoke();
 		}catch (NumberFormatException e) {
 			Object action = invocation.getAction();
