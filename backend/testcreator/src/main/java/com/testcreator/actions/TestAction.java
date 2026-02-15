@@ -244,7 +244,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		try {
 			questionId = Integer.parseInt(questionIdheader);
 		} catch (NumberFormatException e) {
-
+                 e.printStackTrace();
 		}
 		if (questionId < 0) {
 			setError(new ApiError("Invalid Question Id", 400));
