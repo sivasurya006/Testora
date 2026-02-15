@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { router, useRouter } from "expo-router";
 console.log("hello")
 const api = axios.create({
-    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/' : "http://192.168.43.241:8080/testcreator/",
+    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/' : "http://10.37.210.146:8080/testcreator/",
     timeout: 10000,
     headers: {
         'X-Client-Type': Platform.OS == 'web' ? 'web' : 'mobile'
@@ -35,6 +35,9 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(null, (error) => {
     if (error.response?.status === 401) {
         const redirect = error.response.data?.redirectURI;
+        if(typeof error.response.data?.message === 'string' && error.response.data.message.includes("Invalid email or password")){
+            return;
+        } 
         let navLink = '/signin';
         if (redirect) {
             navLink += `?redirect=${redirect}`;

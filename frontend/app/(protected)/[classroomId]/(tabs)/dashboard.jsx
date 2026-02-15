@@ -1,19 +1,17 @@
-import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import { StyleSheet, Text, View, FlatList, ScrollView, Dimensions } from "react-native";
+import React, { useCallback, useState } from "react";
 import api from "../../../../util/api";
 import Colors from "../../../../styles/Colors";
-import { useFocusEffect, useGlobalSearchParams, usePathname } from "expo-router";
+import { useFocusEffect, useGlobalSearchParams } from "expo-router";
 import Test from "../../../../src/components/Test";
-import Fontisto from '@expo/vector-icons/Fontisto';
-import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useWindowDimensions } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { ScrollView } from "react-native-gesture-handler";
-// import { SafeAreaView } from "react-native-safe-area-context";
+import { LineChart, PieChart } from "react-native-chart-kit";
+
 export default function Dashboard() {
   const { classroomId } = useGlobalSearchParams();
-  const path = usePathname();
+  const screenWidth = Dimensions.get("window").width;
+
   const [stats, setStats] = useState({
     classroomName: "",
     createdAt: 0,
@@ -21,20 +19,13 @@ export default function Dashboard() {
     totalStudents: 0,
   });
 
-  const [states, setStates] = useState({
-    testCount: 0,
-  });
-
+  const [states, setStates] = useState({ testCount: 0 });
   const [tests, setTests] = useState([]);
-  const [stests, setsTests] = useState([]);
-
-  const recentlyPublished = tests;
-  const recentlySubmitted = stests;
 
   useFocusEffect(
     useCallback(() => {
       fetchDashboardData();
-      fetchDashboardDatas();
+      fetchDashboardCount();
       fetchDashboardTests();
     }, [])
   );
@@ -44,243 +35,187 @@ export default function Dashboard() {
       const res = await api.get("/api/classroomdetails", {
         headers: { "X-ClassroomId": classroomId },
       });
-      if (res.status === 200) {
-        setStats(res.data);
-        console.log(res.data, "details")
-      }
-    } catch (err) {
-      console.log(err);
-    }
+      if (res.status === 200) setStats(res.data);
+    } catch (err) {}
   }
 
-  async function fetchDashboardDatas() {
+  async function fetchDashboardCount() {
     try {
       const res = await api.get("/api/classroomcount", {
         headers: { "X-ClassroomId": classroomId },
       });
-      if (res.status === 200) {
-        setStates(res.data);
-        console.log(res.data, "testcount")
-
-      }
-    } catch (err) {
-      console.log(err);
-    }
+      if (res.status === 200) setStates(res.data);
+    } catch (err) {}
   }
 
   async function fetchDashboardTests() {
     try {
-      const res = await api.get("/api/tests/get-created-tests?limit=5&status=published", {
-        headers: { "X-ClassroomId": classroomId },
-      });
-      if (res.status === 200) {
-        setTests(res.data);
-        console.log(res.data, "rendertest")
-      }
-    } catch (err) {
-      console.log(err);
-
-    }
+      const res = await api.get(
+        "/api/tests/get-created-tests?limit=5&status=published",
+        { headers: { "X-ClassroomId": classroomId } }
+      );
+      if (res.status === 200) setTests(res.data);
+    } catch (err) {}
   }
 
-  const { width } = useWindowDimensions();
-  const iconSize = width <= 200 ? 24 : width <= 812 ? 20 : 28;
-  const icon = width <= 200 ? 24 : width <= 812 ? 20 : 38;
+  const pieData = [
+    { name: "Submitted", population: 35, color: "#4CAF50", legendFontColor: "#333", legendFontSize: 12 },
+    { name: "Not Submitted", population: 15, color: "#F87171", legendFontColor: "#333", legendFontSize: 12 },
+  ];
+
+  const lineData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    datasets: [{ data: [25, 72, 69, 90, 70] }],
+  };
+
   return (
-
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
 
-        <View
-          style={[styles.top, width <= 812 && { flexDirection: "column", gap: 20 }]}>
-          <View style={styles.detailCard}>
-            <Text style={styles.title}>{stats.classroomName}</Text>
-            <Text style={styles.subText}>Creator: {stats.creatorName}</Text>
-
-            <Text style={styles.subText}>
-              Created At: {stats.createdAt ? new Date(stats.createdAt * 1000).toLocaleDateString() : "-"}
-            </Text>
+        <View style={styles.cardRow}>
+          <View style={styles.smallCard}>
+            <MaterialIcons name="assignment" size={28} color={Colors.primaryColor} />
+            <View>
+              <Text style={styles.cardTitle}>Tests</Text>
+              <Text style={styles.cardNumber}>{states.testCount}</Text>
+            </View>
           </View>
 
-          <View style={[styles.sCard, width <= 812 && { flexDirection: "row", gap: 12, width: 180, height: 100 }]}>
-
-            <View style={styles.smallCard}>
-              <View style={[{ flexDirection: 'column', alignItems: 'center', gap: 20 }, width <= 812 && { gap: 0 }]}>
-                <View style={styles.width}>
-                  <MaterialIcons name="assignment" size={iconSize} color={Colors.primaryColor} />
-                  <Text style={[{ marginLeft: 8, fontSize: 24 }, width <= 812 && { marginLeft: 8, fontSize: 20 }]}>Tests</Text>
-                </View>
-                <View>
-                  <Text style={styles.cardNumber}>{states.testCount}</Text>
-                </View>
-
-              </View>
-
+          <View style={styles.smallCard}>
+            <MaterialIcons name="people" size={28} color={Colors.primaryColor} />
+            <View>
+              <Text style={styles.cardTitle}>Students</Text>
+              <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
             </View>
-
-            <View style={[styles.smallCard]}>
-              <View style={[{ flexDirection: 'column', alignItems: 'center', gap: 20 }, width <= 812 && { gap: 0 }]}>
-                <View style={styles.width}>
-                  <MaterialIcons name="people" size={icon} color={Colors.primaryColor} />
-                  <Text style={[{ marginLeft: 8, fontSize: 24 }, width <= 812 && { marginLeft: 8, fontSize: 20 }]}>Students </Text>
-                </View>
-                <View>
-                  <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
-                </View>
-
-              </View>
-            </View>
-
           </View>
         </View>
-        <View style={[styles.testContainer, width <= 812 && { flexDirection: "column" }]}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recently Published</Text>
-            {recentlyPublished.length > 0 ? (
-              <FlatList
-                data={recentlyPublished}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <Test allTests={tests} setAllTests={setTests} data={item} />}
-              />
-            ) : (
-              <Text>No published tests yet</Text>
-            )}
-          </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recently Submitted</Text>
-            {recentlySubmitted.length > 0 ? (
-              <FlatList
-                data={recentlySubmitted}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => <Test data={item} />}
-              />
-            ) : (
-              <View style={styles.centerContainer}>
-                <Text style={styles.submitted}>No submitted tests yet</Text>
+        <View style={styles.detailCard}>
+          <Text style={styles.title}>{stats.classroomName}</Text>
+          <Text style={styles.subText}>Creator: {stats.creatorName}</Text>
+          <Text style={styles.subText}>
+            Created: {stats.createdAt ? new Date(stats.createdAt * 1000).toLocaleDateString() : "-"}
+          </Text>
+        </View>
 
-              </View>
-            )}
-          </View>
+        <View style={styles.chartCard}>
+          <Text style={styles.sectionTitle}>Monthly Progress</Text>
+          <LineChart
+            data={lineData}
+            width={screenWidth - 40}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+          />
+        </View>
+
+        <View style={styles.chartCard}>
+          <Text style={styles.sectionTitle}>Submission</Text>
+          <PieChart
+            data={pieData}
+            width={screenWidth - 40}
+            height={200}
+            chartConfig={chartConfig}
+            accessor="population"
+            backgroundColor="transparent"
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Recently Published</Text>
+          {tests.length > 0 ? (
+            <FlatList
+              data={tests}
+              scrollEnabled={false}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => <Test data={item} isDashboard />}
+            />
+          ) : (
+            <Text>No tests yet</Text>
+          )}
         </View>
       </ScrollView>
-    </SafeAreaView >
-    
+    </SafeAreaView>
   );
 }
 
+const chartConfig = {
+  backgroundGradientFrom: "#fff",
+  backgroundGradientTo: "#fff",
+  decimalPlaces: 0,
+  color: (opacity = 1) => `rgba(33,150,243,${opacity})`,
+  labelColor: () => "#333",
+};
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
     backgroundColor: Colors.bgColor,
   },
-  width: {
-    width: 300,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
 
-  },
-  testContainer: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 20
-  },
-
-  sCard: {
+  cardRow: {
     flexDirection: "row",
     gap: 12,
-    width: 420
-  },
-
-  top: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 16,
-  },
-
-  studenticon: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-
-  topRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 16,
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  submitted: {
-    fontSize: 16,
-    color: '#777',
-  },
-
-  detailCard: {
-    width: "100%",
-    maxWidth: 800,
-    padding: 24,
-    borderRadius: 12,
-    height: 200,
-    justifyContent: "center",
-    backgroundColor: "#fff",
-
-  },
-  submitted: {
-
   },
 
   smallCard: {
-    width: "100%",
-
-    maxWidth: 450,
-    borderRadius: 12,
+    flex: 1,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    gap: 10,
     backgroundColor: "#fff",
-
+    padding: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#eee",
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 30,
-    // width:10
-  },
-
-  subText: {
-    fontSize: 16,
+  cardTitle: {
+    fontSize: 14,
     color: "#555",
-    marginBottom: 4,
   },
 
   cardNumber: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: "bold",
-    // color: "#fff",
   },
 
-  cardLabel: {
-    fontSize: 10,
-    color: "#fff",
+  detailCard: {
+    marginTop: 16,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
+
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
     marginBottom: 6,
   },
 
+  subText: {
+    fontSize: 14,
+    color: "#555",
+  },
+
+  chartCard: {
+    marginTop: 16,
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
+
   section: {
-    flex: 1,
-    marginTop: 12,
+    marginTop: 20,
   },
 
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 10,
   },
-
-
 });

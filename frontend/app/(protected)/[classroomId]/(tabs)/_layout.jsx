@@ -32,12 +32,12 @@ export default function ClassroomLayout() {
                         }
                     }),
                     headerShown: false,
-                    tabBarShowLabel: isLargeScreen,  tabBarLabelStyle : {
+                    tabBarShowLabel: isLargeScreen, tabBarLabelStyle: {
                         fontSize: 16,
-                        fontFamily : fonts.regular
+                        fontFamily: fonts.regular
                     },
-                    tabBarActiveTintColor: Colors.primaryColor,
-                    tabBarInactiveTintColor: Colors.white,
+                    tabBarActiveTintColor: Colors.white,
+                    tabBarInactiveTintColor: Colors.lightFont,
                     tabBarItemStyle: {
                         paddingTop: 7
                     },

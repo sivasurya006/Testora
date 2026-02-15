@@ -21,10 +21,10 @@ console.log({ ...MD3LightTheme.colors })
 export default function RootLayout() {
 
   const [loaded] = useFonts({
-    InterRegular: require('../assets/fonts/Inter_18pt-Regular.ttf'),
-    InterMedium: require('../assets/fonts/Inter_18pt-Medium.ttf'),
-    InterSemiBold: require('../assets/fonts/Inter_18pt-SemiBold.ttf'),
-    InterBold: require('../assets/fonts/Inter_18pt-Bold.ttf'),
+    PuviRegular: require('..//assets/fonts/Zoho Puvi Regular.ttf'),
+    PuviMedium: require('../assets/fonts/Zoho Puvi Medium.ttf'),
+    PuviSemiBold: require('../assets/fonts/Zoho Puvi Semibold.ttf'),
+    PuviBold: require('../assets/fonts/Zoho Puvi Bold.ttf'),
   });
 
   if (!loaded) return null;
