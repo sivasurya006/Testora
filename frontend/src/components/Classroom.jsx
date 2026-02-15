@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 import api from '../../util/api'
 import Colors from '../../styles/Colors';
 import { Menu, IconButton } from 'react-native-paper'
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import ConfirmModal from './modals/ConfirmModal';
 import InputModal from './modals/InputModal';
+import { AppMediumText, AppRegularText, AppSemiBoldText, fonts } from '../../styles/fonts';
+import LoadingScreen from './LoadingScreen';
 
 
 
@@ -16,6 +18,8 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
     const [isDeleteConfirmModalVisible, setDeleteModalVisible] = useState(false);
     const [isRenameModalVisible, setReNameModalVisible] = useState(false);
     const [newClassName, setNewClassName] = useState(false);
+    const [enterHovered, setEnterHovered] = useState(false);
+    const [isLoading, setLoading] = useState(false);
 
     const onDeleteConfirm = async () => {
         await handleDelete();
@@ -33,6 +37,7 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
     const onCancelRenameClassroom = () => setReNameModalVisible(false);
 
     const handleRenameClassroom = async () => {
+        setLoading(true)
         const res = await renameClass(id, newClassName);
         if (res) {
             setCreatedClassrooms(createdClassrooms.map(classroom => {
@@ -44,86 +49,143 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
         } else {
             console.log("can't rename");
         }
+        setLoading(false)
     }
 
     const handleDelete = async () => {
+        setLoading(true)
         const res = await deleteClassRoom(id);
         if (res) {
             setCreatedClassrooms(createdClassrooms.filter(classroom => classroom.classroomId != id));
         } else {
             console.log("can't delete classroom")
         }
+        setLoading(false)
     }
 
 
-
+    const [isHovered, setHovered] = useState(false)
     const [isMenuVisible, setMenuVisible] = useState(false);
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
 
     return (
-        <View style={styles.container}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <>
+            <LoadingScreen visible={isLoading} />
+            <Pressable
+                onPress={() => setClassroomID(id)}
+                style={[
+                    styles.container,
+                    isHovered && styles.hoveredClass
+                ]}
+                onHoverIn={() => setHovered(true)}
+                onHoverOut={() => setHovered(false)}
+            >
+
+                <View style={styles.classHeader} >
+                    {isMenuNeed ? <MaterialIcons name='groups' size={40} color={Colors.lightFont} /> : <Ionicons name='school' size={40} color={Colors.lightFont} />}
+                </View>
+                <View style={styles.classContainer}>
+                    <View>
+                        <Text style={styles.className}>{name}</Text>
+                        <Text style={styles.createdAt}>
+                            Created on {new Date(createdAt * 1000).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                // weekday: 'short',    
+                            })}
+                        </Text>
+                    </View>
+                    {
+                        isMenuNeed ? (
+                            <View>
+                                <Menu
+                                    key={isMenuVisible ? 'open' : 'closed'}
+                                    visible={isMenuVisible}
+                                    onDismiss={closeMenu}
+                                    onRequestClose={closeMenu}
+                                    anchorPosition='bottom'
+                                    anchor={
+                                        <IconButton
+                                            icon="dots-vertical"
+                                            onPress={openMenu}
+                                            iconColor='black'
+                                        />
+                                    }
+
+                                    contentStyle={styles.menuContentStyle}
+                                >
+
+                                    <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                                    <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+
+                                </Menu>
+                            </View>
+                        ) : null
+                    }
+                </View>
                 <View>
-                    <Text style={styles.className}>{name}</Text>
-                    <Text style={styles.createdAt}>
-                        Created on {new Date(createdAt*1000).toLocaleDateString()}
-                    </Text>
+                    {
+                        !isMenuNeed ? (
+                            <>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 22 }}>
+                                    <AppMediumText>Progress</AppMediumText>
+                                    <AppMediumText>68%</AppMediumText>
+                                </View>
+                                <View style={styles.progressBarBackground}>
+                                    <View style={[styles.progressBarFill, { width: '68%' }]} />
+                                </View>
+                            </>
+                        ) : null
+                    }
+                    <View style={styles.infoBar} >
+                        {
+                            isMenuNeed ? (
+                                <>
+                                    <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >Students : 30</AppMediumText>
+                                    </View>
+                                    <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
+                                        <AppMediumText style={{ color: '#009B4D' }} >Active Tests : 7</AppMediumText>
+                                    </View>
+                                </>
+                            ) : (
+                                <>
+                                    <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >New Tests : 3</AppMediumText>
+                                    </View>
+                                </>
+                            )
+                        }
+                        <Pressable
+                            onPress={() => setClassroomID(id)}
+                            onHoverIn={() => setEnterHovered(true)}
+                            onHoverOut={() => setEnterHovered(false)}
+                            style={[styles.enter, enterHovered && styles.enterHovered]}
+                        >
+                            <FontAwesome5 name="arrow-right" color={'white'} size={16} />
+                        </Pressable>
+                    </View>
+
                 </View>
                 {
-                    isMenuNeed ? (
-                        <View>
-                            <Menu
-                                key={isMenuVisible ? 'open' : 'closed'}
-                                visible={isMenuVisible}
-                                onDismiss={closeMenu}
-                                anchorPosition='bottom'
-                                anchor={
-                                    <IconButton
-                                        icon="dots-vertical"
-                                        onPress={openMenu}
-                                        iconColor='black'
-                                    />
-                                }
-
-                                contentStyle={styles.menuContentStyle}
-                            >
-
-                                <Menu.Item title="Rename" onPress={() => { closeMenu(); setReNameModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
-                                <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
-
-                            </Menu>
-                        </View>
-                    ) : null
+                    isDeleteConfirmModalVisible ?
+                        <ConfirmModal message={"Do you really want delete classroom?"}
+                            visible={isDeleteConfirmModalVisible} onCancel={onDeleteCancel} onConfirm={onDeleteConfirm} />
+                        : null
                 }
-            </View>
-            <Pressable onPress={() => setClassroomID(id)}>
-                <View style={styles.classContainer}>
-                    <MaterialCommunityIcons
-                        name="google-classroom"
-                        size={34}
-                        color={Colors.secondaryColor}
-                    />
 
-                </View>
+                {
+                    isRenameModalVisible ?
+                        <InputModal placeholder={"New class name"} visible={isRenameModalVisible}
+                            onConfirm={onConfirmRenameClassroom} onCancel={onCancelRenameClassroom}
+                            onValueChange={setNewClassName} />
+                        : null
+                }
+
             </Pressable>
-
-            {
-                isDeleteConfirmModalVisible ?
-                    <ConfirmModal message={"Do you really want delete classroom?"}
-                        visible={isDeleteConfirmModalVisible} onCancel={onDeleteCancel} onConfirm={onDeleteConfirm} />
-                    : null
-            }
-
-            {
-                isRenameModalVisible ?
-                    <InputModal placeholder={"New class name"} visible={isRenameModalVisible}
-                        onConfirm={onConfirmRenameClassroom} onCancel={onCancelRenameClassroom}
-                        onValueChange={setNewClassName} />
-                    : null
-            }
-
-        </View>
+        </>
     );
 }
 
@@ -169,35 +231,42 @@ async function renameClass(id, newName) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.white,
-        alignSelf: 'center',
-        padding: 18,
+        // alignSelf: 'center',
+        // padding: 18,
+        paddingBottom: 18,
         borderRadius: 12,
         margin: 8,
-        minWidth: 280,
-        maxWidth: 280,
-        flex: 1,
+        maxWidth: 340,
+        width: '100%',
+        // boxShadow: Colors.blackBoxShadow,
+        // flex: 1,
         boxShadow: Colors.blackBoxShadow,
-        marginHorizontal: 10
-    },
+        marginHorizontal: 10,
+        elevation: 6
 
-    classContainer: {
+    },
+    classHeader: {
+        height: 100,
+        borderTopRightRadius: 12,
+        borderTopLeftRadius: 12,
+        backgroundColor: Colors.thirdColor,
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 30,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        rowGap: 12,
-        marginTop : 10,
-        backgroundColor: Colors.bgColor,
-        borderWidth: 1,
-        borderColor: Colors.tagBg,
+        justifyContent: 'center'
+    },
+    classContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: 20,
+        paddingVertical: 15
     },
 
     className: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: Colors.secondaryColor,
+        fontSize: 16,
+        fontWeight: 300,
+        // color: Colors.secondaryColor,
         marginTop: 6,
+        fontFamily: fonts.semibold
     },
 
     menuTitleStyle: {
@@ -211,10 +280,52 @@ const styles = StyleSheet.create({
     },
     createdAt: {
         fontSize: 12,
-        color: Colors.shadeGray,
-        marginTop: 2,
+        color: Colors.dimBg,
+        marginTop: 5,
     },
-    
+    enterHovered: {
+        shadowColor: Colors.shadowColor,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 6,
+    },
+    hoveredClass: {
+        shadowColor: Colors.shadowColor,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 6,
+    },
+    infoBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20
+    },
+    enter: {
+        backgroundColor: Colors.primaryColor,
+        height: 30,
+        width: 30,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        
+    },
+    progressBarBackground: {
+        height: 8,
+        backgroundColor: Colors.primaryColor + '20', 
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginHorizontal: 22,
+        marginVertical : 10 
+    },
+
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 10,
+    },
 });
 
 

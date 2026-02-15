@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import Colors from "./Colors";
+import { fonts } from "./fonts";
 
 const AuthStyles = StyleSheet.create({
     primaryButton : {
@@ -62,7 +63,8 @@ const AuthStyles = StyleSheet.create({
     },      
     appName : {
         fontSize : 30,
-        marginBottom : 50
+        marginBottom : 50,
+        fontFamily : fonts.bold
     },
     link: {
         color: Colors.linkColor,              

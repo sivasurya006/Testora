@@ -37,6 +37,7 @@ export default function Edit() {
 
     const [allQuestions, setAllQuestions] = useState([]);
     const [isAddQuesModalVisible, setAddQuesModalVisible] = useState(false);
+    const [hovered, setHovered] = useState(false);
     const openAddQuesModal = () => setAddQuesModalVisible(true);
     const closeAddQuesModal = () => setAddQuesModalVisible(false);
 
@@ -118,8 +119,10 @@ export default function Edit() {
                     )
                 }
                 <Pressable
-                    style={styles.addNew}
+                    style={[styles.addNew , hovered && styles.hovered]}
                     onPress={openAddQuesModal}
+                    onHoverIn={() => setHovered(true)}
+                    onHoverOut={() => setHovered(false)}
                 >
                     <Text style={styles.addNewText}>+</Text>
                 </Pressable>
@@ -147,14 +150,13 @@ export default function Edit() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor : Colors.bgColor,
     },
     questionPaper: {
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.bgColor,
         flex: 1,
-        elevation: 6,
-        boxShadow: Colors.blackBoxShadow,
-        width: "100%",
-        borderRadius: 8,
+        // width: "100%",
+        paddingTop : 10,
     },
     addNew: {
         position: 'absolute',
@@ -173,6 +175,12 @@ const styles = StyleSheet.create({
         color: Colors.white,
         fontSize: 28,
         fontWeight: '900',
+    },
+    hovered: {
+        shadowColor: Colors.shadowColor,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
     },
 })
 

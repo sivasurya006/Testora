@@ -4,10 +4,11 @@ import Colors from '../../../../styles/Colors';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { fonts } from '../../../../styles/fonts';
 import { Modal, Portal } from 'react-native-paper';
-import { text } from 'node:stream/consumers';
 import api from '../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 export default function StudentList() {
 
@@ -40,7 +41,9 @@ export default function StudentList() {
   console.log(studentsList)
 
   return (
-    <View style={{ flex: 1 }}>
+   <>
+     <StatusBar translucent/>
+    <SafeAreaView style={{ flex: 1 }}>
       <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
       {
         studentsList.length === 0 ? (
@@ -91,7 +94,8 @@ export default function StudentList() {
         }}
         onCancel={() => setInviteStudentModalVisible(false)}
       />
-    </View>
+    </SafeAreaView>
+   </>
   )
 }
 
@@ -259,7 +263,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: Colors.formBg,
+    backgroundColor: Colors.white,
     paddingHorizontal: 24,
     paddingVertical: 20,
     borderRadius: 12,
@@ -335,7 +339,8 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   headerItem: {
-    color: Colors.white,
+    color: '#000',
+    fontFamily : fonts.bold,
     fontWeight: '600'
   },
   linkText: {

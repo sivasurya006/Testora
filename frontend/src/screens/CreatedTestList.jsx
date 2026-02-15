@@ -6,6 +6,9 @@ import InputModal from "../components/modals/InputModal"
 import api from "../../util/api";
 import { router, useFocusEffect, useGlobalSearchParams } from 'expo-router'
 import Test from '../components/Test'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { StatusBar } from 'expo-status-bar'
+import { AppMediumText } from '../../styles/fonts'
 
 export default function CreatedTestList({ filter }) {
 
@@ -47,49 +50,50 @@ export default function CreatedTestList({ filter }) {
   }
 
   return (
-    
-    <View style={styles.container}>
 
-      <View style={styles.topBar}>
-        <TextInput
-          placeholder="Search tests..."
-          value={searchText}
-          onChangeText={setSearchText}
-          style={styles.searchInput}
-        />
+    <>
+      <StatusBar style="light" translucent />
+      <SafeAreaView style={styles.container}>
+        
 
-        <Pressable
-          style={styles.addButton}
-          onPress={() => setCreateTestModalVisible(true)}
-        >
-          <AntDesign name="plus" size={16} color={Colors.white} />
-          <Text style={styles.addButtonText}>Create</Text>
-        </Pressable>
-      </View>
+        <View style={styles.topBar}>
+          <Pressable
+            style={styles.addButton}
+            onPress={() => setCreateTestModalVisible(true)}
+          >
+            <AntDesign name="plus" size={16} color={Colors.white} />
+            <Text style={styles.addButtonText}>Create</Text>
+          </Pressable>
+        </View>
 
-      <FlatList
-        data={allCreatedTests}
-        keyExtractor={(item, index) => item.testId.toString()}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        renderItem={({ item }) => (
-          <Test allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
-        )}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No tests found</Text>
+        {
+          allCreatedTests.length == 0 ? (
+            <View style={{alignItems:'center',justifyContent:'center',flex:1}}>
+              <AppMediumText style={styles.emptyText}>No tests found</AppMediumText>
+            </View>
+          ) : (
+            <FlatList
+              data={allCreatedTests}
+              keyExtractor={(item, index) => item.testId.toString()}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              renderItem={({ item }) => (
+                <Test allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
+              )}
+            />
+          )
         }
-      />
+        {
+          isCreateTestModalVisible &&
+          <InputModal
+            placeholder={"Test name"}
+            onCancel={onCancelTest}
+            onValueChange={setTestName}
+            onConfirm={onCreateTest}
+          />
+        }
 
-      {
-        isCreateTestModalVisible &&
-        <InputModal
-          placeholder={"Test name"}
-          onCancel={onCancelTest}
-          onValueChange={setTestName}
-          onConfirm={onCreateTest}
-        />
-      }
-
-    </View>
+      </SafeAreaView>
+    </>
   )
 }
 
@@ -149,17 +153,19 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    backgroundColor: Colors.bgColor
   },
 
   topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingTop: 10,
     gap: 10,
+    paddingBottom : 10,
     ...(Platform.OS === 'web' && {
-      maxWidth: 900,
+      // maxWidth: 900,
       alignSelf: 'center',
       width: '100%',
     })
@@ -181,6 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 40,
     borderRadius: 8,
+    alignSelf : 'flex-end'
   },
 
   addButtonText: {

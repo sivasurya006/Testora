@@ -4,7 +4,7 @@ import { Checkbox, IconButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 
-export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions , allQuestions }) {
+export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions }) {
 
     const [checked, setChecked] = useState([]);
 
@@ -21,7 +21,7 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
 
         return (
             <View style={styles.container}>
-                <QuestionRow question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions}/>
+                <QuestionRow question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
                 <View style={styles.optionsList}>
                     {options.map((opt, i) => {
                         const isChecked = checked.includes(opt);
@@ -53,10 +53,16 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         backgroundColor: Colors.white,
-        marginVertical: 10,
-        borderBottomWidth : 0.3,
-        borderBottomColor : 'gray'
+        marginVertical: 5,
+        shadowColor: Colors.shadowColor,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        elevation: 6,
+        borderRadius:8,
+        marginHorizontal : 10
     },
+
     questionRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
@@ -92,13 +98,13 @@ const styles = StyleSheet.create({
     optionsText: {
         fontSize: 15,
     },
-    correctAnswerText : {
-        color : 'green',
-        fontWeight : 600,
-        fontSize : 16
+    correctAnswerText: {
+        color: 'green',
+        fontWeight: 600,
+        fontSize: 16
     },
-    correctAnswerLabel : {
-        fontWeight : 600,
-        fontSize : 16
+    correctAnswerLabel: {
+        fontWeight: 600,
+        fontSize: 16
     }
 });

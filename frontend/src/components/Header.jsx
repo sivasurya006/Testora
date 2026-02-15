@@ -6,22 +6,30 @@ import { fonts } from '../../styles/fonts';
 
 export default function Header() {
     return (
-        <React.Fragment>
-            <View style={styles.container}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} >
-                    <Image source={require('../../assets/logo/logo.png')} style={styles.appLogo} />
-                    <Text style={styles.appName}>Test Creator</Text>
-                </View>
-                <View style={{ marginRight: 10 }}>
-                    <Pressable>
-                        <MaterialIcons name='account-circle' size={30} color={Colors.white} />
-                    </Pressable>
-                </View>
+        <View style={styles.container}>
+
+            {/* Left Side (Logo + Name) */}
+            <View style={styles.leftSection}>
+                <Image
+                    source={require('../../assets/logo/logo.png')}
+                    style={styles.appLogo}
+                    resizeMode="contain"
+                />
+                <Text style={styles.appName}>Testora</Text>
             </View>
-        </React.Fragment>
+
+            {/* Right Side (Profile Icon) */}
+            <Pressable>
+                <MaterialIcons
+                    name='account-circle'
+                    size={30}
+                    color={Colors.white}
+                />
+            </Pressable>
+
+        </View>
     )
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -29,21 +37,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: Colors.secondaryColor,
         alignItems: 'center',
-        paddingLeft: 20,
-        paddingRight: 20,
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
         borderBottomWidth: 0.5,
         borderBottomColor: Colors.charcoal,
-        justifyContent: 'space-between'
+    },
+    leftSection: {
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     appLogo: {
-        marginTop: 20,
-        width: 50,
-        height: 110,
+        width: 40,
+        height: 40,
         marginRight: 10
     },
     appName: {
         fontSize: 20,
         color: Colors.white,
-        fontFamily : fonts.medium
+        fontFamily: fonts.medium
     }
 });

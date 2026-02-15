@@ -19,8 +19,13 @@
 export default {
     primaryColor: "#2563EB",
     secondaryColor: "#0F172A",
+    thirdColor : '#EDEDF9',
     lightFont: "#94A3B8",
     lightShadow: "#E9EFFD",
     white: '#ffffff',
-    bgColor: "#F7F6F8"
+    bgColor: "#F7F6F8",
+    blackBoxShadow : '0px 4px 10px rgba(0,0,0,0.1)',
+    shadowColor : '#6C63FF',
+    dimBg :  'rgba(0,0,0,0.3)',
+    lightBadge : '#EFF6FF',
 }

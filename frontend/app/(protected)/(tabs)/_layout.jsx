@@ -8,6 +8,7 @@ import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-ic
 import Colors from '../../../styles/Colors'
 import Header from '../../../src/components/Header'
 import { fonts } from '../../../styles/fonts'
+import { ClassroomTabBar } from '../../../src/components/ClassroomTobBar'
 
 export default function ProtectedLayout() {
 
@@ -42,41 +43,41 @@ export default function ProtectedLayout() {
 
     return (
 
-        <SafeAreaView style={{ flex: 1 }}>
-            {isLargeScreen ? <Header /> : null}
-
-            <Tabs screenOptions={{
+        // <SafeAreaView style={{ flex: 1 }}>
+            <Tabs 
+            tabBar={isLargeScreen ? (props) => <ClassroomTabBar {...props} /> : undefined}
+            screenOptions={{
                 tabBarPosition: isLargeScreen ? "left" : 'bottom',
                 headerShown: false,
                 tabBarStyle: Platform.select({
                     web: {
-                        paddingTop : 30,
-                        minWidth: 230,
+                        paddingTop : isLargeScreen ? 30 : 0,
+                        minWidth: 300,
                         backgroundColor: Colors.secondaryColor
                     },
                     android: {
-                        height: 60,
+                        // height: 60,
                         backgroundColor: Colors.secondaryColor
                     },
                     ios: {
-                        height: 60,
+                        // height: 60,
                         backgroundColor: Colors.secondaryColor
                     }
                 }),
-                tabBarShowLabel: isLargeScreen,
+                tabBarShowLabel: true,
                 tabBarLabelStyle : {
-                    fontSize: 16,
-                    fontFamily : fonts.regular
+                    fontSize: isLargeScreen ?  16 : 12,
+                    fontFamily: fonts.semibold
                 },
-                tabBarActiveTintColor: Colors.primaryColor,
-                tabBarInactiveTintColor: Colors.white,
+                tabBarActiveTintColor: Colors.white,
+                tabBarInactiveTintColor: Colors.lightFont,
                 tabBarItemStyle: {
-                    paddingTop: 5,
+                    paddingTop: isLargeScreen ? 5 : 0,
                 },
-                tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent'
+                tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent',
             }}>
                 <Tabs.Screen name='index' options={{
-                    title: 'Created Classrooms',
+                    title: isLargeScreen ? 'Created Classrooms' : 'Created',
                     tabBarIcon: ({ color }) => (
                         // <MaterialCommunityIcons
                         //     name="account-school"
@@ -88,7 +89,7 @@ export default function ProtectedLayout() {
                 }} />
 
                 <Tabs.Screen name='joinedClassrooms' options={{
-                    title: 'Enrolled Classrooms',
+                    title: isLargeScreen ? 'Enrolled Classrooms' : 'Enrolled',
                     tabBarIcon: ({ color }) => (
                         // <MaterialIcons name="school" size={30} color={color} />
                         // <MaterialCommunityIcons name="bookshelf" size={24} color={color} />
@@ -99,15 +100,15 @@ export default function ProtectedLayout() {
                 <Tabs.Screen
                     name='profile' options={{
                         title: 'Profile',
-                        href: null,
-                        // tabBarIcon: ({ color }) => (
-                        //     <MaterialIcons name='account-circle' size={30} color={color} />
-                        // )
+                        tabBarIcon: ({ color }) => (
+                            <MaterialIcons name='account-circle' size={30} color={color} />
+                        ),
+                        ...(isLargeScreen ? {href : null} : {})
                     }}
                 />
 
             </Tabs>
-        </SafeAreaView>
+        // </SafeAreaView>
 
     )
 }

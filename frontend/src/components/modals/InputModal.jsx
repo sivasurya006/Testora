@@ -48,13 +48,13 @@ export default function InputModal({placeholder,onValueChange,visible,onConfirm,
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.35)', 
+      backgroundColor: Colors.dimBg, 
       alignItems: 'center',
       justifyContent: 'center',
     },
   
     modalContent: {
-      backgroundColor: Colors.formBg,
+      backgroundColor: Colors.white,
       paddingHorizontal: 24,
       paddingVertical: 20,
       borderRadius: 12,
