@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform, Dimensions, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Platform, Dimensions, ScrollView , Modal } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import TestHeader from '../../../../../../src/components/testComponents/TestHeader'
 import TestFooter from '../../../../../../src/components/testComponents/TestFooter'
@@ -7,7 +7,9 @@ import Colors from '../../../../../../styles/Colors'
 import api from '../../../../../../util/api'
 import { router, useGlobalSearchParams } from 'expo-router'
 import ConfirmModal from '../../../../../../src/components/modals/ConfirmModal'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator, Button } from 'react-native-paper'
+import { AppBoldText } from '../../../../../../styles/fonts'
+import ResultModal from '../../../../../../src/components/ResultModal'
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
@@ -20,6 +22,8 @@ export default function Test() {
   const [message, setMessage] = useState("Loading....");
   const [submitModalVisible, setSubmitModalVisible] = useState(false);
   const [timesupModalVisible, setTimesupModalVisible] = useState(false);
+  const [totalMarks, setTotalMarks] = useState(0);
+  const [isResultPageOpen, setResultPageOpen] = useState(false);
 
   const attemptId = useRef(null);
 
@@ -38,14 +42,16 @@ export default function Test() {
   async function submitAnswer() {
     try {
       if (!attemptId.current) throw new Error('Attempt ID not set');
-      await api.post('/timedtest/submit', makePayload(selectedAnswers), {
+      const result = await api.post('/timedtest/submit', makePayload(selectedAnswers), {
         headers: {
           'X-ClassroomId': classroomId,
           'X-TestId': testId,
           'X-AttemptId': attemptId.current
         }
       });
-      onExit()
+      setTotalMarks(result.data.reduce((sum, ques) => sum + ques.marks, 0));
+      setSubmitModalVisible(false)
+      setResultPageOpen(true)
     } catch (err) {
       console.log(err);
     }
@@ -112,7 +118,7 @@ export default function Test() {
 
   if (!data || !data.test) {
     return (
-      <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size={'large'} />
       </View>
     )
@@ -158,9 +164,9 @@ export default function Test() {
       </ScrollView>
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
-
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => setSubmitModalVisible(false)} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
+      <ResultModal totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen}/>
     </View>
   )
 }
@@ -185,9 +191,9 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: '#ddd',
     margin: 20,
-    width : '100%',
-    maxWidth : 480,
-    overflow : 'hidden'
+    width: '100%',
+    maxWidth: 480,
+    overflow: 'hidden'
   },
   progressBarFill: {
     height: '100%',

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View, TextInput, FlatList, Platform } from 'react-native'
+import { Pressable, StyleSheet, Text, View, TextInput, FlatList, Platform, Dimensions, useWindowDimensions } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Colors from "../../styles/Colors"
 import { AntDesign } from "react-native-vector-icons"
@@ -9,6 +9,12 @@ import Test from '../components/Test'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
 import { AppMediumText } from '../../styles/fonts'
+import TestBanner from '../components/TestComponentBanner'
+
+
+
+const classroom_width = 360;
+const { width } = Dimensions.get('window')
 
 export default function CreatedTestList({ filter }) {
 
@@ -18,6 +24,11 @@ export default function CreatedTestList({ filter }) {
   const [isCreateTestModalVisible, setCreateTestModalVisible] = useState(false);
   const [testName, setTestName] = useState("");
   const [searchText, setSearchText] = useState("");
+  const { width } = useWindowDimensions();
+  const numColumns = Math.floor((width - 300) / classroom_width);
+  console.log(numColumns)
+
+  
 
   const { classroomId } = useGlobalSearchParams();
 
@@ -32,10 +43,11 @@ export default function CreatedTestList({ filter }) {
     const result = await handleCreateTest(classroomId, testName);
     console.log("result ", result)
     if (result && filter != 'published') {
+      console.log('/[classroomId]/(tabs)/tests/[testId]/edit')
       router.push({
-        pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
+        pathname: '/[classroomId]/(tabs)/tests/[testId]/edit',
         params: {
-          classroomId: classroomId,
+          classroomId: result.classroomId,
           testId: result.testId,
           title: result.testTitle,
         },
@@ -54,7 +66,7 @@ export default function CreatedTestList({ filter }) {
     <>
       <StatusBar style="light" translucent />
       <SafeAreaView style={styles.container}>
-        
+
 
         <View style={styles.topBar}>
           <Pressable
@@ -68,17 +80,22 @@ export default function CreatedTestList({ filter }) {
 
         {
           allCreatedTests.length == 0 ? (
-            <View style={{alignItems:'center',justifyContent:'center',flex:1}}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
               <AppMediumText style={styles.emptyText}>No tests found</AppMediumText>
             </View>
           ) : (
             <FlatList
               data={allCreatedTests}
+              numColumns={numColumns}
+              key={numColumns}
               keyExtractor={(item, index) => item.testId.toString()}
               contentContainerStyle={{ paddingBottom: 20 }}
               renderItem={({ item }) => (
-                <Test allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
+                <TestBanner allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
               )}
+            //   columnWrapperStyle={
+            //     numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
+            // }
             />
           )
         }
@@ -153,7 +170,7 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     backgroundColor: Colors.bgColor
   },
 
@@ -163,7 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     gap: 10,
-    paddingBottom : 10,
+    paddingBottom: 10,
     ...(Platform.OS === 'web' && {
       // maxWidth: 900,
       alignSelf: 'center',
@@ -187,7 +204,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 40,
     borderRadius: 8,
-    alignSelf : 'flex-end'
+    alignSelf: 'flex-end'
   },
 
   addButtonText: {

@@ -69,12 +69,12 @@ export default function ClassroomLayout() {
                         <Ionicons name="settings-sharp" size={24} color={color} />
                     )
                 }} />
-                 <Tabs.Screen name='tests' options={{
-                    title: 'Settings',
+                 <Tabs.Screen name='tests/[testId]' options={{
+                    // title: 'Settings',
                     href : null,
-                    tabBarIcon: ({ color }) => (
-                        <Ionicons name="settings-sharp" size={24} color={color} />
-                    )
+                    // tabBarIcon: ({ color }) => (
+                    //     <Ionicons name="settings-sharp" size={24} color={color} />
+                    // )
                 }} />
             </Tabs>
         // </SafeAreaView>

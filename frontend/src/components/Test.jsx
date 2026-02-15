@@ -8,7 +8,7 @@ import ConfirmModal from './modals/ConfirmModal';
 import api from '../../util/api';
 import InputModal from './modals/InputModal';
 
-export default function Test({ data, allTests, setAllTests, isDashboard = true }) {
+export default function Test({ data, allTests, setAllTests, isDashboard }) {
 
   const [isMenuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
@@ -26,7 +26,7 @@ export default function Test({ data, allTests, setAllTests, isDashboard = true }
   function handleEdit() {
     console.log('edit')
     router.push({
-      pathname: '/[classroomId]/(tabs)/tests/[testId]/edit',
+      pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
       params: {
         classroomId: data.classroomId,
         testId: data.testId,
@@ -38,7 +38,7 @@ export default function Test({ data, allTests, setAllTests, isDashboard = true }
   function handlePublish() {
     console.log('publish')
     router.push({
-      pathname: '/[classroomId]/(tabs)/tests/[testId]/publish',
+      pathname: '/[classroomId]/(tabs)/test/[testId]/publish',
       params: {
         classroomId: data.classroomId,
         testId: data.testId,
@@ -91,7 +91,7 @@ export default function Test({ data, allTests, setAllTests, isDashboard = true }
           <Text onPress={handleEdit} style={styles.title}>{data.testTitle}</Text>
 
           {(
-            <View style={[styles.draftBadge,data.status === "DRAFT" && {backgroundColor:Colors.thirdColor}]}>
+            <View style={styles.draftBadge}>
               <Text style={styles.draftText}>{data.status === "DRAFT" ? 'Draft' : 'Published'}</Text>
             </View>
           )}

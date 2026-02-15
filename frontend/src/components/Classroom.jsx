@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View, Text, Button, Alert } from 'react-native'
+import { Pressable, StyleSheet, View, Text, Button, Alert, Dimensions } from 'react-native'
 import React, { useState } from 'react'
 import api from '../../util/api'
 import Colors from '../../styles/Colors';
@@ -10,11 +10,13 @@ import { AppMediumText, AppRegularText, AppSemiBoldText, fonts } from '../../sty
 import LoadingScreen from './LoadingScreen';
 
 
+const { width } = Dimensions.get('window')
+
+export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms, isMenuNeed , totalStudents , totalTests , totalAttempted}) {
 
 
-export default function Classroom({ id, name, createdAt, createdBy, setClassroomID, setCreatedClassrooms, createdClassrooms, isMenuNeed }) {
-
-
+    const newTests = totalTests - totalAttempted;
+    const progress = totalTests > 0 ? (totalAttempted / totalTests) * 100 : 0;
     const [isDeleteConfirmModalVisible, setDeleteModalVisible] = useState(false);
     const [isRenameModalVisible, setReNameModalVisible] = useState(false);
     const [newClassName, setNewClassName] = useState(false);
@@ -131,10 +133,10 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                             <>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 22 }}>
                                     <AppMediumText>Progress</AppMediumText>
-                                    <AppMediumText>68%</AppMediumText>
+                                    <AppMediumText>{Math.floor(progress)}%</AppMediumText>
                                 </View>
                                 <View style={styles.progressBarBackground}>
-                                    <View style={[styles.progressBarFill, { width: '68%' }]} />
+                                    <View style={[styles.progressBarFill, { width: Math.floor(progress)+"%" }]} />
                                 </View>
                             </>
                         ) : null
@@ -144,16 +146,16 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                             isMenuNeed ? (
                                 <>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: Colors.primaryColor }} >Students : 30</AppMediumText>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >Students : {totalStudents}</AppMediumText>
                                     </View>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: '#009B4D' }} >Active Tests : 7</AppMediumText>
+                                        <AppMediumText style={{ color: '#009B4D' }} >Active Tests : {totalTests}</AppMediumText>
                                     </View>
                                 </>
                             ) : (
                                 <>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: Colors.primaryColor }} >New Tests : 3</AppMediumText>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >New Tests : {newTests}</AppMediumText>
                                     </View>
                                 </>
                             )
@@ -236,7 +238,7 @@ const styles = StyleSheet.create({
         paddingBottom: 18,
         borderRadius: 12,
         margin: 8,
-        maxWidth: 340,
+        maxWidth: width > 400 ? 380 : 340,
         width: '100%',
         // boxShadow: Colors.blackBoxShadow,
         // flex: 1,

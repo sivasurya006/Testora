@@ -93,21 +93,21 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 16,
         backgroundColor: Colors.bgColor
-      },
-    
-      topBar: {
+    },
+
+    topBar: {
         // flexDirection: 'row',
         // alignItems: 'center',
         paddingHorizontal: 16,
         paddingTop: 10,
         gap: 10,
-        paddingBottom : 10,
+        paddingBottom: 10,
         ...(Platform.OS === 'web' && {
-          // maxWidth: 900,
-          alignSelf: 'center',
-          width: '100%',
+            // maxWidth: 900,
+            alignSelf: 'center',
+            width: '100%',
         })
-      },
+    },
     emptyText: {
         fontSize: 20,
         color: "black"

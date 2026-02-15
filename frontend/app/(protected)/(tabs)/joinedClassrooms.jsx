@@ -11,9 +11,9 @@ import LoadingScreen from '../../../src/components/LoadingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
-const classroom_width = 340;
-const { width } = Dimensions.get('window');
 
+const { width } = Dimensions.get('window');
+const classroom_width = width > 400 ? 380 : 340;
 
 export default function JoinedClassrooms() {
 
@@ -65,11 +65,10 @@ export default function JoinedClassrooms() {
                 setClassroomID={setSelectedClassroomId}
                 setCreatedClassrooms={setAllJoinedClassrooms}
                 createdClassrooms={allJoinedClassrooms}
+                totalTests={item.totalTests}
+                totalAttempted={item.totalAttempted}
                 isMenuNeed={false} />
             )}
-            contentContainerStyle={
-              numColumns > 1 ? { justifyContent: 'center' } : null
-            }
           />
           }
           {createModalVisible ?

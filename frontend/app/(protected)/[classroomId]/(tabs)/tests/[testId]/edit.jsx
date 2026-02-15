@@ -51,6 +51,7 @@ export default function Edit() {
     }
 
     useEffect(() => {
+        if(!testId) return
         const fetchQuestions = async function () {
             const questions = await getAllTestQuestion(classroomId, testId);
             setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
@@ -58,7 +59,7 @@ export default function Edit() {
         if (testId) {
             fetchQuestions();
         }
-    }, [testId]);
+    }, [classroomId,testId]);
 
     return (
         <View style={styles.container}>

@@ -6,6 +6,7 @@ import { IconButton, Menu } from 'react-native-paper';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
+import { AppMediumText } from '../../styles/fonts';
 
 export default function StudentTest({ data }) {
 
@@ -14,7 +15,7 @@ export default function StudentTest({ data }) {
     const closeMenu = () => setMenuVisible(false);
     const { width } = useWindowDimensions();
 
-    const { classroomId , testId } = useGlobalSearchParams();
+    const { classroomId, testId } = useGlobalSearchParams();
 
     function handleStart() {
         router.replace({
@@ -86,40 +87,43 @@ export default function StudentTest({ data }) {
                 </View>
 
                 <View style={styles.infoRow}>
-                    <View style={styles.infoItem}>
-                        <MaterialCommunityIcons name="timer-outline" size={16} />
-                        <Text style={styles.infoText}>
-                            {data.durationMinutes ? `${data.durationMinutes} min` : 'Untimed'}
-                        </Text>
-                    </View>
-
-                    <View style={styles.infoItem}>
-                        <Feather name="repeat" size={16} />
-                        <Text style={styles.infoText}>
-                            {data.maximumAttempts == 0 ? 'Unlimited' : data.maximumAttempts}
-                        </Text>
-                    </View>
-
-                    <View style={styles.infoItem}>
-                        <MaterialCommunityIcons name="check-decagram-outline" size={16} />
-                        <Text style={styles.infoText}>{data.correctionMethod}</Text>
-                    </View>
-
-                    {data.attemptCount!=0 && remaining > 0 ? (
-                        <View style={styles.btnContainer}>
-                            <Pressable style={styles.btnInsideContainer} onPress={handleStart} >
-                                <Entypo name="controller-play" size={20} color="black" />
-                                <Text>ReAttempt</Text>
-                            </Pressable>
+                    <View style={{width : 280, flexDirection:'row'}} >
+                        <View style={styles.infoItem}>
+                            <MaterialCommunityIcons name="timer-outline" size={16} />
+                            <Text style={styles.infoText}>
+                                {data.durationMinutes ? `${data.durationMinutes} min` : 'Untimed'}
+                            </Text>
                         </View>
-                    ) : remaining > 0 || data.maximumAttempts == 0 ? (
-                        <View style={styles.btnContainer}>
-                            <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
-                                <Entypo name="controller-play" size={20} color="black" />
-                                <Text>Start</Text>
-                            </Pressable>
+
+                        <View style={styles.infoItem}>
+                            <Feather name="repeat" size={16} />
+                            <Text style={styles.infoText}>
+                                {data.maximumAttempts == 0 ? 'Unlimited' : data.maximumAttempts}
+                            </Text>
                         </View>
-                    ) : null}
+
+                        <View style={styles.infoItem}>
+                            <MaterialCommunityIcons name="check-decagram-outline" size={16} />
+                            <Text style={styles.infoText}>{data.correctionMethod}</Text>
+                        </View>
+                    </View>
+                    <View>
+                        {data.attemptCount != 0 && remaining > 0 ? (
+                            <View style={styles.btnContainer}>
+                                <Pressable style={styles.btnInsideContainer} onPress={handleStart} >
+                                    <Entypo style={{color:'white'}} name="controller-play" size={20} color="black" />
+                                    <AppMediumText style={{color:'white'}} >ReAttempt</AppMediumText>
+                                </Pressable>
+                            </View>
+                        ) : remaining > 0 || data.maximumAttempts == 0 ? (
+                            <View style={styles.btnContainer}>
+                                <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
+                                    <Entypo style={{color:'white'}}  name="controller-play" size={20} color="black" />
+                                    <AppMediumText style={{color:'white'}}>Start</AppMediumText>
+                                </Pressable>
+                            </View>
+                        ) : null}
+                    </View>
 
                     {width >= 890 ? (
                         <View style={styles.createdAt}>
@@ -137,7 +141,7 @@ export default function StudentTest({ data }) {
 
 
 const styles = StyleSheet.create({
-    
+
     wrapper: {
         marginVertical: 8,
         marginHorizontal: 16,
@@ -202,10 +206,12 @@ const styles = StyleSheet.create({
         // marginLeft: 'auto',
         paddingHorizontal: 12,
         paddingVertical: 5,
-        borderWidth: 0.5,
-        width: 120,
+        // borderWidth: 0.5,
+        borderRadius : 8,
+        width: 130,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor : Colors.primaryColor
     },
     btnInsideContainer: {
         flexDirection: 'row',

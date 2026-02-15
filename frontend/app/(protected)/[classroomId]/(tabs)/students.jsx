@@ -47,7 +47,7 @@ export default function StudentList() {
       <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
       {
         studentsList.length === 0 ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' , backgroundColor : Colors.bgColor }} >
             <Text style={{ fontSize: 16, fontFamily: fonts.semibold }}>No students yet</Text>
           </View>
         ) : (
@@ -319,6 +319,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.thirdColor,
     borderRadius: 8,
     borderBottomWidth: 0,
+    backgroundColor : 'white'
   },
   tableRow: {
     flexDirection: 'row',

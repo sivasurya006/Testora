@@ -14,8 +14,9 @@ import Header from '../../../src/components/Header';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const classroom_width = 340;
+
 const { width } = Dimensions.get('window')
+const classroom_width = width > 400 ? 380 : 340;
 
 export default function Index() {
 
@@ -67,7 +68,7 @@ export default function Index() {
                 }
             })
             if (result.status == 200) {
-                setCreatedClassrooms([...createdClassrooms, result.data]);
+                setCreatedClassrooms([result.data, ...createdClassrooms]);
             } else {
                 throw new Error("request failed");
             }
@@ -103,11 +104,14 @@ export default function Index() {
                                 setClassroomID={setSelectedClassroomId}
                                 setCreatedClassrooms={setCreatedClassrooms}
                                 createdClassrooms={createdClassrooms}
-                                isMenuNeed={true} />
+                                isMenuNeed={true}
+                                totalStudents={item.totalStudents}
+                                totalTests={item.totalTests}
+                            />
                         )}
-                        columnWrapperStyle={
-                            numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
-                        }
+                    // columnWrapperStyle={
+                    //     numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
+                    // }
                     />
                     }
                     {createModalVisible ?
@@ -130,7 +134,7 @@ async function getAllCreatedClassrooms(setCreatedClassrooms) {
         const result = await api.get('/api/created-classrooms');
 
         if (result?.status == 200) {
-            setCreatedClassrooms(result.data);
+            setCreatedClassrooms(result.data.reverse());
         } else {
             console.log(`can't fetch created classrooms`);
         }

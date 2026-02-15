@@ -138,7 +138,12 @@ public class ClassroomDao {
 					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					classroomDto.setCreatedBy(rs.getInt("created_by"));
 					classroomDto.setClassroomName(rs.getString("name"));
-					classroomDto.setCreatorName(rs.getString("creator_name"));
+					Integer totaTests = rs.getInt("total_tests");
+					totaTests = totaTests == null ? 0 : totaTests;
+					classroomDto.setTotalTests(totaTests);
+					Integer totalStudents = rs.getInt("total_students");
+					totalStudents = totalStudents == null ? 0 : totalStudents;
+					classroomDto.setTotalStudents(totalStudents);
 					classrooms.add(classroomDto);
 				}
 			}
@@ -163,8 +168,13 @@ public class ClassroomDao {
 					classroomDto.setCreatedBy(rs.getInt("created_by"));
 					classroomDto.setClassroomName(rs.getString("name"));
 					classroomDto.setJoinedAt(rs.getTimestamp("joined_at").toInstant().getEpochSecond());
-					classroomDto.setCreatorName(rs.getString("creator_name"));
-
+					classroomDto.setCreatorName(rs.getString("c.name"));
+					Integer totaTests = rs.getInt("total_published");
+					totaTests = totaTests == null ? 0 : totaTests;
+					classroomDto.setTotalTests(totaTests);
+					Integer totalAttempted = rs.getInt("total_attempted");
+					totalAttempted = totalAttempted == null ? 0 : totalAttempted;
+					classroomDto.setTotalAttempted(totalAttempted);
 					classrooms.add(classroomDto);
 				}
 			}
@@ -172,7 +182,6 @@ public class ClassroomDao {
 			// TODO Implement logger
 			e.printStackTrace();
 		}
-
 		return classrooms;
 	}
 
