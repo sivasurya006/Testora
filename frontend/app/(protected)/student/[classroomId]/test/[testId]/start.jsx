@@ -45,6 +45,7 @@ export default function Test() {
           'X-AttemptId': attemptId.current
         }
       });
+      onExit()
     } catch (err) {
       console.log(err);
     }

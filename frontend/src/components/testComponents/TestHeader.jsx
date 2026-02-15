@@ -18,7 +18,7 @@ export default function TestHeader({ data, onExit, onSubmit, onTimeEnd }) {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(timer);
-          onTimeEnd?.();
+          onTimeEnd();
           return 0;
         }
         return prev - 1;
@@ -43,7 +43,6 @@ export default function TestHeader({ data, onExit, onSubmit, onTimeEnd }) {
   return (
     <View style={[styles.container, isWeb ? styles.webContainer : styles.mobileContainer]}>
       {isWeb ? (
-        // WEB LAYOUT
         <>
           <Pressable style={{zIndex:10}} onPress={handleCloseTest}>
             <AntDesign name="close" size={24} color="black" />
@@ -64,7 +63,6 @@ export default function TestHeader({ data, onExit, onSubmit, onTimeEnd }) {
           </View>
         </>
       ) : (
-        // MOBILE LAYOUT
         <>
           <View style={styles.mobileTitleContainer}>
             <Text style={styles.testTitle}>{data.title}</Text>

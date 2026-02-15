@@ -91,7 +91,7 @@ export default function Test({ data, allTests, setAllTests, isDashboard = true }
           <Text onPress={handleEdit} style={styles.title}>{data.testTitle}</Text>
 
           {(
-            <View style={styles.draftBadge}>
+            <View style={[styles.draftBadge,data.status === "DRAFT" && {backgroundColor:Colors.thirdColor}]}>
               <Text style={styles.draftText}>{data.status === "DRAFT" ? 'Draft' : 'Published'}</Text>
             </View>
           )}

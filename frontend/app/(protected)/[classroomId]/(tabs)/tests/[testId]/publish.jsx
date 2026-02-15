@@ -48,7 +48,7 @@ export default function Publish() {
 
     function handleCancel() {
         router.replace({
-            pathname: '/[classroomId]/test/createTest',
+            pathname: '/[classroomId]/test',
             params: {
                 classroomId,
             },
