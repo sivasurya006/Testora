@@ -20,12 +20,12 @@
   
   <filter-mapping>
   	<filter-name>struts2</filter-name>
-  	<url-pattern>/*</url-pattern>
+  	<url-pattern>/api/*</url-pattern>
   </filter-mapping>
   
   <context-param>
   	<param-name>config.location</param-name>
-  	<param-value>/home/pirthi-zstk422/TRADESHOW/Final/backend/testcreator/config/app.properties</param-value>
+  	<param-value>/home/siva-zstk432/Desktop/FinalWorkingDirectory/backend/testcreator/config/app.properties</param-value>
   </context-param>
 
 	<welcome-file-list>

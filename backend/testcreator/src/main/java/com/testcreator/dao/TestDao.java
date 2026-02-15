@@ -455,10 +455,10 @@ public class TestDao {
 		return testDto;
 	}
 
-	public TestDto getTestCount(int userId) {
+	public TestDto getTestCount(int classroomId) {
 		TestDto testDto = null;
 		try (PreparedStatement ps = connection.prepareStatement(Queries.selectTestCount)) {
-			ps.setInt(1, userId);
+			ps.setInt(1, classroomId);
 			try (ResultSet rs = ps.executeQuery()) {
 
 				while (rs.next()) {

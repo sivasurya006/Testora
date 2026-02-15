@@ -598,9 +598,10 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	public String getTestCount() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		try {
 			TestService testService = new TestService();
-			this.testDto = testService.getTestCount(userId);
+			this.testDto = testService.getTestCount(classroomId);
 			
 			
 			return SUCCESS;

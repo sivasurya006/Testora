@@ -70,7 +70,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			classroomDto.setClassroomId(classroom.getClassroomId());
 			classroomDto.setClassroomName(classroom.getName());
 			;
-			classroomDto.setCreatedAt(classroom.getcreatedAt().toEpochMilli());
+			classroomDto.setCreatedAt(classroom.getcreatedAt().getEpochSecond());
 			classroomDto.setCreatedBy(classroom.getcreatedBy());
 
 			return SUCCESS;

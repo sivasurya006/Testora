@@ -142,6 +142,8 @@
 				<param name="root">testDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
+			<interceptor-ref name="apiStack" />
+			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
 
 		<action name="inviteLink"
@@ -460,17 +462,19 @@
 			<result name="success" type="json">
 				<param name="root">startTestDto</param>
 			</result>
-			<interceptor-ref name="timedTestStack"/>
+			<interceptor-ref name="timedTestStack" />
 		</action>
 
-		<action name="submit" class="com.testcreator.actions.TestAnswerAction" method="submitAnswers">
-			
+		<action name="submit"
+			class="com.testcreator.actions.TestAnswerAction"
+			method="submitAnswers">
+
 			<result name="success" type="json">
 				<param name="root">corrected</param>
 			</result>
-			
-			<interceptor-ref name="timedTestStack"/>
-			<interceptor-ref name="attemptIdInterceptor"/>
+
+			<interceptor-ref name="timedTestStack" />
+			<interceptor-ref name="attemptIdInterceptor" />
 		</action>
 	</package>
 
