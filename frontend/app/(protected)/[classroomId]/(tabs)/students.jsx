@@ -9,6 +9,7 @@ import { useGlobalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { ScrollView } from 'react-native';
 
 export default function StudentList() {
 
@@ -41,61 +42,63 @@ export default function StudentList() {
   console.log(studentsList)
 
   return (
-   <>
-     <StatusBar translucent/>
-    <SafeAreaView style={{ flex: 1 }}>
-      <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
-      {
-        studentsList.length === 0 ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' , backgroundColor : Colors.bgColor }} >
-            <Text style={{ fontSize: 16, fontFamily: fonts.semibold }}>No students yet</Text>
-          </View>
-        ) : (
-          <View style={styles.tableContainer}>
-            <View style={[styles.tableRow, styles.tableHeader]}>
-              <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text>
-              <Text style={[styles.tableItem, styles.headerItem]}>Name</Text>
-              <Text style={[styles.tableItem, styles.headerItem]}>Email</Text>
-              <Text style={[styles.tableItem, styles.headerItem]}>Enrolled Date</Text>
-              <Text style={[styles.tableItem, styles.headerItem]}>View Activity</Text>
+    <>
+      <StatusBar translucent />
+      <SafeAreaView style={{ flex: 1 }}>
+        <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
+        {
+          studentsList.length === 0 ? (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgColor }} >
+              <Text style={{ fontSize: 16, fontFamily: fonts.semibold }}>No students yet</Text>
             </View>
-            {studentsList.map((student, i) => (
-              <View key={student.user.userId} style={styles.tableRow}>
-                <Text style={styles.tableItem}>{i + 1}</Text>
-                <Pressable
-                  onPress={() => console.log('profile')}
-                  style={{ flex: 1 }}
-                >
-                  <Text style={[styles.tableItem, styles.linkText]}>
-                    {student.user.name}
-                  </Text>
-                </Pressable>
-                <Text style={styles.tableItem}>{student.user.email}</Text>
-                <Text style={styles.tableItem}>
-                  {new Date(student.user.registeredAt * 1000).toLocaleDateString('en-GB', {day: 'numeric',month: 'short',year: 'numeric'})}
-                </Text>
-                <Pressable
-                  onPress={() => console.log('Activity')}
-                  style={{ flex: 1 }}>
-                  <Text style={[styles.tableItem, styles.linkText]}>View Activity</Text>
-                </Pressable>
+          ) : (
+            <View style={styles.tableContainer}>
+              <View style={[styles.tableRow, styles.tableHeader]}>
+                <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text>
+                <Text style={[styles.tableItem, styles.headerItem]}>Name</Text>
+                <Text style={[styles.tableItem, styles.headerItem]}>Email</Text>
+                <Text style={[styles.tableItem, styles.headerItem]}>Enrolled Date</Text>
+                <Text style={[styles.tableItem, styles.headerItem]}>View Activity</Text>
               </View>
-            ))}
-          </View>
+              <ScrollView>
+                {studentsList.map((student, i) => (
+                  <View key={student.user.userId} style={styles.tableRow}>
+                    <Text style={styles.tableItem}>{i + 1}</Text>
+                    <Pressable
+                      onPress={() => console.log('profile')}
+                      style={{ flex: 1 }}
+                    >
+                      <Text style={[styles.tableItem, styles.linkText]}>
+                        {student.user.name}
+                      </Text>
+                    </Pressable>
+                    <Text style={styles.tableItem}>{student.user.email}</Text>
+                    <Text style={styles.tableItem}>
+                      {new Date(student.user.registeredAt * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </Text>
+                    <Pressable
+                      onPress={() => console.log('Activity')}
+                      style={{ flex: 1 }}>
+                      <Text style={[styles.tableItem, styles.linkText]}>View Activity</Text>
+                    </Pressable>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
 
-        )
-      }
+          )
+        }
 
-      <InviteStudentModal
-        visible={inviteStudentModalVisible}
-        onConfirm={async (link) => {
-          await Clipboard.setStringAsync(link);
-          setInviteStudentModalVisible(false);
-        }}
-        onCancel={() => setInviteStudentModalVisible(false)}
-      />
-    </SafeAreaView>
-   </>
+        <InviteStudentModal
+          visible={inviteStudentModalVisible}
+          onConfirm={async (link) => {
+            await Clipboard.setStringAsync(link);
+            setInviteStudentModalVisible(false);
+          }}
+          onCancel={() => setInviteStudentModalVisible(false)}
+        />
+      </SafeAreaView>
+    </>
   )
 }
 
@@ -319,7 +322,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.thirdColor,
     borderRadius: 8,
     borderBottomWidth: 0,
-    backgroundColor : 'white'
+    backgroundColor: 'white'
   },
   tableRow: {
     flexDirection: 'row',
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
   },
   headerItem: {
     color: '#000',
-    fontFamily : fonts.bold,
+    fontFamily: fonts.bold,
     fontWeight: '600'
   },
   linkText: {

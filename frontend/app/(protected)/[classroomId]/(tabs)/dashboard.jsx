@@ -8,6 +8,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LineChart, PieChart } from "react-native-chart-kit";
 import { useWindowDimensions } from "react-native";
+import { AppBoldText, AppRegularText } from "../../../../styles/fonts";
+import { StatusBar } from "expo-status-bar";
 export default function Dashboard() {
   const { classroomId } = useGlobalSearchParams();
   const screenWidth = Dimensions.get("window").width;
@@ -62,12 +64,12 @@ export default function Dashboard() {
       const res = await api.get("/api/tests/get-created-tests?limit=5&status=published",
         { headers: { "X-ClassroomId": classroomId } }
       );
-      if (res.status === 200){
-      setTests(res.data);
+      if (res.status === 200) {
+        setTests(res.data);
       }
 
 
-    
+
     } catch (err) { }
   }
 
@@ -111,68 +113,70 @@ export default function Dashboard() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <>
+      <StatusBar style="dark" backgroundColor={Colors.bgColor} />
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+        <ScrollView contentContainerStyle={styles.container}>
 
-        {isMobile ? (
-          <>
+          {isMobile ? (
+            <>
 
-            <View style={styles.cardRowMobile}>
-              <View style={styles.smallCardMobile}>
-                <MaterialIcons name="assignment" size={26} color={Colors.primaryColor} />
-                <View>
-                  <Text style={styles.cardTitleMobile}>Tests</Text>
-                  <Text style={styles.cardNumberMobile}>{states.testCount}</Text>
+              <View style={styles.cardRowMobile}>
+                <View style={styles.smallCardMobile}>
+                  <MaterialIcons name="assignment" size={26} color={Colors.primaryColor} />
+                  <View>
+                    <AppRegularText style={styles.cardTitleMobile}>Tests</AppRegularText>
+                    <Text style={styles.cardNumberMobile}>{states.testCount}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.smallCardMobile}>
+                  <MaterialIcons name="people" size={26} color={Colors.primaryColor} />
+                  <View>
+                    <AppRegularText style={styles.cardTitleMobile}>Students</AppRegularText>
+                    <Text style={styles.cardNumberMobile}>{stats.totalStudents}</Text>
+                  </View>
                 </View>
               </View>
 
-              <View style={styles.smallCardMobile}>
-                <MaterialIcons name="people" size={26} color={Colors.primaryColor} />
-                <View>
-                  <Text style={styles.cardTitleMobile}>Students</Text>
-                  <Text style={styles.cardNumberMobile}>{stats.totalStudents}</Text>
-                </View>
+              <View style={styles.detailCardMobile}>
+                <AppBoldText style={styles.titleMobile}>{stats.classroomName}</AppBoldText>
+                <AppRegularText style={styles.subTextMobile}>
+                  Creator: {stats.creatorName}
+                </AppRegularText>
+                <AppRegularText style={styles.subTextMobile}>
+                  Created:{" "}
+                  {stats.createdAt
+                    ? new Date(stats.createdAt * 1000).toLocaleDateString()
+                    : "-"}
+                </AppRegularText>
               </View>
-            </View>
 
-            <View style={styles.detailCardMobile}>
-              <Text style={styles.titleMobile}>{stats.classroomName}</Text>
-              <Text style={styles.subTextMobile}>
-                Creator: {stats.creatorName}
-              </Text>
-              <Text style={styles.subTextMobile}>
-                Created:{" "}
-                {stats.createdAt
-                  ? new Date(stats.createdAt * 1000).toLocaleDateString()
-                  : "-"}
-              </Text>
-            </View>
+              <View style={styles.chartCardMobile}>
+                <AppBoldText style={styles.sectionTitle}>Monthly Progress</AppBoldText>
+                <LineChart
+                  data={lineData}
+                  width={screenWidth - 32}
+                  height={220}
+                  chartConfig={chartConfig}
+                  bezier
+                />
+              </View>
 
-            <View style={styles.chartCardMobile}>
-              <Text style={styles.sectionTitle}>Monthly Progress</Text>
-              <LineChart
-                data={lineData}
-                width={screenWidth - 32}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-              />
-            </View>
+              <View style={styles.chartCardMobile}>
+                <AppBoldText style={styles.sectionTitle}>Submission</AppBoldText>
+                <PieChart
+                  data={pieData}
+                  width={screenWidth - 32}
+                  height={200}
+                  chartConfig={chartConfig}
+                  accessor="population"
+                  backgroundColor="transparent"
+                />
+              </View>
+              <View style={styles.sectionMobile}>
+                <AppBoldText style={styles.sectionTitle}>Recently Published</AppBoldText>
 
-            <View style={styles.chartCardMobile}>
-              <Text style={styles.sectionTitle}>Submission</Text>
-              <PieChart
-                data={pieData}
-                width={screenWidth - 32}
-                height={200}
-                chartConfig={chartConfig}
-                accessor="population"
-                backgroundColor="transparent"
-              />
-            </View>
-            <View style={styles.sectionMobile}>
-              <Text style={styles.sectionTitle}>Recently Published</Text>
-               
                 <View style={{ width: "100%" }}>
                   <FlatList
                     data={tests}
@@ -186,141 +190,142 @@ export default function Dashboard() {
                     )}
                   />
                 </View>
-              
-            </View>
-            <View style={styles.sectionMobile}>
-              <Text style={styles.sectionTitle}>Top Performing</Text>
-              {array.map((item, index) => (
-                <View key={index} style={styles.topperCardMobile}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>
-                      {item.name.substring(0, 2).toUpperCase()}
-                    </Text>
-                  </View>
 
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.topperName}>{item.name}</Text>
-                    <Text style={styles.topperScore}>
-                      Score: {item.score}
-                    </Text>
-                  </View>
-
-                  <MaterialIcons name="trending-up" size={20} color="green" />
-                </View>
-              ))}
-            </View>
-          </>
-        ) : (
-          <>
-
-            <View style={styles.Cards}>
-              <View style={styles.smallCardRow}>
-                <View style={styles.smallCard}>
-                  <MaterialIcons name="assignment" size={34} color={Colors.primaryColor} />
-                  <View style={styles.Count}>
-                    <Text style={styles.cardTitle}>Total Tests</Text>
-                    <Text style={styles.cardNumber}>{states.testCount}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.smallCard}>
-                  <MaterialIcons name="people" size={34} color={Colors.primaryColor} />
-                  <View style={styles.Count}>
-                    <Text style={styles.cardTitle}>Total Students</Text>
-                    <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
-                  </View>
-                </View>
               </View>
-
-              <View style={styles.detailCard}>
-                <View style={styles.classroomDeatilTop} />
-                <View style={styles.classRoomDetailCard}>
-                  <Text style={styles.title}>{stats.classroomName}</Text>
-                  <View style={styles.creatorCard}>
-                    <Text style={styles.subText}>Creator:</Text>
-                    <Text>{stats.creatorName}</Text>
-                  </View>
-                  <View style={styles.creatorCard}>
-                    <Text style={styles.subText}>Created:</Text>
-                    <Text>
-                      {stats.createdAt
-                        ? new Date(stats.createdAt * 1000).toLocaleDateString()
-                        : "-"}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.graph1}>
-              <View style={styles.LineCard}>
-                <Text style={styles.sectionTitle}>Monthly Progress</Text>
-                <LineChart
-                  data={lineData}
-                  width={960}
-                  height={400}
-                  chartConfig={chartConfig}
-                  bezier
-                />
-              </View>
-
-              <View style={styles.chartCard}>
-                <Text style={styles.sectionTitle}>Submission Status</Text>
-                <PieChart
-                  data={pieData}
-                  width={400}
-                  height={220}
-                  chartConfig={chartConfig}
-                  accessor="population"
-                  backgroundColor="transparent"
-                />
-              </View>
-            </View>
-
-            <View style={styles.bottom}>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Recently Published</Text>
-                <FlatList
-                  data={tests}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <Test data={item} isDashboard={false} />
-                  )}
-                />
-              </View>
-
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Top Performing</Text>
-                <View style={styles.topperContainerDesktop}>
-                  {array.map((item, index) => (
-                    <View key={index} style={styles.topperCardDesktop}>
-                      <View style={styles.nameProfile}>
-                        <Text style={styles.profileText}>
-                          {item.name.substring(0, 2).toUpperCase()}
-                        </Text>
-                      </View>
-
-                      <View>
-                        <Text style={styles.topperNameDesktop}>
-                          {item.name}
-                        </Text>
-                        <Text style={styles.topperScoreDesktop}>
-                          Score: {item.score}
-                        </Text>
-                      </View>
-
-                      <View style={styles.progressIcon}>
-                        <MaterialIcons name="trending-up" size={20} color="green" />
-                      </View>
+              <View style={styles.sectionMobile}>
+                <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
+                {array.map((item, index) => (
+                  <View key={index} style={styles.topperCardMobile}>
+                    <View style={styles.avatar}>
+                      <AppRegularText style={styles.avatarText}>
+                        {item.name.substring(0, 2).toUpperCase()}
+                      </AppRegularText>
                     </View>
-                  ))}
+
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.topperName}>{item.name}</Text>
+                      <Text style={styles.topperScore}>
+                        Score: {item.score}
+                      </Text>
+                    </View>
+
+                    <MaterialIcons name="trending-up" size={20} color="green" />
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : (
+            <>
+
+              <View style={styles.Cards}>
+                <View style={styles.smallCardRow}>
+                  <View style={styles.smallCard}>
+                    <MaterialIcons name="assignment" size={34} color={Colors.primaryColor} />
+                    <View style={styles.Count}>
+                      <AppRegularText style={styles.cardTitle}>Total Tests</AppRegularText>
+                      <Text style={styles.cardNumber}>{states.testCount}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.smallCard}>
+                    <MaterialIcons name="people" size={34} color={Colors.primaryColor} />
+                    <View style={styles.Count}>
+                      <AppRegularText style={styles.cardTitle}>Total Students</AppRegularText>
+                      <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.detailCard}>
+                  <View style={styles.classroomDeatilTop} />
+                  <View style={styles.classRoomDetailCard}>
+                    <AppRegularText style={styles.title}>{stats.classroomName}</AppRegularText>
+                    <View style={styles.creatorCard}>
+                      <AppRegularText style={styles.subText}>Creator:</AppRegularText>
+                      <Text style={styles.creatorName}>{stats.creatorName}</Text>
+                    </View>
+                    <View style={styles.creatorCard}>
+                      <Text style={styles.subText}>Created:</Text>
+                      <Text style={styles.createdAt}>
+                        {stats.createdAt
+                          ? new Date(stats.createdAt * 1000).toLocaleDateString()
+                          : "-"}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+
+              <View style={styles.graph1}>
+                <View style={styles.LineCard}>
+                  <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
+                  <LineChart
+                    data={lineData}
+                    width={960}
+                    height={400}
+                    chartConfig={chartConfig}
+                    bezier
+                  />
+                </View>
+
+                <View style={styles.chartCard}>
+                  <AppRegularText style={styles.sectionTitle}>Submission Status</AppRegularText>
+                  <PieChart
+                    data={pieData}
+                    width={400}
+                    height={220}
+                    chartConfig={chartConfig}
+                    accessor="population"
+                    backgroundColor="transparent"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.bottom}>
+                <View style={styles.section}>
+                  <AppRegularText style={styles.sectionTitle}>Recently Published</AppRegularText>
+                  <FlatList
+                    data={tests}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <Test data={item} isDashboard={false} />
+                    )}
+                  />
+                </View>
+
+                <View style={styles.sectionTopPeform}>
+                  <AppRegularText style={styles.sectionTitle}>Top Performing</AppRegularText>
+                  <View style={styles.topperContainerDesktop}>
+                    {array.map((item, index) => (
+                      <View key={index} style={styles.topperCardDesktop}>
+                        <View style={styles.nameProfile}>
+                          <AppRegularText style={styles.profileText}>
+                            {item.name.substring(0, 2).toUpperCase()}
+                          </AppRegularText>
+                        </View>
+
+                        <View>
+                          <AppRegularText style={styles.topperNameDesktop}>
+                            {item.name}
+                          </AppRegularText>
+                          <AppRegularText style={styles.topperScoreDesktop}>
+                            Score: {item.score}
+                          </AppRegularText>
+                        </View>
+
+                        <View style={styles.progressIcon}>
+                          <MaterialIcons name="trending-up" size={20} color="green" />
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              </View>
+            </>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -360,6 +365,19 @@ const styles = StyleSheet.create({
   cardTitleMobile: {
     fontSize: 13,
     color: "#666",
+  },
+
+  creatorName: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
+  },
+  createdAt: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
   },
 
   cardNumberMobile: {
@@ -505,6 +523,7 @@ const styles = StyleSheet.create({
   creatorCard: {
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 5
   },
 
   title: {
@@ -550,6 +569,7 @@ const styles = StyleSheet.create({
   bottom: {
     flexDirection: "row",
     gap: 20,
+
   },
 
   section: {
@@ -580,7 +600,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 100,
     gap: 20,
-    width: 560,
+    width: 540,
   },
 
   nameProfile: {
@@ -598,6 +618,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  
-});
+  progressIcon: {
 
+    marginHorizontal: 250
+  }
+  ,
+  sectionTopPeform: {
+    width: 580,
+    marginTop: 25,
+  }
+
+});

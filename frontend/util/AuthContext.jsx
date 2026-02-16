@@ -58,7 +58,7 @@ export default function AuthContextProvider({ children }) {
                     'Content-Type': 'application/json'
                 }
             });
-            if(!res) return
+            if (!res) return
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signup error:", errorText);
@@ -96,7 +96,7 @@ export default function AuthContextProvider({ children }) {
             const res = await api.post("/signin", { userEmail, userPassword }, {
                 'Content-Type': 'application'
             });
-            if(!res) return
+            if (!res) return
             if (!res.data.success) {
                 const errorText = res.data.message;
                 console.log("Signin error:", errorText);
@@ -119,9 +119,10 @@ export default function AuthContextProvider({ children }) {
         }
     }
 
-    function signOut() {
-
-        setLoggedIn(false);
+    async function signOut() {
+        if (Platform.OS !== 'web') {
+            await SecureStore.deleteItemAsync("token");
+        }
         router.replace('/signin');
     }
 

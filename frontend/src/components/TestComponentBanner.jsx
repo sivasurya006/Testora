@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native'
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, Platform } from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
@@ -92,7 +92,6 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
     return (
         <View style={styles.card}>
 
-            {/* Header */}
             <View style={styles.header}>
                 <View style={styles.titleContainer}>
                     <Ionicons name='clipboard-outline' size={22} color={Colors.primaryColor} />
@@ -103,9 +102,9 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                         styles.statusBadge,
                         data.status === "DRAFT" && styles.draftBadge
                     ]}>
-                        <AppMediumText style={styles.statusText}>
+                        <AppRegularText style={styles.statusText}>
                             {data.status === "DRAFT" ? 'Draft' : 'Published'}
-                        </AppMediumText>
+                        </AppRegularText>
                     </View>
                 </View>
 
@@ -134,8 +133,6 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 </Menu>
             </View>
 
-
-            {/* Info Section */}
             <View style={styles.infoSection}>
 
                 <View style={styles.infoItem}>
@@ -160,8 +157,6 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 </View>
             </View>
 
-
-            {/* Actions */}
             {isDashboard ? (
                 <View style={styles.actions}>
                     <View style={styles.dateContainer}>
@@ -295,9 +290,12 @@ const styles = StyleSheet.create({
         elevation: 3,
         borderWidth: 1,
         borderColor: '#F1F1F1',
-        maxWidth: 360,
+        maxWidth: 340,
         width: '100%',
-        margin: 16
+        marginBottom : 15,
+        ...(Platform.OS == 'web' ? {
+            margin: 16,
+        } : {})
     },
 
     header: {
@@ -309,6 +307,7 @@ const styles = StyleSheet.create({
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        flexWrap : 'wrap',
         gap: 10,
         flex: 1
     },

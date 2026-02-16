@@ -18,7 +18,7 @@ export default function Test() {
     return (
         <>
             <StatusBar style="light" translucent />
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={styles.container} edges={['top']}>
                 <View style={styles.menu}>
                     <Pressable
                         style={[styles.menuItem, selected == 'all' && styles.selectedItem]}
@@ -64,7 +64,7 @@ export default function Test() {
                         <Ionicons name="search" size={18} color={Colors.dimBg} />
 
                         <TextInput
-                            placeholder="Search classrooms..."
+                            placeholder="Search Tests..."
                             placeholderTextColor={Colors.dimBg}
                             value={search}
                             onChangeText={setSearch}
@@ -91,7 +91,7 @@ export default function Test() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 16,
+        paddingHorizontal: 10,
         backgroundColor: Colors.bgColor
     },
 
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
 
     menuItem: {
         paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     selectedItem: {
         borderBottomWidth: 2,

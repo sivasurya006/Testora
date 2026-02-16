@@ -152,7 +152,7 @@ export default function Publish() {
                     {isTimed && (
                         <View style={{ marginTop: 10 , flexDirection  : 'row' , alignItems : 'center' , gap : 20 }}>
                             <TextInput
-                                placeholder='30'
+                                defaultValue='30'
                                 style={{
                                     borderWidth: 1,
                                     borderColor: '#E5E7EB',
@@ -214,17 +214,7 @@ export default function Publish() {
                         onPress={handlePublish}
                     >
                         <AppRegularText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
-                            Confirm & Publish
-                        </AppRegularText>
-                    </Pressable>
-
-                    <Pressable onPress={handleCancel}>
-                        <AppRegularText style={{
-                            textAlign: 'center',
-                            marginTop: 15,
-                            color: '#6B7280'
-                        }}>
-                            Save as Draft
+                             Publish
                         </AppRegularText>
                     </Pressable>
                 </View>

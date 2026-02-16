@@ -92,37 +92,44 @@ export default function JoinClassroom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: Colors.dimBg, 
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
+
   classroomDetails: {
-    backgroundColor: Colors.formBg,
+    backgroundColor: Colors.white,
     padding: 20,
     borderRadius: 10,
     width: '100%',
     maxWidth: 500,
     alignItems: 'center',
-    boxShadow: Colors.blackBoxShadow,
     elevation: 5,
+    shadowColor: Colors.shadowColor, 
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
+
   classroomName: {
     fontSize: 24,
     fontFamily: fonts.semibold,
     color: Colors.primaryColor,
     marginBottom: 10,
   },
+
   creatorName: {
     fontSize: 16,
     fontFamily: fonts.regular,
-    color: Colors.charcoal,
+    color: Colors.secondaryColor, 
     marginBottom: 20,
   },
+
   errorText: {
     fontSize: 16,
     fontFamily: fonts.regular,
-    color: Colors.btnColor,
+    color: Colors.primaryColor, 
     marginBottom: 20,
   },
 
@@ -138,7 +145,7 @@ const styles = StyleSheet.create({
   },
 
   cancelBtn: {
-    backgroundColor: '#ddd',
+    backgroundColor: Colors.lightShadow, 
   },
 
   confirmText: {
@@ -148,7 +155,7 @@ const styles = StyleSheet.create({
   },
 
   cancelText: {
-    color: Colors.charcoal,
+    color: Colors.secondaryColor, 
     fontSize: 15,
     fontWeight: '500',
   },
