@@ -64,8 +64,8 @@ export default function CreatedTestList({ filter }) {
   return (
 
     <>
-      <StatusBar style="light" translucent />
-      <SafeAreaView style={styles.container}>
+      
+      {/* <SafeAreaView style={styles.container} edges={['top']}> */}
 
 
         <View style={styles.topBar}>
@@ -109,7 +109,7 @@ export default function CreatedTestList({ filter }) {
           />
         }
 
-      </SafeAreaView>
+      {/* </SafeAreaView> */}
     </>
   )
 }
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     // flexDirection: 'row',
     // alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 10,
+    // paddingTop: 10,
     gap: 10,
     paddingBottom: 10,
     ...(Platform.OS === 'web' && {

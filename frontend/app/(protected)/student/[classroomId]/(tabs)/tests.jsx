@@ -71,7 +71,7 @@ export default function StudentTestLists() {
     return (
         <>
 
-            <StatusBar backgroundColor={Colors.bgColor} />
+            <StatusBar style="dark" translucent backgroundColor={Colors.bgColor} />
             <LoadingScreen visible={isLoading} />
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bgColor }} edges={['top']}>
 
@@ -125,7 +125,7 @@ export default function StudentTestLists() {
                         <Ionicons name="search" size={18} color={Colors.dimBg} />
 
                         <TextInput
-                            placeholder="Search classrooms..."
+                            placeholder="Search Tests..."
                             placeholderTextColor={Colors.dimBg}
                             value={search}
                             onChangeText={setSearch}

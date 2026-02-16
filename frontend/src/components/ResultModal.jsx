@@ -22,7 +22,7 @@ export default function ResultModal({ isResultPageOpen, totalMarks, onExit }){
             <Text style={styles.totalMarksText}>{totalMarks}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={onExit}>
-            <Text style={styles.buttonText}>Confirm</Text>
+            <Text style={styles.buttonText}>Back to home</Text>
           </TouchableOpacity>
         </View>
       </View>

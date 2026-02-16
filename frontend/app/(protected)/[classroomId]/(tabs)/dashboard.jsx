@@ -65,12 +65,17 @@ export default function Dashboard() {
       );
       if (res.status === 200) {
         setTests(res.data);
+      if (res.status === 200) {
+        setTests(res.data);
       }
 
 
 
-    } catch (err) { }
+
+    } 
   }
+  catch (err) { }
+}
 
   const pieData = [
     { name: "Submitted", population: 35, color: "#4CAF50", legendFontColor: "#333", legendFontSize: 12 },
@@ -112,11 +117,13 @@ export default function Dashboard() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <>
+      <StatusBar style="dark" backgroundColor={Colors.bgColor} />
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+        <ScrollView contentContainerStyle={styles.container}>
 
-        {isMobile ? (
-          <>
+          {isMobile ? (
+            <>
 
             <View style={styles.cardRowMobile}>
               <View style={styles.smallCardMobile}>
@@ -199,20 +206,20 @@ export default function Dashboard() {
                     </AppRegularText>
                   </View>
 
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.topperName}>{item.name}</Text>
-                    <Text style={styles.topperScore}>
-                      Score: {item.score}
-                    </Text>
-                  </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.topperName}>{item.name}</Text>
+                      <Text style={styles.topperScore}>
+                        Score: {item.score}
+                      </Text>
+                    </View>
 
-                  <MaterialIcons name="trending-up" size={20} color="green" />
-                </View>
-              ))}
-            </View>
-          </>
-        ) : (
-          <>
+                    <MaterialIcons name="trending-up" size={20} color="green" />
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : (
+            <>
 
             <View style={styles.Cards}>
               <View style={styles.smallCardRow}>
@@ -310,18 +317,19 @@ export default function Dashboard() {
                         </AppRegularText>
                       </View>
 
-                      <View style={styles.progressIcon}>
-                        <MaterialIcons name="trending-up" size={20} color="green" />
+                        <View style={styles.progressIcon}>
+                          <MaterialIcons name="trending-up" size={20} color="green" />
+                        </View>
                       </View>
-                    </View>
-                  ))}
+                    ))}
+                  </View>
                 </View>
               </View>
-            </View>
-          </>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+            </>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -361,6 +369,19 @@ const styles = StyleSheet.create({
   cardTitleMobile: {
     fontSize: 13,
     color: "#666",
+  },
+
+  creatorName: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
+  },
+  createdAt: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
   },
 
   creatorName: {
@@ -519,6 +540,7 @@ const styles = StyleSheet.create({
   creatorCard: {
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 5,
     marginVertical: 5
   },
 
@@ -566,6 +588,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 20,
 
+
   },
 
   section: {
@@ -596,6 +619,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 100,
     gap: 20,
+    width: 540,
     width: 540,
   },
 

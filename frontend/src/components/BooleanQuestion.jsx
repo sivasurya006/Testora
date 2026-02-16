@@ -44,14 +44,21 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
 }
 
 
+
 const styles = StyleSheet.create({
     container: {
         padding: 16,
         backgroundColor: Colors.white,
-        marginVertical: 10,
-        borderBottomWidth: 0.3,
-        borderBottomColor: 'gray'
+        marginVertical: 5,
+        shadowColor: Colors.shadowColor,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        elevation: 6,
+        borderRadius:8,
+        marginHorizontal : 10
     },
+
     questionRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',

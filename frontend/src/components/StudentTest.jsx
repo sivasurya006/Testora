@@ -112,7 +112,7 @@ export default function StudentTest({ data }) {
                             <View style={styles.btnContainer}>
                                 <Pressable style={styles.btnInsideContainer} onPress={handleStart} >
                                     <Entypo style={{color:'white'}} name="controller-play" size={20} color="black" />
-                                    <AppMediumText style={{color:'white'}} >ReAttempt</AppMediumText>
+                                    <AppMediumText style={{color:'white'}} >Reattempt</AppMediumText>
                                 </Pressable>
                             </View>
                         ) : remaining > 0 || data.maximumAttempts == 0 ? (
