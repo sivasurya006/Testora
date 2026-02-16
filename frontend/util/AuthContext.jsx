@@ -7,7 +7,6 @@ import * as SecureStore from "expo-secure-store";
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
-
     const [isLoading, setLoading] = useState(false);
 
     {/**

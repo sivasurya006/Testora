@@ -8,6 +8,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LineChart, PieChart } from "react-native-chart-kit";
 import { useWindowDimensions } from "react-native";
+import { AppBoldText, AppRegularText } from "../../../../styles/fonts";
 export default function Dashboard() {
   const { classroomId } = useGlobalSearchParams();
   const screenWidth = Dimensions.get("window").width;
@@ -62,12 +63,12 @@ export default function Dashboard() {
       const res = await api.get("/api/tests/get-created-tests?limit=5&status=published",
         { headers: { "X-ClassroomId": classroomId } }
       );
-      if (res.status === 200){
-      setTests(res.data);
+      if (res.status === 200) {
+        setTests(res.data);
       }
 
 
-    
+
     } catch (err) { }
   }
 
@@ -121,7 +122,7 @@ export default function Dashboard() {
               <View style={styles.smallCardMobile}>
                 <MaterialIcons name="assignment" size={26} color={Colors.primaryColor} />
                 <View>
-                  <Text style={styles.cardTitleMobile}>Tests</Text>
+                  <AppRegularText style={styles.cardTitleMobile}>Tests</AppRegularText>
                   <Text style={styles.cardNumberMobile}>{states.testCount}</Text>
                 </View>
               </View>
@@ -129,27 +130,27 @@ export default function Dashboard() {
               <View style={styles.smallCardMobile}>
                 <MaterialIcons name="people" size={26} color={Colors.primaryColor} />
                 <View>
-                  <Text style={styles.cardTitleMobile}>Students</Text>
+                  <AppRegularText style={styles.cardTitleMobile}>Students</AppRegularText>
                   <Text style={styles.cardNumberMobile}>{stats.totalStudents}</Text>
                 </View>
               </View>
             </View>
 
             <View style={styles.detailCardMobile}>
-              <Text style={styles.titleMobile}>{stats.classroomName}</Text>
-              <Text style={styles.subTextMobile}>
+              <AppBoldText style={styles.titleMobile}>{stats.classroomName}</AppBoldText>
+              <AppRegularText style={styles.subTextMobile}>
                 Creator: {stats.creatorName}
-              </Text>
-              <Text style={styles.subTextMobile}>
+              </AppRegularText>
+              <AppRegularText style={styles.subTextMobile}>
                 Created:{" "}
                 {stats.createdAt
                   ? new Date(stats.createdAt * 1000).toLocaleDateString()
                   : "-"}
-              </Text>
+              </AppRegularText>
             </View>
 
             <View style={styles.chartCardMobile}>
-              <Text style={styles.sectionTitle}>Monthly Progress</Text>
+              <AppBoldText style={styles.sectionTitle}>Monthly Progress</AppBoldText>
               <LineChart
                 data={lineData}
                 width={screenWidth - 32}
@@ -160,7 +161,7 @@ export default function Dashboard() {
             </View>
 
             <View style={styles.chartCardMobile}>
-              <Text style={styles.sectionTitle}>Submission</Text>
+              <AppBoldText style={styles.sectionTitle}>Submission</AppBoldText>
               <PieChart
                 data={pieData}
                 width={screenWidth - 32}
@@ -171,31 +172,31 @@ export default function Dashboard() {
               />
             </View>
             <View style={styles.sectionMobile}>
-              <Text style={styles.sectionTitle}>Recently Published</Text>
-               
-                <View style={{ width: "100%" }}>
-                  <FlatList
-                    data={tests}
-                    scrollEnabled={false}
-                    keyExtractor={(item, index) => index.toString()}
-                    contentContainerStyle={{ gap: 12 }}
-                    renderItem={({ item }) => (
-                      <View style={{ width: "100%" }}>
-                        <Test data={item} isDashboard />
-                      </View>
-                    )}
-                  />
-                </View>
-              
+              <AppBoldText style={styles.sectionTitle}>Recently Published</AppBoldText>
+
+              <View style={{ width: "100%" }}>
+                <FlatList
+                  data={tests}
+                  scrollEnabled={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  contentContainerStyle={{ gap: 12 }}
+                  renderItem={({ item }) => (
+                    <View style={{ width: "100%" }}>
+                      <Test data={item} isDashboard />
+                    </View>
+                  )}
+                />
+              </View>
+
             </View>
             <View style={styles.sectionMobile}>
-              <Text style={styles.sectionTitle}>Top Performing</Text>
+              <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
               {array.map((item, index) => (
                 <View key={index} style={styles.topperCardMobile}>
                   <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>
+                    <AppRegularText style={styles.avatarText}>
                       {item.name.substring(0, 2).toUpperCase()}
-                    </Text>
+                    </AppRegularText>
                   </View>
 
                   <View style={{ flex: 1 }}>
@@ -218,7 +219,7 @@ export default function Dashboard() {
                 <View style={styles.smallCard}>
                   <MaterialIcons name="assignment" size={34} color={Colors.primaryColor} />
                   <View style={styles.Count}>
-                    <Text style={styles.cardTitle}>Total Tests</Text>
+                    <AppRegularText style={styles.cardTitle}>Total Tests</AppRegularText>
                     <Text style={styles.cardNumber}>{states.testCount}</Text>
                   </View>
                 </View>
@@ -226,7 +227,7 @@ export default function Dashboard() {
                 <View style={styles.smallCard}>
                   <MaterialIcons name="people" size={34} color={Colors.primaryColor} />
                   <View style={styles.Count}>
-                    <Text style={styles.cardTitle}>Total Students</Text>
+                    <AppRegularText style={styles.cardTitle}>Total Students</AppRegularText>
                     <Text style={styles.cardNumber}>{stats.totalStudents}</Text>
                   </View>
                 </View>
@@ -235,14 +236,14 @@ export default function Dashboard() {
               <View style={styles.detailCard}>
                 <View style={styles.classroomDeatilTop} />
                 <View style={styles.classRoomDetailCard}>
-                  <Text style={styles.title}>{stats.classroomName}</Text>
+                  <AppRegularText style={styles.title}>{stats.classroomName}</AppRegularText>
                   <View style={styles.creatorCard}>
-                    <Text style={styles.subText}>Creator:</Text>
-                    <Text>{stats.creatorName}</Text>
+                    <AppRegularText style={styles.subText}>Creator:</AppRegularText>
+                    <Text style={styles.creatorName}>{stats.creatorName}</Text>
                   </View>
                   <View style={styles.creatorCard}>
                     <Text style={styles.subText}>Created:</Text>
-                    <Text>
+                    <Text style={styles.createdAt}>
                       {stats.createdAt
                         ? new Date(stats.createdAt * 1000).toLocaleDateString()
                         : "-"}
@@ -254,7 +255,7 @@ export default function Dashboard() {
 
             <View style={styles.graph1}>
               <View style={styles.LineCard}>
-                <Text style={styles.sectionTitle}>Monthly Progress</Text>
+                <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
                 <LineChart
                   data={lineData}
                   width={960}
@@ -265,7 +266,7 @@ export default function Dashboard() {
               </View>
 
               <View style={styles.chartCard}>
-                <Text style={styles.sectionTitle}>Submission Status</Text>
+                <AppRegularText style={styles.sectionTitle}>Submission Status</AppRegularText>
                 <PieChart
                   data={pieData}
                   width={400}
@@ -279,7 +280,7 @@ export default function Dashboard() {
 
             <View style={styles.bottom}>
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Recently Published</Text>
+                <AppRegularText style={styles.sectionTitle}>Recently Published</AppRegularText>
                 <FlatList
                   data={tests}
                   keyExtractor={(item, index) => index.toString()}
@@ -289,24 +290,24 @@ export default function Dashboard() {
                 />
               </View>
 
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Top Performing</Text>
+              <View style={styles.sectionTopPeform}>
+                <AppRegularText style={styles.sectionTitle}>Top Performing</AppRegularText>
                 <View style={styles.topperContainerDesktop}>
                   {array.map((item, index) => (
                     <View key={index} style={styles.topperCardDesktop}>
                       <View style={styles.nameProfile}>
-                        <Text style={styles.profileText}>
+                        <AppRegularText style={styles.profileText}>
                           {item.name.substring(0, 2).toUpperCase()}
-                        </Text>
+                        </AppRegularText>
                       </View>
 
                       <View>
-                        <Text style={styles.topperNameDesktop}>
+                        <AppRegularText style={styles.topperNameDesktop}>
                           {item.name}
-                        </Text>
-                        <Text style={styles.topperScoreDesktop}>
+                        </AppRegularText>
+                        <AppRegularText style={styles.topperScoreDesktop}>
                           Score: {item.score}
-                        </Text>
+                        </AppRegularText>
                       </View>
 
                       <View style={styles.progressIcon}>
@@ -360,6 +361,19 @@ const styles = StyleSheet.create({
   cardTitleMobile: {
     fontSize: 13,
     color: "#666",
+  },
+
+  creatorName: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
+  },
+  createdAt: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
   },
 
   cardNumberMobile: {
@@ -505,6 +519,7 @@ const styles = StyleSheet.create({
   creatorCard: {
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 5
   },
 
   title: {
@@ -550,6 +565,7 @@ const styles = StyleSheet.create({
   bottom: {
     flexDirection: "row",
     gap: 20,
+
   },
 
   section: {
@@ -580,7 +596,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 100,
     gap: 20,
-    width: 560,
+    width: 540,
   },
 
   nameProfile: {
@@ -598,6 +614,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  
+  progressIcon: {
+
+    marginHorizontal: 250
+  }
+  ,
+  sectionTopPeform: {
+    width: 580,
+    marginTop: 25,
+  }
+
 });
 
