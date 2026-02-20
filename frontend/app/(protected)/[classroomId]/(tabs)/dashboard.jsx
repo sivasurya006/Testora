@@ -10,8 +10,11 @@ import { LineChart, PieChart } from "react-native-chart-kit";
 import { useWindowDimensions } from "react-native";
 import { AppBoldText, AppRegularText } from "../../../../styles/fonts";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 export default function Dashboard() {
+
   const { classroomId } = useGlobalSearchParams();
+
   const screenWidth = Dimensions.get("window").width;
 
   const [stats, setStats] = useState({
@@ -19,46 +22,62 @@ export default function Dashboard() {
     createdAt: 0,
     creatorName: "",
     totalStudents: 0,
+    totalTests: 0,
   });
 
 
+  const [pieData, setPieData] = useState([]);
+  const [lineData, setLineData] = useState({
+    labels: [],
+    datasets: [{ data: [] }],
+  })
+  const [tests, setTests] = useState([]);
+
   const { width } = useWindowDimensions();
-  const screenwidth = width;
 
   const isMobile = width <= 812;
-  const [states, setStates] = useState({ testCount: 0 });
-  const [tests, setTests] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
       fetchDashboardData();
-      fetchDashboardCount();
       fetchDashboardTests();
+
     }, [])
   );
 
+  useEffect(() => {
+    fetchDashboardAnalitics();
+  }, [stats])
+
   async function fetchDashboardData() {
+
     try {
-      const res = await api.get("/api/classroomdetails", {
+      const res = await api.get("/api/api/classroomdetails", {
         headers: { "X-ClassroomId": classroomId },
       });
+
       if (res.status === 200) {
-        setStats(res.data);
+        const data = res.data || {};
+        console.log(res.data, "hi")
+
+
+        setStats({
+          classroomName: data.classroomName ?? "",
+          createdAt: data.createdAt ?? 0,
+          creatorName: data.creatorName ?? "",
+          totalStudents: data.totalStudents ?? 0,
+          totalTests: data.totalTests ?? 0,
+        })
+
+
       }
-    } catch (err) { }
+
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  async function fetchDashboardCount() {
-    try {
-      const res = await api.get("/api/classroomcount", {
-        headers: { "X-ClassroomId": classroomId },
-      });
-      if (res.status === 200) {
-        setStates(res.data);
-      }
-    } catch (err) { }
-  }
-  { console.log(classroomId) }
+
   async function fetchDashboardTests() {
     try {
       const res = await api.get("/api/tests/get-created-tests?limit=5&status=published",
@@ -66,22 +85,80 @@ export default function Dashboard() {
       );
       if (res.status === 200) {
         setTests(res.data);
+        if (res.status === 200) {
+          setTests(res.data);
+        }
+
       }
-
-
-
-    } catch (err) { }
+    }
+    catch (err) { }
   }
 
-  const pieData = [
-    { name: "Submitted", population: 35, color: "#4CAF50", legendFontColor: "#333", legendFontSize: 12 },
-    { name: "Not Submitted", population: 15, color: "#F87171", legendFontColor: "#333", legendFontSize: 12 },
-  ];
 
-  const lineData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-    datasets: [{ data: [25, 72, 69, 90, 70] }],
-  };
+  async function fetchDashboardAnalitics() {
+
+    try {
+      const res = await api.get("/api/tests/getclassroomAnalitics", {
+        headers: { "X-ClassroomId": classroomId },
+      });
+
+      if (res.status === 200) {
+        const pieChartData = res.data ?? [];
+
+        const submittedCount = pieChartData.reduce(
+          (total, item) => total + item.attemptCount,
+          0
+        );
+
+        const total =
+          (stats?.totalStudents ?? 0) *
+          (stats?.totalTests ?? 0);
+
+        console.log("Total Students:", stats?.totalStudents);
+        console.log("Total Tests:", stats?.totalTests);
+        console.log("Submitted Count:", submittedCount);
+        console.log("Total Possible Submissions:", total);
+        console.log("Pie Chart Data:", pieChartData);
+
+        const notSubmittedCount = total - submittedCount;
+
+        setPieData([
+          {
+            name: "Submitted",
+            population: submittedCount,
+            color: "#4CAF50",
+            legendFontColor: "#333",
+            legendFontSize: 14,
+          },
+          {
+            name: "Not Submitted",
+            population: notSubmittedCount > 0 ? notSubmittedCount : 0,
+            color: "#F44336",
+            legendFontColor: "#333",
+            legendFontSize: 14,
+          },
+        ]);
+
+        const LineChartTestName = pieChartData
+          .slice(0, 5)
+          .map(item => item.testTitle);
+
+        const LineChartTestAttemptCount = pieChartData
+          .slice(0, 5)
+          .map(item => item.attemptCount);
+
+        setLineData({
+          labels: LineChartTestName,
+          datasets: [{ data: LineChartTestAttemptCount }],
+        });
+
+
+      }
+    } catch (err) {
+      console.log("Analytics error:", err);
+    }
+  }
+
 
   const array = [
     {
@@ -126,7 +203,7 @@ export default function Dashboard() {
                   <MaterialIcons name="assignment" size={26} color={Colors.primaryColor} />
                   <View>
                     <AppRegularText style={styles.cardTitleMobile}>Tests</AppRegularText>
-                    <Text style={styles.cardNumberMobile}>{states.testCount}</Text>
+                    <Text style={styles.cardNumberMobile}>{stats.totalTests}</Text>
                   </View>
                 </View>
 
@@ -175,14 +252,14 @@ export default function Dashboard() {
                 />
               </View>
               <View style={styles.sectionMobile}>
+
                 <AppBoldText style={styles.sectionTitle}>Recently Published</AppBoldText>
 
                 <View style={{ width: "100%" }}>
                   <FlatList
                     data={tests}
-                    scrollEnabled={false}
+                    scrollEnabled={true}
                     keyExtractor={(item, index) => index.toString()}
-                    contentContainerStyle={{ gap: 12 }}
                     renderItem={({ item }) => (
                       <View style={{ width: "100%" }}>
                         <Test data={item} isDashboard />
@@ -223,7 +300,7 @@ export default function Dashboard() {
                     <MaterialIcons name="assignment" size={34} color={Colors.primaryColor} />
                     <View style={styles.Count}>
                       <AppRegularText style={styles.cardTitle}>Total Tests</AppRegularText>
-                      <Text style={styles.cardNumber}>{states.testCount}</Text>
+                      <Text style={styles.cardNumber}>{stats.totalTests}</Text>
                     </View>
                   </View>
 
@@ -327,6 +404,7 @@ export default function Dashboard() {
       </SafeAreaView>
     </>
   );
+
 }
 
 const chartConfig = {
@@ -365,6 +443,19 @@ const styles = StyleSheet.create({
   cardTitleMobile: {
     fontSize: 13,
     color: "#666",
+  },
+
+  creatorName: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
+  },
+  createdAt: {
+    fontSize: 14,
+    marginLeft: 5,
+    color: '#555',
+    marginBottom: 4
   },
 
   creatorName: {
@@ -523,6 +614,7 @@ const styles = StyleSheet.create({
   creatorCard: {
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 5,
     marginVertical: 5
   },
 
@@ -570,6 +662,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 20,
 
+
   },
 
   section: {
@@ -601,6 +694,7 @@ const styles = StyleSheet.create({
     height: 100,
     gap: 20,
     width: 540,
+    width: 540,
   },
 
   nameProfile: {
@@ -629,3 +723,6 @@ const styles = StyleSheet.create({
   }
 
 });
+
+
+

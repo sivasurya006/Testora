@@ -863,32 +863,90 @@ public class TestDao {
 	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
 			throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
+			for (QuestionAnswer qa : questionAnswers) {
+				List<Answer> answerList = qa.getAnswer();
+				if (answerList == null || answerList.isEmpty()) {
+					continue;
+				}
+				for (Answer a : answerList) {
+					ps.setBoolean(1, a.getCorrect() != null ? a.getCorrect() : false);
+					ps.setInt(2, a.getGivenMarks() != null ? a.getGivenMarks() : 0);
+					ps.setInt(3, a.getAnswerId());
 
-			for (QuestionReportDto questionReportDto : questionAnswers) {
-				for (Answer option : questionReportDto.getSelectedOptions()) {
-					
-					System.out.println(option);
-					
-					ps.setBoolean(1, option.getCorrect());
-					ps.setInt(2, option.getGivenMarks());
-					ps.setInt(3, option.getAnswerId());
 					System.out.println("Updating");
+
 					ps.addBatch();
 				}
 			}
 
 			System.out.println("Updated");
 
-			if (Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0)) {
-				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatusByEvaluated)) {
-					psUpdate.setInt(1, totalMarks);
-					psUpdate.setInt(2, attemptId);
-					return psUpdate.executeUpdate() > 0;
-				}
-			}
-
-			return false;
+			return Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0);
 		}
 	}
 
+	public List<TestDto> getDashboardAnaliticsData(int classrommId) {
+		List <TestDto> analiticsList=new ArrayList<TestDto>();
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getDashBoardAnaliticsData)) {
+
+			try {
+				ps.setInt(1, classrommId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					TestDto analiticscDto = new TestDto();
+					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTest"));
+					analiticscDto.setTestTitle((rs.getString("title")));
+					analiticsList.add(analiticscDto);
+					
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("intestDto"+analiticsList.size());
+		return analiticsList;
+	}
+	
+	
+	public List<TestDto> getTopPerformingData(int classrommId) {
+		List <TestDto> analiticsList=new ArrayList<TestDto>();
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getDashBoardAnaliticsData)) {
+
+			try {
+				ps.setInt(1, classrommId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					TestDto analiticscDto = new TestDto();
+					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTes"));
+					analiticscDto.setTestTitle((rs.getString("title")));
+					analiticsList.add(analiticscDto);
+					
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("intestDto"+analiticsList.size());
+		return analiticsList;
+	}
+
+
+
+
+
 }
+

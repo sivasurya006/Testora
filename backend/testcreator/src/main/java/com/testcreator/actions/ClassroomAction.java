@@ -40,6 +40,8 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	private List<ClassroomDto> createdClassrooms;
 	private List<ClassroomUser> classroomUsers;
 
+
+
 	@Override
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -144,6 +146,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		try {
 			ClassroomService classroomService = new ClassroomService();
 			if (classroomService.deleteClassRoom(userId, classroomId)) {
+				
 				this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
 				return SUCCESS;
 			} else {
@@ -289,11 +292,11 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		return ERROR;
 	}
 
+	
 	public String fetchClassroomStudents() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 
-		
 		System.out.println(classroomId+" "+userId);
 		
 		try {
@@ -318,6 +321,46 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
+	  
+	public String deleteStudent() {
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		String classroomIdHeader = request.getHeader("X-ClassroomId");
+
+		if (classroomIdHeader == null) {
+			setError(new ApiError("ClassroomId not provided", 400));
+			return INPUT;
+		}
+
+		this.classroomId = Integer.parseInt(classroomIdHeader);
+
+		if (classroomId <= 0) {
+			setError(new ApiError("Invalid classroom id", 400));
+			return INPUT;
+		}
+
+		try {
+			ClassroomService classroomService = new ClassroomService();
+			if (classroomService.deleteStudent(userId, classroomId)) {
+				
+				this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
+				return SUCCESS;
+			} else {
+				this.successDto = new SuccessDto("Classroom not deleted", 422, false);
+				return SUCCESS;
+			}
+
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authendication failed", 401));
+			return LOGIN;
+		} catch (Exception e) {
+			e.printStackTrace();
+			setError(new ApiError("Server error", 500));
+		}
+		return ERROR;	}
+	
 	
 	public SuccessDto getSuccessDto() {
 		return successDto;

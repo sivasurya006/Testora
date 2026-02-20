@@ -11,7 +11,7 @@ public class Queries {
 	public static final String updateClassPublicCode = "update Classrooms set public_code = ? where classroom_id = ?";
 	
 	// read classrooms
-	public static final String selectClassroomStudents = "select u.user_id , u.name , u.email , u.registered_at , cu.joined_at  from Users u join Classroom_Users cu on  u.user_id = cu.user_id where cu.classroom_id = ? and cu.role = 'student'";
+	public static final String selectClassroomStudents = "select  u.user_id , u.name , u.email , u.registered_at , cu.joined_at, count(distinct t.test_id) as totalTestsCount, count(distinct a.test_id) as attemptedTestsCount from Users u join Classroom_Users cu on  u.user_id = cu.user_id join Tests t on t.classroom_id=cu.classroom_id join Attempts a on t.test_id=a.test_id where cu.classroom_id = ? and cu.role = 'student' and t.status='published' and a.status='submitted' group by u.name,u.user_id ;";
 	public static final String selectClassroomTutors = "select u.user_id , u.name , u.email , u.registered_at  , cu.joined_at  from Users u join Classroom_Users cu on  u.user_id = cu.user_id where cu.classroom_id = ? and cu.role = 'tutor'";
 	public static final String selectCreatedClassrooms  = "select c.* , count(distinct t.test_id) as total_tests , count(distinct cu.user_id) as total_students from Classrooms c left join Tests t on t.classroom_id = c.classroom_id and t.status = 'published' left join Classroom_Users cu on cu.classroom_id = c.classroom_id and cu.role = 'student'  where created_by = ? group by  c.classroom_id";
 	
@@ -99,11 +99,13 @@ public class Queries {
 //	public static final String selectClassroom=" select c.name, u.name , c.created_at from Classrooms c join Users u on created_by=user_id ";
 
 	
-	public static final String selectClassroom="select c.name as classname, u.name as username , c.created_at , count(cu.user_id) as studentCount from Classrooms c join Users u on created_by=user_id  left join Classroom_Users cu on c.classroom_id=cu.classroom_id and cu.role='student' where u.user_id=? and c.classroom_id=? group by c.classroom_id, c.name, u.name, c.created_at";
+	public static final String selectClassroomDetails="select c.name as classname,u.name  as  username,c.created_at as created_at, count(distinct t.test_id) as testCount  , (select count(distinct user_id) from Classroom_Users where role=\"student\" and classroom_id=? ) as studentCount from Classrooms c left join Tests t on t.classroom_id = c.classroom_id  left join Classroom_Users cu on cu.classroom_id = c.classroom_id join Users u on u.user_id=c.created_by  where c.created_by = ? and c.classroom_id = ?  group by c.name,u.name,c.created_at;";
 	public static final String selectTestCount="select count(test_id) as testCount  from Tests where classroom_id = ?";
 	public static final String selectStudentTests="select  t.test_id as testId ,t.title as testTitle, t.is_timed, t.duration_minutes, t.creator_id, t.maximum_attempts,  t.correction_type,t.classroom_id, u.name as creatorName, COUNT(a.attempt_id) as attemptCount from Tests t join Users u    on u.user_id = t.creator_id left join Attempts a    on a.test_id = t.test_id  and  a.user_id=? where t.classroom_id=? and t.status='published' group by  t.test_id,  t.title,    t.is_timed,   t.duration_minutes,   t.maximum_attempts,  t.correction_type,  u.name;";
-	
-	
+	public static final String getDashBoardAnaliticsData="select count(distinct user_id) as AttemptedStudentCountOnTest , t.title from Tests t left join Attempts a on t.test_id=a.test_id and a.status='submitted' and t.status='published' where t.classroom_id=? group by t.title, t.test_id order by AttemptedStudentCountOnTest desc;";
+	public static final String getTopPerformingData="select distinct u.name, a.marks from Tests t join Classroom_Users cu on t.classroom_id=cu.classroom_id and cu.role='student' join Users u on u.user_id=cu.user_id join Attempts a on a.user_id = u.user_id where cu.classroom_id=10;";
+	public static final String deleteStudent="delete from Students where user_id = ?";
+
 	// Student Test Questions And Answers
 	
 	public static final String getTestQuestionsWithAttempt = "select title , is_timed , duration_minutes, q.question_id ,"
@@ -124,4 +126,5 @@ public class Queries {
 	public static final String getQuestions = "select t.correction_type , t.title , q.question_id, q.type, o.option_id , o.is_correct , q.marks, o.option_mark , q.question_text , o.option_text , o.properties from Tests t left join Questions q on q.test_id = t.test_id  left join Options o on q.question_id = o.question_id where q.test_id = ?"; 
 	public static final String getAnswer = "select question_id , option_id , answer_id , properties from Answers where attempt_id = ?";
 	public static final String updateAnswer = "update Answers set is_correct = ?, given_marks = ? where answer_id = ?";
+	
 } 

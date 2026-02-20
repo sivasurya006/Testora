@@ -40,5 +40,10 @@ public class StudentService {
 
         return StudentListDao.fetchStudentNamesByClassroomId(classroomId);
     }
+
+	public boolean deleteStudent(int userId, int studentId) {
+		   
+		return false;
+	}
     
 }

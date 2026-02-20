@@ -58,14 +58,13 @@ public class ClassroomDao {
 
 				insertClassroom.setInt(1, createdBy);
 				insertClassroom.setString(2, name);
-				
+
 				String classCode;
 				do {
 					classCode = ClassroomCodeGenerator.generateId(7);
-				}while(isClassCodeExists(classCode));
-				
-				
-				insertClassroom.setString(3,classCode);
+				} while (isClassCodeExists(classCode));
+
+				insertClassroom.setString(3, classCode);
 				insertClassroom.executeUpdate();
 				int classroomId;
 				try (ResultSet rs = insertClassroom.getGeneratedKeys()) {
@@ -122,9 +121,8 @@ public class ClassroomDao {
 			insertClassroomUserRel.setInt(2, userId);
 			insertClassroomUserRel.setString(3, UserRole.STUDENT.name().toLowerCase());
 			return insertClassroomUserRel.executeUpdate() > 0;
-		} 
+		}
 	}
-	
 
 	public List<ClassroomDto> getAllCreatedClassrooms(int createdBy) {
 		List<ClassroomDto> classrooms = new LinkedList<>();
@@ -192,8 +190,9 @@ public class ClassroomDao {
 			try (ResultSet rs = getStudents.executeQuery()) {
 				while (rs.next()) {
 					User user = new User(rs.getString("name"), rs.getInt("user_id"), rs.getString("email"),
-							rs.getTimestamp("registered_at").toInstant().getEpochSecond());
+							rs.getTimestamp("registered_at").toInstant().getEpochSecond(),rs.getInt("totalTestsCount"),rs.getInt("attemptedTestsCount"));
 					Instant joinedAt = rs.getTimestamp("joined_at").toInstant();
+                      
 					students.add(new ClassroomUser(user, joinedAt.getEpochSecond(), UserRole.STUDENT));
 				}
 			}
@@ -281,40 +280,39 @@ public class ClassroomDao {
 			}
 		}
 	}
-	
+
 	public String getClassroomCode(int classroomId) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.getClassPublicCode)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getClassPublicCode)) {
 			ps.setInt(1, classroomId);
-			try(ResultSet rs = ps.executeQuery()){
-				if(rs.next()) {
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
 					return rs.getString(1);
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public String changeClassroomCode(int classroomId) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.updateClassPublicCode)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.updateClassPublicCode)) {
 			String classCode;
 			do {
 				classCode = ClassroomCodeGenerator.generateId(7);
-			}while(isClassCodeExists(classCode));
+			} while (isClassCodeExists(classCode));
 			ps.setString(1, classCode);
 			ps.setInt(2, classroomId);
-			if(ps.executeUpdate() > 0) {
+			if (ps.executeUpdate() > 0) {
 				return classCode;
 			}
 		}
 		return null;
 	}
-	
-	
+
 	public ClassroomDto getClassroomPublicDetails(String code) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.selectClassroomPublicDetais)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.selectClassroomPublicDetais)) {
 			ps.setString(1, code);
-			try(ResultSet rs = ps.executeQuery()){
-				if(rs.next()) {
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
 					ClassroomDto classroomDto = new ClassroomDto();
 					classroomDto.setClassroomName(rs.getString("name"));
 					classroomDto.setCreatorName(rs.getString("creator_name"));
@@ -331,22 +329,26 @@ public class ClassroomDao {
 
 		try {
 
-			PreparedStatement classroom = connection.prepareStatement(Queries.selectClassroom);
+			PreparedStatement classroom = connection.prepareStatement(Queries.selectClassroomDetails);
 
-			classroom.setInt(1, userId);
-			classroom.setInt(2, classroomId);
-			try  {
+			classroom.setInt(1, classroomId);
+			classroom.setInt(2, userId);
+			classroom.setInt(3, classroomId);
+
+			try {
 				ResultSet rs = classroom.executeQuery();
 				while (rs.next()) {
-
 					classroomDto = new ClassroomDto();
 					classroomDto.setCreatedAt(rs.getTimestamp("created_at").toInstant().getEpochSecond());
 					classroomDto.setClassroomName(rs.getString("classname"));
 					classroomDto.setCreatorName(rs.getString("username"));
 					classroomDto.setTotalStudents(rs.getInt("studentCount"));
+					classroomDto.setTotalTests(rs.getInt("testCount"));
+
+					System.out.println("creatorname" + rs.getString("username"));
 
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} catch (SQLException e) {
@@ -355,28 +357,56 @@ public class ClassroomDao {
 		}
 		return classroomDto;
 	}
-	
+
 	public int getClassroomId(String code) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.getClassrommIdByCode)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getClassrommIdByCode)) {
 			ps.setString(1, code);
-			try(ResultSet rs = ps.executeQuery()){
-				if(rs.next()) {
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
 					return rs.getInt("classroom_id");
 				}
 			}
 		}
 		return 0;
 	}
-	
+
 	private boolean isClassCodeExists(String code) throws SQLException {
-		try(PreparedStatement ps = connection.prepareStatement(Queries.selectClassByPublicCode)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.selectClassByPublicCode)) {
 			ps.setString(1, code);
-			if(ps.execute()) {
-				try(ResultSet rs = ps.getResultSet()){
+			if (ps.execute()) {
+				try (ResultSet rs = ps.getResultSet()) {
 					return rs.next();
 				}
 			}
 			return false;
+		}
+	}
+	
+	public boolean deleteStudent(int userId,int classroomId) throws SQLException {
+		try (PreparedStatement isAuthorized = connection.prepareStatement(Queries.selectClassroomByCreatedByAndClassroomId)) {
+
+			isAuthorized.setInt(1, classroomId);
+			isAuthorized.setInt(2, userId);
+
+			try (ResultSet rs = isAuthorized.executeQuery()) {
+				if (!rs.next()) {
+					System.out.println("unautorized");
+					throw new UnauthorizedException();
+				} else {
+					try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent) {
+						deleteClass.setInt(1, classroomId);
+						deleteClass.setInt(2, userId);
+
+						if (deleteClass.executeUpdate() == 1) {
+							System.out.println("deleted");
+							return true;
+						} else {
+							throw new ClassroomNotNoundException();
+						}
+					}
+				}
+			}
+
 		}
 	}
 }

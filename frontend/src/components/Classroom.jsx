@@ -51,7 +51,7 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
         } else {
             console.log("can't rename");
         }
-        setLoading(false)
+        setLoading(false);
     }
 
     const handleDelete = async () => {

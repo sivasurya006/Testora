@@ -105,5 +105,9 @@ public class ClassroomService {
 	public List<ClassroomUser> getAllStudents(int classroomId){
 		return classroomDao.getAllStudents(classroomId);
 	}
-	
+
+	public boolean deleteStudent(int userId, int classroomId) throws SQLException {
+		if(userId <=0 || classroomId <= 0) return false;
+		return classroomDao.deleteStudent(userId, classroomId);
+	}
 }
