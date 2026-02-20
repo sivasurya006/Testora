@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform, Dimensions, ScrollView , Modal } from 'react-native'
+import { View, Text, StyleSheet, Platform, Dimensions, ScrollView, Modal } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import TestHeader from '../../../../../../src/components/testComponents/TestHeader'
 import TestFooter from '../../../../../../src/components/testComponents/TestFooter'
@@ -10,6 +10,9 @@ import ConfirmModal from '../../../../../../src/components/modals/ConfirmModal'
 import { ActivityIndicator, Button } from 'react-native-paper'
 import { AppBoldText } from '../../../../../../styles/fonts'
 import ResultModal from '../../../../../../src/components/ResultModal'
+import FillInBlankQuestionView from '../../../../../../src/components/testComponents/FillInBlankQuestionView'
+import MacthcingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
+import MatchingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
@@ -49,7 +52,7 @@ export default function Test() {
           'X-AttemptId': attemptId.current
         }
       });
-      setTotalMarks(result.data.reduce((sum, ques) => sum + ques.marks, 0));
+      setTotalMarks(result.data.totalMarks);
       setSubmitModalVisible(false)
       setResultPageOpen(true)
     } catch (err) {
@@ -158,15 +161,24 @@ export default function Test() {
 
         <Text style={styles.quesNumber}>{currentIndex + 1} / {questions.length}</Text>
 
-        <View style={[styles.content, { width: containerWidth }]}>
-          <QuestionView selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} question={currentQuestion} />
+        <View style={[styles.content, (currentQuestion.type != 'FILL_BLANK' && currentQuestion.type != 'MATCHING' ) ? { width: containerWidth } : { alignItems: 'center', margin: 'auto', width: containerWidth + 150 }]}>
+          {
+            currentQuestion.type == 'FILL_BLANK' ? (
+              <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
+
+            ) : currentQuestion.type == 'MATCHING' ? (
+              <MatchingQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
+            ) : (
+              <QuestionView selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} question={currentQuestion} />
+            )
+          }
         </View>
       </ScrollView>
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => setSubmitModalVisible(false)} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
-      <ResultModal totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen}/>
+      <ResultModal totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} />
     </View>
   )
 }
@@ -212,9 +224,12 @@ function makePayload(input) {
 
   const payload = { answers: [] };
   Object.entries(input).forEach(([key, value]) => {
+
+    console.log(input)
+
     payload.answers.push({
       questionId: parseInt(key),
-      options: Array.isArray(value) ? value.map(opt => { return { optionId : opt.optionId } }) : [value].map(opt => { return { optionId : opt.optionId } })
+      options: Array.isArray(value) ? value : [value]
 
     });
   });

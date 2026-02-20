@@ -462,6 +462,7 @@
 			class="com.testcreator.actions.TimedTestAction" method="startTest">
 			<result name="success" type="json">
 				<param name="root">startTestDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="timedTestStack" />
 		</action>
@@ -471,7 +472,8 @@
 			method="submitAnswers">
 
 			<result name="success" type="json">
-				<param name="root">corrected</param>
+				<param name="root">testReportDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 
 			<interceptor-ref name="timedTestStack" />

@@ -1,5 +1,7 @@
 package com.testcreator.model;
 
+import com.testcreator.dto.AnswerPropertiesDto;
+
 public class Answer {
 	
 	private Integer answerId;
@@ -8,6 +10,9 @@ public class Answer {
     private Boolean correct;
     private Integer givenMarks;
     
+    private AnswerPropertiesDto properties;
+    
+   
 	public Integer getAnswerId() {
 		return answerId;
 	}
@@ -37,6 +42,15 @@ public class Answer {
 	}
 	public void setGivenMarks(Integer givenMarks) {
 		this.givenMarks = givenMarks;
+	}
+	
+	
+	
+	public AnswerPropertiesDto getAnswerPropertiesDto() {
+		return properties;
+	}
+	public void setAnswerPropertiesDto(AnswerPropertiesDto properties) {
+		this.properties = properties;
 	}
 	@Override
 	public String toString() {

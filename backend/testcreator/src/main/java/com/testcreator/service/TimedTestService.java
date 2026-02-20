@@ -7,13 +7,16 @@ import java.util.Map;
 
 import com.testcreator.dao.ClassroomUsersDao;
 import com.testcreator.dao.TestDao;
+import com.testcreator.dto.TestReportDto;
 import com.testcreator.dto.student.QuestionAnswerDto;
 import com.testcreator.dto.student.StartTestDto;
 import com.testcreator.dto.student.StartTestQuestionsDto;
 import com.testcreator.dto.student.TestOptionDto;
+import com.testcreator.dto.student.TestQuestionDto;
 import com.testcreator.model.Answer;
-import com.testcreator.model.Question;
-import com.testcreator.model.QuestionAnswer;
+import com.testcreator.model.AnswerSheet;
+import com.testcreator.model.MatchingOptionProperties;
+import com.testcreator.model.QuestionType;
 import com.testcreator.util.TestValidator;
 
 public class TimedTestService {
@@ -26,27 +29,50 @@ public class TimedTestService {
 	}
 	
 	public StartTestDto startTest(int userId, int testId) throws SQLException {
+		
+		
+		
 		StartTestDto startTestDto = new StartTestDto();
 		StartTestQuestionsDto testQuestionDto = testDao.startTest(userId, testId);
 		if(testQuestionDto == null) {
+			
 			throw new IllegalArgumentException("Invalid data, can't start Test");
 		}
+		
+		for(TestQuestionDto question  : testQuestionDto.getQuestions()) {
+			if(question.getType() == QuestionType.MATCHING) {
+				suffleMatches(question.getOptions());
+			}
+		}
+		
 		startTestDto.setTest(testQuestionDto);
 		return startTestDto;
 	}
 	
-	public List<QuestionAnswer> submitAnswer(int attemptId,int testId,List<QuestionAnswerDto> answers) throws SQLException {
-		 if(!testDao.saveAnswer(attemptId, convertListToMap(answers))) {
-			 throw new IllegalArgumentException("Invalid data, submit test");
-		 }
-		 List<Question> questions = testDao.getQuestions(testId);
-		 List<Answer> submitedAnswers = testDao.getAnswers(attemptId);
-		 List<QuestionAnswer> questionAnswers  = TestValidator.assignMarksAndCalculate(questions,submitedAnswers);
-		 System.out.println(questionAnswers.get(0).getAnswer());
-		 if(testDao.updateAnswers(questionAnswers)) {
-			 return questionAnswers;
-		 }
-		 throw new IllegalArgumentException("Invalid data, can't correct");
+	private void suffleMatches(List<TestOptionDto> options) {
+		int size = options.size();
+		for(TestOptionDto opt : options) {
+			int rand = (int)(Math.random() * size);
+			MatchingOptionProperties tempMatch =  opt.getMatchingOptionProperties();
+			TestOptionDto tempOption = options.get(rand);
+			opt.setMatchingOptionProperties(tempOption.getMatchingOptionProperties());
+			tempOption.setMatchingOptionProperties(tempMatch);
+		}
+	}
+	
+	public TestReportDto submitAnswer(int attemptId,int testId,List<QuestionAnswerDto> answers) throws SQLException {
+		if(testDao.saveAnswer(attemptId, convertListToMap(answers))) {
+			return validateTest(attemptId, testId);
+		}
+		return null;
+	}
+	
+	private TestReportDto validateTest(int attemptId,int testId) throws SQLException {
+		AnswerSheet answerSheet = testDao.getOriginalAnswerSheet(testId);
+		List<Answer> answers = testDao.getAnswers(attemptId);
+		TestReportDto reportDto  =  TestValidator.assignMarksAndCalculate(answerSheet, answers);
+		testDao.updateAnswers(reportDto.getQuestions(),reportDto.getTotalMarks(),attemptId);
+		return reportDto;
 	}
 	
 	private Map<String, List<TestOptionDto>> convertListToMap(List<QuestionAnswerDto> list) {

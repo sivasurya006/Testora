@@ -10,10 +10,18 @@ public class Test {
 	private int durationMinutes;
 	private TestStatus status;
 	private int maximumAttempts;
+	private CorrectionMethod correctionMethod;
 	
 	
 	public int getTestId() {
 		return testId;
+	}
+	
+	public CorrectionMethod getCorrectionMethod() {
+		return correctionMethod;
+	}
+	public void setCorrectionMethod(CorrectionMethod correctionMethod) {
+		this.correctionMethod = correctionMethod;
 	}
 	public void setTestId(int testId) {
 		this.testId = testId;

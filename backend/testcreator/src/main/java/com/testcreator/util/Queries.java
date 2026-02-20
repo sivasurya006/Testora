@@ -107,20 +107,21 @@ public class Queries {
 	// Student Test Questions And Answers
 	
 	public static final String getTestQuestionsWithAttempt = "select title , is_timed , duration_minutes, q.question_id ,"
-			+ " q.type , question_text , option_id , option_text from Tests t "
+			+ " q.type , question_text , option_id , option_text , properties from Tests t "
 			+ "left join Questions q on q.test_id = t.test_id left join Options o on q.question_id = o.question_id where t.test_id = ?";
 	
 	public static final String newAttempt = "insert Attempts (test_id,user_id) values (?,?)";
 	public static final String getMaxAndUserAttempts = "select maximum_attempts , count(attempt_id) as user_attempts  from Tests t left join Attempts a on t.test_id = a.test_id where t.test_id = ? and user_id = ?";
 	
 	
-	public static final String insertAnswer = "insert into Answers (attempt_id,question_id,option_id) values (?,?,?)";
+	public static final String insertAnswer = "insert into Answers (attempt_id,question_id,option_id,properties) values (?,?,?,?)";
 	public static final String getActveAttempt = "select attempt_id, test_id, user_id, started_at, submitted_at, status, marks from Attempts where test_id = ? and user_id = ? order by started_at desc limit 1";
 	public static final String getDurationMinutes = "select duration_minutes, is_timed from Tests where test_id = ?";
 	
 	public static final String updateAttemptStatus = "update Attempts set status = 'submitted', submitted_at = now() where attempt_id = ?";
+	public static final String updateAttemptStatusByEvaluated = "update Attempts set status = 'evaluated' , marks = ?  where attempt_id = ?";
 	
-	public static final String getQuestions = " select q.question_id, q.type ,  o.option_id , o.is_correct , q.marks, o.option_mark from Questions q left join Options o on q.question_id = o.question_id where q.test_id = ?"; 
-	public static final String getAnswer = "select question_id , option_id , answer_id from Answers where attempt_id = ?";
+	public static final String getQuestions = "select t.correction_type , t.title , q.question_id, q.type, o.option_id , o.is_correct , q.marks, o.option_mark , q.question_text , o.option_text , o.properties from Tests t left join Questions q on q.test_id = t.test_id  left join Options o on q.question_id = o.question_id where q.test_id = ?"; 
+	public static final String getAnswer = "select question_id , option_id , answer_id , properties from Answers where attempt_id = ?";
 	public static final String updateAnswer = "update Answers set is_correct = ?, given_marks = ? where answer_id = ?";
 } 

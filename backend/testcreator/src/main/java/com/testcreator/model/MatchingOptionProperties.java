@@ -24,7 +24,9 @@ public class MatchingOptionProperties implements OptionProperties {
 	@Override
 	public JsonObject getProperties() {
 		JsonObject props = new JsonObject();
-		props.addProperty("match", match);
+		if(match != null) {
+			props.addProperty("match", match);
+		}
 		return props;
 	}
 }

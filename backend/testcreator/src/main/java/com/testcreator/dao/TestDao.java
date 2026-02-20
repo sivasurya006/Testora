@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +16,11 @@ import java.util.Map;
 import org.apache.struts2.ServletActionContext;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.testcreator.dto.AnswerPropertiesDto;
 import com.testcreator.dto.QuestionDto;
+import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.TestDto;
 import com.testcreator.dto.student.StartTestQuestionsDto;
 import com.testcreator.dto.student.TestOptionDto;
@@ -24,6 +28,7 @@ import com.testcreator.dto.student.TestQuestionDto;
 import com.testcreator.exception.QuestionNotFoundException;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.Answer;
+import com.testcreator.model.AnswerSheet;
 import com.testcreator.model.Attempt;
 import com.testcreator.model.AttemptStatus;
 import com.testcreator.model.BlankOptionProperties;
@@ -35,6 +40,7 @@ import com.testcreator.model.OptionProperties;
 import com.testcreator.model.Question;
 import com.testcreator.model.QuestionAnswer;
 import com.testcreator.model.QuestionType;
+import com.testcreator.model.Test;
 import com.testcreator.model.TestStatus;
 import com.testcreator.util.DBConnectionMaker;
 import com.testcreator.util.Queries;
@@ -49,7 +55,7 @@ public class TestDao {
 			throw new SQLException("Driver not found");
 		}
 	}
-	
+
 	public TestDao(Connection connection) {
 		this.connection = connection;
 	}
@@ -220,7 +226,6 @@ public class TestDao {
 			ps.setString(2, type.name().toLowerCase());
 			ps.setString(3, questionText);
 			ps.setInt(4, marks);
-			
 
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
@@ -240,9 +245,8 @@ public class TestDao {
 						case SINGLE:
 						case MCQ:
 						case BOOLEAN:
-						case FILL_BLANK :
-						case MATCHING:
-						{
+						case FILL_BLANK:
+						case MATCHING: {
 							questionDto.setOptions(createNewOptions(questionId, options));
 							break;
 						}
@@ -285,14 +289,16 @@ public class TestDao {
 						boolean isCorrect = rs.getBoolean("is_correct");
 						if (isCorrect) {
 							option.setCorrect(isCorrect);
-							if(questionDto.getType() == QuestionType.FILL_BLANK) {
+							if (questionDto.getType() == QuestionType.FILL_BLANK) {
 								JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-								System.out.println(" first option JSON : "+json.toString());
-								option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),json.get("isCaseSensitive").getAsBoolean()));
-							}else if(questionDto.getType() == QuestionType.MATCHING) {
+								System.out.println(" first option JSON : " + json.toString());
+								option.setBlankOptionProperties(new BlankOptionProperties(
+										json.get("blankIdx").getAsInt(), json.get("isCaseSensitive").getAsBoolean()));
+							} else if (questionDto.getType() == QuestionType.MATCHING) {
 								JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-								System.out.println(" second option JSON : "+json.toString());
-								option.setMatchingOptionProperties((new MatchingOptionProperties(json.get("match").getAsString())));
+								System.out.println(" second option JSON : " + json.toString());
+								option.setMatchingOptionProperties(
+										(new MatchingOptionProperties(json.get("match").getAsString())));
 							}
 						}
 					}
@@ -303,19 +309,22 @@ public class TestDao {
 					while (rs.next()) {
 						Option opt = new Option();
 						opt.setOptionId(rs.getInt("option_id"));
-						System.out.println("get question by id "+questionDto.getType().name());
+						System.out.println("get question by id " + questionDto.getType().name());
 						if (showAnswers) {
 							boolean isCorrect = rs.getBoolean("is_correct");
 							if (isCorrect) {
 								opt.setCorrect(isCorrect);
-								if(questionDto.getType() == QuestionType.FILL_BLANK) {
+								if (questionDto.getType() == QuestionType.FILL_BLANK) {
 									JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-									System.out.println(" second option JSON : "+json.toString());
-									opt.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),json.get("isCaseSensitive").getAsBoolean()));
-								}else if(questionDto.getType() == QuestionType.MATCHING) {
+									System.out.println(" second option JSON : " + json.toString());
+									opt.setBlankOptionProperties(
+											new BlankOptionProperties(json.get("blankIdx").getAsInt(),
+													json.get("isCaseSensitive").getAsBoolean()));
+								} else if (questionDto.getType() == QuestionType.MATCHING) {
 									JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-									System.out.println(" second option JSON : "+json.toString());
-									opt.setMatchingOptionProperties((new MatchingOptionProperties(json.get("match").getAsString())));
+									System.out.println(" second option JSON : " + json.toString());
+									opt.setMatchingOptionProperties(
+											(new MatchingOptionProperties(json.get("match").getAsString())));
 								}
 							}
 							opt.setOptionMark(rs.getInt("option_mark"));
@@ -344,12 +353,12 @@ public class TestDao {
 					Statement.RETURN_GENERATED_KEYS)) {
 				ps.setInt(1, questionId);
 				ps.setString(2, option.getOptionText());
-				
+
 				ps.setInt(4, option.getOptionMark());
-				if(option.getOptionProperties() != null) {
-					ps.setBoolean(3, true);   // any way all blanks and Matching  are correct 
+				if (option.getOptionProperties() != null) {
+					ps.setBoolean(3, true); // any way all blanks and Matching are correct
 					ps.setString(5, option.getOptionProperties().getProperties().toString());
-				}else {
+				} else {
 					ps.setBoolean(3, option.getCorrect());
 					ps.setString(5, "{}");
 				}
@@ -370,11 +379,12 @@ public class TestDao {
 						if (option.getCorrect() == null || option.getCorrect()) {
 							createdOption.setCorrect(true);
 						}
-						if(option.getOptionProperties() != null) {
-							if(option.getOptionProperties() instanceof MatchingOptionProperties matchingOptionProperties) {
+						if (option.getOptionProperties() != null) {
+							if (option
+									.getOptionProperties() instanceof MatchingOptionProperties matchingOptionProperties) {
 								createdOption.setMatchingOptionProperties(matchingOptionProperties);
 							}
-							if(option.getOptionProperties() instanceof BlankOptionProperties blankOptionProperties ) {
+							if (option.getOptionProperties() instanceof BlankOptionProperties blankOptionProperties) {
 								createdOption.setBlankOptionProperties(blankOptionProperties);
 							}
 						}
@@ -418,36 +428,36 @@ public class TestDao {
 
 				// update Options set option_text = ?, is_correct = ? , option_mark = ? where
 				// option_id = ?
-				
+
 				LinkedList<Option> newOptions = new LinkedList<Option>();
-				
+
 				if (questionDto.getOptions() != null) {
 					for (Option option : questionDto.getOptions()) {
-						if(option.getOptionId() == 0) {
+						if (option.getOptionId() == 0) {
 							newOptions.add(option);
 							continue;
 						}
 						try (PreparedStatement optionUpdate = connection.prepareStatement(Queries.updateOptions)) {
 							optionUpdate.setString(1, option.getOptionText());
 							optionUpdate.setInt(3, option.getOptionMark());
-							System.out.println("Updating option mark : "+option.getOptionMark());
-							if(option.getOptionProperties() != null) {
+							System.out.println("Updating option mark : " + option.getOptionMark());
+							if (option.getOptionProperties() != null) {
 								System.out.println("if");
-								optionUpdate.setBoolean(2, true);   // any way all blanks and Matching  are correct 
+								optionUpdate.setBoolean(2, true); // any way all blanks and Matching are correct
 								optionUpdate.setString(4, option.getOptionProperties().getProperties().toString());
-							}else {
+							} else {
 								System.out.println("else");
 								optionUpdate.setBoolean(2, option.getCorrect());
 								optionUpdate.setString(4, "{}");
 							}
 							optionUpdate.setInt(5, option.getOptionId());
-							System.out.println("For option id : "+option.getOptionId());
+							System.out.println("For option id : " + option.getOptionId());
 							optionUpdate.executeUpdate();
 						}
 
 					}
 				}
-				if(!newOptions.isEmpty()) {
+				if (!newOptions.isEmpty()) {
 					createNewOptions(questionId, newOptions);
 				}
 				return true;
@@ -504,13 +514,17 @@ public class TestDao {
 								boolean isCorrect = rs.getBoolean("is_correct");
 								if (isCorrect) {
 									option.setCorrect(isCorrect);
-									if(questionDto.getType() == QuestionType.FILL_BLANK) {
-										JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-										option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),null));
-									}else if(questionDto.getType() == QuestionType.MATCHING) {
-										JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-										System.out.println(" second option JSON : "+json.toString());
-										option.setMatchingOptionProperties((new MatchingOptionProperties(json.get("match").getAsString())));
+									if (questionDto.getType() == QuestionType.FILL_BLANK) {
+										JsonObject json = new Gson().fromJson(rs.getString("properties"),
+												JsonObject.class);
+										option.setBlankOptionProperties(
+												new BlankOptionProperties(json.get("blankIdx").getAsInt()));
+									} else if (questionDto.getType() == QuestionType.MATCHING) {
+										JsonObject json = new Gson().fromJson(rs.getString("properties"),
+												JsonObject.class);
+										System.out.println(" second option JSON : " + json.toString());
+										option.setMatchingOptionProperties(
+												(new MatchingOptionProperties(json.get("match").getAsString())));
 									}
 								}
 								option.setOptionMark(rs.getInt("option_mark"));
@@ -548,6 +562,7 @@ public class TestDao {
 	}
 
 	public StartTestQuestionsDto startTest(int userId, int testId) throws SQLException {
+
 		StartTestQuestionsDto test = null;
 		try (PreparedStatement newAttempt = connection.prepareStatement(Queries.newAttempt,
 				Statement.RETURN_GENERATED_KEYS)) {
@@ -572,6 +587,7 @@ public class TestDao {
 					try (ResultSet rs = getQuestions.executeQuery()) {
 						Map<Integer, TestQuestionDto> questionMap = new LinkedHashMap<>();
 						while (rs.next()) {
+
 							if (test == null) {
 								test = new StartTestQuestionsDto();
 								test.setTitle(rs.getString("title"));
@@ -596,7 +612,14 @@ public class TestDao {
 							}
 							TestOptionDto option = new TestOptionDto();
 							option.setOptionId(rs.getInt("option_id"));
-							option.setOptionText(rs.getString("option_text"));
+							if (question.getType() != QuestionType.FILL_BLANK) {
+								option.setOptionText(rs.getString("option_text"));
+							}
+							if (question.getType() == QuestionType.MATCHING) {
+								JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+								option.setMatchingOptionProperties(
+										(new MatchingOptionProperties(json.get("match").getAsString())));
+							}
 							question.getOptions().add(option);
 						}
 					}
@@ -649,6 +672,13 @@ public class TestDao {
 					ps.setInt(1, attemptId);
 					ps.setInt(2, questionId);
 					ps.setInt(3, optionDto.getOptionId());
+					if (optionDto.getBlankOptionProperties() != null) {
+						ps.setString(4, optionDto.getOptionProperties().getProperties().toString());
+					} else if (optionDto.getMatchingOptionProperties() != null) {
+						ps.setString(4, optionDto.getMatchingOptionProperties().getProperties().toString());
+					} else {
+						ps.setString(4, "{}");
+					}
 
 					ps.addBatch();
 				}
@@ -722,7 +752,9 @@ public class TestDao {
 		return 0;
 	}
 
-	public List<Question> getQuestions(int testId) throws SQLException {
+	public AnswerSheet getOriginalAnswerSheet(int testId) throws SQLException {
+
+		AnswerSheet answerSheet = new AnswerSheet();
 
 		Map<Integer, Question> questionMap = new LinkedHashMap<>();
 
@@ -730,35 +762,66 @@ public class TestDao {
 			ps.setInt(1, testId);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
+
+					if (answerSheet.getTest() == null) {
+						Test test = new Test();
+						test.setTestId(testId);
+						test.setTestTitle(rs.getString("correction_type"));
+						test.setCorrectionMethod(
+								CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
+						answerSheet.setTest(test);
+						answerSheet.setQuestions(new LinkedList<Question>());
+					}
+
 					int questionId = rs.getInt("question_id");
 					int marks = rs.getInt("marks");
 					String type = rs.getString("type");
+					String questionText = rs.getString("question_text");
 
 					Question question = questionMap.get(questionId);
+
 					if (question == null) {
 						question = new Question();
 						question.setQuestionId(questionId);
 						question.setMarks(marks);
+						question.setQuestionText(questionText);
 						question.setOptions(new ArrayList<>());
 						question.setType(QuestionType.valueOf(type.toUpperCase()));
+						answerSheet.getQuestions().add(question);
 						questionMap.put(questionId, question);
 					}
 
 					int optionId = rs.getInt("option_id");
 					boolean isCorrect = rs.getInt("is_correct") == 1;
 					int optionMark = rs.getInt("option_mark");
+					String optionText = rs.getString("option_text");
 
 					Option option = new Option();
 					option.setOptionId(optionId);
 					option.setCorrect(isCorrect);
 					option.setOptionMark(optionMark);
-
+					option.setOptionText(optionText);
 					question.getOptions().add(option);
+
+					if (question.getType() == QuestionType.FILL_BLANK) {
+						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+						System.out.println(" first option JSON : " + json.toString());
+						option.setBlankOptionProperties(new BlankOptionProperties(
+								json.get("blankIdx").getAsInt(), json.get("isCaseSensitive").getAsBoolean()));
+					}
+
+					if (question.getType() == QuestionType.MATCHING) {
+						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+						option.setMatchingOptionProperties(
+								(new MatchingOptionProperties(json.get("match").getAsString())));
+					}
+
 				}
+
 			}
 		}
 
-		return new ArrayList<>(questionMap.values());
+		return answerSheet;
 	}
 
 	public List<Answer> getAnswers(int attemptId) throws SQLException {
@@ -771,35 +834,60 @@ public class TestDao {
 					answer.setQuestionId(rs.getInt("question_id"));
 					answer.setOptionId(rs.getInt("option_id"));
 					answer.setAnswerId(rs.getInt("answer_id"));
+					JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+					AnswerPropertiesDto answerPropertiesDto = new AnswerPropertiesDto();
+					
+					JsonElement blankIdx = json.get("blankIdx");
+ 					JsonElement blankText = json.get("blankText");
+ 					JsonElement match = json.get("match");
+ 					
+					if(blankIdx != null &&  !blankIdx.isJsonNull()) {
+						answerPropertiesDto.setBlankIdx(blankIdx.getAsInt());
+					}
+					if( blankText != null && !blankText.isJsonNull()) {
+						answerPropertiesDto.setBlankText(blankText.getAsString());
+					}
+					if( match != null && !match.isJsonNull()) {
+						answerPropertiesDto.setMatch(match.getAsString());
+					}
+					
+					answer.setAnswerPropertiesDto(answerPropertiesDto);
 					answers.add(answer);
 				}
 			}
 		}
-		System.out.println("submitted answers : "+answers);
+		System.out.println("submitted answers : " + answers);
 		return answers;
 	}
 
-	public boolean updateAnswers(List<QuestionAnswer> questionAnswers) throws SQLException {
+	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
+			throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
-			for (QuestionAnswer qa : questionAnswers) {
-				List<Answer> answerList = qa.getAnswer();
-				if (answerList == null || answerList.isEmpty()) {
-					continue;
-				}
-				for (Answer a : answerList) {
-					ps.setBoolean(1, a.getCorrect() != null ? a.getCorrect() : false);
-					ps.setInt(2, a.getGivenMarks() != null ? a.getGivenMarks() : 0);
-					ps.setInt(3, a.getAnswerId());
+
+			for (QuestionReportDto questionReportDto : questionAnswers) {
+				for (Answer option : questionReportDto.getSelectedOptions()) {
 					
+					System.out.println(option);
+					
+					ps.setBoolean(1, option.getCorrect());
+					ps.setInt(2, option.getGivenMarks());
+					ps.setInt(3, option.getAnswerId());
 					System.out.println("Updating");
-					
 					ps.addBatch();
 				}
 			}
-			
+
 			System.out.println("Updated");
-			
-			return Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0);
+
+			if (Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0)) {
+				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatusByEvaluated)) {
+					psUpdate.setInt(1, totalMarks);
+					psUpdate.setInt(2, attemptId);
+					return psUpdate.executeUpdate() > 0;
+				}
+			}
+
+			return false;
 		}
 	}
 

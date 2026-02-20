@@ -3,21 +3,16 @@ package com.testcreator.dto;
 import java.util.List;
 
 public class TestReportDto {
-	private List<QuestionDto> originalQuestions;
-	private List<QuestionDto> selectedQuestios;
-	private Integer totalMarks;
 	
-	public List<QuestionDto> getOriginalQuestions() {
-		return originalQuestions;
+	private TestDto test;
+	private Integer totalMarks;
+	private List<QuestionReportDto> questions;
+	
+	public TestDto getTest() {
+		return test;
 	}
-	public void setOriginalQuestions(List<QuestionDto> originalQuestions) {
-		this.originalQuestions = originalQuestions;
-	}
-	public List<QuestionDto> getSelectedQuestios() {
-		return selectedQuestios;
-	}
-	public void setSelectedQuestios(List<QuestionDto> selectedQuestios) {
-		this.selectedQuestios = selectedQuestios;
+	public void setTest(TestDto test) {
+		this.test = test;
 	}
 	public Integer getTotalMarks() {
 		return totalMarks;
@@ -25,5 +20,12 @@ public class TestReportDto {
 	public void setTotalMarks(Integer totalMarks) {
 		this.totalMarks = totalMarks;
 	}
+	public List<QuestionReportDto> getQuestions() {
+		return questions;
+	}
+	public void setQuestions(List<QuestionReportDto> questions) {
+		this.questions = questions;
+	}
+	
 	
 }

@@ -3,6 +3,8 @@ package com.testcreator.model;
 import java.util.List;
 
 public class Question {
+	
+	private String questionText;
 	private int questionId;
 	private int marks;
 	private List<Option> options;
@@ -32,11 +34,17 @@ public class Question {
 	public void setOptions(List<Option> options) {
 		this.options = options;
 	}
+	
+	public String getQuestionText() {
+		return questionText;
+	}
+	public void setQuestionText(String questionText) {
+		this.questionText = questionText;
+	}
+	
 	@Override
 	public String toString() {
-		return "Question [questionId=" + questionId + ", marks=" + marks + ", options=" + options + ", type=" + type
-				+ "]";
-	}	
-	
-	
+		return "Question [questionText=" + questionText + ", questionId=" + questionId + ", marks=" + marks
+				+ ", options=" + options + ", type=" + type + "]";
+	}
 }

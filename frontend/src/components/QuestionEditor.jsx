@@ -52,9 +52,9 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
     const [questionOptions, setQuestionOptions] = useState([]);
     const [error, setError] = useState("");
     const [textParts, setTextParts] = useState([]);
+    const [makeAllCaseSensitive, setMakeAllCaseSensitive] = useState(false);
 
-
-    console.log("==============> " +questionText)
+    console.log("==============> " + questionText)
 
     useEffect(() => {
         setQuestionText('');
@@ -204,9 +204,13 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
                                     case 'FILL_BLANK':
                                         return (
                                             // <AppBoldText>Fill Blank</AppBoldText>
-                                            <FillBlankComponent giveOptionMarks={giveOptionMarks} textParts={textParts} setTextParts={setTextParts} defaultTextParts={convertFillBlank(defaultQuestion)} questionText={questionText} setQuestionText={setQuestionText} />
+                                            <FillBlankComponent giveOptionMarks={giveOptionMarks} textParts={textParts}
+                                                setTextParts={setTextParts} defaultTextParts={convertFillBlank(defaultQuestion)}
+                                                questionText={questionText} setQuestionText={setQuestionText}
+                                                setMakeAllCaseSensitive={setMakeAllCaseSensitive}
+                                                makeAllCaseSensitive={makeAllCaseSensitive} />
                                         );
-                                    default :
+                                    default:
                                         return (
                                             <MatchingComponents defaultOptions={defaultQuestion.options} options={questionOptions} setOptions={setQuestionOptions} giveOptionMarks={giveOptionMarks} />
                                         )
@@ -215,7 +219,17 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
                         }
                     </ScrollView>
                     <View>
-                        <View style={{ alignItems: 'flex-end' }}>
+                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                            {
+                                selectedType.value == 'FILL_BLANK' && (
+                                    <Checkbox.Item
+                                        label="All case sensitive"
+                                        status={makeAllCaseSensitive ? 'checked' : 'unchecked'}
+                                        onPress={() => setMakeAllCaseSensitive(!makeAllCaseSensitive)}
+                                        color="blue"
+                                    />
+                                )
+                            }
                             <Checkbox.Item
                                 label="Give option marks"
                                 status={giveOptionMarks ? 'checked' : 'unchecked'}
@@ -410,6 +424,10 @@ const styles = StyleSheet.create({
         padding: 20,
         elevation: 6,
         gap: 20,
+        // width : 400,
+        // maxWidth : 1000,
+        // width : '100%',
+        // flexShrink : 0
         // alignSelf : 'center'
     },
     modalHeader: {

@@ -4,6 +4,7 @@ import McqOptions from './McqOptions'
 import SingleChoiceOptions from './SingleChoiceOptions'
 import BooleanOption from './BooleanOptions'
 import { fonts } from '../../../styles/fonts'
+import RenderHTML from 'react-native-render-html'
 
 export default function QuestionView({ question, selectedAnswers, setSelectedAnswers }) {
 
@@ -12,13 +13,14 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
 
     function onSelect(option) {
 
+
+        console.log(option)
+
         if (question.type === 'MCQ') {
             const prevQues = selectedAnswers[question.questionId] || [];
             const exists = prevQues.find(o => o.optionId === option.optionId);
 
-            const updated = exists
-                ? prevQues.filter(o => o.optionId !== option.optionId)
-                : [...prevQues, option];
+            const updated = exists ? prevQues.filter(o => o.optionId !== option.optionId) : [...prevQues, option];
 
             setSelectedAnswers({
                 ...selectedAnswers,
@@ -26,6 +28,9 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
             });
 
         } else {
+
+
+
             setSelectedAnswers({
                 ...selectedAnswers,
                 [question.questionId]: option
@@ -39,14 +44,16 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
             isWeb && styles.webContainer
         ]}>
 
-            {/* Question */}
+
             <View style={styles.questionContainer}>
-                <Text style={styles.questionText}>
-                    {question.questionText}
-                </Text>
+                <RenderHTML
+                    contentWidth={width - 100}
+                    source={{ html: question.questionText }}
+                    baseStyle={styles.htmlText}
+                />
             </View>
 
-            {/* Options */}
+
             <View style={styles.optionContainer}>
                 {
                     question.type === 'MCQ' ? (
@@ -94,11 +101,15 @@ const styles = StyleSheet.create({
     questionText: {
         textAlign: 'center',
         fontSize: 24,
-        fontFamily: fonts.bold,
+        // fontFamily: fonts.bold,
         lineHeight: 32,
     },
 
     optionContainer: {
         width: '100%',
+    },
+    htmlText: {
+        fontSize: 24,
+        // fontWeight: '600',
     },
 })

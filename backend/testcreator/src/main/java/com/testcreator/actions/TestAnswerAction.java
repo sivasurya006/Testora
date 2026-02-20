@@ -11,6 +11,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.testcreator.dto.ApiError;
 import com.testcreator.dto.SuccessDto;
+import com.testcreator.dto.TestReportDto;
 import com.testcreator.dto.student.QuestionAnswerDto;
 import com.testcreator.dto.student.TestOptionDto;
 import com.testcreator.exception.AttemptExpiredException;
@@ -29,6 +30,7 @@ public class TestAnswerAction extends JsonApiAction implements ServletRequestAwa
 	private SuccessDto successDto;
 	private List<QuestionAnswer> questionAnswers;
 	private List<Question> corrected;
+	private TestReportDto testReportDto;
 
 	public String submitAnswers() {
 
@@ -45,7 +47,7 @@ public class TestAnswerAction extends JsonApiAction implements ServletRequestAwa
 			context.setTestId(testId);
 			new AccessService().require(Permission.CLASSROOM_MEMBER, context);
 			new AccessService().require(Permission.ATTEMPT_NOT_EXPIRED, context);
-			this.questionAnswers = new TimedTestService().submitAnswer(attemptId,testId, answers);
+			this.testReportDto = new TimedTestService().submitAnswer(attemptId,testId, answers);
 			if(this.questionAnswers != null) {
 				this.corrected = new LinkedList<>();
 				for(QuestionAnswer qa : this.questionAnswers) {
@@ -101,4 +103,10 @@ public class TestAnswerAction extends JsonApiAction implements ServletRequestAwa
 	public List<Question> getCorrected() {
 		return corrected;
 	}
+
+	public TestReportDto getTestReportDto() {
+		return testReportDto;
+	}
+	
+	
 }

@@ -108,6 +108,7 @@ create table Answers (
     
     option_id int,
     is_correct boolean,
+    properties json,
     
     given_marks decimal(6,2),
     

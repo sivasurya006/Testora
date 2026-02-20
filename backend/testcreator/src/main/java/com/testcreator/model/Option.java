@@ -1,7 +1,10 @@
 package com.testcreator.model;
 
+import org.apache.struts2.json.annotations.JSON;
+
 public class Option {
 
+	private int answerId;
 	private String optionText;
 	private Integer optionMark;
 	private int optionId;
@@ -81,11 +84,24 @@ public class Option {
 	public void setOptionMark(Integer optionMark) {
 		this.optionMark = optionMark;
 	}
+	
+	@JSON(serialize = false)
+	public int getAnswerId() {
+		return answerId;
+	}
+
+	public void setAnswerId(int answerId) {
+		this.answerId = answerId;
+	}
 
 	@Override
 	public String toString() {
-		return "Option [optionText=" + optionText + ", optionMark=" + optionMark + ", optionId=" + optionId
-				+ ", correct=" + correct + "]";
+		return "Option [answerId=" + answerId + ", optionText=" + optionText + ", optionMark=" + optionMark
+				+ ", optionId=" + optionId + ", correct=" + correct + ", blankOptionProperties=" + blankOptionProperties
+				+ ", matchingOptionProperties=" + matchingOptionProperties + ", optionProperties=" + optionProperties
+				+ "]";
 	}
+
+	
 
 }

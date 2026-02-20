@@ -311,16 +311,28 @@ const BooleanComponent = ({ giveOptionMarks, options, setOptions, defaultOptions
  */
 
 
-const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, defaultTextParts, questionText, setQuestionText }) => {
+const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, setMakeAllCaseSensitive, makeAllCaseSensitive }) => {
 
 
-    console.log("updated text part here ", defaultTextParts)
+    const updateRadio = useRef(true);
 
     useEffect(() => {
         setTextParts([
             { type: "text", value: "" },
         ])
     }, [])
+
+    useEffect(() => {
+        if(textParts.length == 0) return
+        if(!updateRadio.current){
+            updateRadio.current = true
+            return
+        }
+        setTextParts(textParts.map(p => {
+            p.isCaseSensitive = makeAllCaseSensitive
+            return p
+        }))
+    },[makeAllCaseSensitive])
 
     const updateTextPart = (idx, text) => {
         const newTextParts = [...textParts]
@@ -387,18 +399,23 @@ const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, defaultT
                                         l
 
                                     />
-                                    <View style={{ marginTop: 2, flexDirection: 'row', gap: 10, alignItems: 'center' }} >
-                                        <View style={{ marginTop: 2, flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                                            <AppMediumText style={{ color: 'gray' }} >isCaseSensitive</AppMediumText>
+                                    <View style={{ marginTop: 2, flexDirection: 'row', justifyContent : 'space-between', alignItems: 'center' }} >
+                                        <View style={{ marginTop: 2, flexDirection: 'row', alignItems: 'center' }}>
                                             <RadioButton
                                                 status={part.isCaseSensitive ? 'checked' : 'unchecked'}
                                                 onPress={() => {
                                                     const newTextParts = [...textParts];
                                                     newTextParts[index].isCaseSensitive = !part.isCaseSensitive;
+                                                    if(!part.isCaseSensitive){
+                                                        setMakeAllCaseSensitive(false)
+
+                                                        updateRadio.current = !updateRadio.current;
+                                                    }
                                                     setTextParts(newTextParts);
                                                 }}
                                                 color={Colors.primaryColor}
                                             />
+                                            <AppMediumText style={{ color: 'gray' }} >isCaseSensitive</AppMediumText>
                                         </View>
                                         {
                                             giveOptionMarks ? (
@@ -436,7 +453,7 @@ const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, defaultT
 
 const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
 
-    console.log("default matching options : ",defaultOptions)
+    console.log("default matching options : ", defaultOptions)
 
     useEffect(() => {
         if (defaultOptions && defaultOptions.length > 0) {
@@ -449,8 +466,8 @@ const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptio
         }
     }, []);
 
-      const addOption = () => {
-        setOptions([...options,  { optionId: '', optionText: '', optionMark: '', matchingOptionProperties: { match: "" } }]);
+    const addOption = () => {
+        setOptions([...options, { optionId: '', optionText: '', optionMark: '', matchingOptionProperties: { match: "" } }]);
     }
 
     const updateLeftText = (index, text) => {
@@ -484,14 +501,14 @@ const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptio
         <View>
             {options.map((opt, idx) => (
                 <View key={idx} style={[styles.optionContainer]}>
-                    <View style={{flexDirection:'row',gap : 20,flex:1,alignItems:'center'}}>
+                    <View style={{ flexDirection: 'row', gap: 20, flex: 1, alignItems: 'center' }}>
                         <PaperTextInput
                             label={`Left pair ${idx + 1}`}
                             value={opt.optionText}
                             onChangeText={text => updateLeftText(idx, text)}
                             // style={styles.input}
                             mode='outlined'
-                            style={{flex:1,marginBottom:5}}
+                            style={{ flex: 1, marginBottom: 5 }}
                             outlineColor={Colors.borderColor}
                         />
                         <PaperTextInput
@@ -500,7 +517,7 @@ const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptio
                             onChangeText={text => updateRightText(idx, text)}
                             // style={styles.input}
                             mode='outlined'
-                            style={{flex:1,marginBottom:5}}
+                            style={{ flex: 1, marginBottom: 5 }}
                             outlineColor={Colors.borderColor}
                         />
                     </View>
@@ -517,7 +534,7 @@ const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptio
                                     newOptions[idx].optionMark = text;
                                     setOptions(newOptions);
                                 }}
-                                style={[styles.input,{maxWidth : 80 , height : 50,marginLeft : 20}]}
+                                style={[styles.input, { maxWidth: 80, height: 50, marginLeft: 20 }]}
                             />
                         ) : null
                     }
