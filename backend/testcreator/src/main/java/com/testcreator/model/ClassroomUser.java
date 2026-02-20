@@ -6,11 +6,13 @@ public class ClassroomUser {
 	private final Long joinedAt;
 	private final UserRole role;
 	private Integer classroomId;
+
 	
 	public ClassroomUser(User user, Long joinedAt, UserRole role) {
 		this.user = user;
 		this.joinedAt = joinedAt;
 		this.role = role;
+
 	}
 	
 	

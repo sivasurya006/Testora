@@ -122,8 +122,11 @@
 			method="getClassroomDetails">
 			<result name="success" type="json">
 				<param name="root">classroomDto</param>
+				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
+
+
 
 		<action name="students"
 			class="com.testcreator.actions.ClassroomAction"
@@ -140,6 +143,16 @@
 			class="com.testcreator.actions.TestAction" method="getTestCount">
 			<result name="success" type="json">
 				<param name="root">testDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="apiStack" />
+			<interceptor-ref name="classroomIdInterceptor" />
+		</action>
+
+		<action name="deleteStudent"
+			class="com.testcreator.actions.ClassroomAction" method="">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="apiStack" />
@@ -313,6 +326,27 @@
 			</result>
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
+		<action name="getclassroomAnalitics"
+			class="com.testcreator.actions.TestAction" method="getAnalyticsData">
+
+			<result name="success" type="json">
+				<param name="root">analitics</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="classroomIdInterceptor" />
+		</action>
+
+		<action name="getTopPerformingData"
+			class="com.testcreator.actions.TestAction"
+			method="getTopPerformingData">
+			<result name="success" type="json">
+				<param name="root">analitics</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="classroomIdInterceptor" />
+
 		</action>
 
 	</package>

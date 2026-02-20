@@ -19,6 +19,25 @@ public class TestDto {
 	private TestStatus status;
 	private int maximumAttempts;
 	private CorrectionMethod correctionMethod;
+	private Integer submittedTestCount;
+	private Integer AttemptCountOnTest;
+	
+	
+	public Integer getSubmittedTestCount() {
+		return submittedTestCount;
+	}
+
+
+
+	public Integer getAttemptCountOnTest() {
+		return AttemptCountOnTest;
+	}
+
+	public void setAttemptCountOnTest(Integer attemptCountOnTest) {
+		AttemptCountOnTest = attemptCountOnTest;
+	}
+
+
 	
 	public Integer getRemainingAttempts() {
 		return remainingAttempts;
@@ -150,6 +169,11 @@ public class TestDto {
 	
 	public void setCorrectionMethod(CorrectionMethod correctionMethod) {
 		this.correctionMethod = correctionMethod;
+	}
+
+	public void setSubmittedTestCount(Integer int1) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
