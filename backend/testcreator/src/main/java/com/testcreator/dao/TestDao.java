@@ -44,7 +44,7 @@ public class TestDao {
 			throw new SQLException("Driver not found");
 		}
 	}
-	
+
 	public TestDao(Connection connection) {
 		this.connection = connection;
 	}
@@ -705,7 +705,7 @@ public class TestDao {
 				}
 			}
 		}
-		System.out.println("submitted answers : "+answers);
+		System.out.println("submitted answers : " + answers);
 		return answers;
 	}
 
@@ -720,17 +720,81 @@ public class TestDao {
 					ps.setBoolean(1, a.getCorrect() != null ? a.getCorrect() : false);
 					ps.setInt(2, a.getGivenMarks() != null ? a.getGivenMarks() : 0);
 					ps.setInt(3, a.getAnswerId());
-					
+
 					System.out.println("Updating");
-					
+
 					ps.addBatch();
 				}
 			}
-			
+
 			System.out.println("Updated");
-			
+
 			return Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0);
 		}
 	}
 
+	public List<TestDto> getDashboardAnaliticsData(int classrommId) {
+		List <TestDto> analiticsList=new ArrayList<TestDto>();
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getDashBoardAnaliticsData)) {
+
+			try {
+				ps.setInt(1, classrommId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					TestDto analiticscDto = new TestDto();
+					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTest"));
+					analiticscDto.setTestTitle((rs.getString("title")));
+					analiticsList.add(analiticscDto);
+					
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("intestDto"+analiticsList.size());
+		return analiticsList;
+	}
+	
+	
+	public List<TestDto> getTopPerformingData(int classrommId) {
+		List <TestDto> analiticsList=new ArrayList<TestDto>();
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getDashBoardAnaliticsData)) {
+
+			try {
+				ps.setInt(1, classrommId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					TestDto analiticscDto = new TestDto();
+					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTes"));
+					analiticscDto.setTestTitle((rs.getString("title")));
+					analiticsList.add(analiticscDto);
+					
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("intestDto"+analiticsList.size());
+		return analiticsList;
+	}
+
+
+
+
+
 }
+

@@ -116,4 +116,13 @@ public class TestService {
 		
 	
 	}
+	
+	public List<TestDto> getDashbordAnaliticsData(int classroomId) {
+		return testDao.getDashboardAnaliticsData(classroomId);
+	}
+	
+	public List<TestDto> getTopPerformingData(int classroomId){
+		return testDao.getTopPerformingData(classroomId);
+	
+	}
 }
