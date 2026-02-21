@@ -107,7 +107,12 @@ public class ClassroomService {
 	}
 
 	public boolean deleteStudent(int userId, int classroomId) throws SQLException {
-		if(userId <=0 || classroomId <= 0) return false;
+		if(userId <=0 || classroomId <= 0) {
+			System.out.println("hi");
+			return false;
+		}
+		System.out.println("hi");
+
 		return classroomDao.deleteStudent(userId, classroomId);
 	}
 }

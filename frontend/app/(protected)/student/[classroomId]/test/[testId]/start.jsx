@@ -146,6 +146,15 @@ export default function Test() {
 
   const containerWidth = Platform.OS === 'web' ? Math.min(800, windowWidth - 40) : '100%';
 
+
+  document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        console.log("User switched tab");
+    } else {
+        console.log("User came back");
+    }
+});
+
   return (
     <View style={styles.screen}>
       <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} onExit={onExit} />

@@ -190,9 +190,10 @@ public class ClassroomDao {
 			try (ResultSet rs = getStudents.executeQuery()) {
 				while (rs.next()) {
 					User user = new User(rs.getString("name"), rs.getInt("user_id"), rs.getString("email"),
-							rs.getTimestamp("registered_at").toInstant().getEpochSecond(),rs.getInt("totalTestsCount"),rs.getInt("attemptedTestsCount"));
+							rs.getTimestamp("registered_at").toInstant().getEpochSecond(), rs.getInt("totalTestsCount"),
+							rs.getInt("attemptedTestsCount"));
 					Instant joinedAt = rs.getTimestamp("joined_at").toInstant();
-                      
+
 					students.add(new ClassroomUser(user, joinedAt.getEpochSecond(), UserRole.STUDENT));
 				}
 			}
@@ -381,32 +382,20 @@ public class ClassroomDao {
 			return false;
 		}
 	}
-	
-	public boolean deleteStudent(int userId,int classroomId) throws SQLException {
-		try (PreparedStatement isAuthorized = connection.prepareStatement(Queries.selectClassroomByCreatedByAndClassroomId)) {
 
-			isAuthorized.setInt(1, classroomId);
-			isAuthorized.setInt(2, userId);
+	public boolean deleteStudent(int userId, int classroomId) throws SQLException {
 
-			try (ResultSet rs = isAuthorized.executeQuery()) {
-				if (!rs.next()) {
-					System.out.println("unautorized");
-					throw new UnauthorizedException();
-				} else {
-					try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent) {
-						deleteClass.setInt(1, classroomId);
-						deleteClass.setInt(2, userId);
+		try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent)) {
+//			deleteClass.setInt(1, classroomId);
+			deleteClass.setInt(1, userId);
 
-						if (deleteClass.executeUpdate() == 1) {
-							System.out.println("deleted");
-							return true;
-						} else {
-							throw new ClassroomNotNoundException();
-						}
-					}
-				}
+			if (deleteClass.executeUpdate() == 1) {
+				System.out.println("deleted");
+				return true;
+			} else {
+				throw new ClassroomNotNoundException();
 			}
-
 		}
+
 	}
 }

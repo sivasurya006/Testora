@@ -188,7 +188,6 @@ export default function Dashboard() {
     },
   ];
 
-
   return (
     <>
       <StatusBar style="dark" backgroundColor={Colors.bgColor} />
