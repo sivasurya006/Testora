@@ -10,6 +10,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.google.gson.JsonObject;
 import com.opensymphony.xwork2.ModelDriven;
+import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dto.ApiError;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.SuccessDto;
@@ -38,6 +39,8 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 	private List<TestDto> allTests;
 	private List<TestDto> analitics;
+	
+	private List<SubmissionDto> submittedUsers;
 
 	public String createTest() {
 
@@ -141,7 +144,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			addFieldError("type", "Invalid question type");
 			return;
 		}
-	
 
 		QuestionType type = questionDto.getType();
 		if (questionDto.getOptions() != null) {
@@ -155,19 +157,19 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 				if (option.getOptionMark() < 0) {
 					addFieldError("options.optionMark", "Invalid option mark");
 				}
-				if(type == QuestionType.FILL_BLANK || type == QuestionType.MATCHING) {
+				if (type == QuestionType.FILL_BLANK || type == QuestionType.MATCHING) {
 					option.setOptionProperties(type);
-					if(option.getOptionProperties() == null || option.getOptionProperties().getProperties() == null) {
+					if (option.getOptionProperties() == null || option.getOptionProperties().getProperties() == null) {
 						addFieldError("options.optionProperties", "Invalid option Properties");
 						return;
-					}else if(type == QuestionType.FILL_BLANK){
+					} else if (type == QuestionType.FILL_BLANK) {
 						JsonObject props = option.getOptionProperties().getProperties();
-						if(props.get("blankIdx") == null) {
+						if (props.get("blankIdx") == null) {
 							addFieldError("options.optionProperties", "Invalid option index");
 						}
-					}else {
+					} else {
 						JsonObject props = option.getOptionProperties().getProperties();
-						if(props.get("match").isJsonNull() || props.get("match").toString().isBlank()) {
+						if (props.get("match").isJsonNull() || props.get("match").toString().isBlank()) {
 							addFieldError("options.optionProperties", "Invalid option match");
 						}
 					}
@@ -431,9 +433,9 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 	public void validateUpdateQuestion() {
 		System.out.println("validate called");
-		
-		System.out.println("Type : "+questionDto.getType());
-		
+
+		System.out.println("Type : " + questionDto.getType());
+
 		if (questionDto == null || questionDto.getQuestionText() == null || questionDto.getQuestionText().isBlank()) {
 			addFieldError("questionText", "Invalid question text");
 			System.out.println("qu txt error");
@@ -456,7 +458,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		if (questionDto.getOptions() != null) {
 
 			for (Option option : questionDto.getOptions()) {
-				
+
 				option.setOptionProperties(questionDto.getType());
 
 				if (option.getOptionId() < 0) {
@@ -488,7 +490,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
 			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
-			System.out.println("Incomming : "+questionDto);
+			System.out.println("Incomming : " + questionDto);
 			boolean updated = testService.updateQuestion(context, questionDto);
 			if (updated) {
 				this.successDto = new SuccessDto("Question successfully updated", 200, updated);
@@ -652,30 +654,87 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		try {
 			TestService testService = new TestService();
 			this.analitics = testService.getDashbordAnaliticsData(classroomId);
-			System.out.println("Size "+analitics.size());
+			System.out.println("Size " + analitics.size());
 			return SUCCESS;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return ERROR;
 	}
-	
-	
+
 	public String getTopPerformingData() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		try {
 			TestService testService = new TestService();
 			this.analitics = testService.getTopPerformingData(classroomId);
-			System.out.println("Size "+analitics.size());
+			System.out.println("Size " + analitics.size());
 			return SUCCESS;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return ERROR;
 	}
+
+	public String submittedUsers() {
+
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		try {
+			TestService testService = new TestService();
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.submittedUsers = testService.getSumittedUsers(classroomId);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException | QuestionNotFoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
 	
-	
+	public String testSubmissionDetails() {
+
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+
+		try {
+			TestService testService = new TestService();
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.submittedUsers = testService.getTestSubmissionDetails(classroomId,testId);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException | QuestionNotFoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+
 	public List<TestDto> getAnalitics() {
 		return analitics;
 	}
@@ -721,5 +780,11 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	public QuestionDto getModel() {
 		return questionDto;
 	}
+
+	public List<SubmissionDto> getSubmittedUsers() {
+		return submittedUsers;
+	}
+	
+	
 
 }

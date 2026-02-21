@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.testcreator.dao.ClassroomUsersDao;
+import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dao.TestDao;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.TestDto;
@@ -124,6 +125,14 @@ public class TestService {
 	
 	public List<TestDto> getTopPerformingData(int classroomId){
 		return testDao.getTopPerformingData(classroomId);
-	
 	}
+	
+	public List<SubmissionDto> getSumittedUsers(int classroomId) throws SQLException{
+		return testDao.getSubmittedUsers(classroomId);
+	}
+	
+	public List<SubmissionDto> getTestSubmissionDetails(int classroomId,int testId) throws SQLException{
+		return testDao.getTestSubmissionDetails(classroomId,testId);
+	}
+	
 }

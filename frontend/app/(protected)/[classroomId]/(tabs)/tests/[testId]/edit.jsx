@@ -10,6 +10,7 @@ import api from '../../../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import FillInBlankQuestion from '../../../../../../src/components/FillIntheBlankQuestion';
 import MatchingQuestion from '../../../../../../src/components/MatchingQuestion';
+import { AppRegularText } from '../../../../../../styles/fonts';
 
 
 // {
@@ -70,7 +71,7 @@ export default function Edit() {
                     allQuestions.length == 0 ? (
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
                             <Pressable style={{ backgroundColor: Colors.primaryColor, padding: 16, borderRadius: 8 }} onPress={openAddQuesModal}>
-                                <Text style={{ color: Colors.white }}  >Create New Question</Text>
+                                <AppRegularText style={{ color: Colors.white }}  >Create New Question</AppRegularText>
                             </Pressable>
                         </View>
                     ) : (

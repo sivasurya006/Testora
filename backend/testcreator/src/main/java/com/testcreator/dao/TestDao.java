@@ -863,27 +863,34 @@ public class TestDao {
 	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
 			throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
-			for (QuestionAnswer qa : questionAnswers) {
-				List<Answer> answerList = qa.getAnswer();
-				if (answerList == null || answerList.isEmpty()) {
-					continue;
-				}
-				for (Answer a : answerList) {
-					ps.setBoolean(1, a.getCorrect() != null ? a.getCorrect() : false);
-					ps.setInt(2, a.getGivenMarks() != null ? a.getGivenMarks() : 0);
-					ps.setInt(3, a.getAnswerId());
 
+			for (QuestionReportDto questionReportDto : questionAnswers) {
+				for (Answer option : questionReportDto.getSelectedOptions()) {
+					
+					System.out.println(option);
+					
+					ps.setBoolean(1, option.getCorrect());
+					ps.setInt(2, option.getGivenMarks());
+					ps.setInt(3, option.getAnswerId());
 					System.out.println("Updating");
-
 					ps.addBatch();
 				}
 			}
 
 			System.out.println("Updated");
 
-			return Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0);
+			if (Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0)) {
+				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatusByEvaluated)) {
+					psUpdate.setInt(1, totalMarks);
+					psUpdate.setInt(2, attemptId);
+					return psUpdate.executeUpdate() > 0;
+				}
+			}
+
+			return false;
 		}
 	}
+	
 
 	public List<TestDto> getDashboardAnaliticsData(int classrommId) {
 		List <TestDto> analiticsList=new ArrayList<TestDto>();
@@ -943,10 +950,65 @@ public class TestDao {
 		System.out.println("intestDto"+analiticsList.size());
 		return analiticsList;
 	}
+	
+	public List<SubmissionDto> getSubmittedUsers(int classroomId) throws SQLException{
+		List<SubmissionDto> submissions = new LinkedList<>();
+		try(PreparedStatement ps  = connection.prepareStatement(Queries.getSubmissionsWithAttempts)){
+			ps.setInt(1, classroomId);
+			try(ResultSet rs = ps.executeQuery()){
+				while(rs.next()) {
+					SubmissionDto submission = new SubmissionDto();
+					submission.setName(rs.getString("name"));
+					submission.setEmail(rs.getString("email"));
+					submission.setUserId(rs.getInt("user_id"));
+					submission.setTestId(rs.getInt("test_id"));
+					submission.setTitle(rs.getString("title"));
+					
+					Integer count = rs.getInt("attempts_count");
+					count = count == null ? 0 : count;
+					
+					submission.setAttemptsCount(count);
+					
+					System.out.println(submission);
+					
+					submissions.add(submission);
+				}
+			}
+		}
+		return submissions;
+	}
 
-
-
-
+	public List<SubmissionDto> getTestSubmissionDetails(int classroomId,int testId) throws SQLException{
+		List<SubmissionDto> submissions = new LinkedList<>();
+		try(PreparedStatement ps  = connection.prepareStatement(Queries.getTestSubmissionDetails)){
+			ps.setInt(1, classroomId);
+			ps.setInt(2, testId);
+			
+			try(ResultSet rs = ps.executeQuery()){
+				while(rs.next()) {
+					SubmissionDto submission = new SubmissionDto();
+					submission.setName(rs.getString("name"));
+					submission.setEmail(rs.getString("email"));
+					submission.setUserId(rs.getInt("user_id"));
+					
+					Integer attemptsCount = rs.getInt("total_attempts");
+					Integer evaluatedCount = rs.getInt("evaluated");
+					Integer submittedCount = rs.getInt("submitted");
+					
+					attemptsCount = attemptsCount == null ? 0 : attemptsCount;			
+					evaluatedCount = evaluatedCount == null ? 0 : evaluatedCount; 
+					submittedCount = submittedCount == null ? 0 : submittedCount;
+					
+					submission.setAttemptsCount(attemptsCount);
+					submission.setEvaluatedCount(evaluatedCount);
+					submission.setSubmittedCount(submittedCount);
+					
+					
+					submissions.add(submission);
+				}
+			}
+		}
+		return submissions;
+	}
 
 }
-

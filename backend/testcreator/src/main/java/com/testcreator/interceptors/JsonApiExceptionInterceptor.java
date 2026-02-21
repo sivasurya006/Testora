@@ -17,7 +17,8 @@ public class JsonApiExceptionInterceptor extends AbstractInterceptor  {
 		
 		try {
 			return actionInvocation.invoke();
-		}catch (JSONException e) {
+		}catch (JSONException e) {;
+			
 			 Object action = actionInvocation.getAction();
 			if(action instanceof JsonApiAction jsonAction) {
 				jsonAction.setError(new ApiError("Invalid json format", 400));
