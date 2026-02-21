@@ -22,7 +22,7 @@ export default function StudentList() {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
-  
+
 
   const { classroomId } = useGlobalSearchParams();
 
@@ -81,80 +81,81 @@ export default function StudentList() {
       <StatusBar translucent />
       <SafeAreaView style={{ flex: 1 }}>
         <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
-        {
-          studentsList.length === 0 ? (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgColor }} >
-              <Text style={{ fontSize: 16, fontFamily: fonts.semibold }}>No students yet</Text>
-            </View>
-          ) : (
-            <View style={styles.tableContainer}>
-              <View style={[styles.tableRow, styles.tableHeader]}>
-                <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text>
-                <Text style={[styles.tableItem, styles.headerItem]}>Name</Text>
-                <Text style={[styles.tableItem, styles.headerItem]}>Email</Text>
-                <Text style={[styles.tableItem, styles.headerItem]}>Enrolled Date</Text>
-                <Text style={[styles.tableItem, styles.headerItem, styles.progressHeader]}>Progress</Text>
-                <Text style={[styles.tableItem, styles.headerItem, styles.actionHeader]} />
+        <ScrollView>
+          {
+            studentsList.length === 0 ? (
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgColor }} >
+                <Text style={{ fontSize: 16, fontFamily: fonts.semibold }}>No students yet</Text>
               </View>
-              <ScrollView>
-                {studentsList.map((student, i) => {
-                  const totalTests = student.user?.totalTestCount || 0;
-                  const totalAttempted = student.user?.totalAttemptedTestCount || 0;
-                  const studentProgress = totalTests > 0 ? (totalAttempted / totalTests) * 100 : 0;
-                  return (
-                    <View key={student.user.userId} style={styles.tableRow} dangerouslySetInnerHTML={{ __html: student.user.name }}>
-                      <Text style={styles.tableItem}>{i + 1}</Text>
-                      <Pressable
-                        onPress={() => console.log('profile')}
-                        style={{ flex: 1 }}
-                      >
-                        <Text style={[styles.tableItem, styles.linkText]}>
-                          {student.user.name}
-                        </Text>
-                      </Pressable>
-                      <Text style={styles.tableItem}>{student.user.email}</Text>
-                      <Text style={styles.tableItem}>
-                        {new Date(student.user.registeredAt * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </Text>
-
-                      <View style={styles.progressCell}>
-                        <View style={styles.progressBarBackground}>
-                          <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
-                        </View>
-                        <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
-                      </View>
-                      
-                      <View>
-                        <Menu
-                          key={isMenuVisible ? 'open' : 'closed'}
-                          visible={isMenuVisible}
-                          onDismiss={closeMenu}
-                          onRequestClose={closeMenu}
-                          anchorPosition='bottom'
-                          anchor={
-                            <IconButton
-                              icon="dots-vertical"
-                              onPress={openMenu}
-                              iconColor='black'
-                            />
-                          }
-
-                          contentStyle={styles.menuContentStyle}
+            ) : (
+              <View style={styles.tableContainer}>
+                <View style={[styles.tableRow, styles.tableHeader]}>
+                  <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text>
+                  <Text style={[styles.tableItem, styles.headerItem]}>Name</Text>
+                  <Text style={[styles.tableItem, styles.headerItem]}>Email</Text>
+                  <Text style={[styles.tableItem, styles.headerItem]}>Enrolled Date</Text>
+                  <Text style={[styles.tableItem, styles.headerItem, styles.progressHeader]}>Progress</Text>
+                  <Text style={[styles.tableItem, styles.headerItem, styles.actionHeader]} />
+                </View>
+                <View>
+                  {studentsList.map((student, i) => {
+                    const totalTests = student.user?.totalTestCount || 0;
+                    const totalAttempted = student.user?.totalAttemptedTestCount || 0;
+                    const studentProgress = totalTests > 0 ? (totalAttempted / totalTests) * 100 : 0;
+                    return (
+                      <View key={student.user.userId} style={[styles.tableRow]} dangerouslySetInnerHTML={{ __html: student.user.name }}>
+                        <Text style={styles.tableItem}>{i + 1}</Text>
+                        <Pressable
+                          onPress={() => console.log('profile')}
+                          style={{ flex: 1 }}
                         >
+                          <Text style={[styles.tableItem, styles.linkText]}>
+                            {student.user.name}
+                          </Text>
+                        </Pressable>
+                        <Text style={styles.tableItem}>{student.user.email}</Text>
+                        <Text style={styles.tableItem}>
+                          {new Date(student.user.registeredAt * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </Text>
 
-                          <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                        <View style={styles.progressCell}>
+                          <View style={styles.progressBarBackground}>
+                            <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
+                          </View>
+                          <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
+                        </View>
 
-                        </Menu>
+                        <View>
+                          <Menu
+                            key={isMenuVisible ? 'open' : 'closed'}
+                            visible={isMenuVisible}
+                            onDismiss={closeMenu}
+                            onRequestClose={closeMenu}
+                            anchorPosition='bottom'
+                            anchor={
+                              <IconButton
+                                icon="dots-vertical"
+                                onPress={openMenu}
+                                iconColor='black'
+                              />
+                            }
+
+                            contentStyle={styles.menuContentStyle}
+                          >
+
+                            <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+
+                          </Menu>
+                        </View>
                       </View>
-                    </View>
-                  )
-                })}
-              </ScrollView>
-            </View>
+                    )
+                  })}
+                </View>
+              </View>
 
-          )
-        }
-
+            )
+          }
+        </ScrollView>
         <InviteStudentModal
           visible={inviteStudentModalVisible}
           onConfirm={async (link) => {
@@ -387,7 +388,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.thirdColor,
     borderRadius: 8,
     borderBottomWidth: 0,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    // position : 'fixed'
   },
   tableRow: {
     flexDirection: 'row',

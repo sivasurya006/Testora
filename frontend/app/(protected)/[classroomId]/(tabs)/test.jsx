@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CreatedTestList from '../../../../src/screens/CreatedTestList';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import StudentSubmissionScreen from '../../../../src/screens/Submissions';
 
 
 const { width } = Dimensions.get('window')
@@ -36,7 +37,7 @@ export default function Test() {
                             setSelected("correction");
                         }}
                     >
-                        <AppMediumText style={{ fontSize: 16 }}>Corrections</AppMediumText>
+                        <AppMediumText style={{ fontSize: 16 }}>Submission</AppMediumText>
                     </Pressable>
 
                     <Pressable
@@ -64,7 +65,7 @@ export default function Test() {
                         <Ionicons name="search" size={18} color={Colors.dimBg} />
 
                         <TextInput
-                            placeholder="Search Tests..."
+                            placeholder= {selected == 'correction' ? "Search Students..." :  "Search Tests..." } 
                             placeholderTextColor={Colors.dimBg}
                             value={search}
                             onChangeText={setSearch}
@@ -75,9 +76,7 @@ export default function Test() {
 
                 {
                     selected === 'correction' ? (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <AppMediumText>No submissions yet!</AppMediumText>
-                        </View>
+                        <StudentSubmissionScreen/>
                     ) : (
                         <CreatedTestList filter={selected} />
                     )

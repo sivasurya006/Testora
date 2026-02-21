@@ -18,7 +18,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
     const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
     const [isInputModalVisible, setInputModalVisible] = useState(false);
     const [newTestName, setNewTestName] = useState("");
-    const [ confirmUnpublish , setConfirmUnpublish ] = useState(false)
+    const [confirmUnpublish, setConfirmUnpublish] = useState(false)
 
     const isPublished = data.status === 'PUBLISHED';
 
@@ -168,7 +168,16 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                         style={[
                             styles.primaryBtn,
                         ]}
-                        onPress={isPublished ? () => console.log('view') : handlePublish}
+                        onPress={isPublished ? () => {
+                            router.push({
+                                pathname: '/[classroomId]/(tabs)/tests/[testId]/submission',
+                                params: {
+                                    classroomId: data.classroomId,
+                                    testId: data.testId,
+                                    title: data.testTitle
+                                },
+                            })
+                        } : handlePublish}
                     >
                         <Ionicons
                             name={data.status === 'DRAFT' ? 'cloud-upload-outline' : 'eye-outline'}
@@ -203,7 +212,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                     onCancel={() => setInputModalVisible(false)}
                 />
             ) : null}
-            <ConfirmModal visible={confirmUnpublish} message={'Do you want un publish the test?'} onConfirm={() => {unpuplishCreatedTest(); setConfirmUnpublish(false)}} onCancel={() => setConfirmUnpublish(false)}/>
+            <ConfirmModal visible={confirmUnpublish} message={'Do you want un publish the test?'} onConfirm={() => { unpuplishCreatedTest(); setConfirmUnpublish(false) }} onCancel={() => setConfirmUnpublish(false)} />
         </View>
     );
 
@@ -292,7 +301,7 @@ const styles = StyleSheet.create({
         borderColor: '#F1F1F1',
         maxWidth: 340,
         width: '100%',
-        marginBottom : 15,
+        marginBottom: 15,
         ...(Platform.OS == 'web' ? {
             margin: 16,
         } : {})
@@ -307,7 +316,7 @@ const styles = StyleSheet.create({
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        flexWrap : 'wrap',
+        flexWrap: 'wrap',
         gap: 10,
         flex: 1
     },

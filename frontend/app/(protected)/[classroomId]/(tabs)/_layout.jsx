@@ -86,7 +86,7 @@ export default function ClassroomLayout() {
                     )
                 }} />
                  <Tabs.Screen name='tests/[testId]' options={{
-                    title: 'Test',
+                    title: 'Tests',
                     href : null,
                     // tabBarIcon: ({ color }) => (
                     //     <Ionicons name="settings-sharp" size={24} color={color} />
