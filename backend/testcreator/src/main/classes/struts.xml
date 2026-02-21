@@ -126,8 +126,6 @@
 			</result>
 		</action>
 
-
-
 		<action name="students"
 			class="com.testcreator.actions.ClassroomAction"
 			method="fetchClassroomStudents">
@@ -143,20 +141,19 @@
 			class="com.testcreator.actions.TestAction" method="getTestCount">
 			<result name="success" type="json">
 				<param name="root">testDto</param>
-				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="apiStack" />
 			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
 
-		<action name="deleteStudent"
-			class="com.testcreator.actions.ClassroomAction" method="">
+		<action name="deletestudent"
+			class="com.testcreator.actions.ClassroomAction" method="deleteStudent">
 			<result name="success" type="json">
 				<param name="root">successDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="apiStack" />
-			<interceptor-ref name="classroomIdInterceptor" />
+			<interceptor-ref name="classroomIdInterceptor"/>
 		</action>
 
 		<action name="inviteLink"
@@ -179,9 +176,6 @@
 			<interceptor-ref name="apiStack" />
 			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
-
-
-
 
 	</package>
 

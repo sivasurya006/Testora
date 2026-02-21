@@ -322,14 +322,15 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		return ERROR;
 	}
 	  
-	public String deleteStudent() {
-
+public String deleteStudent() {
 		HttpServletRequest request = ServletActionContext.getRequest();
-		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-
+		int userId = Integer.parseInt(request.getParameter("studentId"));
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
+		System.out.println(classroomIdHeader);
+		System.out.println(userId);
 
 		if (classroomIdHeader == null) {
+
 			setError(new ApiError("ClassroomId not provided", 400));
 			return INPUT;
 		}
@@ -337,14 +338,17 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		this.classroomId = Integer.parseInt(classroomIdHeader);
 
 		if (classroomId <= 0) {
+
 			setError(new ApiError("Invalid classroom id", 400));
 			return INPUT;
 		}
 
 		try {
+			
 			ClassroomService classroomService = new ClassroomService();
+
 			if (classroomService.deleteStudent(userId, classroomId)) {
-				
+
 				this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
 				return SUCCESS;
 			} else {
@@ -353,13 +357,17 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			}
 
 		} catch (UnauthorizedException e) {
+			System.out.println("in server error");
+
 			setError(new ApiError("Authendication failed", 401));
 			return LOGIN;
 		} catch (Exception e) {
+			System.out.println("in server error");
 			e.printStackTrace();
 			setError(new ApiError("Server error", 500));
 		}
-		return ERROR;	}
+		return ERROR;
+}
 	
 	
 	public SuccessDto getSuccessDto() {

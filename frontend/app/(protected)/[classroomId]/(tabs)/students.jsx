@@ -12,19 +12,35 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView } from 'react-native';
 import { AppMediumText } from '../../../../styles/fonts';
 import { Menu, IconButton } from 'react-native-paper';
-
+import ConfirmModal from '../../../../src/components/modals/ConfirmModal';
 
 export default function StudentList() {
 
   const [studentsList, setStudentsList] = useState([]);
   const [studentsDelete, setStudentsDelete] = useState([]);
   const [inviteStudentModalVisible, setInviteStudentModalVisible] = useState(false);
-  const [isMenuVisible, setMenuVisible] = useState(false);
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
-  
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const onDeleteConfirm = async () => {
+    if (studentToDelete) {
+      await deleteStudent(studentToDelete);
+      setStudentsList(prev => prev.filter(s => s.user.userId !== studentToDelete));
+    }
+    setStudentToDelete(null);
+    setDeleteModalVisible(false);
+  };
+  const onDeleteCancel = () => {
+    setStudentToDelete(null);
+    setDeleteModalVisible(false);
+  };
+
+  const [menuVisibleFor, setMenuVisibleFor] = useState(null);
+  const openMenu = (studentId) => setMenuVisibleFor(studentId);
+  const closeMenu = () => setMenuVisibleFor(null);
 
   const { classroomId } = useGlobalSearchParams();
+  const {userId} = useGlobalSearchParams();
 
   async function getStudentsList() {
     try {
@@ -44,16 +60,12 @@ export default function StudentList() {
     }
   }
 
-
-
-
-  async function deleteStudent(studentId) {
+  async function deleteStudent(userId) {
     try {
-      const result = await api.delete(`/api/students/${studentId}`, {
+      const result = await api.delete(`http://localhost:8080/testcreator/api/api/deletestudent?studentId=${userId}`, {
         headers: { 'X-ClassroomId': classroomId }
       });
       if (result?.status == 200 && result.data) {
-        // optionally handle response
         console.log("Deleted student", result.data);
         getStudentsList();
       } else {
@@ -64,17 +76,11 @@ export default function StudentList() {
     }
   }
 
-
-
-  const handleOptions = (student) => {
-
-  };
-
   useEffect(() => {
     getStudentsList();
   }, [])
 
-  console.log(studentsList)
+  console.log(studentsList);
 
   return (
     <>
@@ -123,18 +129,18 @@ export default function StudentList() {
                         </View>
                         <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
                       </View>
-                      
+
                       <View>
                         <Menu
-                          key={isMenuVisible ? 'open' : 'closed'}
-                          visible={isMenuVisible}
+                          // ensure each row shows menu only when its id matches
+                          visible={menuVisibleFor === student.user.userId}
                           onDismiss={closeMenu}
                           onRequestClose={closeMenu}
                           anchorPosition='bottom'
                           anchor={
                             <IconButton
                               icon="dots-vertical"
-                              onPress={openMenu}
+                              onPress={() => openMenu(student.user.userId)}
                               iconColor='black'
                             />
                           }
@@ -142,11 +148,12 @@ export default function StudentList() {
                           contentStyle={styles.menuContentStyle}
                         >
 
-                          <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                          <Menu.Item title="Delete" onPress={() => { closeMenu(); setStudentToDelete(student.user.userId); setDeleteModalVisible(true); }} titleStyle={styles.menuTitleStyle} />
 
                         </Menu>
                       </View>
                     </View>
+
                   )
                 })}
               </ScrollView>
@@ -163,10 +170,16 @@ export default function StudentList() {
           }}
           onCancel={() => setInviteStudentModalVisible(false)}
         />
+
+        <ConfirmModal
+          message={"Do you really want to delete this student?"}
+          visible={deleteModalVisible}
+          onCancel={onDeleteCancel}
+          onConfirm={onDeleteConfirm}
+        />
       </SafeAreaView>
     </>
   )
-
 
 }
 
@@ -315,6 +328,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 40,
   },
+
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -323,11 +337,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 8,
   },
+
   addButtonText: {
     color: Colors.white,
     marginLeft: 6,
     fontSize: 14,
   },
+
   modalContent: {
     width: '100%',
     maxWidth: 400,
@@ -338,6 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 'auto',
   },
+
   inputBox: {
     width: '100%',
     borderWidth: 1,
@@ -350,16 +367,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+
   linkText: {
     flex: 1,
     marginRight: 8,
     color: '#1DA1F2'
   },
+
   options: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
   },
+
   optionBtn: {
     flex: 1,
     paddingVertical: 12,
@@ -367,20 +387,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5,
   },
+
   cancelBtn: {
     backgroundColor: '#ddd',
   },
+
   confirmBtn: {
     backgroundColor: Colors.primaryColor,
   },
+
   cancelText: {
     color: Colors.black,
     fontWeight: '500',
   },
+
   confirmText: {
     color: Colors.white,
     fontWeight: '500',
   },
+
   tableContainer: {
     margin: 16,
     borderWidth: 1,
@@ -389,6 +414,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     backgroundColor: 'white'
   },
+
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
@@ -398,20 +424,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
   },
+
   tableHeader: {
     backgroundColor: Colors.thirdColor,
   },
+
   tableItem: {
     flex: 1,
     fontSize: 14,
     fontFamily: fonts.regular,
     color: Colors.black,
   },
+
   headerItem: {
     color: '#000',
     fontFamily: fonts.bold,
     fontWeight: '600'
   },
+
   linkText: {
     color: Colors.primaryColor,
     textDecorationLine: 'underline',
@@ -452,21 +482,26 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingHorizontal: 8,
   },
+
   progressHeader: {
     textAlign: 'right',
     paddingRight: 8,
   },
+
   progressText: {
     marginLeft: 8,
   },
+
   actionCell: {
     width: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   actionHeader: {
     width: 40,
   },
+
   // progressBarBackground: {
   //   height: 8,
   //   backgroundColor: Colors.primaryColor + '20',
@@ -480,6 +515,7 @@ const styles = StyleSheet.create({
   //   backgroundColor: Colors.primaryColor,
   //   borderRadius: 10,
   // },
+
 
 })
 
