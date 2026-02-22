@@ -77,7 +77,18 @@ export default function Test() {
 
 
 
+
+
+
   useEffect(() => {
+    const detectDevTools = () => {
+      const threshold = 160;
+
+      if (
+        window.outerWidth - window.innerWidth > threshold ||
+        window.outerHeight - window.innerHeight > threshold
+      ) {
+        console.log("DevTools might be open");
     const detectDevTools = () => {
       const threshold = 160;
 
@@ -94,10 +105,29 @@ export default function Test() {
     };
 
     const interval = setInterval(detectDevTools, 1000);
+        submitAnswer();
+        onExit();
+      }
+    };
+
+    const interval = setInterval(detectDevTools, 1000);
 
     return () => {
       clearInterval(interval);
+      clearInterval(interval);
     };
+  }, []);
+
+
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
 
@@ -156,6 +186,7 @@ const pageLoaded = useRef(false);
   window.addEventListener('focus', handleFocus);
 
 
+
     useEffect(() => {
           if (Platform.OS == 'web') return;
 
@@ -186,6 +217,7 @@ const pageLoaded = useRef(false);
         return;
       }
 
+      const result = await api.get('/timedtest/start', {
       const result = await api.get('/timedtest/start', {
         headers: { 'X-ClassroomId': classroomId, 'X-TestId': testId }
       });
