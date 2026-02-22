@@ -14,7 +14,7 @@ import FillInBlankQuestionView from '../../../../../../src/components/testCompon
 import MacthcingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import MatchingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport'
-
+import { AppState } from "react-native";
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
 export default function Test() {
@@ -28,15 +28,21 @@ export default function Test() {
   const [timesupModalVisible, setTimesupModalVisible] = useState(false);
   const [totalMarks, setTotalMarks] = useState(0);
   const [isResultPageOpen, setResultPageOpen] = useState(false);
-  const [ reportData , setReportData ]  =  useState([])
-
+  const [reportData, setReportData] = useState([])
+  const [tabWarningVisible, setTabWarningVisible] = useState(false);
   const attemptId = useRef(null);
 
   function onExit() {
+   
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  }
+
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
     }
+
     router.replace('/student/' + classroomId + '/tests');
   }
 
@@ -67,6 +73,82 @@ export default function Test() {
     setTimesupModalVisible(true);
   }
 
+
+  // useEffect(() => {
+  //   if (Platform.OS !== "web") return;
+
+  //   const handleVisibilityChange = () => {
+  //     console.log("visibility:", document.visibilityState);
+
+
+  //     if (document.visibilityState === "blur") {
+
+  //       setTabWarningVisible(true);
+  //     }
+
+  //     if (document.visibilityState === "hidden") {
+
+  //       const controller = new AbortController();
+  //       controller.abort();
+  //       setTabWarningVisible(true);
+
+
+  //     }
+
+
+
+  //   };
+
+
+  //   document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  //   return () => {
+  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
+  //   };
+  // }, []);
+
+
+  useEffect(() => {
+  const detectDevTools = () => {
+    const threshold = 160;
+
+    if (
+      window.outerWidth - window.innerWidth > threshold ||
+      window.outerHeight - window.innerHeight > threshold
+    ) {
+      console.log("DevTools might be open");
+
+      setTabWarningVisible(true);
+      submitAnswer();
+      onExit();
+    }
+  };
+
+  const interval = setInterval(detectDevTools, 1000);
+
+  return () => {
+    clearInterval(interval);
+  };
+}, []);
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        console.log("User left fullscreen");
+        setTabWarningVisible(true);
+          submitAnswer();
+          onExit();
+      }
+    };
+
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     const handleBeforeUnload = (event) => {
@@ -76,6 +158,64 @@ export default function Test() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
+
+  useEffect(() => {
+    console.log("Effect started", Platform.OS);
+
+    const handleVisibilityChange = () => {
+      alert("Tab switch detected! Please return to the test window.");
+      console.log("visibility changed", document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onHidden = () => {
+      if (document.hidden) alert("Tab switch detected!");
+    };
+
+    const onBlur = () => {
+      setTabWarningVisible(true);
+
+    };
+
+    document.addEventListener("visibilitychange", onHidden);
+    window.addEventListener("blur", onBlur);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onHidden);
+      window.removeEventListener("blur", onBlur);
+    };
+  }, []);
+
+  useEffect(() => {
+    startNewTest()
+  }, [classroomId, testId]);
+
+
+  //   useEffect(() => {
+  //   const appState = useRef(AppState.currentState);
+
+  //   const handleAppStateChange = (nextAppState) => {
+  //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+  //       console.log("User left the app");
+  //       setTabWarningVisible(true);
+  //     }
+
+  //     appState.current = nextAppState;
+  //   };
+
+  //   const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
 
   async function startNewTest() {
     try {
@@ -118,10 +258,6 @@ export default function Test() {
   }
 
 
-  useEffect(() => {
-    startNewTest()
-  }, [classroomId, testId]);
-
   if (!data || !data.test) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -147,13 +283,6 @@ export default function Test() {
   const containerWidth = Platform.OS === 'web' ? Math.min(800, windowWidth - 40) : '100%';
 
 
-  document.addEventListener("visibilitychange", function() {
-    if (document.hidden) {
-        console.log("User switched tab");
-    } else {
-        console.log("User came back");
-    }
-});
 
   return (
     <View style={styles.screen}>
@@ -173,7 +302,7 @@ export default function Test() {
 
         <Text style={styles.quesNumber}>{currentIndex + 1} / {questions.length}</Text>
 
-        <View style={[styles.content, (currentQuestion.type != 'FILL_BLANK' && currentQuestion.type != 'MATCHING' ) ? { width: containerWidth } : { alignItems: 'center', margin: 'auto', width: containerWidth + 150 }]}>
+        <View style={[styles.content, (currentQuestion.type != 'FILL_BLANK' && currentQuestion.type != 'MATCHING') ? { width: containerWidth } : { alignItems: 'center', margin: 'auto', width: containerWidth + 150 }]}>
           {
             currentQuestion.type == 'FILL_BLANK' ? (
               <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
@@ -191,7 +320,20 @@ export default function Test() {
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => setSubmitModalVisible(false)} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
+
+      <ConfirmModal
+        message={"Tab switch detected or you left fullscreen mode!\nYour answers will be submitted and you will exit the test."}
+        confirmOnly
+        visible={tabWarningVisible}
+        onConfirm={() => {
+          setTabWarningVisible(false);
+          submitAnswer();
+          onExit();
+        }}
+      />
     </View>
+
+
   )
 }
 

@@ -40,7 +40,7 @@ export default function StudentList() {
   const closeMenu = () => setMenuVisibleFor(null);
 
   const { classroomId } = useGlobalSearchParams();
-  const {userId} = useGlobalSearchParams();
+  const { userId } = useGlobalSearchParams();
 
   async function getStudentsList() {
     try {
@@ -76,12 +76,23 @@ export default function StudentList() {
     }
   }
 
+  const handleDelete = async (userId) => {
+    setStudentsList(prev => prev.filter(s => s.user.userId !== userId));
+    await deleteStudent(userId);
+  }
+
   useEffect(() => {
     getStudentsList();
   }, [])
 
-  console.log(studentsList);
-
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      alert("You have switched tabs. Please come back to the test tab to avoid any issues.");
+      console.log("User switched tab");
+    } else {
+      console.log("User came back");
+    }
+  });
   return (
     <>
       <StatusBar translucent />
@@ -124,41 +135,41 @@ export default function StudentList() {
                           {new Date(student.user.registeredAt * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </Text>
 
-                      <View style={styles.progressCell}>
-                        <View style={styles.progressBarBackground}>
-                          <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
+                        <View style={styles.progressCell}>
+                          <View style={styles.progressBarBackground}>
+                            <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
+                          </View>
+                          <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
                         </View>
-                        <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
-                      </View>
 
-                      <View>
-                        <Menu
-                          // ensure each row shows menu only when its id matches
-                          visible={menuVisibleFor === student.user.userId}
-                          onDismiss={closeMenu}
-                          onRequestClose={closeMenu}
-                          anchorPosition='bottom'
-                          anchor={
-                            <IconButton
-                              icon="dots-vertical"
-                              onPress={() => openMenu(student.user.userId)}
-                              iconColor='black'
-                            />
-                          }
+                        <View>
+                          <Menu
+                            // ensure each row shows menu only when its id matches
+                            visible={menuVisibleFor === student.user.userId}
+                            onDismiss={closeMenu}
+                            onRequestClose={closeMenu}
+                            anchorPosition='bottom'
+                            anchor={
+                              <IconButton
+                                icon="dots-vertical"
+                                onPress={() => openMenu(student.user.userId)}
+                                iconColor='black'
+                              />
+                            }
 
                             contentStyle={styles.menuContentStyle}
                           >
 
-                          <Menu.Item title="Delete" onPress={() => { closeMenu(); setStudentToDelete(student.user.userId); setDeleteModalVisible(true); }} titleStyle={styles.menuTitleStyle} />
+                            <Menu.Item title="Delete" onPress={() => { closeMenu(); handleDelete(student.user.userId); }} titleStyle={styles.menuTitleStyle} />
 
-                        </Menu>
+                          </Menu>
+                        </View>
                       </View>
-                    </View>
 
-                  )
-                })}
-              </ScrollView>
-            </View>
+                    )
+                  })}
+                </View>
+              </View>
 
             )
           }

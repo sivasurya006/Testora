@@ -863,8 +863,8 @@ public class TestDao {
 	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
 			throws SQLException {
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
-			for (QuestionAnswer qa : questionAnswers) {
-				List<Answer> answerList = qa.getAnswer();
+			for (QuestionReportDto qa : questionAnswers) {
+				List<Answer> answerList = qa.getSelectedOptions();
 				if (answerList == null || answerList.isEmpty()) {
 					continue;
 				}
