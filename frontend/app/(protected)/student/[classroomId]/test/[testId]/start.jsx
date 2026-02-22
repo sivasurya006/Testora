@@ -14,7 +14,7 @@ import FillInBlankQuestionView from '../../../../../../src/components/testCompon
 import MacthcingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import MatchingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport'
-
+import { AppState } from "react-native";
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
 export default function Test() {
@@ -28,15 +28,21 @@ export default function Test() {
   const [timesupModalVisible, setTimesupModalVisible] = useState(false);
   const [totalMarks, setTotalMarks] = useState(0);
   const [isResultPageOpen, setResultPageOpen] = useState(false);
-  const [ reportData , setReportData ]  =  useState([])
-
+  const [reportData, setReportData] = useState([])
+  const [tabWarningVisible, setTabWarningVisible] = useState(false);
   const attemptId = useRef(null);
 
   function onExit() {
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
     }
+
     router.replace('/student/' + classroomId + '/tests');
   }
 
@@ -68,222 +74,95 @@ export default function Test() {
   }
 
 
-  useEffect(() => {
-    if (Platform.OS !== "web") return;
-
-    const handleVisibilityChange = () => {
-      console.log("visibility:", document.visibilityState);
-
-
-      if (document.visibilityState === "blur") {
-
-        setTabWarningVisible(true);
-      }
-
-      if (document.visibilityState === "hidden") {
-
-        const controller = new AbortController();
-        controller.abort();
-        setTabWarningVisible(true);
-
-
-      }
-
-
-
-    };
-
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
-
-
   // useEffect(() => {
-  // const detectDevTools = () => {
-  //   const threshold = 160;
+  //   if (Platform.OS !== "web") return;
 
-  //   if (
-  //     window.outerWidth - window.innerWidth > threshold ||
-  //     window.outerHeight - window.innerHeight > threshold
-  //   ) {
-  //     console.log("DevTools might be open");
-
-  //     setTabWarningVisible(true);
-  //     submitAnswer();
-  //     onExit();
-  //   }
-  // };
-
-  //   const interval = setInterval(detectDevTools, 1000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    startNewTest()
-  }, [classroomId, testId]);
-
-  const hiddenStart = useRef(null);  /// track the previuos value
-  const tabSwitchCount = useRef(0);
-  const violationPoints = useRef(0);
+  //   const handleVisibilityChange = () => {
+  //     console.log("visibility:", document.visibilityState);
 
 
+  //     if (document.visibilityState === "blur") {
 
-const pageLoaded = useRef(false);
-
-  const handleBlur = () => {
-    if (!pageLoaded.current) { pageLoaded.current = true; return; }
-    hiddenStart.current = Date.now();
-    tabSwitchCount.current += 1;
-    violationPoints.current += 1;
-    console.log('Window blur…');
-  };
-
-  const handleFocus = () => {
-    if (!hiddenStart.current) return;
-    const secondsAway = (Date.now() - hiddenStart.current) / 1000;
-    console.log('User returned after', secondsAway, 'seconds');
-
-    if (secondsAway > 30) {
-      violationPoints.current += 30;
-    } else if (secondsAway > 10) {
-      violationPoints.current += 5;
-    }
-    hiddenStart.current = null;
-
-    if (violationPoints.current > 10) {
-      console.log('Max tab switches reached, auto‑submitting');
-      submitAnswer(); 
-    }
-  };
-
-  window.addEventListener('blur', handleBlur);
-  window.addEventListener('focus', handleFocus);
-
-    useEffect(() => {
-          if (Platform.OS == 'web') return;
-
-    const appState = useRef(AppState.currentState);
-
-    const handleAppStateChange = (nextAppState) => {
-      if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
-        console.log("User left the app");
-        setTabWarningVisible(true);
-
-      }
-
-      appState.current = nextAppState;
-    };
-
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
-
-  useEffect(() => {
-    if (Platform.OS !== 'web') return;
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
-  useEffect(() => {
-    console.log("Effect started", Platform.OS);
-
-    const handleVisibilityChange = () => {
-      alert("Tab switch detected! Please return to the test window.");
-      console.log("visibility changed", document.hidden);
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    const onHidden = () => {
-      if (document.hidden) alert("Tab switch detected!");
-    };
-
-    const onBlur = () => {
-      setTabWarningVisible(true);
-
-    };
-
-    document.addEventListener("visibilitychange", onHidden);
-    window.addEventListener("blur", onBlur);
-
-    return () => {
-      document.removeEventListener("visibilitychange", onHidden);
-      window.removeEventListener("blur", onBlur);
-    };
-  }, []);
-
-  useEffect(() => {
-    startNewTest()
-  }, [classroomId, testId]);
-
-
-  //   useEffect(() => {
-  //   const appState = useRef(AppState.currentState);
-
-  //   const handleAppStateChange = (nextAppState) => {
-  //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
-  //       console.log("User left the app");
   //       setTabWarningVisible(true);
   //     }
 
-  //     appState.current = nextAppState;
+  //     if (document.visibilityState === "hidden") {
+
+  //       const controller = new AbortController();
+  //       controller.abort();
+  //       setTabWarningVisible(true);
+
+
+  //     }
+
+
+
   //   };
 
-  //   const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+  //   document.addEventListener("visibilitychange", handleVisibilityChange);
 
   //   return () => {
-  //     subscription.remove();
+  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
   //   };
   // }, []);
 
+
+  useEffect(() => {
+    const detectDevTools = () => {
+      const threshold = 160;
+
+      if (
+        window.outerWidth - window.innerWidth > threshold ||
+        window.outerHeight - window.innerHeight > threshold
+      ) {
+        console.log("DevTools might be open");
+
+        setTabWarningVisible(true);
+        submitAnswer();
+        onExit();
+      }
+    };
+
+    const interval = setInterval(detectDevTools, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        console.log("User left fullscreen");
+        setTabWarningVisible(true);
+        submitAnswer();
+        onExit();
+      }
+    };
+
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+
+
   async function startNewTest() {
     try {
-      console.log('Starting test with classroomId:', classroomId, 'testId:', testId);
-
-      if (!classroomId || !testId) {
-        setMessage('Missing classroomId or testId');
-        return;
-      }
-
-      const result = await api.get('/api/timedtest/start', {
+      const result = await api.get('/timedtest/start', {
         headers: { 'X-ClassroomId': classroomId, 'X-TestId': testId }
       });
       setData(result.data);
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
-
-      // Request fullscreen when test starts (web only)
-      if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch((err) => {
-          console.log('Fullscreen request failed:', err);
-        });
-      }
     } catch (err) {
-      if (err.response?.status === 403) setMessage('Maximum Attempts reached');
-      console.log('startNewTest error:', err);
-      if (err.response?.status === 403) setMessage('Maximum Attempts reached');
-      console.log('startNewTest error:', err);
+      if (err.response?.status === 403) {
+        setMessage('Maximum Attempts reached');
+      }
+      console.log(err);
     }
   }
 
@@ -314,10 +193,6 @@ const pageLoaded = useRef(false);
   }
 
 
-  useEffect(() => {
-    startNewTest()
-  }, [classroomId, testId]);
-
   if (!data || !data.test) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -342,10 +217,6 @@ const pageLoaded = useRef(false);
 
   const containerWidth = Platform.OS === 'web' ? Math.min(800, windowWidth - 40) : '100%';
 
-
-
-
-
   return (
     <View style={styles.screen}>
       <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} onExit={onExit} />
@@ -364,7 +235,7 @@ const pageLoaded = useRef(false);
 
         <Text style={styles.quesNumber}>{currentIndex + 1} / {questions.length}</Text>
 
-        <View style={[styles.content, (currentQuestion.type != 'FILL_BLANK' && currentQuestion.type != 'MATCHING' ) ? { width: containerWidth } : { alignItems: 'center', margin: 'auto', width: containerWidth + 150 }]}>
+        <View style={[styles.content, (currentQuestion.type != 'FILL_BLANK' && currentQuestion.type != 'MATCHING') ? { width: containerWidth } : { alignItems: 'center', margin: 'auto', width: containerWidth + 150 }]}>
           {
             currentQuestion.type == 'FILL_BLANK' ? (
               <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
@@ -384,15 +255,18 @@ const pageLoaded = useRef(false);
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
 
       <ConfirmModal
-        message={`Tab Switch Warning!\n\nViolation #${tabSwitchCount.current} of 10\n\nYou switched tabs or windows. Please stay on this test page to avoid penalties.\n\nContinue with caution or your test will be auto-submitted after 10 violations.`}
-        normal={true}
+        message={"Tab switch detected or you left fullscreen mode!\nYour answers will be submitted and you will exit the test."}
+        confirmOnly
         visible={tabWarningVisible}
-        onCancel={() => setTabWarningVisible(false)}
         onConfirm={() => {
           setTabWarningVisible(false);
+          submitAnswer();
+          onExit();
         }}
       />
     </View>
+
+
   )
 }
 
