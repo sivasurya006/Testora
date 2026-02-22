@@ -17,22 +17,7 @@ export default function StudentTest({ data }) {
 
     const { classroomId, testId } = useGlobalSearchParams();
 
-
-
-    const enterFullScreen = () => {
-        const element = document.documentElement; // whole page
-
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen(); // Safari
-        } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen(); // IE
-        }
-    };
-
     function handleStart() {
-        enterFullScreen();
         router.replace({
             pathname: 'student/[classroomId]/test/[testId]/start',
             params: {
@@ -97,13 +82,12 @@ export default function StudentTest({ data }) {
                         }
                         contentStyle={styles.menuContentStyle}
                     >
-
                         <Menu.Item title="Preview" onPress={() => { closeMenu(); }} titleStyle={styles.menuTitleStyle} />
                     </Menu>
                 </View>
 
                 <View style={styles.infoRow}>
-                    <View style={{ width: 280, flexDirection: 'row' }} >
+                    <View style={{width : 280, flexDirection:'row'}} >
                         <View style={styles.infoItem}>
                             <MaterialCommunityIcons name="timer-outline" size={16} />
                             <Text style={styles.infoText}>
@@ -127,15 +111,15 @@ export default function StudentTest({ data }) {
                         {data.attemptCount != 0 && remaining > 0 ? (
                             <View style={styles.btnContainer}>
                                 <Pressable style={styles.btnInsideContainer} onPress={handleStart} >
-                                    <Entypo style={{ color: 'white' }} name="controller-play" size={20} color="black" />
-                                    <AppMediumText style={{ color: 'white' }} >Reattempt</AppMediumText>
+                                    <Entypo style={{color:'white'}} name="controller-play" size={20} color="black" />
+                                    <AppMediumText style={{color:'white'}} >Reattempt</AppMediumText>
                                 </Pressable>
                             </View>
                         ) : remaining > 0 || data.maximumAttempts == 0 ? (
                             <View style={styles.btnContainer}>
                                 <Pressable style={styles.btnInsideContainer} onPress={handleStart}>
-                                    <Entypo style={{ color: 'white' }} name="controller-play" size={20} color="black" />
-                                    <AppMediumText style={{ color: 'white' }}>Start</AppMediumText>
+                                    <Entypo style={{color:'white'}}  name="controller-play" size={20} color="black" />
+                                    <AppMediumText style={{color:'white'}}>Start</AppMediumText>
                                 </Pressable>
                             </View>
                         ) : null}
@@ -223,11 +207,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 5,
         // borderWidth: 0.5,
-        borderRadius: 8,
+        borderRadius : 8,
         width: 130,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.primaryColor
+        backgroundColor : Colors.primaryColor
     },
     btnInsideContainer: {
         flexDirection: 'row',

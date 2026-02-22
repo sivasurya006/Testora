@@ -387,6 +387,7 @@ public class ClassroomDao {
 
 		try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent)) {
 //			deleteClass.setInt(1, classroomId);
+			System.out.println("user_id"  +userId);
 			deleteClass.setInt(1, userId);
 
 			if (deleteClass.executeUpdate() == 1) {

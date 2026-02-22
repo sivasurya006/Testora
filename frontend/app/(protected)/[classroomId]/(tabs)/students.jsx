@@ -19,10 +19,10 @@ export default function StudentList() {
   const [studentsList, setStudentsList] = useState([]);
   const [studentsDelete, setStudentsDelete] = useState([]);
   const [inviteStudentModalVisible, setInviteStudentModalVisible] = useState(false);
-  const [isMenuVisible, setMenuVisible] = useState(false);
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
-
+  // track which student's menu is open (userId)
+  const [menuVisibleFor, setMenuVisibleFor] = useState(null);
+  const openMenu = (studentId) => setMenuVisibleFor(studentId);
+  const closeMenu = () => setMenuVisibleFor(null);
 
   const { classroomId } = useGlobalSearchParams();
 
@@ -45,15 +45,12 @@ export default function StudentList() {
   }
 
 
-
-
   async function deleteStudent(studentId) {
     try {
-      const result = await api.delete(`/api/students/${studentId}`, {
+      const result = await api.delete(`/api/deletestudent?studentId=${studentId}`, {
         headers: { 'X-ClassroomId': classroomId }
       });
       if (result?.status == 200 && result.data) {
-        // optionally handle response
         console.log("Deleted student", result.data);
         getStudentsList();
       } else {
@@ -65,10 +62,16 @@ export default function StudentList() {
   }
 
 
-
-  const handleOptions = (student) => {
-
+  const handleDelete = async (studentId) => {
+    setStudentsList(prev => prev.filter(s => s.user.userId !== studentId));
+    try {
+      await deleteStudent(studentId);
+    } catch (err) {
+      console.log('delete failed', err);
+      getStudentsList();
+    }
   };
+
 
   useEffect(() => {
     getStudentsList();
@@ -124,24 +127,23 @@ export default function StudentList() {
                           </View>
                           <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
                         </View>
-                        <View style={styles.progressCell}>
+                        {/* <View style={styles.progressCell}>
                           <View style={styles.progressBarBackground}>
                             <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
                           </View>
                           <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
-                        </View>
+                        </View> */}
 
                         <View>
                           <Menu
-                            key={isMenuVisible ? 'open' : 'closed'}
-                            visible={isMenuVisible}
+                            visible={menuVisibleFor === student.user.userId}
                             onDismiss={closeMenu}
                             onRequestClose={closeMenu}
                             anchorPosition='bottom'
                             anchor={
                               <IconButton
                                 icon="dots-vertical"
-                                onPress={openMenu}
+                                onPress={() => openMenu(student.user.userId)}
                                 iconColor='black'
                               />
                             }
@@ -149,7 +151,7 @@ export default function StudentList() {
                             contentStyle={styles.menuContentStyle}
                           >
 
-                            <Menu.Item title="Delete" onPress={() => { closeMenu(); setDeleteModalVisible(true) }} titleStyle={styles.menuTitleStyle} />
+                            <Menu.Item title="Delete" onPress={() => { closeMenu(); handleDelete(student.user.userId); }} titleStyle={styles.menuTitleStyle} />
 
                           </Menu>
                         </View>

@@ -74,69 +74,69 @@ export default function Test() {
   }
 
 
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+
+    const handleVisibilityChange = () => {
+      console.log("visibility:", document.visibilityState);
+
+
+      if (document.visibilityState === "blur") {
+
+        setTabWarningVisible(true);
+      }
+
+      if (document.visibilityState === "hidden") {
+
+        const controller = new AbortController();
+        controller.abort();
+        setTabWarningVisible(true);
+
+
+      }
+
+
+
+    };
+
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+
   // useEffect(() => {
-  //   if (Platform.OS !== "web") return;
+  // const detectDevTools = () => {
+  //   const threshold = 160;
 
-  //   const handleVisibilityChange = () => {
-  //     console.log("visibility:", document.visibilityState);
+  //   if (
+  //     window.outerWidth - window.innerWidth > threshold ||
+  //     window.outerHeight - window.innerHeight > threshold
+  //   ) {
+  //     console.log("DevTools might be open");
 
+  //     setTabWarningVisible(true);
+  //     submitAnswer();
+  //     onExit();
+  //   }
+  // };
 
-  //     if (document.visibilityState === "blur") {
-
-  //       setTabWarningVisible(true);
-  //     }
-
-  //     if (document.visibilityState === "hidden") {
-
-  //       const controller = new AbortController();
-  //       controller.abort();
-  //       setTabWarningVisible(true);
-
-
-  //     }
-
-
-
-  //   };
-
-
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
+  //   const interval = setInterval(detectDevTools, 1000);
 
   //   return () => {
-  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
+  //     clearInterval(interval);
   //   };
   // }, []);
 
-
-  useEffect(() => {
-    const detectDevTools = () => {
-      const threshold = 160;
-
-      if (
-        window.outerWidth - window.innerWidth > threshold ||
-        window.outerHeight - window.innerHeight > threshold
-      ) {
-        console.log("DevTools might be open");
-
-        setTabWarningVisible(true);
-        submitAnswer();
-        onExit();
-      }
-    };
-
-    const interval = setInterval(detectDevTools, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
   useEffect(() => {
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
         console.log("User left fullscreen");
         setTabWarningVisible(true);
-        submitAnswer();
-        onExit();
+
       }
     };
 
@@ -149,20 +149,99 @@ export default function Test() {
   }, []);
 
 
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
+  useEffect(() => {
+    console.log("Effect started", Platform.OS);
+
+    const handleVisibilityChange = () => {
+      alert("Tab switch detected! Please return to the test window.");
+      console.log("visibility changed", document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onHidden = () => {
+      if (document.hidden) alert("Tab switch detected!");
+    };
+
+    const onBlur = () => {
+      setTabWarningVisible(true);
+
+    };
+
+    document.addEventListener("visibilitychange", onHidden);
+    window.addEventListener("blur", onBlur);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onHidden);
+      window.removeEventListener("blur", onBlur);
+    };
+  }, []);
+
+  useEffect(() => {
+    startNewTest()
+  }, [classroomId, testId]);
+
+
+  //   useEffect(() => {
+  //   const appState = useRef(AppState.currentState);
+
+  //   const handleAppStateChange = (nextAppState) => {
+  //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+  //       console.log("User left the app");
+  //       setTabWarningVisible(true);
+  //     }
+
+  //     appState.current = nextAppState;
+  //   };
+
+  //   const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
 
   async function startNewTest() {
     try {
-      const result = await api.get('/timedtest/start', {
+      console.log('Starting test with classroomId:', classroomId, 'testId:', testId);
+
+      if (!classroomId || !testId) {
+        setMessage('Missing classroomId or testId');
+        return;
+      }
+
+      const result = await api.get('/api/timedtest/start', {
         headers: { 'X-ClassroomId': classroomId, 'X-TestId': testId }
       });
       setData(result.data);
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
-    } catch (err) {
-      if (err.response?.status === 403) {
-        setMessage('Maximum Attempts reached');
+
+      // Request fullscreen when test starts (web only)
+      if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.log('Fullscreen request failed:', err);
+        });
       }
-      console.log(err);
+    } catch (err) {
+      if (err.response?.status === 403) setMessage('Maximum Attempts reached');
+      console.log('startNewTest error:', err);
     }
   }
 
@@ -216,6 +295,8 @@ export default function Test() {
   }
 
   const containerWidth = Platform.OS === 'web' ? Math.min(800, windowWidth - 40) : '100%';
+
+
 
   return (
     <View style={styles.screen}>
