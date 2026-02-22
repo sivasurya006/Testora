@@ -124,6 +124,12 @@ export default function StudentList() {
                           </View>
                           <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
                         </View>
+                        <View style={styles.progressCell}>
+                          <View style={styles.progressBarBackground}>
+                            <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
+                          </View>
+                          <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
+                        </View>
 
                         <View>
                           <Menu
