@@ -343,6 +343,25 @@
 
 		</action>
 
+		<action name="submissions"
+			class="com.testcreator.actions.TestAction" method="submittedUsers">
+			<result name="success" type="json">
+				<param name="root">submittedUsers</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+		</action>
+
+		<action name="testSubmissions"
+			class="com.testcreator.actions.TestAction"
+			method="testSubmissionDetails">
+			<result name="success" type="json">
+				<param name="root">submittedUsers</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
 	</package>
 
 	<package name="joinEndPoints" namespace="/api/join"

@@ -174,7 +174,8 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                                 params: {
                                     classroomId: data.classroomId,
                                     testId: data.testId,
-                                    title: data.testTitle
+                                    title: data.testTitle,
+                                    preview: 0,
                                 },
                             })
                         } : handlePublish}

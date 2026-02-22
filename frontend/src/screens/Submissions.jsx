@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, FlatList, StyleSheet, SectionList } from 'react-native';
+import { View, FlatList, StyleSheet, SectionList, Pressable, TouchableOpacity } from 'react-native';
 import { AppRegularText, AppMediumText, AppSemiBoldText, AppBoldText } from '../../styles/fonts';
-import { useGlobalSearchParams } from 'expo-router';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 import api from '../../util/api';
+import Colors from '../../styles/Colors';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { title } from 'node:process';
 
 export default function StudentSubmissionScreen({ mode = 'submissions' }) {
 
     const [data, setData] = useState([])
-    const { classroomId, testId } = useGlobalSearchParams()
+    const { classroomId, testId, title } = useGlobalSearchParams()
 
     useEffect(() => {
         if (mode == 'submissions') {
@@ -18,6 +21,29 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
         }
     }, [classroomId, testId])
 
+    const router = useRouter();
+
+    function handleGrade(item) {
+
+        // console.log('I am called', item)
+
+        // console.log({
+        //     classroomId,
+        //     testId: item.testId || testId,
+        //     userId: item.userId
+        // });
+
+        router.push({
+            pathname: '/[classroomId]/tests/[testId]/studentSubmissions',
+            params: {
+                classroomId,
+                testId: item.testId || testId,
+                preview: 0,
+                title: title,
+                student: item.userId,
+            }
+        })
+    }
 
 
     const getSubmissions = async () => {
@@ -101,6 +127,28 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
                 </View>
 
                 <View style={{ flexDirection: 'row' }}>
+
+                    {
+                        mode == 'submissions' ? (
+                            <TouchableOpacity style={styles.button} onPress={() => handleGrade(item)}>
+                                <FontAwesome6 name="pen-clip" size={13} color="white" />
+                                <AppRegularText style={styles.buttonText}>Grade</AppRegularText>
+                            </TouchableOpacity>
+                        ) : (
+                            (item.submittedCount > 0) ? (
+                                <TouchableOpacity style={styles.button} onPress={() => handleGrade(item)}>
+                                    <FontAwesome6 name="pen-clip" size={13} color="white" />
+                                    <AppRegularText style={styles.buttonText}>Grade</AppRegularText>
+                                </TouchableOpacity>
+                            ) : (item.attemptsCount > 0) ? (
+                                <TouchableOpacity style={styles.button} onPress={() => { }}>
+                                    <FontAwesome6 name="eye" size={13} color="white" />
+                                    <AppRegularText style={styles.buttonText}>View</AppRegularText>
+                                </TouchableOpacity>
+                            ) : null
+                        )
+                    }
+
                     <View style={styles.attemptContainer}>
                         <AppBoldText
                             style={[
@@ -173,6 +221,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
             {
                 mode == 'submissions' ? (
                     <SectionList
+                        // style={{ marginTop: 0, paddingTop: 0 }}
                         sections={sections}
                         keyExtractor={(item, index) =>
                             item.email + item.title + index
@@ -181,6 +230,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
                         renderSectionHeader={renderSectionHeader}
                         stickySectionHeadersEnabled
                         showsVerticalScrollIndicator={false}
+
                     />
                 ) : (
                     <FlatList
@@ -276,5 +326,22 @@ const styles = StyleSheet.create({
 
     grayText: {
         color: '#94A3B8',
+    },
+    button: {
+        backgroundColor: Colors.primaryColor,
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 20,
+        flexDirection: 'row',
+        gap: 10,
+        width: 80
+    },
+    buttonText: {
+        // fontSize: 16,
+        color: Colors.white,
+        // fontWeight: 'bold',
     },
 });
