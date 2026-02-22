@@ -10,6 +10,9 @@ export default function TestsLayout() {
     // const { width } = useWindowDimensions();
     // const isLargeScreen = width > 821;
     const { classroomId } = useGlobalSearchParams();
+    const params = useGlobalSearchParams();
+
+    console.log(params)
 
     return (
         <Stack
@@ -38,23 +41,33 @@ export default function TestsLayout() {
                     </Pressable>
                 ),
                 headerRight: () => (
-                    <Pressable
-                        onPress={() =>
-                            router.push({
-                                pathname: '/[classroomId]/(tabs)/test/preview',
-                                params: { classroomId }
-                            })}
-                        style={({ hovered }) => [
-                            styles.button,
-                            hovered && styles.hovered, 
-                        ]}
-                    >
-                        <Ionicons name="eye" size={20} color={Colors.white} />
-                        <AppMediumText style={styles.buttonText}>Preview</AppMediumText>
-                    </Pressable>
+                    route.params?.preview == 0 ? null : (
+                        <Pressable
+                            onPress={() =>
+                                router.push({
+                                    pathname: '/[classroomId]/(tabs)/test/preview',
+                                    params: { classroomId }
+                                })}
+                            style={({ hovered }) => [
+                                styles.button,
+                                hovered && styles.hovered,
+                            ]}
+                        >
+                            <Ionicons name="eye" size={20} color={Colors.white} />
+                            <AppMediumText style={styles.buttonText}>Preview</AppMediumText>
+                        </Pressable>
+                    )
                 ),
             })}
-        />
+        >
+
+            <Stack.Screen name='studentSubmissions' 
+                options={{
+                    headerShown : false
+                }}
+            />
+
+        </Stack>
 
     );
 
@@ -149,7 +162,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 8,
-        marginHorizontal : 20
+        marginHorizontal: 20
     },
     hovered: {
         shadowColor: Colors.shadowColor,

@@ -43,7 +43,6 @@ export default function CreatedTestList({ filter }) {
     const result = await handleCreateTest(classroomId, testName);
     console.log("result ", result)
     if (result && filter != 'published') {
-      console.log('/[classroomId]/(tabs)/tests/[testId]/edit')
       router.push({
         pathname: '/[classroomId]/(tabs)/tests/[testId]/edit',
         params: {
@@ -136,13 +135,13 @@ async function handleCreateTest(classroomId, testTitle) {
 
 
 async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
-  console.log("called")
+  console.log("called",filter)
   let status;
   switch (filter) {
     case 'published':
       status = 'published';
       break;
-    case 'draft':
+    case 'drafts':
       status = 'draft';
       break;
     default:
@@ -157,9 +156,8 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
     });
     if (result?.status == 200) {
       setCreatedTests(result.data);
-      console.log("createed tst data", result.data)
     } else {
-      console.log(`can't fetch created classrooms`);
+      console.log(`can't fetch created Tests`);
     }
   } catch (err) {
     console.log(err)
