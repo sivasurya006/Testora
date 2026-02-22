@@ -8,7 +8,7 @@ import { BooleanComponent, FillBlankComponent, MatchingComponents, MCQComponent,
 import { Checkbox } from 'react-native-paper'
 import { AppBoldText, AppMediumText, AppRegularText, AppSemiBoldText } from '../../styles/fonts'
 import { AntDesign } from '@expo/vector-icons'
-import { type } from 'node:os'
+import { platform, type } from 'node:os'
 import MatchingQuestion from './MatchingQuestion'
 
 
@@ -43,7 +43,7 @@ function getOptionIndex(type) {
 export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuestion }) {
 
     // console.log('default question ', defaultQuestion)
-
+if(platform.OS != 'web') return null;
     const [giveOptionMarks, setGiveOptionMarks] = useState(false);
     const [selectedType, setSelectedType] = useState(mode === 'editQuestion' ?
         options[getOptionIndex(defaultQuestion.type)] : options[0]);
