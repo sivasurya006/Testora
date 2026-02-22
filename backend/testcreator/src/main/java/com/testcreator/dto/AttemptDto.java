@@ -1,15 +1,15 @@
 package com.testcreator.dto;
 
-import com.testcreator.model.CorrectionStatus;
+import com.testcreator.model.AttemptStatus;
 
 public class AttemptDto {
 	
 	private Integer attemptId;
 	private Long startedAt;
-	private Long submittedOn;
+	private Long submittedAt;
 	private Long timeTaken;
 	private Integer marks;
-	private CorrectionStatus status;
+	private AttemptStatus status;
 	
 	public Integer getAttemptId() {
 		return attemptId;
@@ -23,11 +23,11 @@ public class AttemptDto {
 	public void setStartedAt(Long startedAt) {
 		this.startedAt = startedAt;
 	}
-	public Long getSubmittedOn() {
-		return submittedOn;
+	public Long getSubmittedAt() {
+		return submittedAt;
 	}
-	public void setSubmittedOn(Long submittedOn) {
-		this.submittedOn = submittedOn;
+	public void setSubmittedAt(Long submittedAt) {
+		this.submittedAt = submittedAt;
 	}
 	public Long getTimeTaken() {
 		return timeTaken;
@@ -41,10 +41,10 @@ public class AttemptDto {
 	public void setMarks(Integer marks) {
 		this.marks = marks;
 	}
-	public CorrectionStatus getStatus() {
+	public AttemptStatus getStatus() {
 		return status;
 	}
-	public void setStatus(CorrectionStatus status) {
+	public void setStatus(AttemptStatus status) {
 		this.status = status;
 	}
 	

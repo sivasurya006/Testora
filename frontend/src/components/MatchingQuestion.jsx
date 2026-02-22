@@ -5,8 +5,9 @@ import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 import { TextInput as PaperInput } from "react-native-paper";
 import { MCQComponent } from './OptionComponents';
+import { AppSemiBoldText } from '../../styles/fonts';
 
-export default function MatchingQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions }) {
+export default function MatchingQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
 
     if (mode === 'edit') {
         return (
@@ -34,6 +35,12 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
         );
     }
 
+    const selectedMap =
+        selectedOptions?.reduce((acc, item) => {
+            acc[item.optionId] = item;
+            return acc;
+        }, {}) || {};
+
     return (
         <>
             <QuestionRow
@@ -41,6 +48,9 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
                 questionNumber={questionNumber}
                 mode={mode}
             />
+
+            <AppSemiBoldText>Correct Matchings :</AppSemiBoldText>
+
             {options.map((opt, i) => {
                 return (
                     <View style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }} >
@@ -48,11 +58,45 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
                             label={`Left pair ${i + 1}`}
                             mode='outlined'
                             value={opt.optionText}
+                            editable={false}
                         />
                         <PaperInput
                             label={`right pair ${i + 1}`}
                             mode='outlined'
                             value={opt.matchingOptionProperties?.match}
+                            editable={false}
+                        />
+                    </View>
+                );
+            })}
+
+            <AppSemiBoldText>Your Matchings :</AppSemiBoldText>
+
+            {options.map((opt, i) => {
+                const selected = selectedMap[opt.optionId];
+
+                const correctMatch = opt.matchingOptionProperties?.match;
+                const userMatch = selected?.answerPropertiesDto?.match;
+
+                const isCorrect = correctMatch === userMatch;
+
+                return (
+                    <View
+                        key={opt.optionId}
+                        style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }}
+                    >
+                        <PaperInput
+                            label={`Left pair ${i + 1}`}
+                            mode="outlined"
+                            value={opt.optionText}
+                            editable={false}
+                        />
+
+                        <PaperInput
+                            label={`Right pair ${i + 1}`}
+                            mode="outlined"
+                            value={userMatch}
+                            editable={false}
                         />
                     </View>
                 );
