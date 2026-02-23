@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
+import { AppBoldText, AppSemiBoldText } from '../../styles/fonts';
 
-export default function FillInBlankQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions }) {
-    
+export default function FillInBlankQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
+
     if (!question) return null;
     const blankAnswers = {};
     options?.forEach(opt => {
@@ -71,12 +72,30 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
         );
     }
 
+
+    const writtenAnswers = selectedOptions?.length
+        ? selectedOptions
+            .map(opt => opt.answerPropertiesDto?.blankText || '----')
+            .join(' , ')
+        : '';
     return (
-        <QuestionRow
-            question={{ ...question, questionText: questionWithAnswers }}
-            questionNumber={questionNumber}
-            mode={mode}
-        />
+        <>
+            <QuestionRow
+                question={{ ...question, questionText: questionWithAnswers }}
+                questionNumber={questionNumber}
+                mode={mode}
+            />
+
+            <View style={styles.yourAnswerContainer}>
+                <AppSemiBoldText style={styles.yourAnswerLabel}>
+                    Your Answers:
+                </AppSemiBoldText>
+
+                <Text style={styles.yourAnswerText}>
+                    {writtenAnswers || 'No answer written'}
+                </Text>
+            </View>
+        </>
     );
 }
 
@@ -159,5 +178,24 @@ const styles = StyleSheet.create({
         padding: 4,
         marginHorizontal: 4,
         fontSize: 16
-    }
+    },
+    yourAnswerContainer: {
+        marginTop: 12,
+        padding: 12,
+        backgroundColor: '#F4F6F8',
+        borderRadius: 8,
+        marginHorizontal: 10,
+    },
+
+    yourAnswerLabel: {
+        fontSize: 16,
+        fontWeight: '700',
+        marginBottom: 6,
+    },
+
+    yourAnswerText: {
+        fontSize: 15,
+        color: '#333',
+        lineHeight: 22,
+    },
 });

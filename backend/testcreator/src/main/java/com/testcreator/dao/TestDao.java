@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,9 +20,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.testcreator.dto.AnswerPropertiesDto;
+import com.testcreator.dto.AttemptDto;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.UserTestAttemptDto;
 import com.testcreator.dto.student.StartTestQuestionsDto;
 import com.testcreator.dto.student.TestOptionDto;
 import com.testcreator.dto.student.TestQuestionDto;
@@ -806,8 +809,8 @@ public class TestDao {
 					if (question.getType() == QuestionType.FILL_BLANK) {
 						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
 						System.out.println(" first option JSON : " + json.toString());
-						option.setBlankOptionProperties(new BlankOptionProperties(
-								json.get("blankIdx").getAsInt(), json.get("isCaseSensitive").getAsBoolean()));
+						option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),
+								json.get("isCaseSensitive").getAsBoolean()));
 					}
 
 					if (question.getType() == QuestionType.MATCHING) {
@@ -836,21 +839,21 @@ public class TestDao {
 					answer.setAnswerId(rs.getInt("answer_id"));
 					JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
 					AnswerPropertiesDto answerPropertiesDto = new AnswerPropertiesDto();
-					
+
 					JsonElement blankIdx = json.get("blankIdx");
- 					JsonElement blankText = json.get("blankText");
- 					JsonElement match = json.get("match");
- 					
-					if(blankIdx != null &&  !blankIdx.isJsonNull()) {
+					JsonElement blankText = json.get("blankText");
+					JsonElement match = json.get("match");
+
+					if (blankIdx != null && !blankIdx.isJsonNull()) {
 						answerPropertiesDto.setBlankIdx(blankIdx.getAsInt());
 					}
-					if( blankText != null && !blankText.isJsonNull()) {
+					if (blankText != null && !blankText.isJsonNull()) {
 						answerPropertiesDto.setBlankText(blankText.getAsString());
 					}
-					if( match != null && !match.isJsonNull()) {
+					if (match != null && !match.isJsonNull()) {
 						answerPropertiesDto.setMatch(match.getAsString());
 					}
-					
+
 					answer.setAnswerPropertiesDto(answerPropertiesDto);
 					answers.add(answer);
 				}
@@ -866,9 +869,9 @@ public class TestDao {
 
 			for (QuestionReportDto questionReportDto : questionAnswers) {
 				for (Answer option : questionReportDto.getSelectedOptions()) {
-					
+
 					System.out.println(option);
-					
+
 					ps.setBoolean(1, option.getCorrect());
 					ps.setInt(2, option.getGivenMarks());
 					ps.setInt(3, option.getAnswerId());
@@ -890,10 +893,9 @@ public class TestDao {
 			return false;
 		}
 	}
-	
 
 	public List<TestDto> getDashboardAnaliticsData(int classrommId) {
-		List <TestDto> analiticsList=new ArrayList<TestDto>();
+		List<TestDto> analiticsList = new ArrayList<TestDto>();
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getDashBoardAnaliticsData)) {
 
 			try {
@@ -907,7 +909,7 @@ public class TestDao {
 					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTest"));
 					analiticscDto.setTestTitle((rs.getString("title")));
 					analiticsList.add(analiticscDto);
-					
+
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -917,13 +919,12 @@ public class TestDao {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("intestDto"+analiticsList.size());
+		System.out.println("intestDto" + analiticsList.size());
 		return analiticsList;
 	}
-	
-	
+
 	public List<TestDto> getTopPerformingData(int classrommId) {
-		List <TestDto> analiticsList=new ArrayList<TestDto>();
+		List<TestDto> analiticsList = new ArrayList<TestDto>();
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getDashBoardAnaliticsData)) {
 
 			try {
@@ -937,7 +938,7 @@ public class TestDao {
 					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTest"));
 					analiticscDto.setTestTitle((rs.getString("title")));
 					analiticsList.add(analiticscDto);
-					
+
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -947,30 +948,30 @@ public class TestDao {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("intestDto"+analiticsList.size());
+		System.out.println("intestDto" + analiticsList.size());
 		return analiticsList;
 	}
-	
-	public List<SubmissionDto> getSubmittedUsers(int classroomId) throws SQLException{
+
+	public List<SubmissionDto> getSubmittedUsers(int classroomId) throws SQLException {
 		List<SubmissionDto> submissions = new LinkedList<>();
-		try(PreparedStatement ps  = connection.prepareStatement(Queries.getSubmissionsWithAttempts)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getSubmissionsWithAttempts)) {
 			ps.setInt(1, classroomId);
-			try(ResultSet rs = ps.executeQuery()){
-				while(rs.next()) {
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
 					SubmissionDto submission = new SubmissionDto();
 					submission.setName(rs.getString("name"));
 					submission.setEmail(rs.getString("email"));
 					submission.setUserId(rs.getInt("user_id"));
 					submission.setTestId(rs.getInt("test_id"));
 					submission.setTitle(rs.getString("title"));
-					
+
 					Integer count = rs.getInt("attempts_count");
 					count = count == null ? 0 : count;
-					
+
 					submission.setAttemptsCount(count);
-					
+
 					System.out.println(submission);
-					
+
 					submissions.add(submission);
 				}
 			}
@@ -978,37 +979,80 @@ public class TestDao {
 		return submissions;
 	}
 
-	public List<SubmissionDto> getTestSubmissionDetails(int classroomId,int testId) throws SQLException{
+	public List<SubmissionDto> getTestSubmissionDetails(int classroomId, int testId) throws SQLException {
 		List<SubmissionDto> submissions = new LinkedList<>();
-		try(PreparedStatement ps  = connection.prepareStatement(Queries.getTestSubmissionDetails)){
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getTestSubmissionDetails)) {
 			ps.setInt(1, classroomId);
 			ps.setInt(2, testId);
-			
-			try(ResultSet rs = ps.executeQuery()){
-				while(rs.next()) {
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
 					SubmissionDto submission = new SubmissionDto();
 					submission.setName(rs.getString("name"));
 					submission.setEmail(rs.getString("email"));
 					submission.setUserId(rs.getInt("user_id"));
-					
+
 					Integer attemptsCount = rs.getInt("total_attempts");
 					Integer evaluatedCount = rs.getInt("evaluated");
 					Integer submittedCount = rs.getInt("submitted");
-					
-					attemptsCount = attemptsCount == null ? 0 : attemptsCount;			
-					evaluatedCount = evaluatedCount == null ? 0 : evaluatedCount; 
+
+					attemptsCount = attemptsCount == null ? 0 : attemptsCount;
+					evaluatedCount = evaluatedCount == null ? 0 : evaluatedCount;
 					submittedCount = submittedCount == null ? 0 : submittedCount;
-					
+
 					submission.setAttemptsCount(attemptsCount);
 					submission.setEvaluatedCount(evaluatedCount);
 					submission.setSubmittedCount(submittedCount);
-					
-					
+
 					submissions.add(submission);
 				}
 			}
 		}
 		return submissions;
+	}
+
+	public UserTestAttemptDto getUserTestAttempts(int testId, int userId) throws SQLException {
+		
+		UserTestAttemptDto userAttempt = new UserTestAttemptDto();
+		List<AttemptDto> attempts = new LinkedList<>();
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getUserTestAttempts)) {
+			ps.setInt(1, testId);
+			ps.setInt(2, userId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					
+					if(userAttempt.getUserName() == null){
+						userAttempt.setUserName(rs.getString("name"));
+					}
+					
+					if(userAttempt.getUserEmail() == null) {
+						userAttempt.setUserEmail(rs.getString("email"));
+					}
+					
+					AttemptDto attempt = new AttemptDto();
+
+					Long startedAt = rs.getTimestamp("started_at").toInstant().getEpochSecond();
+					Long submittedAt = rs.getTimestamp("submitted_at").toInstant().getEpochSecond();
+					Long timeTaken = null;
+
+
+					if (startedAt != null && submittedAt != null) {
+						timeTaken = submittedAt - startedAt;
+					}
+					
+					attempt.setAttemptId(rs.getInt("attempt_id"));
+					attempt.setStartedAt(startedAt);
+					attempt.setSubmittedAt(submittedAt);
+					attempt.setTimeTaken(timeTaken);
+					attempt.setMarks(rs.getInt("marks"));
+					attempt.setStatus(AttemptStatus.valueOf(rs.getString("status").toUpperCase()));
+
+					attempts.add(attempt);
+				}
+			}
+		}
+		userAttempt.setAttempts(attempts);
+		return userAttempt;
 	}
 
 }

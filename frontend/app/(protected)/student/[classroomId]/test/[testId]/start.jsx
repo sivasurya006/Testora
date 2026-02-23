@@ -201,14 +201,12 @@ export default function Test() {
         console.log("User left the app");
         setTabWarningVisible(true);
       }
-
-      appState.current = nextAppState;
     };
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const interval = setInterval(detectDevTools, 1000);
 
     return () => {
-      subscription.remove();
+      clearInterval(interval);
     };
   }, []);
 
@@ -227,13 +225,6 @@ export default function Test() {
       setData(result.data);
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
-
-      // Request fullscreen when test starts (web only)
-      if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch((err) => {
-          console.log('Fullscreen request failed:', err);
-        });
-      }
     } catch (err) {
       if (err.response?.status === 403) setMessage('Maximum Attempts reached');
       console.log('startNewTest error:', err);
@@ -332,7 +323,6 @@ export default function Test() {
         message={`Tab Switch Warning!\n\nViolation point${tabSwitchCount.current} of You switched tabs or windows. Please stay on this test page to avoid penalties.`}
         normal={true}
         visible={tabWarningVisible}
-        onCancel={() => setTabWarningVisible(false)}
         onConfirm={() => {
           setTabWarningVisible(false);
         }}

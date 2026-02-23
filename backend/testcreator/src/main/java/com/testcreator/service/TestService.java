@@ -9,6 +9,7 @@ import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dao.TestDao;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.UserTestAttemptDto;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.Context;
@@ -133,6 +134,10 @@ public class TestService {
 	
 	public List<SubmissionDto> getTestSubmissionDetails(int classroomId,int testId) throws SQLException{
 		return testDao.getTestSubmissionDetails(classroomId,testId);
+	}
+	
+	public UserTestAttemptDto  getUserTestAttempts(int testId,int userId) throws SQLException {
+		return testDao.getUserTestAttempts(testId, userId);
 	}
 	
 }

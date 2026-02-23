@@ -47,39 +47,35 @@ export default function DetailedTestReport({ isResultPageOpen, onExit, totalMark
                         <AntDesign name="close" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
-
-                <View style={{ flexDirection: 'row', gap: 50, margin: 50, flexWrap: 'wrap' }}>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.header}>
-                            <Icon name="check-circle" size={30} color="white" />
-                            <Text style={styles.headerText}>Total Marks</Text>
-                        </View>
-                        <View style={styles.resultContainer}>
-                            <Text style={styles.totalMarksText}>{totalMarks}</Text>
-                        </View>
-                        {/* <TouchableOpacity style={styles.button} onPress={onExit}>
-                            <Text style={styles.buttonText}>Back to home</Text>
-                        </TouchableOpacity> */}
+                <View style={styles.reportContainer}>
+                    <View style={styles.reportItem}>
+                        <AppSemiBoldText style={styles.reportTitle}>
+                            TOTAL MARKS
+                        </AppSemiBoldText>
+                        <AppBoldText style={styles.reportNumber}>
+                            {totalMarks}
+                        </AppBoldText>
                     </View>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.header}>
-                            <Icon name="check-circle" size={30} color="white" />
-                            <Text style={styles.headerText}>Score</Text>
-                        </View>
-                        <View style={styles.resultContainer}>
-                            <Text style={styles.totalMarksText}>{Math.floor((correctQuestions / numberOfQuestion) * 100) + "%"}</Text>
-                        </View>
-
+                    <View style={styles.line} />  
+                    <View style={styles.reportItem}>
+                        <AppSemiBoldText style={styles.reportTitle}>
+                            SCORE PERCENTAGE
+                        </AppSemiBoldText>
+                        <AppBoldText style={styles.reportNumber}>
+                            {Math.floor((correctQuestions / numberOfQuestion) * 100)}%
+                        </AppBoldText>
                     </View>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.header}>
-                            <Icon name="check-circle" size={30} color="white" />
-                            <Text style={styles.headerText}>Correct Questions</Text>
-                        </View>
-                        <View style={styles.resultContainer}>
-                            <Text style={styles.totalMarksText}>{correctQuestions}</Text>
-                        </View>
-
+                    <View style={styles.line} />
+                    <View style={styles.reportItem}>
+                        <AppSemiBoldText style={styles.reportTitle}>
+                            CORRECT QUESTIONS
+                        </AppSemiBoldText>
+                        <AppBoldText style={styles.reportNumber}>
+                            {correctQuestions}
+                            <AppSemiBoldText style={styles.lightText}>
+                                {" / "}{numberOfQuestion}
+                            </AppSemiBoldText>
+                        </AppBoldText>
                     </View>
                 </View>
                 <ScrollView style={{
@@ -92,11 +88,11 @@ export default function DetailedTestReport({ isResultPageOpen, onExit, totalMark
                     borderRadius: 8,
                     paddingVertical: 10,
                     paddingHorizontal: 20,
-                    backgroundColor: Colors.white
+                    backgroundColor: Colors.white,
                 }}>
                     {
                         questions?.map((ques, index) => (
-                            <View key={ques.id} style={{}}>
+                            <View key={ques.id} style={{margin : 20}}>
                                 {
                                     getQuestion(ques, index + 1)
                                 }
@@ -120,6 +116,7 @@ function getQuestion(item, index) {
                     question={item}
                     options={item.options}
                     questionNumber={index}
+                    selectedOptions={item.selectedOptions}
                 />
             );
         case "MCQ":
@@ -129,6 +126,7 @@ function getQuestion(item, index) {
                     question={item}
                     options={item.options}
                     questionNumber={index}
+                    selectedOptions={item.selectedOptions}
                 />
             )
         case 'BOOLEAN': {
@@ -138,6 +136,8 @@ function getQuestion(item, index) {
                     question={item}
                     options={item.options}
                     questionNumber={index}
+                    selectedOptions={item.selectedOptions}
+
                 />
             )
         }
@@ -148,6 +148,7 @@ function getQuestion(item, index) {
                     question={item}
                     options={item.options}
                     questionNumber={index}
+                    selectedOptions={item.selectedOptions}
                 />
             )
         }
@@ -158,6 +159,7 @@ function getQuestion(item, index) {
                     question={item}
                     options={item.options}
                     questionNumber={index}
+                    selectedOptions={item.selectedOptions}
                 />
             )
         }
@@ -188,14 +190,14 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: 300,
         padding: 20,
-        backgroundColor: '#009B4D',
+        // backgroundColor: '#009B4D',
         borderRadius: 10,
         alignItems: 'center',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     headerText: {
         fontSize: 20,
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     resultContainer: {
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     totalMarksText: {
         fontSize: 40,
@@ -227,11 +229,80 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
-        marginBottom: 20,
+        // marginBottom: 20,
     },
 
     closeButton: {
         position: 'absolute',
         right: 0,
+    },
+    statCard: {
+        width: 150,
+        minHeight: 100,
+        borderRadius: 12,
+        padding: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+
+    statLabel: {
+        color: 'white',
+        fontSize: 14,
+        marginTop: 8,
+        textAlign: 'center',
+    },
+
+    statValue: {
+        color: 'white',
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginTop: 5,
+        textAlign: 'center',
+    },
+    reportContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#F1F3F6',
+        borderRadius: 16,
+        paddingVertical: 25,
+        marginVertical: 20,
+        borderWidth: 1,
+        borderColor: '#E0E6ED',
+        alignItems: 'center',
+        width: '100%',
+        maxWidth: 1200,
+    },
+
+    reportItem: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    reportTitle: {
+        fontSize: 12,
+        letterSpacing: 1,
+        color: '#7B8794',
+        marginBottom: 8,
+    },
+
+    reportNumber: {
+        fontSize: 28,
+        color: '#1F2933',
+    },
+
+    lightText: {
+        fontSize: 16,
+        color: '#9AA5B1',
+    },
+
+    line: {
+        width: 1,
+        height: '60%',
+        backgroundColor: '#D6DDE6',
     },
 })
