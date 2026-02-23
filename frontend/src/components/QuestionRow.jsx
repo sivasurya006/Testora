@@ -92,16 +92,18 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
 
 
             {
-                mode == 'report' ? (
-                    <View style={{ flexDirection: 'row', marginHorizontal : 10 , gap: 10, alignItems: 'center' }} >
-                        <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                            <AppMediumText style={{ color: Colors.primaryColor }} >Marks : {question.marks}</AppMediumText>
-                        </View>
-                        <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                            <AppMediumText style={{ color: '#009B4D' }} >Scored : {question.givenMarks}</AppMediumText>
-                        </View>
-                    </View>
-                ) : (
+                mode != 'report' &&
+                //  (
+                    // <View style={{ flexDirection: 'row', marginHorizontal : 10 , gap: 10, alignItems: 'center' }} >
+                    //     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
+                    //         <AppMediumText style={{ color: Colors.primaryColor }} >Marks : {question.marks}</AppMediumText>
+                    //     </View>
+                    //     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
+                    //         <AppMediumText style={{ color: '#009B4D' }} >Scored : {question.givenMarks}</AppMediumText>
+                    //     </View>
+                    // </View>
+                // ) :
+                 (
                     <AppMediumText style={styles.questionMark}>
                         Marks {question.marks}
                     </AppMediumText>

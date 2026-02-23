@@ -87,6 +87,18 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
         setConfirmModalVisible(false)
     }
 
+    function handleSubmissions() {
+        router.push({
+            pathname: '/[classroomId]/(tabs)/tests/[testId]/submission',
+            params: {
+                classroomId: data.classroomId,
+                testId: data.testId,
+                title: data.testTitle,
+                preview: 0,
+            },
+        })
+    }
+
 
 
     return (
@@ -95,7 +107,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
             <View style={styles.header}>
                 <View style={styles.titleContainer}>
                     <Ionicons name='clipboard-outline' size={22} color={Colors.primaryColor} />
-                    <Text onPress={handleEdit} style={styles.title}>
+                    <Text onPress={isPublished ? handleSubmissions : handleEdit} style={styles.title}>
                         {data.testTitle}
                     </Text>
                     <View style={[
@@ -168,17 +180,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                         style={[
                             styles.primaryBtn,
                         ]}
-                        onPress={isPublished ? () => {
-                            router.push({
-                                pathname: '/[classroomId]/(tabs)/tests/[testId]/submission',
-                                params: {
-                                    classroomId: data.classroomId,
-                                    testId: data.testId,
-                                    title: data.testTitle,
-                                    preview: 0,
-                                },
-                            })
-                        } : handlePublish}
+                        onPress={isPublished ? handleSubmissions : handlePublish}
                     >
                         <Ionicons
                             name={data.status === 'DRAFT' ? 'cloud-upload-outline' : 'eye-outline'}

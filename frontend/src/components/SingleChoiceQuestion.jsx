@@ -5,10 +5,11 @@ import Colors from '../../styles/Colors'
 import QuestionRow from './QuestionRow';
 import MenuDropdown from './MenuDropdown';
 
-export default function SingleChoiceQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions }) {
+export default function SingleChoiceQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
     const [selected, setSelected] = useState(options.find((opt) => opt.isCorrect || null));
     const correctAnswer = options.find((opt) => opt.isCorrect)?.optionText || "Not given"
 
+    console.log("selectedOptions =================== ", selectedOptions)
 
     if (mode === 'edit') {
         return (
@@ -24,6 +25,9 @@ export default function SingleChoiceQuestion({ mode, question, options, question
         );
     }
 
+
+    const selectedId = selectedOptions?.[0]?.optionId;
+
     return (
         <>
             <QuestionRow
@@ -31,21 +35,37 @@ export default function SingleChoiceQuestion({ mode, question, options, question
                 questionNumber={questionNumber}
                 mode={mode}
             />
-             {options.map((opt, i) => {
 
-              
+            {options.map((opt, i) => {
+                const isSelected = selectedId === opt.optionId;
+                const isCorrect = opt.correct;
+
+                let status = 'unchecked';
+                let color = 'white';
+
+                if (isCorrect) {
+                    status = 'checked';
+                    color = 'green';
+                }
+
+                if (isSelected && !isCorrect) {
+                    status = 'checked';
+                    color = 'red';
+                }
+
                 return (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} key={i}>
-
+                    <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        key={i}
+                    >
                         <RadioButton
-                            status={opt.correct ? 'checked' : 'unchecked'}
-                            // onPress={() => onSelect(opt)}
-                            color={Colors.green}
+                            status={status}
+                            color={color}
                         />
-                        <Text
-                            style={[styles.optionText]}
-                        >{opt.optionText}</Text>
 
+                        <Text style={[styles.optionText]}>
+                            {opt.optionText}
+                        </Text>
                     </View>
                 );
             })}
@@ -54,29 +74,29 @@ export default function SingleChoiceQuestion({ mode, question, options, question
 }
 
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-        backgroundColor: Colors.white,
-        marginVertical: 5,
-        shadowColor: Colors.shadowColor,
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-        elevation: 6,
-        borderRadius: 8,
-        marginHorizontal: 10
-    },
-    answerRow: {
-        gap: 20,
-    },
-    correctAnswerText: {
-        color: 'green',
-        fontWeight: 600,
-        fontSize: 16
-    },
-    correctAnswerLabel: {
-        fontWeight: 600,
-        fontSize: 16
-    }
-});
+    const styles = StyleSheet.create({
+        container: {
+            padding: 16,
+            backgroundColor: Colors.white,
+            marginVertical: 5,
+            shadowColor: Colors.shadowColor,
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
+            elevation: 6,
+            borderRadius: 8,
+            marginHorizontal: 10
+        },
+        answerRow: {
+            gap: 20,
+        },
+        correctAnswerText: {
+            color: 'green',
+            fontWeight: 600,
+            fontSize: 16
+        },
+        correctAnswerLabel: {
+            fontWeight: 600,
+            fontSize: 16
+        }
+    });

@@ -4,7 +4,7 @@ import { RadioButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 
-export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions }) {
+export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions , selectedOptions }) {
 
     const [checked, setChecked] = useState([]);
 
@@ -39,6 +39,7 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
             </View>
         );
     }
+    const selectedId = selectedOptions?.[0]?.optionId;
 
     return (
         <>
@@ -47,16 +48,33 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
                 questionNumber={questionNumber}
                 mode={mode}
             />
+
             {options.map((opt, i) => {
-            
+                const isSelected = selectedId === opt.optionId;
+                const isCorrect = opt.correct;
+
+                let status = 'unchecked';
+                let color = undefined;
+
+                if (isCorrect) {
+                    status = 'checked';
+                    color = Colors.green;
+                }
+
+                if (isSelected && !isCorrect) {
+                    status = 'checked';
+                    color = 'red';
+                }
+
                 return (
                     <View
                         key={i}
-                        style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
                         <RadioButton
                             value={opt.optionText}
-                            status={opt.correct ? 'checked' : 'unchecked'}
-                            color={Colors.green}
+                            status={status}
+                            color={color}
                         />
                         <Text>{opt.optionText}</Text>
                     </View>

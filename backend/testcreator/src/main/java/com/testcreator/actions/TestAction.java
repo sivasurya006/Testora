@@ -15,6 +15,7 @@ import com.testcreator.dto.ApiError;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.SuccessDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.UserTestAttemptDto;
 import com.testcreator.exception.ClassroomNotNoundException;
 import com.testcreator.exception.QuestionNotFoundException;
 import com.testcreator.exception.UnauthorizedException;
@@ -41,6 +42,9 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	private List<TestDto> analitics;
 	
 	private List<SubmissionDto> submittedUsers;
+	
+	private UserTestAttemptDto userTestAttempt;
+	private Integer student;
 
 	public String createTest() {
 
@@ -734,6 +738,50 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
+	
+	public String userTestAttempt() {
+
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+
+		
+		if(student == null) {
+			setError(new ApiError("Invalid student Id",400));
+			return INPUT;
+		}
+		
+		
+		try {
+			TestService testService = new TestService();
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.userTestAttempt = testService.getUserTestAttempts(testId, student);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException | QuestionNotFoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+	
+	
+	
+
+	public UserTestAttemptDto getUserTestAttempt() {
+		return userTestAttempt;
+	}
 
 	public List<TestDto> getAnalitics() {
 		return analitics;
@@ -783,6 +831,14 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 	public List<SubmissionDto> getSubmittedUsers() {
 		return submittedUsers;
+	}
+
+	public Integer getStudent() {
+		return student;
+	}
+
+	public void setStudent(Integer student) {
+		this.student = student;
 	}
 	
 	
