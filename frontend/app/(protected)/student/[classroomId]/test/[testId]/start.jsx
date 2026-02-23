@@ -31,6 +31,7 @@ export default function Test() {
   const [reportData, setReportData] = useState([])
   const [tabWarningVisible, setTabWarningVisible] = useState(false);
   const attemptId = useRef(null);
+  const [ submittedConfirmModalVisible , setSubmittedConfirmModalVisible  ] = useState(false);
 
   function onExit() {
 
@@ -60,6 +61,12 @@ export default function Test() {
           'X-AttemptId': attemptId.current
         }
       });
+
+      if(result.data == null){
+        setSubmittedConfirmModalVisible(true)
+        return;
+      }
+
       setTotalMarks(result.data.totalMarks);
       setReportData(result.data);
       setSubmitModalVisible(false)
@@ -73,96 +80,138 @@ export default function Test() {
     setTimesupModalVisible(true);
   }
 
+  useEffect(() => {
+  const detectDevTools = () => {
+    const threshold = 160;
 
-  // useEffect(() => {
-  //   if (Platform.OS !== "web") return;
+    if (
+      window.outerWidth - window.innerWidth > threshold ||
+      window.outerHeight - window.innerHeight > threshold
+    ) {
+      console.log("DevTools might be open");
 
-  //   const handleVisibilityChange = () => {
-  //     console.log("visibility:", document.visibilityState);
+      setTabWarningVisible(true);
+    
+      
+    }
+  };
 
+  const interval = setInterval(detectDevTools, 1000);
 
-  //     if (document.visibilityState === "blur") {
-
-  //       setTabWarningVisible(true);
-  //     }
-
-  //     if (document.visibilityState === "hidden") {
-
-  //       const controller = new AbortController();
-  //       controller.abort();
-  //       setTabWarningVisible(true);
-
-
-  //     }
-
-
-
-  //   };
-
-
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  //   return () => {
-  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
-  //   };
-  // }, []);
-
+  return () => clearInterval(interval);
+}, []);
 
   useEffect(() => {
-    const detectDevTools = () => {
-      const threshold = 160;
-
-      if (
-        window.outerWidth - window.innerWidth > threshold ||
-        window.outerHeight - window.innerHeight > threshold
-      ) {
-        console.log("DevTools might be open");
-
-        setTabWarningVisible(true);
-        submitAnswer();
-        onExit();
-      }
+    if (Platform.OS !== 'web') return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
     };
-
-    const interval = setInterval(detectDevTools, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
+
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        console.log("User left fullscreen");
-        setTabWarningVisible(true);
-        submitAnswer();
-        onExit();
-      }
+    if (Platform.OS !== 'web') return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
     };
-
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
 
+
+  useEffect(() => {
+    startNewTest()
+  }, [classroomId, testId]);
+
+  const hiddenStart = useRef(null);  /// track the previuos
+  const tabSwitchCount = useRef(0);
+  const violationPoints = useRef(0);
+
+
+
+const pageLoaded = useRef(false);
+
+  const handleBlur = () => {
+    if (!pageLoaded.current) { pageLoaded.current = true; return; }
+    hiddenStart.current = Date.now();
+    tabSwitchCount.current += 1;
+    violationPoints.current += 1;
+    console.log('Window blur…');
+  };
+
+  const handleFocus = () => {
+    if (!hiddenStart.current) return;
+    const secondsAway = (Date.now() - hiddenStart.current) / 1000;
+    console.log('User returned after', secondsAway, 'seconds');
+
+    if (secondsAway > 30) {
+      violationPoints.current += 30;
+    } else if (secondsAway > 10) {
+      violationPoints.current += 5;
+    }
+    hiddenStart.current = null;
+
+    if (violationPoints.current > 10) {
+      console.log('Max tab switches reached, auto‑submitting');
+      submitAnswer(); 
+    }
+  };
+
+  window.addEventListener('blur', handleBlur);
+  window.addEventListener('focus', handleFocus);
+
+
+
+    useEffect(() => {
+          if (Platform.OS == 'web') return;
+
+    const appState = useRef(AppState.currentState);
+
+    const handleAppStateChange = (nextAppState) => {
+      if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+        console.log("User left the app");
+        setTabWarningVisible(true);
+      }
+
+      appState.current = nextAppState;
+    };
+
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   async function startNewTest() {
     try {
+      console.log('Starting test with classroomId:', classroomId, 'testId:', testId);
+
+      if (!classroomId || !testId) {
+        setMessage('Missing classroomId or testId');
+        return;
+      }
+
       const result = await api.get('/timedtest/start', {
         headers: { 'X-ClassroomId': classroomId, 'X-TestId': testId }
       });
       setData(result.data);
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
-    } catch (err) {
-      if (err.response?.status === 403) {
-        setMessage('Maximum Attempts reached');
+
+      // Request fullscreen when test starts (web only)
+      if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.log('Fullscreen request failed:', err);
+        });
       }
-      console.log(err);
+    } catch (err) {
+      if (err.response?.status === 403) setMessage('Maximum Attempts reached');
+      console.log('startNewTest error:', err);
     }
   }
 
@@ -217,6 +266,8 @@ export default function Test() {
 
   const containerWidth = Platform.OS === 'web' ? Math.min(800, windowWidth - 40) : '100%';
 
+
+
   return (
     <View style={styles.screen}>
       <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} onExit={onExit} />
@@ -252,16 +303,16 @@ export default function Test() {
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => setSubmitModalVisible(false)} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
+      <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => {setSubmittedConfirmModalVisible(false); onExit()}} visible={submittedConfirmModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
 
       <ConfirmModal
-        message={"Tab switch detected or you left fullscreen mode!\nYour answers will be submitted and you will exit the test."}
-        confirmOnly
+        message={`Tab Switch Warning!\n\nViolation #${tabSwitchCount.current} of 10\n\nYou switched tabs or windows. Please stay on this test page to avoid penalties.\n\nContinue with caution or your test will be auto-submitted after 10 violations.`}
+        normal={true}
         visible={tabWarningVisible}
+        onCancel={() => setTabWarningVisible(false)}
         onConfirm={() => {
           setTabWarningVisible(false);
-          submitAnswer();
-          onExit();
         }}
       />
     </View>

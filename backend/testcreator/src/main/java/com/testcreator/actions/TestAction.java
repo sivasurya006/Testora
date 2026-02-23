@@ -15,6 +15,7 @@ import com.testcreator.dto.ApiError;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.SuccessDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.TestReportDto;
 import com.testcreator.dto.UserTestAttemptDto;
 import com.testcreator.exception.ClassroomNotNoundException;
 import com.testcreator.exception.QuestionNotFoundException;
@@ -44,7 +45,10 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	private List<SubmissionDto> submittedUsers;
 	
 	private UserTestAttemptDto userTestAttempt;
+	private TestReportDto report;
+	
 	private Integer student;
+	private Integer attempt;
 
 	public String createTest() {
 
@@ -739,6 +743,44 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		return ERROR;
 	}
 	
+	public String userTestReport() {
+
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+
+		
+		if(attempt == null) {
+			setError(new ApiError("Invalid attempt Id",400));
+			return INPUT;
+		}
+		
+		
+		try {
+			TestService testService = new TestService();
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.report = testService.getTetsReport(attempt, testId);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException | QuestionNotFoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+	
+	
 	public String userTestAttempt() {
 
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
@@ -759,6 +801,44 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			context.setUserId(userId);
 			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 			this.userTestAttempt = testService.getUserTestAttempts(testId, student);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException | QuestionNotFoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+	
+	
+	public String userAnswerReport() {
+
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		int testId = (Integer) request.getAttribute("testId");
+
+		
+		if(attempt == null) {
+			setError(new ApiError("Invalid attempt Id",400));
+			return INPUT;
+		}
+		
+		
+		try {
+			TestService testService = new TestService();
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			this.report = testService.getSubmittedAnswerReport(attempt, testId);
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));
@@ -839,6 +919,14 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 	public void setStudent(Integer student) {
 		this.student = student;
+	}
+
+	public TestReportDto getReport() {
+		return report;
+	}
+
+	public void setAttempt(Integer attempt) {
+		this.attempt = attempt;
 	}
 	
 	

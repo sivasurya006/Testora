@@ -1,6 +1,6 @@
 package com.testcreator.service;
 
-import java.awt.image.renderable.ContextualRenderedImageFactory;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -9,12 +9,12 @@ import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dao.TestDao;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.TestReportDto;
 import com.testcreator.dto.UserTestAttemptDto;
 import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.model.ClassroomUser;
 import com.testcreator.model.Context;
 import com.testcreator.model.Option;
-import com.testcreator.model.OptionProperties;
 import com.testcreator.model.Permission;
 import com.testcreator.model.QuestionType;
 import com.testcreator.model.TestStatus;
@@ -138,6 +138,14 @@ public class TestService {
 	
 	public UserTestAttemptDto  getUserTestAttempts(int testId,int userId) throws SQLException {
 		return testDao.getUserTestAttempts(testId, userId);
+	}
+	
+	public TestReportDto getTetsReport(int attemptId,int testId) throws SQLException {
+		return testDao.getTestReport(attemptId, testId);
+	}
+	
+	public TestReportDto getSubmittedAnswerReport(int attemptId,int testId) throws SQLException {
+		return testDao.getSubmittedAnswerReport(attemptId, testId);
 	}
 	
 }

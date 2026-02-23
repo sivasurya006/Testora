@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import com.testcreator.dto.AttemptDto;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.TestDto;
+import com.testcreator.dto.TestReportDto;
 import com.testcreator.dto.UserTestAttemptDto;
 import com.testcreator.dto.student.StartTestQuestionsDto;
 import com.testcreator.dto.student.TestOptionDto;
@@ -691,7 +693,12 @@ public class TestDao {
 
 			boolean allInserted = Arrays.stream(results).allMatch(r -> r > 0);
 
+			System.out.println("all inserted ----------");
+			
 			if (allInserted) {
+				
+				System.out.println("updating status ----------");
+				
 				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatus)) {
 					psUpdate.setInt(1, attemptId);
 					psUpdate.executeUpdate();
@@ -1012,7 +1019,7 @@ public class TestDao {
 	}
 
 	public UserTestAttemptDto getUserTestAttempts(int testId, int userId) throws SQLException {
-		
+
 		UserTestAttemptDto userAttempt = new UserTestAttemptDto();
 		List<AttemptDto> attempts = new LinkedList<>();
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getUserTestAttempts)) {
@@ -1020,27 +1027,32 @@ public class TestDao {
 			ps.setInt(2, userId);
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					
-					if(userAttempt.getUserName() == null){
+
+					if (userAttempt.getUserName() == null) {
 						userAttempt.setUserName(rs.getString("name"));
 					}
-					
-					if(userAttempt.getUserEmail() == null) {
+
+					if (userAttempt.getUserEmail() == null) {
 						userAttempt.setUserEmail(rs.getString("email"));
 					}
-					
+
 					AttemptDto attempt = new AttemptDto();
+					
+					Integer attemptId = rs.getInt("attempt_id");
+					
+					if(attemptId == 0) {
+						continue;
+					}
 
 					Long startedAt = rs.getTimestamp("started_at").toInstant().getEpochSecond();
 					Long submittedAt = rs.getTimestamp("submitted_at").toInstant().getEpochSecond();
 					Long timeTaken = null;
 
-
 					if (startedAt != null && submittedAt != null) {
 						timeTaken = submittedAt - startedAt;
 					}
-					
-					attempt.setAttemptId(rs.getInt("attempt_id"));
+
+					attempt.setAttemptId(attemptId);
 					attempt.setStartedAt(startedAt);
 					attempt.setSubmittedAt(submittedAt);
 					attempt.setTimeTaken(timeTaken);
@@ -1054,5 +1066,228 @@ public class TestDao {
 		userAttempt.setAttempts(attempts);
 		return userAttempt;
 	}
+
+	public TestReportDto getTestReport(int attemptId, int testId) throws SQLException {
+
+		TestReportDto report = new TestReportDto();
+
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getTestReportByAttemptId)) {
+			ps.setInt(1, attemptId);
+			ps.setInt(2, testId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+
+				Map<Integer, QuestionReportDto> questions = new HashMap<>();
+
+				while (rs.next()) {
+					if (report.getTotalMarks() == null) {
+						report.setTotalMarks(rs.getInt("total_marks"));
+						
+					}
+
+					Integer questionId = rs.getInt("question_id");
+
+					QuestionReportDto question = questions.get(questionId);
+
+					if (question == null) {
+						question = new QuestionReportDto();
+
+						question.setId(rs.getInt("question_id"));
+						question.setQuestionText(rs.getString("question_text"));
+						question.setType(QuestionType.valueOf(rs.getString("type").toUpperCase()));
+						question.setMarks(rs.getInt("marks"));
+
+						questions.put(questionId, question);
+						question.setOptions(new LinkedList<Option>());
+						question.setSelectedOptions(new LinkedList<Answer>());
+						
+						if(report.getQuestions() == null) {
+							report.setQuestions(new LinkedList<QuestionReportDto>());
+						}
+						
+						report.getQuestions().add(question);
+					}
+
+					int optionId = rs.getInt("option_id");
+					boolean isCorrect = rs.getInt("is_correct") == 1;
+					int optionMark = rs.getInt("option_mark");
+					String optionText = rs.getString("option_text");
+
+					Option option = new Option();
+					option.setOptionId(optionId);
+					option.setCorrect(isCorrect);
+					option.setOptionMark(optionMark);
+					option.setOptionText(optionText);
+					question.getOptions().add(option);
+
+					if (question.getType() == QuestionType.FILL_BLANK) {
+						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+						System.out.println(" first option JSON : " + json.toString());
+						option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),
+								json.get("isCaseSensitive").getAsBoolean()));
+					}
+
+					if (question.getType() == QuestionType.MATCHING) {
+						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+						option.setMatchingOptionProperties(
+								(new MatchingOptionProperties(json.get("match").getAsString())));
+					}
+
+					Boolean selectedIsCorrect = rs.getBoolean("selected_option_is_correct");
+					int totalGivenMarks = 0;
+					
+					Answer selectedOption = new Answer();
+					if (selectedIsCorrect != null) {
+						selectedOption.setCorrect(selectedIsCorrect);
+						
+						Integer givenMark = rs.getInt("given_marks");
+						if(givenMark != null) {
+							totalGivenMarks+=givenMark;
+						}
+						
+						selectedOption.setGivenMarks(givenMark);
+						selectedOption.setOptionId(optionId);
+
+						JsonObject json = new Gson().fromJson(rs.getString("selected_properties"), JsonObject.class);
+						AnswerPropertiesDto answerPropertiesDto = new AnswerPropertiesDto();
+
+						
+						if(json == null) {
+							continue;
+						}
+						
+						JsonElement blankIdx = json.get("blankIdx");
+						JsonElement blankText = json.get("blankText");
+						JsonElement match = json.get("match");
+
+						if (blankIdx != null && !blankIdx.isJsonNull()) {
+							answerPropertiesDto.setBlankIdx(blankIdx.getAsInt());
+						}
+						if (blankText != null && !blankText.isJsonNull()) {
+							answerPropertiesDto.setBlankText(blankText.getAsString());
+						}
+						if (match != null && !match.isJsonNull()) {
+							answerPropertiesDto.setMatch(match.getAsString());
+						}
+
+						selectedOption.setAnswerPropertiesDto(answerPropertiesDto);
+					}
+					
+					question.setGivenMarks(totalGivenMarks);
+					question.getSelectedOptions().add(selectedOption);
+
+				}
+
+			}
+		}
+		return report;
+	}
+	
+	
+	
+	public TestReportDto getSubmittedAnswerReport(int attemptId, int testId) throws SQLException {
+
+		TestReportDto report = new TestReportDto();
+
+		try (PreparedStatement ps = connection.prepareStatement(Queries.getAnswersForGrade)) {
+			ps.setInt(1, attemptId);
+			ps.setInt(2, testId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+
+				Map<Integer, QuestionReportDto> questions = new HashMap<>();
+
+				while (rs.next()) {
+					Integer questionId = rs.getInt("question_id");
+
+					QuestionReportDto question = questions.get(questionId);
+
+					if (question == null) {
+						question = new QuestionReportDto();
+
+						question.setId(rs.getInt("question_id"));
+						question.setQuestionText(rs.getString("question_text"));
+						question.setType(QuestionType.valueOf(rs.getString("type").toUpperCase()));
+						question.setMarks(rs.getInt("marks"));
+
+						questions.put(questionId, question);
+						question.setOptions(new LinkedList<Option>());
+						question.setSelectedOptions(new LinkedList<Answer>());
+						
+						if(report.getQuestions() == null) {
+							report.setQuestions(new LinkedList<QuestionReportDto>());
+						}
+						
+						report.getQuestions().add(question);
+					}
+
+					int optionId = rs.getInt("option_id");
+					boolean isCorrect = rs.getInt("is_correct") == 1;
+					int optionMark = rs.getInt("option_mark");
+					String optionText = rs.getString("option_text");
+
+					Option option = new Option();
+					option.setOptionId(optionId);
+					option.setCorrect(isCorrect);
+					option.setOptionMark(optionMark);
+					option.setOptionText(optionText);
+					question.getOptions().add(option);
+
+					if (question.getType() == QuestionType.FILL_BLANK) {
+						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+						System.out.println(" first option JSON : " + json.toString());
+						option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),
+								json.get("isCaseSensitive").getAsBoolean()));
+					}
+
+					if (question.getType() == QuestionType.MATCHING) {
+						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
+						option.setMatchingOptionProperties(
+								(new MatchingOptionProperties(json.get("match").getAsString())));
+					}
+
+					
+					Integer answerId = rs.getInt("answer_id");
+					
+					Answer selectedOption = new Answer();
+					if (answerId != null) {
+						
+						selectedOption.setOptionId(optionId);
+						selectedOption.setAnswerId(answerId);
+
+						JsonObject json = new Gson().fromJson(rs.getString("selected_properties"), JsonObject.class);
+						AnswerPropertiesDto answerPropertiesDto = new AnswerPropertiesDto();
+
+						
+						if(json == null) {
+							continue;
+						}
+						
+						JsonElement blankIdx = json.get("blankIdx");
+						JsonElement blankText = json.get("blankText");
+						JsonElement match = json.get("match");
+
+						if (blankIdx != null && !blankIdx.isJsonNull()) {
+							answerPropertiesDto.setBlankIdx(blankIdx.getAsInt());
+						}
+						if (blankText != null && !blankText.isJsonNull()) {
+							answerPropertiesDto.setBlankText(blankText.getAsString());
+						}
+						if (match != null && !match.isJsonNull()) {
+							answerPropertiesDto.setMatch(match.getAsString());
+						}
+
+						selectedOption.setAnswerPropertiesDto(answerPropertiesDto);
+					}
+				
+					question.getSelectedOptions().add(selectedOption);
+
+				}
+
+			}
+		}
+		return report;
+	}
+	
 
 }

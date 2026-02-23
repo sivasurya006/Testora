@@ -134,6 +134,10 @@ public class Queries {
 
 	
 	// Attempts 
-	public static final String getUserTestAttempts = " select u.name , u.email  ,  a.* from Users u left join  Attempts a  on u.user_id = a.user_id and a.test_id = ? and a.status != 'started'  where u.user_id = ?  order by a.submitted_at desc"; 
+	public static final String getUserTestAttempts = "select u.name , u.email  ,  a.* from Users u left join  Attempts a  on u.user_id = a.user_id and a.test_id = ? and a.status != 'started'  where u.user_id = ?  order by a.submitted_at desc"; 
+	public static final String getTestReportByAttemptId = "select q.question_id , q.type, q.question_text, q.marks, o.option_id, o.option_text, o.is_correct, o.option_mark, o.properties, at.marks as total_marks,"
+			+ " an.is_correct as selected_option_is_correct, an.given_marks, an.properties as selected_properties from Questions q left join Options o on q.question_id = o.question_id "
+			+ "left join Attempts at on at.test_id = q.test_id and at.attempt_id = ? left join Answers an on at.attempt_id = an.attempt_id and an.question_id = q.question_id and an.option_id = o.option_id where q.test_id = ?;";
 	
+	public static final String getAnswersForGrade = "select q.question_id , q.type, q.question_text, q.marks, o.option_id, o.option_text, o.is_correct, o.option_mark, o.properties, an.answer_id, an.properties as selected_properties from Questions q left join Options o on q.question_id = o.question_id left join Attempts at on at.test_id = q.test_id and at.attempt_id = ? left join Answers an on at.attempt_id = an.attempt_id and an.question_id = q.question_id and an.option_id = o.option_id where q.test_id = ?";
 } 

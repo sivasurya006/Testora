@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from "react-native";
 import Colors from "../../../styles/Colors";
 import { AppRegularText, AppSemiBoldText } from "../../../styles/fonts";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { router, useGlobalSearchParams } from "expo-router";
+import DetailedTestReport from "../DetailedTestReport";
+import api from "../../../util/api";
+import GradeScreen from "../../screens/GradeScreen";
 
 function getDateTime(seconds) {
     const date = new Date(seconds * 1000);
@@ -12,21 +16,95 @@ function getDateTime(seconds) {
 }
 
 
-function getTime(seconds){
-    const hours = Math.floor(seconds/3600);
-    const min = Math.floor((seconds%3600) / 60 );
-    const sec = Math.floor(seconds%60);
 
-    return String(hours).padStart(2,'0')+":"+String(min).padStart(2,'0')+":"+String(sec).padStart(2,'0');
+function getTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const min = Math.floor((seconds % 3600) / 60);
+    const sec = Math.floor(seconds % 60);
+
+    return String(hours).padStart(2, '0') + ":" + String(min).padStart(2, '0') + ":" + String(sec).padStart(2, '0');
 }
+
+async function getTestReport(classroomId, testId, attemptId) {
+    try {
+        const result = await api.get(`/api/tests/testReport?attempt=${attemptId}`, {
+            headers: {
+                'X-ClassroomId': classroomId,
+                'X-TestId': testId
+            }
+        });
+
+        if (result.status == 200 && result.data) {
+            return result.data
+        }
+
+    } catch (err) {
+        console.log("can't get report", err.response?.data)
+    }
+
+    return [];
+}
+
+
+async function getAnswerSheet(classroomId, testId, attemptId) {
+    try {
+        const result = await api.get(`/api/tests/answerSheet?attempt=${attemptId}`, {
+            headers: {
+                'X-ClassroomId': classroomId,
+                'X-TestId': testId
+            }
+        });
+
+        if (result.status == 200 && result.data) {
+            return result.data
+        }
+
+    } catch (err) {
+        console.log("can't get report", err.response?.data)
+    }
+
+    return [];
+}
+
 
 export default function AttemptCard({ attempt }) {
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
 
-    const { formattedDate : startedDate, formattedTime : startedTime } = getDateTime(attempt.startedAt);
-    const { formattedDate : submittedDate, formattedTime : submittedTime } = getDateTime(attempt.submittedAt)
+    const { classroomId , testId } = useGlobalSearchParams();
+
+    const { formattedDate: startedDate, formattedTime: startedTime } = getDateTime(attempt.startedAt);
+    const { formattedDate: submittedDate, formattedTime: submittedTime } = getDateTime(attempt.submittedAt)
     const timeTaken = getTime(attempt.timeTaken)
+    const [isResultPageOpen, setResultPageOpen] = useState(false);
+    const [reportData, setReportData] = useState([]);
+    const [answerSheet , setAnswerSheet] = useState([]);
+    const [ isGradeScreenOpen , setGradeScreenOpen ] = useState(false);
+
+    function onExit() {
+        if (isResultPageOpen) {
+            setResultPageOpen(false);
+        }
+        if(isGradeScreenOpen){
+            setGradeScreenOpen(false)
+        }
+    }
+
+    async function handleShowReport(attemptId) {
+        const report = await getTestReport(classroomId, testId, attemptId);
+        setReportData(report);
+        setResultPageOpen(true)
+    }
+
+
+
+    async function handleGrade(attemptId) {
+        const answer = await getAnswerSheet(classroomId, testId, attemptId);
+        setAnswerSheet(answer);
+        setGradeScreenOpen(true)
+    }
+
+
 
 
     return (
@@ -67,7 +145,7 @@ export default function AttemptCard({ attempt }) {
                         isLargeScreen && styles.largeBottomRow
                     ]}
                 >
-                    <View style={!isLargeScreen ? { flexDirection: 'row', justifyContent: 'space-around'  } : { flexDirection: 'row', gap: 50 }} >
+                    <View style={!isLargeScreen ? { flexDirection: 'row', justifyContent: 'space-around' } : { flexDirection: 'row', gap: 50 }} >
                         <View style={styles.infoBlock}>
                             <AppRegularText style={styles.label}>Time taken</AppRegularText>
                             <AppRegularText style={styles.value}>{timeTaken}</AppRegularText>
@@ -79,11 +157,23 @@ export default function AttemptCard({ attempt }) {
                         </View>
 
                     </View>
-                    <TouchableOpacity style={styles.button}>
-                        <AppSemiBoldText style={styles.buttonText}>{ attempt.status == 'EVALUATED' ? "View Report" : "Grade" }</AppSemiBoldText>
+                    <TouchableOpacity style={styles.button}
+
+                        onPress={() => {
+                            if (attempt.status == 'EVALUATED') {
+                                handleShowReport(attempt.attemptId)
+                            }else{
+                                handleGrade(attempt.attemptId);
+                            }
+                        }}
+
+                    >
+                        <AppSemiBoldText style={styles.buttonText}>{attempt.status == 'EVALUATED' ? "View Report" : "Grade"}</AppSemiBoldText>
                     </TouchableOpacity>
                 </View>
             </View>
+            <DetailedTestReport totalMarks={reportData.totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
+            <GradeScreen questions={answerSheet.questions} onExit={onExit}  isGradeScreenOpen={isGradeScreenOpen} />
         </View>
     );
 };
@@ -201,12 +291,12 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         // paddingHorizontal: 18,
         borderRadius: 8,
-        width : 120
+        width: 120
     },
 
     buttonText: {
         color: Colors.white,
         // fontWeight: "600",
-        textAlign : 'center',
+        textAlign: 'center',
     },
 });

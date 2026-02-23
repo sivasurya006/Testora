@@ -364,10 +364,29 @@
 		</action>
 
 		<action name="testAttempt"
-			class="com.testcreator.actions.TestAction"
-			method="userTestAttempt">
+			class="com.testcreator.actions.TestAction" method="userTestAttempt">
 			<result name="success" type="json">
 				<param name="root">userTestAttempt</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
+		<action name="testReport"
+			class="com.testcreator.actions.TestAction" method="userTestReport">
+			<result name="success" type="json">
+				<param name="root">report</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
+		<action name="answerSheet"
+			class="com.testcreator.actions.TestAction" method="userAnswerReport">
+			<result name="success" type="json">
+				<param name="root">report</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="testActionStack" />
