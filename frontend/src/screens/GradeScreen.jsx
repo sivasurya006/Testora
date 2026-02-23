@@ -1,68 +1,38 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, useWindowDimensions } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
-import Colors from '../../styles/Colors'
-import { AppBoldText, AppSemiBoldText, fonts } from '../../styles/fonts'
-import { Icon } from 'react-native-paper'
+import { Modal } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import RenderHTML from 'react-native-render-html'
-import FillInBlankQuestionView from './testComponents/FillInBlankQuestionView'
-import MatchingQuestionView from './testComponents/MatchingQuestionView'
-import QuestionView from './testComponents/QuestionView'
-import McqQuestion from './McqQuestion'
-import SingleChoiceQuestion from './SingleChoiceQuestion'
-import FillInBlankQuestion from './FillIntheBlankQuestion'
-import MatchingQuestion from './MatchingQuestion'
-import BooleanQuestion from './BooleanQuestion';
+import FillInBlankQuestion from '../components/FillIntheBlankQuestion'
+import MatchingQuestion from '../components/MatchingQuestion'
+import McqQuestion from '../components/McqQuestion'
+import SingleChoiceQuestion from '../components/SingleChoiceQuestion'
+import BooleanQuestion from '../components/BooleanQuestion'
+import Colors from '../../styles/Colors'
+import { AppBoldText } from '../../styles/fonts'
 import { AntDesign } from '@expo/vector-icons'
 
-export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false }) {
+export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
 
+    if(!isGradeScreenOpen) return
 
-    const numberOfQuestion = questions?.length;
-    const correctQuestions = questions?.reduce((sum, question) => question.givenMarks > 0 ? sum + 1 : sum, 0) || 0;
+    console.log('Grade Screen questions ', questions)
 
-    function renderComponent() {
-        return (
+    return (
+        // <Modal
+        //     visible={isGradeScreenOpen}
+        //     animationType="fade"
+        //     onRequestClose={onExit}
+        //     onDismiss={onExit}
+        // >
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <AppBoldText style={styles.topHeaderText}>
-                        Test Report
+                        Answer Sheet
                     </AppBoldText>
 
                     <TouchableOpacity onPress={onExit} style={styles.closeButton}>
                         <AntDesign name="close" size={24} color="black" />
                     </TouchableOpacity>
-                </View>
-                <View style={styles.reportContainer}>
-                    <View style={styles.reportItem}>
-                        <AppSemiBoldText style={styles.reportTitle}>
-                            TOTAL MARKS
-                        </AppSemiBoldText>
-                        <AppBoldText style={styles.reportNumber}>
-                            {totalMarks}
-                        </AppBoldText>
-                    </View>
-                    <View style={styles.line} />
-                    <View style={styles.reportItem}>
-                        <AppSemiBoldText style={styles.reportTitle}>
-                            SCORE PERCENTAGE
-                        </AppSemiBoldText>
-                        <AppBoldText style={styles.reportNumber}>
-                            {Math.floor((correctQuestions / numberOfQuestion) * 100)}%
-                        </AppBoldText>
-                    </View>
-                    <View style={styles.line} />
-                    <View style={styles.reportItem}>
-                        <AppSemiBoldText style={styles.reportTitle}>
-                            CORRECT QUESTIONS
-                        </AppSemiBoldText>
-                        <AppBoldText style={styles.reportNumber}>
-                            {correctQuestions}
-                            <AppSemiBoldText style={styles.lightText}>
-                                {" / "}{numberOfQuestion}
-                            </AppSemiBoldText>
-                        </AppBoldText>
-                    </View>
                 </View>
                 <ScrollView style={{
                     flex: 1,
@@ -86,30 +56,11 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
                         ))
                     }
                 </ScrollView>
-
             </View>
-        )
-    }
-
-    console.log("Total ", questions)
-
-    const { width } = useWindowDimensions();
-
-    return (
-        noModal ? (
-            renderComponent()
-        ) : (
-            <Modal Modal
-                visible={isGradeScreenOpen}
-                animationType="fade"
-                onRequestClose={onExit}
-                onDismiss={onExit}
-            >
-                {renderComponent}
-            </Modal >
-        )
+        // </Modal >
     )
 }
+
 
 function getQuestion(item, index) {
     switch (item.type) {
@@ -233,7 +184,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
-        // marginBottom: 20,
+        marginBottom: 20,
     },
 
     closeButton: {

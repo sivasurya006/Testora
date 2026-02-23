@@ -33,7 +33,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
         // });
 
         router.push({
-            pathname: '/[classroomId]/tests/[testId]/studentSubmissions',
+            pathname: '/[classroomId]/test/[testId]/studentSubmissions',
             params: {
                 classroomId,
                 testId: item.testId || testId,

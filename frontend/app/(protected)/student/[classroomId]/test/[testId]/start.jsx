@@ -68,6 +68,10 @@ export default function Test() {
         setSubmittedConfirmModalVisible(true)
         return;
       }
+      if (result.data == null) {
+        setSubmittedConfirmModalVisible(true)
+        return;
+      }
       setTotalMarks(result.data.totalMarks);
       setReportData(result.data);
       setSubmitModalVisible(false)
@@ -76,6 +80,9 @@ export default function Test() {
       console.log(err);
     }
   }
+
+
+
 
   function onTimeEnd() {
     setTimesupModalVisible(true);
@@ -92,8 +99,8 @@ export default function Test() {
     }
   }
   useEffect(() => {
-    const detectDevTools = () => {
-      const threshold = 160;
+  const detectDevTools = () => {
+    const threshold = 160;
 
       if (
         window.outerWidth - window.innerWidth > threshold ||
@@ -263,6 +270,8 @@ export default function Test() {
 
 
 
+  useEffect(() => {
+    if (Platform.OS == 'web') return;
   useEffect(() => {
     if (Platform.OS == 'web') return;
 
@@ -438,6 +447,7 @@ export default function Test() {
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
+      <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
       <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
@@ -472,6 +482,7 @@ export default function Test() {
           requestFullscreenMode();
         }}
       />
+
 
     </View>
 

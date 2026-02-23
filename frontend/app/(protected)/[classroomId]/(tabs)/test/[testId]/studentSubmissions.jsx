@@ -7,6 +7,8 @@ import api from '../../../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import AttemptCard from '../../../../../../src/components/submissions/AttemptCard';
 import { FlatList } from 'react-native-gesture-handler';
+import GradeScreen from '../../../../../../src/screens/GradeScreen';
+import DetailedTestReport from '../../../../../../src/components/DetailedTestReport';
 
 export default function StudentSubmissions() {
 
@@ -21,10 +23,26 @@ export default function StudentSubmissions() {
   const [selected, setSelected] = useState('SUBMITTED');
 
   const [performanceChartData, setPerformanceChartData] = useState({});
+  const [isGradeScreenOpen, setGradeScreenOpen] = useState(false);
+  const [answerSheet, setAnswerSheet] = useState([]);
+  const [isResultPageOpen, setResultPageOpen] = useState(false);
+  const [reportData, setReportData] = useState([]);
 
   console.log(params)
 
+  const { classroomId, testId } = useGlobalSearchParams();
 
+  async function handleGrade(attemptId) {
+    const answer = await getAnswerSheet(classroomId, testId, attemptId);
+    setAnswerSheet(answer);
+    setGradeScreenOpen(true)
+  }
+
+  async function handleShowReport(attemptId) {
+    const report = await getTestReport(classroomId, testId, attemptId);
+    setReportData(report);
+    setResultPageOpen(true)
+  }
 
   useEffect(() => {
     const get = async () => {
@@ -73,7 +91,7 @@ export default function StudentSubmissions() {
       // if(labels.length > 24) break;
     }
 
-    setPerformanceChartData({ labels : labels.reverse(), markData : markData })
+    setPerformanceChartData({ labels: labels.reverse(), markData: markData })
 
   }, [data])
 
@@ -87,6 +105,25 @@ export default function StudentSubmissions() {
   }
 
 
+  function onExit() {
+    if (isGradeScreenOpen) {
+      setGradeScreenOpen(false)
+    }
+    if (isResultPageOpen) {
+      setResultPageOpen(false);
+    }
+  }
+
+
+  if (isGradeScreenOpen) {
+    return <GradeScreen questions={answerSheet.questions} onExit={onExit} isGradeScreenOpen={isGradeScreenOpen} />
+  }
+
+  if (isResultPageOpen) {
+    return <DetailedTestReport noModal={true}  totalMarks={reportData.totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
+
+  }
+
   // console.log(data)
 
   return (
@@ -98,7 +135,7 @@ export default function StudentSubmissions() {
         data={filteredData}
         keyExtractor={item => item.attemptId + ""}
         renderItem={({ item }) => (
-          <AttemptCard attempt={item} />
+          <AttemptCard attempt={item} setFilteredData={setFilteredData} handleGrade={handleGrade} handleShowReport={handleShowReport} />
         )}
       />
     </View>
@@ -133,3 +170,46 @@ async function getStudentAttempts(classroomId, testId, studentId) {
 
   return [];
 }
+
+
+
+async function getAnswerSheet(classroomId, testId, attemptId) {
+  try {
+    const result = await api.get(`/api/tests/answerSheet?attempt=${attemptId}`, {
+      headers: {
+        'X-ClassroomId': classroomId,
+        'X-TestId': testId
+      }
+    });
+
+    if (result.status == 200 && result.data) {
+      return result.data
+    }
+
+  } catch (err) {
+    console.log("can't get report", err.response?.data)
+  }
+
+  return [];
+}
+
+async function getTestReport(classroomId, testId, attemptId) {
+    try {
+        const result = await api.get(`/api/tests/testReport?attempt=${attemptId}`, {
+            headers: {
+                'X-ClassroomId': classroomId,
+                'X-TestId': testId
+            }
+        });
+
+        if (result.status == 200 && result.data) {
+            return result.data
+        }
+
+    } catch (err) {
+        console.log("can't get report", err.response?.data)
+    }
+
+    return [];
+}
+

@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from "react-native";
 import Colors from "../../../styles/Colors";
 import { AppRegularText, AppSemiBoldText } from "../../../styles/fonts";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { router, useGlobalSearchParams } from "expo-router";
+import DetailedTestReport from "../DetailedTestReport";
+import api from "../../../util/api";
+import GradeScreen from "../../screens/GradeScreen";
 
 function getDateTime(seconds) {
     const date = new Date(seconds * 1000);
@@ -12,23 +16,27 @@ function getDateTime(seconds) {
 }
 
 
-function getTime(seconds){
-    const hours = Math.floor(seconds/3600);
-    const min = Math.floor((seconds%3600) / 60 );
-    const sec = Math.floor(seconds%60);
 
-    return String(hours).padStart(2,'0')+":"+String(min).padStart(2,'0')+":"+String(sec).padStart(2,'0');
+function getTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const min = Math.floor((seconds % 3600) / 60);
+    const sec = Math.floor(seconds % 60);
+
+    return String(hours).padStart(2, '0') + ":" + String(min).padStart(2, '0') + ":" + String(sec).padStart(2, '0');
 }
 
-export default function AttemptCard({ attempt }) {
+
+
+
+export default function AttemptCard({ attempt  , handleGrade , handleShowReport }) {
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
 
-    const { formattedDate : startedDate, formattedTime : startedTime } = getDateTime(attempt.startedAt);
-    const { formattedDate : submittedDate, formattedTime : submittedTime } = getDateTime(attempt.submittedAt)
-    const timeTaken = getTime(attempt.timeTaken)
+    const { classroomId, testId } = useGlobalSearchParams();
 
-
+    const { formattedDate: startedDate, formattedTime: startedTime } = getDateTime(attempt.startedAt);
+    const { formattedDate: submittedDate, formattedTime: submittedTime } = getDateTime(attempt.submittedAt)
+    const timeTaken = getTime(attempt.timeTaken)  
     return (
         <View style={styles.card}>
             <View
@@ -67,7 +75,7 @@ export default function AttemptCard({ attempt }) {
                         isLargeScreen && styles.largeBottomRow
                     ]}
                 >
-                    <View style={!isLargeScreen ? { flexDirection: 'row', justifyContent: 'space-around'  } : { flexDirection: 'row', gap: 50 }} >
+                    <View style={!isLargeScreen ? { flexDirection: 'row', justifyContent: 'space-around' } : { flexDirection: 'row', gap: 50 }} >
                         <View style={styles.infoBlock}>
                             <AppRegularText style={styles.label}>Time taken</AppRegularText>
                             <AppRegularText style={styles.value}>{timeTaken}</AppRegularText>
@@ -79,8 +87,18 @@ export default function AttemptCard({ attempt }) {
                         </View>
 
                     </View>
-                    <TouchableOpacity style={styles.button}>
-                        <AppSemiBoldText style={styles.buttonText}>{ attempt.status == 'EVALUATED' ? "View Report" : "Grade" }</AppSemiBoldText>
+                    <TouchableOpacity style={styles.button}
+
+                        onPress={() => {
+                            if (attempt.status == 'EVALUATED') {
+                                handleShowReport(attempt.attemptId)
+                            } else {
+                                handleGrade(attempt.attemptId);
+                            }
+                        }}
+
+                    >
+                        <AppSemiBoldText style={styles.buttonText}>{attempt.status == 'EVALUATED' ? "View Report" : "Grade"}</AppSemiBoldText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -201,12 +219,12 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         // paddingHorizontal: 18,
         borderRadius: 8,
-        width : 120
+        width: 120
     },
 
     buttonText: {
         color: Colors.white,
         // fontWeight: "600",
-        textAlign : 'center',
+        textAlign: 'center',
     },
 });

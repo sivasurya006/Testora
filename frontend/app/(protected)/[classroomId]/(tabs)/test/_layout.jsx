@@ -1,10 +1,10 @@
 import { Stack, Tabs, router, useGlobalSearchParams } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { Pressable, StyleSheet, useWindowDimensions } from 'react-native';
-import Colors from '../../../../../../styles/Colors';
+import Colors from '../../../../../styles/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { AppMediumText, fonts } from '../../../../../../styles/fonts';
+import { AppMediumText, fonts } from '../../../../../styles/fonts';
 
 export default function TestsLayout() {
     // const { width } = useWindowDimensions();
@@ -61,9 +61,15 @@ export default function TestsLayout() {
             })}
         >
 
-            <Stack.Screen name='studentSubmissions' 
+            <Stack.Screen name='[testId]/studentSubmissions'
                 options={{
-                    headerShown : false
+                    headerShown: false
+                }}
+            />
+
+            <Stack.Screen name='index'
+                options={{
+                    headerShown: false
                 }}
             />
 

@@ -4,7 +4,7 @@ import { RadioButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 
-export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions , selectedOptions }) {
+export default function BooleanQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions , selectedOptions }) {
 
     const [checked, setChecked] = useState([]);
 
