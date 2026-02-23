@@ -5,12 +5,11 @@ import { useGlobalSearchParams, useRouter } from 'expo-router';
 import api from '../../util/api';
 import Colors from '../../styles/Colors';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { title } from 'node:process';
 
 export default function StudentSubmissionScreen({ mode = 'submissions' }) {
 
     const [data, setData] = useState([])
-    const { classroomId, testId, title } = useGlobalSearchParams()
+    const { classroomId, testId } = useGlobalSearchParams()
 
     useEffect(() => {
         if (mode == 'submissions') {
@@ -39,7 +38,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
                 classroomId,
                 testId: item.testId || testId,
                 preview: 0,
-                title: title,
+                title: item.title,
                 student: item.userId,
             }
         })
@@ -141,9 +140,9 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
                                     <AppRegularText style={styles.buttonText}>Grade</AppRegularText>
                                 </TouchableOpacity>
                             ) : (item.attemptsCount > 0) ? (
-                                <TouchableOpacity style={styles.button} onPress={() => { }}>
+                                <TouchableOpacity style={styles.button} onPress={() => handleGrade(item)}>
                                     <FontAwesome6 name="eye" size={13} color="white" />
-                                    <AppRegularText style={styles.buttonText}>View</AppRegularText>
+                                    <AppRegularText style={styles.buttonText} >View</AppRegularText>
                                 </TouchableOpacity>
                             ) : null
                         )

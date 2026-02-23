@@ -4,7 +4,7 @@ import { Checkbox, IconButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 
-export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions }) {
+export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
 
     const [checked, setChecked] = useState([]);
 
@@ -47,6 +47,7 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
             </View>
         );
     }
+    const selectedIds = selectedOptions?.map(o => o.optionId) || [];
 
     return (
         <>
@@ -55,19 +56,34 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
                 questionNumber={questionNumber}
                 mode={mode}
             />
+
             <View style={styles.optionsList}>
                 {question.options.map((opt, i) => {
-                    // const isChecked = checked.includes(opt);
+                    const isSelected = selectedIds.includes(opt.optionId);
+                    const isCorrect = opt.correct;
+
+                    let status = 'unchecked';
+                    let color = undefined;
+
+                    if (isCorrect) {
+                        status = 'checked';
+                        color = Colors.green; 
+                    }
+
+                    if (isSelected && !isCorrect) {
+                        status = 'checked';
+                        color = 'red';
+                    }
+
                     return (
                         <View style={styles.optionContainer} key={i}>
                             <Checkbox
-                                status={opt.correct ? 'checked' : 'unchecked'}
-                                // onPress={() => setChecked(toggle(opt))}
-                                color='#009B4D'
+                                status={status}
+                                color={color}
                             />
-                            <Text
-                                style={[styles.optionsText]}
-                            >{opt.optionText}</Text>
+                            <Text style={[styles.optionsText]}>
+                                {opt.optionText}
+                            </Text>
                         </View>
                     );
                 })}

@@ -147,13 +147,14 @@
 		</action>
 
 		<action name="deletestudent"
-			class="com.testcreator.actions.ClassroomAction" method="deleteStudent">
+			class="com.testcreator.actions.ClassroomAction"
+			method="deleteStudent">
 			<result name="success" type="json">
 				<param name="root">successDto</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="apiStack" />
-			<interceptor-ref name="classroomIdInterceptor"/>
+			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
 
 		<action name="inviteLink"
@@ -356,6 +357,17 @@
 			method="testSubmissionDetails">
 			<result name="success" type="json">
 				<param name="root">submittedUsers</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
+
+		<action name="testAttempt"
+			class="com.testcreator.actions.TestAction"
+			method="userTestAttempt">
+			<result name="success" type="json">
+				<param name="root">userTestAttempt</param>
 				<param name="excludeNullProperties">true</param>
 			</result>
 			<interceptor-ref name="testActionStack" />

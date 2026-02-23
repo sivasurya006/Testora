@@ -166,14 +166,12 @@ const pageLoaded = useRef(false);
         console.log("User left the app");
         setTabWarningVisible(true);
       }
-
-      appState.current = nextAppState;
     };
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const interval = setInterval(detectDevTools, 1000);
 
     return () => {
-      subscription.remove();
+      clearInterval(interval);
     };
   }, []);
 
@@ -296,12 +294,13 @@ const pageLoaded = useRef(false);
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
 
       <ConfirmModal
-        message={`Tab Switch Warning!\n\nViolation #${tabSwitchCount.current} of 10\n\nYou switched tabs or windows. Please stay on this test page to avoid penalties.\n\nContinue with caution or your test will be auto-submitted after 10 violations.`}
-        normal={true}
+        message={"Tab switch detected or you left fullscreen mode!\nYour answers will be submitted and you will exit the test."}
+        confirmOnly
         visible={tabWarningVisible}
-        onCancel={() => setTabWarningVisible(false)}
         onConfirm={() => {
           setTabWarningVisible(false);
+          submitAnswer();
+          onExit();
         }}
       />
     </View>

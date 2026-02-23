@@ -131,5 +131,9 @@ public class Queries {
 	public static final String getSubmissionsWithAttempts = "select a.user_id , u.name , u.email , a.test_id , t.title , count(a.attempt_id) as attempts_count  from Users u join Classroom_Users cu on u.user_id = cu.user_id join Tests t on t.classroom_id = cu.classroom_id join Attempts a on a.test_id  = t.test_id and a.user_id = cu.user_id and a.status = 'submitted' where cu.classroom_id = ?   group by  u.name , u.email , t.title , a.test_id , a.user_id order by attempts_count desc";
 	public static final String getTestSubmissionDetails = "select u.user_id  , u.name , u.email , count(a.attempt_id) as total_attempts , sum(a.status = 'evaluated') as evaluated , sum(a.status = 'submitted') as submitted  from Users u join Classroom_Users cu on u.user_id = cu.user_id join Tests t on t.classroom_id = cu.classroom_id"
 			+ "  left join Attempts a on a.user_id = cu.user_id and a.test_id = t.test_id where cu.classroom_id = ? and t.test_id = ? group by u.name , u.user_id , u.email order by total_attempts desc";
+
+	
+	// Attempts 
+	public static final String getUserTestAttempts = " select u.name , u.email  ,  a.* from Users u left join  Attempts a  on u.user_id = a.user_id and a.test_id = ? and a.status != 'started'  where u.user_id = ?  order by a.submitted_at desc"; 
 	
 } 
