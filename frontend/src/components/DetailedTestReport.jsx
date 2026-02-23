@@ -15,7 +15,7 @@ import MatchingQuestion from './MatchingQuestion'
 import BooleanQuestion from './BooleanQuestion';
 import { AntDesign } from '@expo/vector-icons'
 
-export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false }) {
+export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false , isResultPageOpen }) {
 
 
     const numberOfQuestion = questions?.length;
@@ -100,12 +100,12 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
             renderComponent()
         ) : (
             <Modal Modal
-                visible={isGradeScreenOpen}
+                visible={isGradeScreenOpen || isResultPageOpen}
                 animationType="fade"
                 onRequestClose={onExit}
                 onDismiss={onExit}
             >
-                {renderComponent}
+                {renderComponent()}
             </Modal >
         )
     )
