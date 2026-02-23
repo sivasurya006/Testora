@@ -1,5 +1,5 @@
 import React from "react";
-import { TextInput, Text, View } from "react-native";
+import { TextInput, Text, View, Platform } from "react-native";
 import { fonts } from "../../../styles/fonts";
 // import { View } from "react-native-web";
 import { useEffect } from "react";
