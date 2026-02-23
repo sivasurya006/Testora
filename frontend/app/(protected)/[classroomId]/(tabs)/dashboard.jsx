@@ -30,7 +30,8 @@ export default function Dashboard() {
   const [lineData, setLineData] = useState({
     labels: [],
     datasets: [{ data: [] }],
-  })
+  });
+  
   const [tests, setTests] = useState([]);
 
   const { width } = useWindowDimensions();
@@ -176,6 +177,7 @@ export default function Dashboard() {
       name: "Priya",
       score: 92,
     },
+
     {
       id: 4,
       name: "Karthik",
