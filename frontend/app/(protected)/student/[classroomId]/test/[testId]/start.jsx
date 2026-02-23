@@ -30,6 +30,8 @@ export default function Test() {
   const [isResultPageOpen, setResultPageOpen] = useState(false);
   const [reportData, setReportData] = useState([])
   const [tabWarningVisible, setTabWarningVisible] = useState(false);
+  const [finalSubmittingWarning, setfinalSubmittinWarning] = useState(false);
+  const [submittedConfirmModalVisible, setSubmittedConfirmModalVisible] = useState(false);
   const attemptId = useRef(null);
 
   function onExit() {
@@ -60,6 +62,10 @@ export default function Test() {
           'X-AttemptId': attemptId.current
         }
       });
+      if (result.data == null) {
+        setSubmittedConfirmModalVisible(true)
+        return;
+      }
       setTotalMarks(result.data.totalMarks);
       setReportData(result.data);
       setSubmitModalVisible(false)
@@ -69,26 +75,14 @@ export default function Test() {
     }
   }
 
+
+
+
   function onTimeEnd() {
     setTimesupModalVisible(true);
   }
 
-
-
-
-
-
-
-
   useEffect(() => {
-    const detectDevTools = () => {
-      const threshold = 160;
-
-      if (
-        window.outerWidth - window.innerWidth > threshold ||
-        window.outerHeight - window.innerHeight > threshold
-      ) {
-        console.log("DevTools might be open");
     const detectDevTools = () => {
       const threshold = 160;
 
@@ -99,26 +93,15 @@ export default function Test() {
         console.log("DevTools might be open");
 
         setTabWarningVisible(true);
-        submitAnswer();
-        onExit();
-      }
-    };
 
-    const interval = setInterval(detectDevTools, 1000);
-        submitAnswer();
-        onExit();
+
       }
     };
 
     const interval = setInterval(detectDevTools, 1000);
 
-    return () => {
-      clearInterval(interval);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
-
-
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -129,8 +112,6 @@ export default function Test() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
-
-
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -154,7 +135,7 @@ export default function Test() {
 
 
 
-const pageLoaded = useRef(false);
+  const pageLoaded = useRef(false);
 
   const handleBlur = () => {
     if (!pageLoaded.current) { pageLoaded.current = true; return; }
@@ -171,24 +152,47 @@ const pageLoaded = useRef(false);
 
     if (secondsAway > 30) {
       violationPoints.current += 30;
-    } else if (secondsAway > 10) {
+      setfinalSubmittinWarning(true)
+    } else if (secondsAway > 10 && secondsAway < 30) {
       violationPoints.current += 5;
+
+      setTabWarningVisible(true)
+
     }
     hiddenStart.current = null;
 
     if (violationPoints.current > 10) {
       console.log('Max tab switches reached, auto‑submitting');
-      submitAnswer(); 
+      submitAnswer();
     }
   };
 
-  window.addEventListener('blur', handleBlur);
-  window.addEventListener('focus', handleFocus);
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+
+    const onBlur = () => {
+      if (isResultPageOpen) return;
+      handleBlur();
+    };
+
+    const onFocus = () => {
+      if (isResultPageOpen) return;
+      handleFocus();
+    };
+
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      window.removeEventListener('blur', onBlur);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [isResultPageOpen]);
 
 
 
-    useEffect(() => {
-          if (Platform.OS == 'web') return;
+  useEffect(() => {
+    if (Platform.OS == 'web') return;
 
     const appState = useRef(AppState.currentState);
 
@@ -218,14 +222,13 @@ const pageLoaded = useRef(false);
       }
 
       const result = await api.get('/timedtest/start', {
-      const result = await api.get('/timedtest/start', {
         headers: { 'X-ClassroomId': classroomId, 'X-TestId': testId }
       });
       setData(result.data);
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
 
-      // Request fullscreen when test starts (web only).....
+      // Request fullscreen when test starts (web only)
       if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch((err) => {
           console.log('Fullscreen request failed:', err);
@@ -288,8 +291,6 @@ const pageLoaded = useRef(false);
 
   const containerWidth = Platform.OS === 'web' ? Math.min(800, windowWidth - 40) : '100%';
 
-
-
   return (
     <View style={styles.screen}>
       <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} onExit={onExit} />
@@ -323,12 +324,12 @@ const pageLoaded = useRef(false);
       </ScrollView>
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
-      <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => setSubmitModalVisible(false)} visible={submitModalVisible} onConfirm={submitAnswer} />
+      <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
-
+      <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
       <ConfirmModal
-        message={`Tab Switch Warning!\n\nViolation #${tabSwitchCount.current} of 10\n\nYou switched tabs or windows. Please stay on this test page to avoid penalties.\n\nContinue with caution or your test will be auto-submitted after 10 violations.`}
+        message={`Tab Switch Warning!\n\nViolation point${tabSwitchCount.current} of You switched tabs or windows. Please stay on this test page to avoid penalties.`}
         normal={true}
         visible={tabWarningVisible}
         onCancel={() => setTabWarningVisible(false)}
@@ -336,6 +337,17 @@ const pageLoaded = useRef(false);
           setTabWarningVisible(false);
         }}
       />
+
+      <ConfirmModal
+        message={`you reached your violation limit`}
+        normal={true}
+        visible={finalSubmittingWarning}
+        onCancel={() => setfinalSubmittinWarning(false)}
+        onConfirm={() => {
+          setfinalSubmittinWarning(false);
+        }}
+      />
+
     </View>
 
 
