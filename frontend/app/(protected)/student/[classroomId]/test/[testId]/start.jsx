@@ -30,9 +30,14 @@ export default function Test() {
   const [isResultPageOpen, setResultPageOpen] = useState(false);
   const [reportData, setReportData] = useState([])
   const [tabWarningVisible, setTabWarningVisible] = useState(false);
+  const [fullScreenExitWarning, setFullScreenExitWarning] = useState(false);
+  const [finalSubmittingWarning, setfinalSubmittinWarning] = useState(false);
+  const [submittedConfirmModalVisible, setSubmittedConfirmModalVisible] = useState(false);
   const attemptId = useRef(null);
-
+  const shouldAutoFullscreen = useRef(true);
+  const fullScreenExitCount = useRef(0);
   function onExit() {
+    shouldAutoFullscreen.current = false; // importan
 
     if (document.fullscreenElement) {
       document.exitFullscreen();
@@ -45,7 +50,6 @@ export default function Test() {
 
     router.replace('/student/' + classroomId + '/tests');
   }
-
   async function onSubmit() {
     setSubmitModalVisible(true);
   }
@@ -60,6 +64,10 @@ export default function Test() {
           'X-AttemptId': attemptId.current
         }
       });
+      if (result.data == null) {
+        setSubmittedConfirmModalVisible(true)
+        return;
+      }
       setTotalMarks(result.data.totalMarks);
       setReportData(result.data);
       setSubmitModalVisible(false)
@@ -73,10 +81,16 @@ export default function Test() {
     setTimesupModalVisible(true);
   }
 
+  function requestFullscreenMode() {
+    if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
 
-
-
-
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.log('Fullscreen request failed:', err);
+      }).then(() => {
+        setFullScreenExitWarning(false);
+      });
+    }
+  }
   useEffect(() => {
     const detectDevTools = () => {
       const threshold = 160;
@@ -85,21 +99,16 @@ export default function Test() {
         window.outerWidth - window.innerWidth > threshold ||
         window.outerHeight - window.innerHeight > threshold
       ) {
-        console.log("DevTools might be open");
-
         setTabWarningVisible(true);
-        submitAnswer();
-        onExit();
       }
     };
 
-    const interval = setInterval(detectDevTools, 1000);
+    window.addEventListener("resize", detectDevTools);
 
     return () => {
-      clearInterval(interval);
+      window.removeEventListener("resize", detectDevTools);
     };
   }, []);
-
 
 
   useEffect(() => {
@@ -112,19 +121,99 @@ export default function Test() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
 
+    const handleKeyDown = (e) => {
+      if (e.key !== 'Escape') return;
+      if (!document.fullscreenElement) {
+        fullScreenExitCount.current += 1;
+        console.log('Escape pressed while not fullscreen, count:', fullScreenExitCount.current);
+
+        if (fullScreenExitCount.current === 1) {
+          shouldAutoFullscreen.current = false;
+          setFullScreenExitWarning(true);
+        } else if (fullScreenExitCount.current >= 1) {
+          submitAnswer();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     startNewTest()
   }, [classroomId, testId]);
 
-  const hiddenStart = useRef(null);  /// track the
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+    const handleCopyPaste = (e) => {
+      e.preventDefault();
+    };
+
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+
+    const handleKeyDown = (e) => {
+      if ( ['c', 'v', 'x', 'a','i'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('copy', handleCopyPaste);
+    document.addEventListener('paste', handleCopyPaste);
+    document.addEventListener('cut', handleCopyPaste);
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('copy', handleCopyPaste);
+      document.removeEventListener('paste', handleCopyPaste);
+      document.removeEventListener('cut', handleCopyPaste);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        fullScreenExitCount.current += 1;
+        console.log('Exited fullscreen, count:', fullScreenExitCount.current);
+
+        if (fullScreenExitCount.current === 1) {
+          console.log('First fullscreen exit — showing warning');
+          fullScreenExitCount.current += 1; // reset to 1 in case it was incremented by Escape key handler
+          shouldAutoFullscreen.current = false;
+          setFullScreenExitWarning(true);
+        } else if (fullScreenExitCount.current >= 2) {
+          console.log('Second fullscreen exit — submitting test');
+          submitAnswer();
+        }
+      } else {
+        shouldAutoFullscreen.current = true;
+        setFullScreenExitWarning(false);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const hiddenStart = useRef(null);  /// track the previuos
   const tabSwitchCount = useRef(0);
   const violationPoints = useRef(0);
 
-
-
-const pageLoaded = useRef(false);
+  const pageLoaded = useRef(false);
 
   const handleBlur = () => {
     if (!pageLoaded.current) { pageLoaded.current = true; return; }
@@ -139,25 +228,43 @@ const pageLoaded = useRef(false);
     const secondsAway = (Date.now() - hiddenStart.current) / 1000;
     console.log('User returned after', secondsAway, 'seconds');
 
-    if (secondsAway > 30) {
-      violationPoints.current += 30;
-    } else if (secondsAway > 10) {
+    if (tabSwitchCount.current > 1) {
+      console.log('Tab switch count exceeded 2, auto-submitting test');
+      submitAnswer();
+    } else if (tabSwitchCount.current >= 1) {
       violationPoints.current += 5;
+      setTabWarningVisible(true);
     }
-    hiddenStart.current = null;
 
-    if (violationPoints.current > 10) {
-      console.log('Max tab switches reached, auto‑submitting');
-      submitAnswer(); 
-    }
+    hiddenStart.current = null;
   };
 
-  window.addEventListener('blur', handleBlur);
-  window.addEventListener('focus', handleFocus);
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+
+    const onBlur = () => {
+      if (isResultPageOpen) return;
+      handleBlur();
+    };
+
+    const onFocus = () => {
+      if (isResultPageOpen) return;
+      handleFocus();
+    };
+
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      window.removeEventListener('blur', onBlur);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [isResultPageOpen]);
 
 
-    useEffect(() => {
-          if (Platform.OS == 'web') return;
+
+  useEffect(() => {
+    if (Platform.OS == 'web') return;
 
     const appState = useRef(AppState.currentState);
 
@@ -170,9 +277,27 @@ const pageLoaded = useRef(false);
 
     const interval = setInterval(detectDevTools, 1000);
 
-    return () => {
-      clearInterval(interval);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
     };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
   async function startNewTest() {
@@ -184,24 +309,47 @@ const pageLoaded = useRef(false);
         return;
       }
 
-      const result = await api.get('/timedtest/start', {
+      const result = await api.get('timedtest/start', {
         headers: { 'X-ClassroomId': classroomId, 'X-TestId': testId }
       });
+
       setData(result.data);
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
 
       // Request fullscreen when test starts (web only)
-      // if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
-      //   document.documentElement.requestFullscreen().catch((err) => {
-      //     console.log('Fullscreen request failed:', err);
-      //   });
-      // }
+      if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen && shouldAutoFullscreen.current) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.log('Fullscreen request failed:', err);
+        });
+      }
     } catch (err) {
       if (err.response?.status === 403) setMessage('Maximum Attempts reached');
       console.log('startNewTest error:', err);
     }
   }
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        ['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())
+      ) {
+        e.preventDefault();
+        alert("Copy/Paste is disabled during the test");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  //   useEffect(() => {
+  //   const handleContextMenu = (e) => e.preventDefault();
+
+  //   window.addEventListener("contextmenu", handleContextMenu);
+  //   return () => window.removeEventListener("contextmenu", handleContextMenu);
+  // }, []);
 
   const wsRef = useRef(null);
 
@@ -289,20 +437,42 @@ const pageLoaded = useRef(false);
       </ScrollView>
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
-      <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => setSubmitModalVisible(false)} visible={submitModalVisible} onConfirm={submitAnswer} />
+      <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
+      <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
-
+      <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
       <ConfirmModal
-        message={"Tab switch detected or you left fullscreen mode!\nYour answers will be submitted and you will exit the test."}
-        confirmOnly
-        visible={tabWarningVisible}
+        message={"You exited fullscreen mode.if you do it agin test will be auto submitted."}
+        normal={true}
+        confirmOnly={true}
+        visible={fullScreenExitWarning}
         onConfirm={() => {
-          setTabWarningVisible(false);
-          submitAnswer();
-          onExit();
+          requestFullscreenMode();
         }}
       />
+      <ConfirmModal
+        message={`tab switch warning if you switch again your test will be submitted automatically`}
+        normal={true}
+        visible={tabWarningVisible}
+        confirmOnly={true}
+        onConfirm={() => {
+          setTabWarningVisible(false);
+          requestFullscreenMode();
+        }}
+      />
+
+      <ConfirmModal
+        message={`you reached your violation limit`}
+        normal={true}
+        confirmOnly={true}
+        visible={finalSubmittingWarning}
+        onConfirm={() => {
+          setfinalSubmittinWarning(false);
+          requestFullscreenMode();
+        }}
+      />
+
     </View>
 
 

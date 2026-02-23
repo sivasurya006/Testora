@@ -43,7 +43,7 @@ function getOptionIndex(type) {
 export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuestion }) {
 
     // console.log('default question ', defaultQuestion)
-if(platform.OS != 'web') return null;
+if(Platform.OS != 'web') return null;
     const [giveOptionMarks, setGiveOptionMarks] = useState(false);
     const [selectedType, setSelectedType] = useState(mode === 'editQuestion' ?
         options[getOptionIndex(defaultQuestion.type)] : options[0]);

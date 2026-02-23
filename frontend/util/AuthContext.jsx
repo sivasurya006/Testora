@@ -125,9 +125,46 @@ export default function AuthContextProvider({ children }) {
         router.replace('/signin');
     }
 
+
+    function prevenmalpractices() {
+            useEffect(() => {
+              if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+          
+              const handleCopyPaste = (e) => {
+                e.preventDefault();
+              };
+          
+              const handleContextMenu = (e) => {
+                e.preventDefault();
+              };
+          
+              const handleKeyDown = (e) => {
+                if ( ['c', 'v', 'x', 'a','i'].includes(e.key.toLowerCase())) {
+                  e.preventDefault();
+                }
+              };
+          
+              document.addEventListener('contextmenu', handleContextMenu);
+              document.addEventListener('keydown', handleKeyDown);
+              document.addEventListener('copy', handleCopyPaste);
+              document.addEventListener('paste', handleCopyPaste);
+              document.addEventListener('cut', handleCopyPaste);
+          
+              return () => {
+                document.removeEventListener('contextmenu', handleContextMenu);
+                document.removeEventListener('keydown', handleKeyDown);
+                document.removeEventListener('copy', handleCopyPaste);
+                document.removeEventListener('paste', handleCopyPaste);
+                document.removeEventListener('cut', handleCopyPaste);
+              };
+            }, []);
+        }
+    
+
     return (
 
-        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut, prevenmalpractices }}>
+
             {children}
         </AuthContext.Provider>
 

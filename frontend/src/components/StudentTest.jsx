@@ -60,6 +60,7 @@ export default function StudentTest({ data }) {
                         </View>
 
                     )}
+                    
                     {data.maximumAttempts === data.remainingAttempts && (<View style={styles.newBadge}>
                         <Text style={styles.newText}>New</Text>
                     </View>)}

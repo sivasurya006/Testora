@@ -162,8 +162,6 @@ export default function Test({ data, allTests, setAllTests, isDashboard }) {
             </> : null
           }
 
-
-
           {
             width >= 890 ? (
               <View style={styles.createdAt}>
