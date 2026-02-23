@@ -28,7 +28,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
     function handleEdit() {
         console.log('edit')
         router.push({
-            pathname: '/[classroomId]/(tabs)/tests/[testId]/edit',
+            pathname: '/[classroomId]/test/[testId]/edit',
             params: {
                 classroomId: data.classroomId,
                 testId: data.testId,
@@ -40,7 +40,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
     function handlePublish() {
         console.log('publish')
         router.push({
-            pathname: '/[classroomId]/(tabs)/tests/[testId]/publish',
+            pathname: '/[classroomId]/test/[testId]/publish',
             params: {
                 classroomId: data.classroomId,
                 testId: data.testId,
@@ -89,7 +89,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
 
     function handleSubmissions() {
         router.push({
-            pathname: '/[classroomId]/(tabs)/tests/[testId]/submission',
+            pathname: '/[classroomId]/test/[testId]/submission',
             params: {
                 classroomId: data.classroomId,
                 testId: data.testId,

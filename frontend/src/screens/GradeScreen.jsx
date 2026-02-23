@@ -13,16 +13,17 @@ import { AntDesign } from '@expo/vector-icons'
 
 export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
 
+    if(!isGradeScreenOpen) return
 
     console.log('Grade Screen questions ', questions)
 
     return (
-        <Modal
-            visible={isGradeScreenOpen}
-            animationType="fade"
-            onRequestClose={onExit}
-            onDismiss={onExit}
-        >
+        // <Modal
+        //     visible={isGradeScreenOpen}
+        //     animationType="fade"
+        //     onRequestClose={onExit}
+        //     onDismiss={onExit}
+        // >
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <AppBoldText style={styles.topHeaderText}>
@@ -56,7 +57,7 @@ export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
                     }
                 </ScrollView>
             </View>
-        </Modal >
+        // </Modal >
     )
 }
 

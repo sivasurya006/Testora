@@ -15,28 +15,14 @@ import MatchingQuestion from './MatchingQuestion'
 import BooleanQuestion from './BooleanQuestion';
 import { AntDesign } from '@expo/vector-icons'
 
-export default function DetailedTestReport({ isResultPageOpen, onExit, totalMarks, questions }) {
+export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false }) {
 
 
     const numberOfQuestion = questions?.length;
     const correctQuestions = questions?.reduce((sum, question) => question.givenMarks > 0 ? sum + 1 : sum, 0) || 0;
-    // console.log("no question  ========================================= ",numberOfQuestion)
 
-    // console.log("correc question  ========================================= ",correctQuestions)
-
-    // console.log("avg  ========================================= ", )
-
-    console.log("Total ", questions)
-
-    const { width } = useWindowDimensions();
-
-    return (
-        <Modal
-            visible={isResultPageOpen}
-            animationType="fade"
-            onRequestClose={onExit}
-            onDismiss={onExit}
-        >
+    function renderComponent() {
+        return (
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <AppBoldText style={styles.topHeaderText}>
@@ -56,7 +42,7 @@ export default function DetailedTestReport({ isResultPageOpen, onExit, totalMark
                             {totalMarks}
                         </AppBoldText>
                     </View>
-                    <View style={styles.line} />  
+                    <View style={styles.line} />
                     <View style={styles.reportItem}>
                         <AppSemiBoldText style={styles.reportTitle}>
                             SCORE PERCENTAGE
@@ -92,7 +78,7 @@ export default function DetailedTestReport({ isResultPageOpen, onExit, totalMark
                 }}>
                     {
                         questions?.map((ques, index) => (
-                            <View key={ques.id} style={{margin : 20}}>
+                            <View key={ques.id} style={{ margin: 20 }}>
                                 {
                                     getQuestion(ques, index + 1)
                                 }
@@ -102,8 +88,26 @@ export default function DetailedTestReport({ isResultPageOpen, onExit, totalMark
                 </ScrollView>
 
             </View>
+        )
+    }
 
-        </Modal>
+    console.log("Total ", questions)
+
+    const { width } = useWindowDimensions();
+
+    return (
+        noModal ? (
+            renderComponent()
+        ) : (
+            <Modal Modal
+                visible={isGradeScreenOpen}
+                animationType="fade"
+                onRequestClose={onExit}
+                onDismiss={onExit}
+            >
+                {renderComponent}
+            </Modal >
+        )
     )
 }
 

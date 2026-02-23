@@ -33,7 +33,6 @@ export default function Test() {
   const [finalSubmittingWarning, setfinalSubmittinWarning] = useState(false);
   const [submittedConfirmModalVisible, setSubmittedConfirmModalVisible] = useState(false);
   const attemptId = useRef(null);
-  const [ submittedConfirmModalVisible , setSubmittedConfirmModalVisible  ] = useState(false);
 
   function onExit() {
 

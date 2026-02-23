@@ -1,12 +1,12 @@
 import { View, TextInput, StyleSheet, Platform, Dimensions, Pressable } from 'react-native'
 import React, { use, useState } from 'react'
-import Colors from '../../../../styles/Colors';
-import { AppMediumText } from '../../../../styles/fonts';
+import Colors from '../../../../../styles/Colors';
+import { AppMediumText } from '../../../../../styles/fonts';
 import { Ionicons } from '@expo/vector-icons';
-import CreatedTestList from '../../../../src/screens/CreatedTestList';
+import CreatedTestList from '../../../../../src/screens/CreatedTestList';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import StudentSubmissionScreen from '../../../../src/screens/Submissions';
+import StudentSubmissionScreen from '../../../../../src/screens/Submissions';
 
 
 const { width } = Dimensions.get('window')

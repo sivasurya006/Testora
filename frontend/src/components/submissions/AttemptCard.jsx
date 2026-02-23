@@ -25,88 +25,18 @@ function getTime(seconds) {
     return String(hours).padStart(2, '0') + ":" + String(min).padStart(2, '0') + ":" + String(sec).padStart(2, '0');
 }
 
-async function getTestReport(classroomId, testId, attemptId) {
-    try {
-        const result = await api.get(`/api/tests/testReport?attempt=${attemptId}`, {
-            headers: {
-                'X-ClassroomId': classroomId,
-                'X-TestId': testId
-            }
-        });
-
-        if (result.status == 200 && result.data) {
-            return result.data
-        }
-
-    } catch (err) {
-        console.log("can't get report", err.response?.data)
-    }
-
-    return [];
-}
 
 
-async function getAnswerSheet(classroomId, testId, attemptId) {
-    try {
-        const result = await api.get(`/api/tests/answerSheet?attempt=${attemptId}`, {
-            headers: {
-                'X-ClassroomId': classroomId,
-                'X-TestId': testId
-            }
-        });
 
-        if (result.status == 200 && result.data) {
-            return result.data
-        }
-
-    } catch (err) {
-        console.log("can't get report", err.response?.data)
-    }
-
-    return [];
-}
-
-
-export default function AttemptCard({ attempt }) {
+export default function AttemptCard({ attempt  , handleGrade , handleShowReport }) {
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
 
-    const { classroomId , testId } = useGlobalSearchParams();
+    const { classroomId, testId } = useGlobalSearchParams();
 
     const { formattedDate: startedDate, formattedTime: startedTime } = getDateTime(attempt.startedAt);
     const { formattedDate: submittedDate, formattedTime: submittedTime } = getDateTime(attempt.submittedAt)
-    const timeTaken = getTime(attempt.timeTaken)
-    const [isResultPageOpen, setResultPageOpen] = useState(false);
-    const [reportData, setReportData] = useState([]);
-    const [answerSheet , setAnswerSheet] = useState([]);
-    const [ isGradeScreenOpen , setGradeScreenOpen ] = useState(false);
-
-    function onExit() {
-        if (isResultPageOpen) {
-            setResultPageOpen(false);
-        }
-        if(isGradeScreenOpen){
-            setGradeScreenOpen(false)
-        }
-    }
-
-    async function handleShowReport(attemptId) {
-        const report = await getTestReport(classroomId, testId, attemptId);
-        setReportData(report);
-        setResultPageOpen(true)
-    }
-
-
-
-    async function handleGrade(attemptId) {
-        const answer = await getAnswerSheet(classroomId, testId, attemptId);
-        setAnswerSheet(answer);
-        setGradeScreenOpen(true)
-    }
-
-
-
-
+    const timeTaken = getTime(attempt.timeTaken)  
     return (
         <View style={styles.card}>
             <View
@@ -162,7 +92,7 @@ export default function AttemptCard({ attempt }) {
                         onPress={() => {
                             if (attempt.status == 'EVALUATED') {
                                 handleShowReport(attempt.attemptId)
-                            }else{
+                            } else {
                                 handleGrade(attempt.attemptId);
                             }
                         }}
@@ -172,8 +102,6 @@ export default function AttemptCard({ attempt }) {
                     </TouchableOpacity>
                 </View>
             </View>
-            <DetailedTestReport totalMarks={reportData.totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
-            <GradeScreen questions={answerSheet.questions} onExit={onExit}  isGradeScreenOpen={isGradeScreenOpen} />
         </View>
     );
 };
