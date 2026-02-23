@@ -8,14 +8,23 @@ import McqQuestion from '../components/McqQuestion'
 import SingleChoiceQuestion from '../components/SingleChoiceQuestion'
 import BooleanQuestion from '../components/BooleanQuestion'
 import Colors from '../../styles/Colors'
-import { AppBoldText } from '../../styles/fonts'
+import { AppBoldText, AppMediumText } from '../../styles/fonts'
 import { AntDesign } from '@expo/vector-icons'
 
 export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
 
-    if(!isGradeScreenOpen) return
+    if (!isGradeScreenOpen) return
 
     console.log('Grade Screen questions ', questions)
+
+    const totalMarks = questions?.reduce((acc, q) => acc + (q.marks || 0), 0)
+
+    const obtainedMarks = questions?.reduce((acc, q) => {
+        return acc + (q.obtainedMarks || 0)
+    }, 0)
+
+    const correctCount = questions?.filter(q => q.isCorrect)?.length
+    const wrongCount = questions?.length - correctCount
 
     return (
         // <Modal
@@ -24,39 +33,87 @@ export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
         //     onRequestClose={onExit}
         //     onDismiss={onExit}
         // >
-            <View style={styles.container}>
-                <View style={styles.headerContainer}>
-                    <AppBoldText style={styles.topHeaderText}>
-                        Answer Sheet
-                    </AppBoldText>
+        <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                 <TouchableOpacity onPress={onExit} style={styles.closeButton}>
+                    <AntDesign name="close" size={24} color="black" />
+                </TouchableOpacity>
+                <AppBoldText style={styles.topHeaderText}>
+                    Answer Sheet
+                </AppBoldText>
+                <View style={styles.bottomActions}>
 
-                    <TouchableOpacity onPress={onExit} style={styles.closeButton}>
-                        <AntDesign name="close" size={24} color="black" />
+                    <TouchableOpacity style={styles.validButton}>
+                        <Text style={styles.validText}>Grade Result</Text>
                     </TouchableOpacity>
                 </View>
-                <ScrollView style={{
-                    flex: 1,
-                    maxWidth: 1200,
-                    width: '100%',
-                    boxShadow: Colors.blackBoxShadow,
-                    marginHorizontal: 10,
-                    elevation: 6,
-                    borderRadius: 8,
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    backgroundColor: Colors.white,
-                }}>
-                    {
-                        questions?.map((ques, index) => (
-                            <View key={ques.id} style={{ margin: 20 }}>
-                                {
-                                    getQuestion(ques, index + 1)
-                                }
-                            </View>
-                        ))
-                    }
-                </ScrollView>
+               
             </View>
+            <View style={styles.summaryContainer}>
+                <View style={styles.summaryCard}>
+                    <Text style={styles.summaryNumber}>{obtainedMarks}/{totalMarks}</Text>
+                    <Text style={styles.summaryLabel}>Total Score</Text>
+                </View>
+
+                <View style={styles.summaryDivider} />
+
+                <View style={styles.summaryCard}>
+                    <Text style={[styles.summaryNumber, { color: '#16A34A' }]}>
+                        {correctCount}
+                    </Text>
+                    <Text style={styles.summaryLabel}>Correct</Text>
+                </View>
+
+                <View style={styles.summaryDivider} />
+
+                <View style={styles.summaryCard}>
+                    <Text style={[styles.summaryNumber, { color: '#DC2626' }]}>
+                        {wrongCount}
+                    </Text>
+                    <Text style={styles.summaryLabel}>Wrong</Text>
+                </View>
+            </View>
+            <ScrollView style={{
+                flex: 1,
+                maxWidth: 1200,
+                width: '100%',
+                boxShadow: Colors.blackBoxShadow,
+                marginHorizontal: 10,
+                elevation: 6,
+                borderRadius: 8,
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                backgroundColor: Colors.white,
+            }}>
+                {
+                    questions?.map((ques, index) => (
+                        <View key={ques.id} style={{ margin: 20 }}>
+                            {
+                                <>
+                                    {
+                                        getQuestion(ques, index + 1)
+                                    }
+                                    <View style={styles.actionRow}>
+                                        <TouchableOpacity style={[styles.actionBtn, styles.invalidOutline]}>
+                                            <AppMediumText style={styles.invalidTextOutline}>
+                                                Invalid
+                                            </AppMediumText>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity style={[styles.actionBtn, styles.validOutline]}>
+                                            <AppMediumText style={styles.validTextOutline}>
+                                                Valid
+                                            </AppMediumText>
+                                        </TouchableOpacity>
+                                    </View>
+                                </>
+                            }
+                        </View>
+                    ))
+                }
+            </ScrollView>
+
+        </View>
         // </Modal >
     )
 }
@@ -67,7 +124,7 @@ function getQuestion(item, index) {
         case 'SINGLE':
             return (
                 <SingleChoiceQuestion
-                    mode="report"
+                    mode="grade"
                     question={item}
                     options={item.options}
                     questionNumber={index}
@@ -77,7 +134,7 @@ function getQuestion(item, index) {
         case "MCQ":
             return (
                 <McqQuestion
-                    mode="report"
+                    mode="grade"
                     question={item}
                     options={item.options}
                     questionNumber={index}
@@ -87,7 +144,7 @@ function getQuestion(item, index) {
         case 'BOOLEAN': {
             return (
                 <BooleanQuestion
-                    mode="report"
+                    mode="grade"
                     question={item}
                     options={item.options}
                     questionNumber={index}
@@ -99,7 +156,7 @@ function getQuestion(item, index) {
         case "FILL_BLANK": {
             return (
                 <FillInBlankQuestion
-                    mode="report"
+                    mode="grade"
                     question={item}
                     options={item.options}
                     questionNumber={index}
@@ -110,7 +167,7 @@ function getQuestion(item, index) {
         case "MATCHING": {
             return (
                 <MatchingQuestion
-                    mode="report"
+                    mode="grade"
                     question={item}
                     options={item.options}
                     questionNumber={index}
@@ -126,12 +183,10 @@ function getQuestion(item, index) {
 
 const styles = StyleSheet.create({
     container: {
-        userSelect: 'none',
         backgroundColor: Colors.bgColor,
         padding: 20,
         flex: 1,
         alignItems: 'center',
-
     },
     topHeaderText: {
         fontSize: 28,
@@ -181,16 +236,17 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         width: '100%',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         position: 'relative',
         marginBottom: 20,
+        flexDirection : 'row',
     },
 
-    closeButton: {
-        position: 'absolute',
-        right: 0,
-    },
+    // closeButton: {
+    //     position: 'absolute',
+    //     right: 0,
+    // },
     statCard: {
         width: 150,
         minHeight: 100,
@@ -259,5 +315,131 @@ const styles = StyleSheet.create({
         width: 1,
         height: '60%',
         backgroundColor: '#D6DDE6',
+    },
+    summaryContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#ffffff',
+        borderRadius: 16,
+        paddingVertical: 20,
+        marginBottom: 20,
+        width: '100%',
+        maxWidth: 1200,
+        alignItems: 'center',
+    },
+
+    summaryCard: {
+        flex: 1,
+        alignItems: 'center',
+    },
+
+    summaryNumber: {
+        fontSize: 26,
+        fontWeight: 'bold',
+    },
+
+    summaryLabel: {
+        fontSize: 14,
+        color: '#6B7280',
+        marginTop: 5,
+    },
+
+    summaryDivider: {
+        width: 1,
+        height: '60%',
+        backgroundColor: '#E5E7EB',
+    },
+
+    questionCard: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
+        padding: 20,
+        marginVertical: 15,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+    },
+
+    questionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    resultBadge: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+    },
+
+    marksText: {
+        marginTop: 10,
+        fontWeight: 'bold',
+        color: '#374151',
+    },
+
+    bottomActions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+    },
+
+    validButton: {
+        flex: 1,
+        backgroundColor: '#16A34A',
+        padding: 15,
+        borderRadius: 12,
+        alignItems: 'center',
+        marginLeft: 10,
+    },
+
+    invalidButton: {
+        flex: 1,
+        backgroundColor: '#DC2626',
+        padding: 15,
+        borderRadius: 12,
+        alignItems: 'center',
+        marginRight: 10,
+    },
+
+    validText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+
+    invalidText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    actionRow: {
+        flexDirection: 'row',
+        gap: 12,
+        marginTop: 15,
+        marginLeft: 'auto',
+    },
+
+    actionBtn: {
+        paddingVertical: 8,
+        paddingHorizontal: 18,
+        borderRadius: 20,
+        borderWidth: 1.5,
+    },
+
+    validOutline: {
+        borderColor: '#16A34A',
+        backgroundColor: '#ECFDF5',
+    },
+
+    invalidOutline: {
+        borderColor: '#DC2626',
+        backgroundColor: '#FEF2F2',
+    },
+
+    validTextOutline: {
+        color: '#16A34A',
+        fontSize: 14,
+    },
+
+    invalidTextOutline: {
+        color: '#DC2626',
+        fontSize: 14,
     },
 })
