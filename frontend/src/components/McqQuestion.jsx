@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Checkbox, IconButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
+import { AppRegularText } from '../../styles/fonts';
 
 export default function McqQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
 
@@ -67,7 +68,7 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
 
                     if (isCorrect) {
                         status = 'checked';
-                        color = Colors.green; 
+                        color = Colors.green;
                     }
 
                     if (isSelected && !isCorrect) {
@@ -81,9 +82,10 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
                                 status={status}
                                 color={color}
                             />
-                            <Text style={[styles.optionsText]}>
+                            <AppRegularText style={[styles.optionsText]}>
                                 {opt.optionText}
-                            </Text>
+                            </AppRegularText>
+                            <AppRegularText style={{ marginLeft: 'auto' }} >{opt.optionMark}</AppRegularText>
                         </View>
                     );
                 })}

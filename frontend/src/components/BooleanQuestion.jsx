@@ -3,8 +3,9 @@ import React, { useState } from 'react'
 import { RadioButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
+import { AppRegularText } from '../../styles/fonts';
 
-export default function BooleanQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions , selectedOptions }) {
+export default function BooleanQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
 
     const [checked, setChecked] = useState([]);
 
@@ -76,7 +77,8 @@ export default function BooleanQuestion({ mode, question, options, questionNumbe
                             status={status}
                             color={color}
                         />
-                        <Text>{opt.optionText}</Text>
+                        <AppRegularText>{opt.optionText}</AppRegularText>
+                        <AppRegularText style={{ marginLeft: 'auto' }} >{opt.optionMark}</AppRegularText>
                     </View>
                 );
             })}

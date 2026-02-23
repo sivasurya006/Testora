@@ -4,6 +4,7 @@ import { IconButton, Menu, RadioButton } from 'react-native-paper'
 import Colors from '../../styles/Colors'
 import QuestionRow from './QuestionRow';
 import MenuDropdown from './MenuDropdown';
+import { AppRegularText } from '../../styles/fonts';
 
 export default function SingleChoiceQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
     const [selected, setSelected] = useState(options.find((opt) => opt.isCorrect || null));
@@ -63,9 +64,11 @@ export default function SingleChoiceQuestion({ mode, question, options, question
                             color={color}
                         />
 
-                        <Text style={[styles.optionText]}>
+                        <AppRegularText style={[styles.optionText]}>
                             {opt.optionText}
-                        </Text>
+                        </AppRegularText>
+
+                        <AppRegularText style={{marginLeft : 'auto'}} >{opt.optionMark}</AppRegularText>
                     </View>
                 );
             })}

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
-import { AppBoldText, AppSemiBoldText } from '../../styles/fonts';
+import { AppBoldText, AppRegularText, AppSemiBoldText } from '../../styles/fonts';
 
 export default function FillInBlankQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
 
@@ -12,7 +12,10 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
         console.log('option ', opt)
         const idx = opt.blankOptionProperties?.blankIdx;
         if (idx) {
-            blankAnswers[idx] = opt.optionText;
+            blankAnswers[idx] = {
+                text: opt.optionText,
+                mark: opt.optionMark
+            };
         }
     });
 
@@ -23,84 +26,89 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
         const answer = blankAnswers[blankCounter] || '';
         console.log("blank answer of " + blankCounter)
         blankCounter++;
-        return " <b>" + answer + "</b> ";
-    });
+        let answerText = " <b>" + answer.text + "</b> ";
+        if (mode == 'grade'){
+            answerText += `<small>${answer.mark}</small>`;
+        }
+        return answerText;
+});
 
-    console.log("question with answers ", questionWithAnswers)
+console.log("question with answers ", questionWithAnswers)
 
-    const [answers, setAnswers] = useState([]);
+const [answers, setAnswers] = useState([]);
 
-    const parts = question?.questionText?.split("__BLANK__") || [];
+const parts = question?.questionText?.split("__BLANK__") || [];
 
-    const handleChange = (text, blankIdx) => {
-        setAnswers(prev => ({
-            ...prev,
-            [blankIdx]: text
-        }));
-    };
+const handleChange = (text, blankIdx) => {
+    setAnswers(prev => ({
+        ...prev,
+        [blankIdx]: text
+    }));
+};
 
-    if (mode === 'edit') {
-        return (
-            <View style={styles.container}>
-                <QuestionRow
-                    question={{ ...question, questionText: questionWithAnswers }}
-                    questionNumber={questionNumber}
-                    setAllTestQuestions={setAllQuestions}
-                    allQuestions={allQuestions}
-                />
-
-                <View style={styles.questionContainer}>
-                    {parts.map((part, index) => (
-                        <React.Fragment key={index}>
-                            <Text style={styles.questionText}>{part}</Text>
-
-                            {index < parts.length - 1 && (
-                                <TextInput
-                                    style={styles.blankInput}
-                                    value={answers[index + 1] || ""}
-                                    onChangeText={(text) =>
-                                        handleChange(text, index + 1)
-                                    }
-                                    placeholder={`Blank ${index + 1}`}
-                                    placeholderTextColor={'gray'}
-                                />
-                            )}
-                        </React.Fragment>
-                    ))}
-                </View>
-            </View>
-        );
-    }
-
-
-    const writtenAnswers = selectedOptions?.length
-        ? selectedOptions
-            .map(opt => opt.answerPropertiesDto?.blankText || '----')
-            .join(' , ')
-        : '';
+if (mode === 'edit') {
     return (
-        <>
+        <View style={styles.container}>
             <QuestionRow
                 question={{ ...question, questionText: questionWithAnswers }}
                 questionNumber={questionNumber}
-                mode={mode}
+                setAllTestQuestions={setAllQuestions}
+                allQuestions={allQuestions}
             />
 
-            {
-                mode !== 'preview' && (
-                    <View style={styles.yourAnswerContainer}>
-                        <AppSemiBoldText style={styles.yourAnswerLabel}>
-                            Your Answers:
-                        </AppSemiBoldText>
+            <View style={styles.questionContainer}>
+                {parts.map((part, index) => (
+                    <React.Fragment key={index}>
+                        <Text style={styles.questionText}>{part}</Text>
 
-                        <Text style={styles.yourAnswerText}>
-                            {writtenAnswers || 'No answer written'}
-                        </Text>
-                    </View>
-                )
-            }
-        </>
+                        {index < parts.length - 1 && (
+                            <TextInput
+                                style={styles.blankInput}
+                                value={answers[index + 1] || ""}
+                                onChangeText={(text) =>
+                                    handleChange(text, index + 1)
+                                }
+                                placeholder={`Blank ${index + 1}`}
+                                placeholderTextColor={'gray'}
+                            />
+                        )}
+                    </React.Fragment>
+                ))}
+            </View>
+        </View>
     );
+}
+
+
+const writtenAnswers = selectedOptions?.length
+    ? selectedOptions
+        .map(opt => opt.answerPropertiesDto?.blankText || '----')
+        .join(' , ')
+    : '';
+return (
+    <>
+        <QuestionRow
+            question={{ ...question, questionText: questionWithAnswers }}
+            questionNumber={questionNumber}
+            mode={mode}
+        />
+
+        {
+            mode !== 'preview' && (
+                <View style={styles.yourAnswerContainer}>
+                    <AppSemiBoldText style={styles.yourAnswerLabel}>
+                        {mode == 'grade' ? 'Student' : 'Your'} Answers:
+                    </AppSemiBoldText>
+
+                    <AppRegularText style={styles.yourAnswerText}>
+                        {writtenAnswers || 'No answer written'}
+                    </AppRegularText>
+
+                </View>
+            )
+        }
+    </>
+);
 }
 
 const styles = StyleSheet.create({

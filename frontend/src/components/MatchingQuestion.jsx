@@ -5,7 +5,7 @@ import Colors from '../../styles/Colors';
 import QuestionRow from './QuestionRow';
 import { TextInput as PaperInput } from "react-native-paper";
 import { MCQComponent } from './OptionComponents';
-import { AppSemiBoldText } from '../../styles/fonts';
+import { AppRegularText, AppSemiBoldText } from '../../styles/fonts';
 
 export default function MatchingQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
 
@@ -66,6 +66,7 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
                             value={opt.matchingOptionProperties?.match}
                             editable={false}
                         />
+                        <AppRegularText style={{ marginLeft: 'auto' }} >{opt.optionMark}</AppRegularText>
                     </View>
                 );
             })}
@@ -73,7 +74,7 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
             {
                 mode !== 'preview' && (
                     <>
-                        <AppSemiBoldText>Your Matchings :</AppSemiBoldText>
+                        <AppSemiBoldText>{mode == 'grade' ? 'Student' : 'Your'} Matchings :</AppSemiBoldText>
 
                         {options.map((opt, i) => {
                             const selected = selectedMap[opt.optionId];
