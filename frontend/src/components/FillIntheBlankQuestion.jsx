@@ -86,15 +86,19 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
                 mode={mode}
             />
 
-            <View style={styles.yourAnswerContainer}>
-                <AppSemiBoldText style={styles.yourAnswerLabel}>
-                    Your Answers:
-                </AppSemiBoldText>
+            {
+                mode !== 'preview' && (
+                    <View style={styles.yourAnswerContainer}>
+                        <AppSemiBoldText style={styles.yourAnswerLabel}>
+                            Your Answers:
+                        </AppSemiBoldText>
 
-                <Text style={styles.yourAnswerText}>
-                    {writtenAnswers || 'No answer written'}
-                </Text>
-            </View>
+                        <Text style={styles.yourAnswerText}>
+                            {writtenAnswers || 'No answer written'}
+                        </Text>
+                    </View>
+                )
+            }
         </>
     );
 }

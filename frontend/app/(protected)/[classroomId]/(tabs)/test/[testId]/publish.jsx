@@ -16,7 +16,7 @@ export default function Publish() {
 
     const { classroomId } = useGlobalSearchParams();
 
-    const { test, testId } = useGlobalSearchParams();
+    const { title, testId } = useGlobalSearchParams();
     const [isTimed, setIsTimed] = React.useState(false);
     const [correctionType, setCorrectionType] = React.useState('AUTO');
     const [testMinutes, setTestMinutes] = useState(0);
@@ -78,7 +78,7 @@ export default function Publish() {
                                 width: '100%',
                                 marginTop: 6
                             }]}
-                            value={test}
+                            value={title}
                             editable={false}
                         />
                     </View>

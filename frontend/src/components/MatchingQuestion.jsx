@@ -70,37 +70,43 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
                 );
             })}
 
-            <AppSemiBoldText>Your Matchings :</AppSemiBoldText>
+            {
+                mode !== 'preview' && (
+                    <>
+                        <AppSemiBoldText>Your Matchings :</AppSemiBoldText>
 
-            {options.map((opt, i) => {
-                const selected = selectedMap[opt.optionId];
+                        {options.map((opt, i) => {
+                            const selected = selectedMap[opt.optionId];
 
-                const correctMatch = opt.matchingOptionProperties?.match;
-                const userMatch = selected?.answerPropertiesDto?.match;
+                            const correctMatch = opt.matchingOptionProperties?.match;
+                            const userMatch = selected?.answerPropertiesDto?.match;
 
-                const isCorrect = correctMatch === userMatch;
+                            const isCorrect = correctMatch === userMatch;
 
-                return (
-                    <View
-                        key={opt.optionId}
-                        style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }}
-                    >
-                        <PaperInput
-                            label={`Left pair ${i + 1}`}
-                            mode="outlined"
-                            value={opt.optionText}
-                            editable={false}
-                        />
+                            return (
+                                <View
+                                    key={opt.optionId}
+                                    style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }}
+                                >
+                                    <PaperInput
+                                        label={`Left pair ${i + 1}`}
+                                        mode="outlined"
+                                        value={opt.optionText}
+                                        editable={false}
+                                    />
 
-                        <PaperInput
-                            label={`Right pair ${i + 1}`}
-                            mode="outlined"
-                            value={userMatch}
-                            editable={false}
-                        />
-                    </View>
-                );
-            })}
+                                    <PaperInput
+                                        label={`Right pair ${i + 1}`}
+                                        mode="outlined"
+                                        value={userMatch}
+                                        editable={false}
+                                    />
+                                </View>
+                            );
+                        })}
+                    </>
+                )
+            }
         </>
     );
 }

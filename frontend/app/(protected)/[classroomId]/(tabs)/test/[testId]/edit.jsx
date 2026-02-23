@@ -45,7 +45,6 @@ export default function Edit() {
     const closeAddQuesModal = () => setAddQuesModalVisible(false);
 
     async function addQuestion(question, constructPayload = true) {
-        console.log('question to add ', question)
         const newQuestion = await createNewQuestion(constructPayload ? makeQuestionPayload(question) : question, classroomId, testId);
         console.log(newQuestion)
         if (!newQuestion) return;

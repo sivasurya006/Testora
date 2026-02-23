@@ -34,8 +34,6 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
 
     async function editQuestionHandler(question) {
 
-        console.log("Handler ==================================================== : ", question)
-
         const success = await editQuestion(makeQuestionPayload(question), classroomId, question.question.questionId);
         if (success) {
             setAllTestQuestions(allQuestions.map(q => {
@@ -79,7 +77,7 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
             </View>
 
             {
-                mode !== 'report' ? (
+                mode !== 'report'  && mode !== 'preview'  ? (
                     <View style={styles.toolsRow}>
                         <IconButton icon="pencil" size={18} onPress={handleEdit} />
                         <Pressable onPress={() => setDeleteLoading(true)}>

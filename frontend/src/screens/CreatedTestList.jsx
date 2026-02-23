@@ -44,7 +44,7 @@ export default function CreatedTestList({ filter }) {
     console.log("result ", result)
     if (result && filter != 'published') {
       router.push({
-        pathname: '/[classroomId]/(tabs)/tests/[testId]/edit',
+        pathname: '/[classroomId]/test/[testId]/edit',
         params: {
           classroomId: result.classroomId,
           testId: result.testId,

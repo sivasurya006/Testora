@@ -33,6 +33,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 classroomId: data.classroomId,
                 testId: data.testId,
                 title: data.testTitle,
+                preview : 1
             },
         })
     }
@@ -44,7 +45,8 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
             params: {
                 classroomId: data.classroomId,
                 testId: data.testId,
-                test: data.testTitle
+                title: data.testTitle,
+                preview : 1
             },
         })
     }
@@ -94,7 +96,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 classroomId: data.classroomId,
                 testId: data.testId,
                 title: data.testTitle,
-                preview: 0,
+                // preview: -1,
             },
         })
     }

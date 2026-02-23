@@ -37,7 +37,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
             params: {
                 classroomId,
                 testId: item.testId || testId,
-                preview: 0,
+                // preview: -1,
                 title: item.title,
                 student: item.userId,
             }

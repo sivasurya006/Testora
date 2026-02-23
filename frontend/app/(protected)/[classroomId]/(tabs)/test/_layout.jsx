@@ -9,13 +9,14 @@ import { AppMediumText, fonts } from '../../../../../styles/fonts';
 export default function TestsLayout() {
     // const { width } = useWindowDimensions();
     // const isLargeScreen = width > 821;
-    const { classroomId } = useGlobalSearchParams();
+    const { classroomId, testId , title } = useGlobalSearchParams();
     const params = useGlobalSearchParams();
 
     console.log(params)
 
     return (
         <Stack
+            initialRouteName='index'
             screenOptions={({ route }) => ({
                 headerTitle: route.params?.title ?? 'Test Details',
                 headerBackVisible: false,
@@ -41,12 +42,27 @@ export default function TestsLayout() {
                     </Pressable>
                 ),
                 headerRight: () => (
-                    route.params?.preview == 0 ? null : (
+                    route.params?.preview == 0 ? (
                         <Pressable
                             onPress={() =>
                                 router.push({
-                                    pathname: '/[classroomId]/(tabs)/test/preview',
-                                    params: { classroomId }
+                                    pathname: `/[classroomId]/test/[testId]/publish`,
+                                    params: { classroomId, testId , title , preview : 1}
+                                })}
+                            style={({ hovered }) => [
+                                styles.button,
+                                hovered && styles.hovered,
+                            ]}
+                        >
+                            <Ionicons name="cloud-upload-outline" size={20} color={Colors.white} />
+                            <AppMediumText style={styles.buttonText}>Publish</AppMediumText>
+                        </Pressable>
+                    ) :    route.params?.preview == 1 ? (
+                        <Pressable
+                            onPress={() =>
+                                router.push({
+                                    pathname: `/[classroomId]/test/[testId]/preview`,
+                                    params: { classroomId, testId, title , preview: 0 }
                                 })}
                             style={({ hovered }) => [
                                 styles.button,
@@ -56,7 +72,7 @@ export default function TestsLayout() {
                             <Ionicons name="eye" size={20} color={Colors.white} />
                             <AppMediumText style={styles.buttonText}>Preview</AppMediumText>
                         </Pressable>
-                    )
+                    ) : null
                 ),
             })}
         >
