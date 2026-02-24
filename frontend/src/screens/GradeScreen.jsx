@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import FillInBlankQuestion from '../components/FillIntheBlankQuestion'
@@ -10,21 +10,91 @@ import BooleanQuestion from '../components/BooleanQuestion'
 import Colors from '../../styles/Colors'
 import { AppBoldText, AppMediumText } from '../../styles/fonts'
 import { AntDesign } from '@expo/vector-icons'
+import ConfirmModal from '../components/modals/ConfirmModal'
+import { useGlobalSearchParams } from 'expo-router'
+import api from '../../util/api'
 
-export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
+export default function GradeScreen({ attemptId, questions, isGradeScreenOpen, onExit, setAttempts, attempts }) {
 
     if (!isGradeScreenOpen) return
+    const [questionState, setQuestionState] = useState(questions || []);
+    const [gradeData, setGradeData] = useState({})
+    const [confirmGradeVisible, setConfirmGradeVisible] = useState(false);
 
-    console.log('Grade Screen questions ', questions)
+    const { classroomId } = useGlobalSearchParams();
 
-    const totalMarks = questions?.reduce((acc, q) => acc + (q.marks || 0), 0)
+    const totalMarks = questionState?.reduce((acc, q) => {
+        const optionMarks = q.options?.reduce((sum, opt) => sum + (opt.optionMark || 0), 0);
+        return acc + (q.marks || 0) + (optionMarks || 0);
+    }, 0);
 
-    const obtainedMarks = questions?.reduce((acc, q) => {
-        return acc + (q.obtainedMarks || 0)
-    }, 0)
+    const obtainedMarks = questionState?.reduce((acc, q) => {
+        const answers = gradeData[q.id] || [];
+        const selectedOptionMarks = answers.reduce((sum, ans) => sum + (ans.isCorrect ? ans.givenMarks : 0), 0);
+        const questionMarks = q.isCorrect ? (q.marks || 0) : 0;
+        return acc + questionMarks + selectedOptionMarks;
+    }, 0);
 
-    const correctCount = questions?.filter(q => q.isCorrect)?.length
-    const wrongCount = questions?.length - correctCount
+    const correctCount = questionState?.filter(q => q.isCorrect)?.length || 0;
+    const wrongCount = questionState?.length - correctCount;
+
+    const handleGradeAnswers = () => setConfirmGradeVisible(true)
+
+    useEffect(() => {
+        if (!questions) return;
+        setQuestionState(questions);
+    }, [questions]);
+
+    console.log("grade data ", gradeData)
+
+    useEffect(() => {
+        if (!questions) return;
+
+        const gradeData = {};
+
+        for (let i = 0; i < questions.length; i++) {
+            const ques = questions[i];
+            const answers = [];
+            if (ques.selectedOptions && ques.selectedOptions.length > 0) {
+                for (let j = 0; j < ques.selectedOptions.length; j++) {
+                    const selected = ques.selectedOptions[j];
+                    const option = ques.options.find(opt => opt.optionId === selected.optionId);
+                    answers.push({
+                        answerId: selected.answerId,
+                        givenMarks: option ? option.optionMark : 0,
+                        isCorrect: false
+                    });
+                }
+            }
+
+            gradeData[ques.id] = answers; // assign array to questionId
+        }
+
+        setGradeData(gradeData);
+    }, [questions]);
+
+    const handleMarkQuestion = (questionId, isCorrect) => {
+        // Update gradeData
+        setGradeData(prev => {
+            const updated = { ...prev };
+
+            if (updated[questionId]) {
+                updated[questionId] = updated[questionId].map(ans => ({
+                    ...ans,
+                    isCorrect: isCorrect
+                }));
+            }
+
+            return updated;
+        });
+
+
+        setQuestionState(prev =>
+            prev.map(q =>
+                q.id === questionId ? { ...q, isCorrect } : q
+            )
+        );
+    };
 
     return (
         // <Modal
@@ -35,7 +105,7 @@ export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
         // >
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                 <TouchableOpacity onPress={onExit} style={styles.closeButton}>
+                <TouchableOpacity onPress={onExit} style={styles.closeButton}>
                     <AntDesign name="close" size={24} color="black" />
                 </TouchableOpacity>
                 <AppBoldText style={styles.topHeaderText}>
@@ -43,11 +113,15 @@ export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
                 </AppBoldText>
                 <View style={styles.bottomActions}>
 
-                    <TouchableOpacity style={styles.validButton}>
+                    <TouchableOpacity
+
+                        onPress={handleGradeAnswers}
+
+                        style={styles.validButton}>
                         <Text style={styles.validText}>Grade Result</Text>
                     </TouchableOpacity>
                 </View>
-               
+
             </View>
             <View style={styles.summaryContainer}>
                 <View style={styles.summaryCard}>
@@ -86,24 +160,40 @@ export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
                 backgroundColor: Colors.white,
             }}>
                 {
-                    questions?.map((ques, index) => (
+
+
+                    questionState?.map((ques, index) => (
                         <View key={ques.id} style={{ margin: 20 }}>
                             {
                                 <>
-                                    {
-                                        getQuestion(ques, index + 1)
-                                    }
+                                    <View style={{ position: 'relative' }}>
+                                        {getQuestion(ques, index + 1)}
+
+                                        {ques.isCorrect === true && (
+                                            <View style={[styles.resultIcon, styles.correctIcon]}>
+                                                <AntDesign name="check-circle" size={22} color={Colors.primaryColor} />
+                                            </View>
+                                        )}
+
+                                        {ques.isCorrect === false && (
+                                            <View style={[styles.resultIcon, styles.wrongIcon]}>
+                                                <AntDesign name="close-circle" size={22} color="#DC2626" />
+                                            </View>
+                                        )}
+                                    </View>
                                     <View style={styles.actionRow}>
-                                        <TouchableOpacity style={[styles.actionBtn, styles.invalidOutline]}>
-                                            <AppMediumText style={styles.invalidTextOutline}>
-                                                Invalid
-                                            </AppMediumText>
+                                        <TouchableOpacity
+                                            style={[styles.actionBtn, styles.invalidOutline]}
+                                            onPress={() => handleMarkQuestion(ques.id, false)}
+                                        >
+                                            <AppMediumText style={styles.invalidTextOutline}>Invalid</AppMediumText>
                                         </TouchableOpacity>
 
-                                        <TouchableOpacity style={[styles.actionBtn, styles.validOutline]}>
-                                            <AppMediumText style={styles.validTextOutline}>
-                                                Valid
-                                            </AppMediumText>
+                                        <TouchableOpacity
+                                            style={[styles.actionBtn, styles.validOutline]}
+                                            onPress={() => handleMarkQuestion(ques.id, true)}
+                                        >
+                                            <AppMediumText style={styles.validTextOutline}>Valid</AppMediumText>
                                         </TouchableOpacity>
                                     </View>
                                 </>
@@ -111,11 +201,65 @@ export default function GradeScreen({ questions, isGradeScreenOpen, onExit }) {
                         </View>
                     ))
                 }
-            </ScrollView>
+            </ScrollView >
+            <ConfirmModal normal={true}
+                onCancel={() => setConfirmGradeVisible(false)}
+                onConfirm={() => {
+                    if (gradeAnswerSheet(classroomId, attemptId, obtainedMarks, gradeData)) {
+                        setAttempts({
+                            attempts: attempts.map(a => {
+                                if (a.attemptId == attemptId) {
+                                    a.marks = obtainedMarks
+                                    a.status = 'EVALUATED'
+                                }
 
-        </View>
+                                return a;
+                            })
+                        })
+                    }
+                    onExit();
+                }
+                }
+                message={'Grade the Answer sheet?'}
+                visible={confirmGradeVisible} />
+        </View >
         // </Modal >
     )
+}
+
+
+async function gradeAnswerSheet(classroomId, attemptId, totalMarks, gradedAnswers) {
+
+
+    try {
+        const result = await api.post(`api/tests/gradeTest?attempt=${attemptId}&totalMarks=${totalMarks}`,
+            transformAnswers(gradedAnswers), {
+            headers: {
+                'X-ClassroomId': classroomId,
+            }
+        });
+        if (result.status == 200 && result.data) {
+            return result.data.success
+        }
+    } catch (err) {
+        console.log(err.response?.data);
+    }
+    return false;
+}
+
+
+
+function transformAnswers(input) {
+    const gradedAnswers = Object.keys(input).map(id => ({
+        id: parseInt(id),
+        selectedOptions: input[id].map(option => ({
+            answerId: option.answerId,
+            givenMarks: option.givenMarks,
+            correct: option.isCorrect
+        }))
+    }));
+
+    return { gradedAnswers };
 }
 
 
@@ -240,7 +384,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
         marginBottom: 20,
-        flexDirection : 'row',
+        flexDirection: 'row',
     },
 
     // closeButton: {
@@ -384,9 +528,10 @@ const styles = StyleSheet.create({
 
     validButton: {
         flex: 1,
-        backgroundColor: '#16A34A',
-        padding: 15,
-        borderRadius: 12,
+        backgroundColor: Colors.primaryColor,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 8,
         alignItems: 'center',
         marginLeft: 10,
     },
@@ -442,4 +587,24 @@ const styles = StyleSheet.create({
         color: '#DC2626',
         fontSize: 14,
     },
+    resultIcon: {
+        position: 'absolute',
+        bottom: -50,
+        right: 200,
+    },
+
+    correctIcon: {
+        backgroundColor: '#ECFDF5',
+        borderRadius: 20,
+        padding: 4,
+    },
+
+    wrongIcon: {
+        backgroundColor: '#FEF2F2',
+        borderRadius: 20,
+        padding: 4,
+    },
 })
+
+
+

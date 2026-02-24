@@ -14,12 +14,18 @@ import FillInBlankQuestion from './FillIntheBlankQuestion'
 import MatchingQuestion from './MatchingQuestion'
 import BooleanQuestion from './BooleanQuestion';
 import { AntDesign } from '@expo/vector-icons'
+import api from '../../util/api'
 
-export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false , isResultPageOpen }) {
+export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false, isResultPageOpen }) {
 
 
     const numberOfQuestion = questions?.length;
-    const correctQuestions = questions?.reduce((sum, question) => question.givenMarks > 0 ? sum + 1 : sum, 0) || 0;
+    const correctQuestions = questions?.reduce((sum, question) => {
+        const selectedOptionIsCorrect = question.selectedOptions?.some(
+            option => option.correct 
+        );
+        return (question.givenMarks > 0 || selectedOptionIsCorrect) ? sum + 1 : sum;
+    }, 0) || 0;
 
     function renderComponent() {
         return (

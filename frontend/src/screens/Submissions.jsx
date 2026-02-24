@@ -23,15 +23,6 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
     const router = useRouter();
 
     function handleGrade(item) {
-
-        // console.log('I am called', item)
-
-        // console.log({
-        //     classroomId,
-        //     testId: item.testId || testId,
-        //     userId: item.userId
-        // });
-
         router.push({
             pathname: '/[classroomId]/test/[testId]/studentSubmissions',
             params: {

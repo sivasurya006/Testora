@@ -392,6 +392,14 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
+		
+		<action name="gradeTest"
+			class="com.testcreator.actions.TestAction" method="gradeTest">
+			<result name="success" type="json">
+				<param name="root">successDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+		</action>
 
 	</package>
 

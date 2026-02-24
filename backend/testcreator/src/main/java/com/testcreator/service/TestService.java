@@ -8,6 +8,7 @@ import com.testcreator.dao.ClassroomUsersDao;
 import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dao.TestDao;
 import com.testcreator.dto.QuestionDto;
+import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.TestDto;
 import com.testcreator.dto.TestReportDto;
 import com.testcreator.dto.UserTestAttemptDto;
@@ -146,6 +147,11 @@ public class TestService {
 	
 	public TestReportDto getSubmittedAnswerReport(int attemptId,int testId) throws SQLException {
 		return testDao.getSubmittedAnswerReport(attemptId, testId);
+	}
+	
+	public boolean gradeAttempt(int attemptId,int totalMarks,List<QuestionReportDto> gradedQuestions) throws SQLException {
+		System.out.println("Grading Tests");
+		return testDao.updateAnswers(gradedQuestions, totalMarks, attemptId);
 	}
 	
 }
