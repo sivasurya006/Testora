@@ -22,7 +22,6 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 	public String intercept(ActionInvocation invocation) throws Exception {
 		
 		
-		System.out.println("hie");
 
 		
 		HttpServletRequest request = ServletActionContext.getRequest();
