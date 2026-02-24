@@ -49,6 +49,7 @@ export default function CreatedTestList({ filter }) {
           classroomId: result.classroomId,
           testId: result.testId,
           title: result.testTitle,
+          preview : 1,
         },
       })
       setCreatedTest([result, ...allCreatedTests]);

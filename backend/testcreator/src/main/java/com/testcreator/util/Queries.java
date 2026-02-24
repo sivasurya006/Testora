@@ -104,7 +104,7 @@ public class Queries {
 	public static final String selectStudentTests="select  t.test_id as testId ,t.title as testTitle, t.is_timed, t.duration_minutes, t.creator_id, t.maximum_attempts,  t.correction_type,t.classroom_id, u.name as creatorName, COUNT(a.attempt_id) as attemptCount from Tests t join Users u    on u.user_id = t.creator_id left join Attempts a    on a.test_id = t.test_id  and  a.user_id=? where t.classroom_id=? and t.status='published' group by  t.test_id,  t.title,    t.is_timed,   t.duration_minutes,   t.maximum_attempts,  t.correction_type,  u.name;";
 	public static final String getDashBoardAnaliticsData="select count(distinct user_id) as AttemptedStudentCountOnTest , t.title from Tests t left join Attempts a on t.test_id=a.test_id and a.status='submitted' and t.status='published' where t.classroom_id=? group by t.title, t.test_id order by AttemptedStudentCountOnTest desc;";
 	public static final String getTopPerformingData="select distinct u.name, a.marks from Tests t join Classroom_Users cu on t.classroom_id=cu.classroom_id and cu.role='student' join Users u on u.user_id=cu.user_id join Attempts a on a.user_id = u.user_id where cu.classroom_id=10;";
-	public static final String deleteStudent="delete from Classroom_Users where user_id = ?";
+	public static final String deleteStudent="delete from Classroom_Users where user_id = ? and classroom_id = ?";
 
 	// Student Test Questions And Answers
 	
@@ -129,7 +129,7 @@ public class Queries {
 	
 	
 	public static final String getSubmissionsWithAttempts = "select a.user_id , u.name , u.email , a.test_id , t.title , count(a.attempt_id) as attempts_count  from Users u join Classroom_Users cu on u.user_id = cu.user_id join Tests t on t.classroom_id = cu.classroom_id join Attempts a on a.test_id  = t.test_id and a.user_id = cu.user_id and a.status = 'submitted' where cu.classroom_id = ?   group by  u.name , u.email , t.title , a.test_id , a.user_id order by attempts_count desc";
-	public static final String getTestSubmissionDetails = "select u.user_id  , u.name , u.email , count(a.attempt_id) as total_attempts , sum(a.status = 'evaluated') as evaluated , sum(a.status = 'submitted') as submitted  from Users u join Classroom_Users cu on u.user_id = cu.user_id join Tests t on t.classroom_id = cu.classroom_id"
+	public static final String getTestSubmissionDetails = "select u.user_id  , u.name , u.email , count(a.attempt_id) as total_attempts , sum(a.status = 'evaluated') as evaluated , sum(a.status = 'submitted') as submitted  from Users u join Classroom_Users cu on u.user_id = cu.user_id and cu.role != 'tutor' join Tests t on t.classroom_id = cu.classroom_id"
 			+ "  left join Attempts a on a.user_id = cu.user_id and a.test_id = t.test_id where cu.classroom_id = ? and t.test_id = ? group by u.name , u.user_id , u.email order by total_attempts desc";
 
 	

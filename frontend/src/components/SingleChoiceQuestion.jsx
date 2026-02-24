@@ -15,7 +15,7 @@ export default function SingleChoiceQuestion({ mode, question, options, question
     if (mode === 'edit') {
         return (
             <View style={styles.container}>
-                <QuestionRow question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
+                <QuestionRow mode={'edit'} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
                 <View style={styles.answerRow}>
                     <MenuDropdown options={options} selected={selected} setSelected={setSelected} backgroundColor={Colors.white} />
                     <View>

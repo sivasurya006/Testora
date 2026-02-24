@@ -97,7 +97,7 @@ create table Attempts (
     marks decimal(6,2) default 0,
 
     foreign key (test_id) references Tests(test_id) on delete cascade,
-    foreign key (user_id) references Users(user_id) on delete cascade
+    foreign key (user_id) references Classroom_Users(user_id) on delete cascade,
 );
 
 create table Answers (

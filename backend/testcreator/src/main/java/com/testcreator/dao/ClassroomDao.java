@@ -386,12 +386,10 @@ public class ClassroomDao {
 	public boolean deleteStudent(int userId, int classroomId) throws SQLException {
 
 		try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent)) {
-//			deleteClass.setInt(1, classroomId);
-			System.out.println("user_id"  +userId);
 			deleteClass.setInt(1, userId);
+			deleteClass.setInt(2, classroomId);
 
 			if (deleteClass.executeUpdate() == 1) {
-				System.out.println("deleted");
 				return true;
 			} else {
 				throw new ClassroomNotNoundException();
