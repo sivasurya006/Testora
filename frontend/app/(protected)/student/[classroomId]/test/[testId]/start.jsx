@@ -54,9 +54,13 @@ export default function Test() {
   }
 
   async function submitAnswer() {
+
+    console.log('Submitting with attemptId:', attemptId.current);
+    console.log(testId, classroomId);
     try {
       if (!attemptId.current) throw new Error('Attempt ID not set');
-      const result = await api.post('/timedtest/submit',{
+      const result = await api.post('/timedtest/submit',
+        makePayload(selectedAnswers), {
         headers: {
           'X-ClassroomId': classroomId,
           'X-TestId': testId,
@@ -97,24 +101,26 @@ export default function Test() {
       });
     }
   }
-  // useEffect(() => {
-  // const detectDevTools = () => {
-  //   const threshold = 160;
 
-  //     if (
-  //       window.outerWidth - window.innerWidth > threshold ||
-  //       window.outerHeight - window.innerHeight > threshold
-  //     ) {
-  //       setTabWarningVisible(true);
-  //     }
-  //   };
+  useEffect(() => {
+    const detectDevTools = () => {
+      const threshold = 160;
 
-  //   window.addEventListener("resize", detectDevTools);
+      if (
+        window.outerWidth - window.innerWidth > threshold ||
+        window.outerHeight - window.innerHeight > threshold
+      ) {
+        setTabWarningVisible(true);
+        submitAnswer();
+      }
+    };
 
-  //   return () => {
-  //     window.removeEventListener("resize", detectDevTools);
-  //   };
-  // }, []);
+    window.addEventListener("resize", detectDevTools);
+
+    return () => {
+      window.removeEventListener("resize", detectDevTools);
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -150,7 +156,9 @@ export default function Test() {
   }, []);
 
   useEffect(() => {
-    startNewTest()
+
+    startNewTest();
+
   }, [classroomId, testId]);
 
   useEffect(() => {
@@ -160,24 +168,24 @@ export default function Test() {
       e.preventDefault();
     };
 
-    // const handleContextMenu = (e) => {
-    //   e.preventDefault();
-    // };
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
 
     const handleKeyDown = (e) => {
-      if ( ['c', 'v', 'x', 'a','i'].includes(e.key.toLowerCase())) {
+      if (['c', 'v', 'x', 'a', 'i'].includes(e.key.toLowerCase())) {
         e.preventDefault();
       }
     };
 
-    // document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('copy', handleCopyPaste);
     document.addEventListener('paste', handleCopyPaste);
     document.addEventListener('cut', handleCopyPaste);
 
     return () => {
-      // document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('copy', handleCopyPaste);
       document.removeEventListener('paste', handleCopyPaste);
@@ -267,8 +275,6 @@ export default function Test() {
     };
   }, [isResultPageOpen]);
 
-
-
   useEffect(() => {
     if (Platform.OS == 'web') return;
 
@@ -307,6 +313,8 @@ export default function Test() {
   }, []);
 
   async function startNewTest() {
+
+    console.log("start new test called");
     try {
       console.log('Starting test with classroomId:', classroomId, 'testId:', testId);
 
@@ -323,7 +331,6 @@ export default function Test() {
       attemptId.current = result.data.test.attemptId;
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
 
-      // Request fullscreen when test starts (web only)
       if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen && shouldAutoFullscreen.current) {
         document.documentElement.requestFullscreen().catch((err) => {
           console.log('Fullscreen request failed:', err);
@@ -332,23 +339,24 @@ export default function Test() {
     } catch (err) {
       if (err.response?.status === 403) setMessage('Maximum Attempts reached');
       console.log('startNewTest error:', err);
+      alert("please allow screen share");
     }
   }
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        ['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())
-      ) {
-        e.preventDefault();
-        alert("Copy/Paste is disabled during the test");
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = (e) => {
+  //     if (
+  //       (e.ctrlKey || e.metaKey) &&
+  //       ['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())
+  //     ) {
+  //       e.preventDefault();
+  //       alert("Copy/Paste is disabled during the test");
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => window.removeEventListener("keydown", handleKeyDown);
+  // }, []);
 
   //   useEffect(() => {
   //   const handleContextMenu = (e) => e.preventDefault();
@@ -361,7 +369,7 @@ export default function Test() {
 
   function connectWebSocket(url) {
     if (!url) return;
-    const wsUrl = url.replace('localhost', '192.168.20.6');
+    const wsUrl = url.replace('localhost', 'localhost'); // Ensure correct WebSocket URL
     console.log(wsUrl)
     try {
       const ws = new WebSocket(wsUrl);
@@ -483,10 +491,9 @@ export default function Test() {
 
 
   )
-  
+
 }
 
-)}
 
 const styles = StyleSheet.create({
   screen: {
