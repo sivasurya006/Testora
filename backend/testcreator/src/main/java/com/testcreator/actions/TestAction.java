@@ -1,6 +1,7 @@
 package com.testcreator.actions;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import com.opensymphony.xwork2.ModelDriven;
 import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dto.ApiError;
 import com.testcreator.dto.QuestionDto;
+import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.SuccessDto;
 import com.testcreator.dto.TestDto;
 import com.testcreator.dto.TestReportDto;
@@ -49,6 +51,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	
 	private Integer student;
 	private Integer attempt;
+	private Integer totalMarks;
 
 	public String createTest() {
 
@@ -857,6 +860,57 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	}
 	
 	
+	public String gradeTest() {
+
+		int classroomId = (Integer) (request.getAttribute("classroomId"));
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+
+		
+		if(attempt == null) {
+			setError(new ApiError("Invalid attempt Id",400));
+			return INPUT;
+		}
+		
+		if(totalMarks == null) {
+			setError(new ApiError("Total marks not given",400));
+			return INPUT;
+		}
+		
+		if(questionDto.getGradedAnswers() == null) {
+			setError(new ApiError("question answers not provided",400));
+			return INPUT;
+		}
+		
+		try {
+			TestService testService = new TestService();
+			Context context = new Context();
+			context.setClasssroomId(classroomId);
+			context.setUserId(userId);
+			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
+			boolean graded = testService.gradeAttempt(attempt, totalMarks, questionDto.getGradedAnswers());
+			if (graded) {
+				this.successDto = new SuccessDto("Test grated sucessfully", 200, graded);
+			} else {
+				this.successDto = new SuccessDto("Test not graded", 422, graded);
+			}
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException | QuestionNotFoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("execute ended");
+		setError(new ApiError("server error", 500));
+		return ERROR;
+	}
+	
+	
 	
 
 	public UserTestAttemptDto getUserTestAttempt() {
@@ -927,6 +981,10 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 	public void setAttempt(Integer attempt) {
 		this.attempt = attempt;
+	}
+
+	public void setTotalMarks(Integer totalMarks) {
+		this.totalMarks = totalMarks;
 	}
 	
 	

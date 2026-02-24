@@ -694,11 +694,11 @@ public class TestDao {
 			boolean allInserted = Arrays.stream(results).allMatch(r -> r > 0);
 
 			System.out.println("all inserted ----------");
-			
+
 			if (allInserted) {
-				
+
 				System.out.println("updating status ----------");
-				
+
 				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatus)) {
 					psUpdate.setInt(1, attemptId);
 					psUpdate.executeUpdate();
@@ -872,15 +872,26 @@ public class TestDao {
 
 	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
 			throws SQLException {
+		
+		System.out.println(questionAnswers);
+		System.out.println("I am called");
+		
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
 
 			for (QuestionReportDto questionReportDto : questionAnswers) {
 				for (Answer option : questionReportDto.getSelectedOptions()) {
-
+					System.out.println("I am called 2 ");
 					System.out.println(option);
 
-					ps.setBoolean(1, option.getCorrect());
-					ps.setInt(2, option.getGivenMarks());
+					Boolean isCorrect = option.getCorrect();
+
+					ps.setBoolean(1, isCorrect);
+					if (isCorrect) {
+						ps.setInt(2, option.getGivenMarks());
+					} else {
+						ps.setInt(2, 0);
+					}
+
 					ps.setInt(3, option.getAnswerId());
 					System.out.println("Updating");
 					ps.addBatch();
@@ -1037,10 +1048,10 @@ public class TestDao {
 					}
 
 					AttemptDto attempt = new AttemptDto();
-					
+
 					Integer attemptId = rs.getInt("attempt_id");
-					
-					if(attemptId == 0) {
+
+					if (attemptId == 0) {
 						continue;
 					}
 
@@ -1082,7 +1093,7 @@ public class TestDao {
 				while (rs.next()) {
 					if (report.getTotalMarks() == null) {
 						report.setTotalMarks(rs.getInt("total_marks"));
-						
+
 					}
 
 					Integer questionId = rs.getInt("question_id");
@@ -1100,11 +1111,11 @@ public class TestDao {
 						questions.put(questionId, question);
 						question.setOptions(new LinkedList<Option>());
 						question.setSelectedOptions(new LinkedList<Answer>());
-						
-						if(report.getQuestions() == null) {
+
+						if (report.getQuestions() == null) {
 							report.setQuestions(new LinkedList<QuestionReportDto>());
 						}
-						
+
 						report.getQuestions().add(question);
 					}
 
@@ -1135,27 +1146,26 @@ public class TestDao {
 
 					Boolean selectedIsCorrect = rs.getBoolean("selected_option_is_correct");
 					int totalGivenMarks = 0;
-					
+
 					Answer selectedOption = new Answer();
 					if (selectedIsCorrect != null) {
 						selectedOption.setCorrect(selectedIsCorrect);
-						
+
 						Integer givenMark = rs.getInt("given_marks");
-						if(givenMark != null) {
-							totalGivenMarks+=givenMark;
+						if (givenMark != null) {
+							totalGivenMarks += givenMark;
 						}
-						
+
 						selectedOption.setGivenMarks(givenMark);
 						selectedOption.setOptionId(optionId);
 
 						JsonObject json = new Gson().fromJson(rs.getString("selected_properties"), JsonObject.class);
 						AnswerPropertiesDto answerPropertiesDto = new AnswerPropertiesDto();
 
-						
-						if(json == null) {
+						if (json == null) {
 							continue;
 						}
-						
+
 						JsonElement blankIdx = json.get("blankIdx");
 						JsonElement blankText = json.get("blankText");
 						JsonElement match = json.get("match");
@@ -1172,7 +1182,7 @@ public class TestDao {
 
 						selectedOption.setAnswerPropertiesDto(answerPropertiesDto);
 					}
-					
+
 					question.setGivenMarks(totalGivenMarks);
 					question.getSelectedOptions().add(selectedOption);
 
@@ -1182,9 +1192,7 @@ public class TestDao {
 		}
 		return report;
 	}
-	
-	
-	
+
 	public TestReportDto getSubmittedAnswerReport(int attemptId, int testId) throws SQLException {
 
 		TestReportDto report = new TestReportDto();
@@ -1213,11 +1221,11 @@ public class TestDao {
 						questions.put(questionId, question);
 						question.setOptions(new LinkedList<Option>());
 						question.setSelectedOptions(new LinkedList<Answer>());
-						
-						if(report.getQuestions() == null) {
+
+						if (report.getQuestions() == null) {
 							report.setQuestions(new LinkedList<QuestionReportDto>());
 						}
-						
+
 						report.getQuestions().add(question);
 					}
 
@@ -1246,23 +1254,21 @@ public class TestDao {
 								(new MatchingOptionProperties(json.get("match").getAsString())));
 					}
 
-					
 					Integer answerId = rs.getInt("answer_id");
-					
+
 					Answer selectedOption = new Answer();
 					if (answerId != null) {
-						
+
 						selectedOption.setOptionId(optionId);
 						selectedOption.setAnswerId(answerId);
 
 						JsonObject json = new Gson().fromJson(rs.getString("selected_properties"), JsonObject.class);
 						AnswerPropertiesDto answerPropertiesDto = new AnswerPropertiesDto();
 
-						
-						if(json == null) {
+						if (json == null) {
 							continue;
 						}
-						
+
 						JsonElement blankIdx = json.get("blankIdx");
 						JsonElement blankText = json.get("blankText");
 						JsonElement match = json.get("match");
@@ -1279,7 +1285,7 @@ public class TestDao {
 
 						selectedOption.setAnswerPropertiesDto(answerPropertiesDto);
 					}
-				
+
 					question.getSelectedOptions().add(selectedOption);
 
 				}
@@ -1288,6 +1294,5 @@ public class TestDao {
 		}
 		return report;
 	}
-	
 
 }

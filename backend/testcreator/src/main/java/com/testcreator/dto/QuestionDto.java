@@ -14,6 +14,10 @@ public class QuestionDto {
 	private String testTitle;
 	private TestDto test;
 	
+	private List<QuestionReportDto> gradedAnswers;
+
+	
+	
 
 	public List<Option> getOptions() {
 		return options;
@@ -79,6 +83,16 @@ public class QuestionDto {
 		this.questionText = questionText;
 	}
 
+	
+	
+
+	public List<QuestionReportDto> getGradedAnswers() {
+		return gradedAnswers;
+	}
+
+	public void setGradedAnswers(List<QuestionReportDto> gradedAnswers) {
+		this.gradedAnswers = gradedAnswers;
+	}
 
 	@Override
 	public String toString() {

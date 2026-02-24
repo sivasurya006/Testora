@@ -27,6 +27,7 @@ export default function StudentSubmissions() {
   const [answerSheet, setAnswerSheet] = useState([]);
   const [isResultPageOpen, setResultPageOpen] = useState(false);
   const [reportData, setReportData] = useState([]);
+  const [ attemptId , setAttemptId ] = useState(null);
 
   console.log(params)
 
@@ -35,12 +36,14 @@ export default function StudentSubmissions() {
   async function handleGrade(attemptId) {
     const answer = await getAnswerSheet(classroomId, testId, attemptId);
     setAnswerSheet(answer);
+    setAttemptId(attemptId)
     setGradeScreenOpen(true)
   }
 
   async function handleShowReport(attemptId) {
     const report = await getTestReport(classroomId, testId, attemptId);
     setReportData(report);
+    setAttemptId(attemptId)
     setResultPageOpen(true)
   }
 
@@ -116,7 +119,7 @@ export default function StudentSubmissions() {
 
 
   if (isGradeScreenOpen) {
-    return <GradeScreen questions={answerSheet.questions} onExit={onExit} isGradeScreenOpen={isGradeScreenOpen} />
+    return <GradeScreen attemptId={attemptId} setAttempts={setData} attempts={data.attempts}  questions={answerSheet.questions} onExit={onExit} isGradeScreenOpen={isGradeScreenOpen} />
   }
 
   if (isResultPageOpen) {
