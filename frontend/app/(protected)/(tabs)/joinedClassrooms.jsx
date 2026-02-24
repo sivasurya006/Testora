@@ -10,6 +10,7 @@ import { useRouter } from 'expo-router';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import InputModal from '../../../src/components/modals/InputModal';
 
 
 const { width } = Dimensions.get('window');
@@ -71,13 +72,13 @@ export default function JoinedClassrooms() {
             )}
           />
           }
-          {createModalVisible ?
+          {/* {createModalVisible ?
             <InputModal placeholder={"Class name"}
               visible={createModalVisible}
               onValueChange={setClassroomName}
               onConfirm={onConfirmCreateClassModal}
               onCancel={onCancelCreateClassModal} />
-            : null}
+            : null} */}
 
         </View >
       </SafeAreaView>
