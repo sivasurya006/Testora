@@ -11,7 +11,6 @@ import { ActivityIndicator, Button } from 'react-native-paper'
 import { AppBoldText } from '../../../../../../styles/fonts'
 import ResultModal from '../../../../../../src/components/ResultModal'
 import FillInBlankQuestionView from '../../../../../../src/components/testComponents/FillInBlankQuestionView'
-import MacthcingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import MatchingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport'
 import { AppState } from "react-native";
@@ -57,7 +56,7 @@ export default function Test() {
   async function submitAnswer() {
     try {
       if (!attemptId.current) throw new Error('Attempt ID not set');
-      const result = await api.post('/timedtest/submit', makePayload(selectedAnswers), {
+      const result = await api.post('/timedtest/submit',{
         headers: {
           'X-ClassroomId': classroomId,
           'X-TestId': testId,
@@ -98,24 +97,24 @@ export default function Test() {
       });
     }
   }
-  useEffect(() => {
-  const detectDevTools = () => {
-    const threshold = 160;
+  // useEffect(() => {
+  // const detectDevTools = () => {
+  //   const threshold = 160;
 
-      if (
-        window.outerWidth - window.innerWidth > threshold ||
-        window.outerHeight - window.innerHeight > threshold
-      ) {
-        setTabWarningVisible(true);
-      }
-    };
+  //     if (
+  //       window.outerWidth - window.innerWidth > threshold ||
+  //       window.outerHeight - window.innerHeight > threshold
+  //     ) {
+  //       setTabWarningVisible(true);
+  //     }
+  //   };
 
-    window.addEventListener("resize", detectDevTools);
+  //   window.addEventListener("resize", detectDevTools);
 
-    return () => {
-      window.removeEventListener("resize", detectDevTools);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("resize", detectDevTools);
+  //   };
+  // }, []);
 
 
   useEffect(() => {
@@ -161,9 +160,9 @@ export default function Test() {
       e.preventDefault();
     };
 
-    const handleContextMenu = (e) => {
-      e.preventDefault();
-    };
+    // const handleContextMenu = (e) => {
+    //   e.preventDefault();
+    // };
 
     const handleKeyDown = (e) => {
       if ( ['c', 'v', 'x', 'a','i'].includes(e.key.toLowerCase())) {
@@ -171,14 +170,14 @@ export default function Test() {
       }
     };
 
-    document.addEventListener('contextmenu', handleContextMenu);
+    // document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('copy', handleCopyPaste);
     document.addEventListener('paste', handleCopyPaste);
     document.addEventListener('cut', handleCopyPaste);
 
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
+      // document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('copy', handleCopyPaste);
       document.removeEventListener('paste', handleCopyPaste);
@@ -270,8 +269,6 @@ export default function Test() {
 
 
 
-  useEffect(() => {
-    if (Platform.OS == 'web') return;
   useEffect(() => {
     if (Platform.OS == 'web') return;
 
@@ -447,9 +444,7 @@ export default function Test() {
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
-      <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
       <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
-      <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
       <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
       <ConfirmModal
@@ -488,7 +483,9 @@ export default function Test() {
 
 
   )
+
 }
+  
 
 const styles = StyleSheet.create({
   screen: {
