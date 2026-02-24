@@ -297,7 +297,6 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 
-		System.out.println(classroomId+" "+userId);
 		
 		try {
 			Context context = new Context();

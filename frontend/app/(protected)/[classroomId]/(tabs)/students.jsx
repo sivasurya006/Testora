@@ -102,6 +102,7 @@ export default function StudentList() {
                 </View>
                 <View>
                   {studentsList.map((student, i) => {
+                    console.log("student ", student);
                     const totalTests = student.user?.totalTestCount || 0;
                     const totalAttempted = student.user?.totalAttemptedTestCount || 0;
                     const studentProgress = totalTests > 0 ? (totalAttempted / totalTests) * 100 : 0;
