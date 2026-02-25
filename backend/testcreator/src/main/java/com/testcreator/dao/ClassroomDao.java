@@ -387,7 +387,7 @@ public class ClassroomDao {
 
 		try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent)) {
 //			deleteClass.setInt(1, classroomId);
-			System.out.println("user_id"  +userId);
+			System.out.println("user_id" + userId);
 			deleteClass.setInt(1, userId);
 
 			if (deleteClass.executeUpdate() == 1) {
@@ -398,5 +398,23 @@ public class ClassroomDao {
 			}
 		}
 
+	}
+
+	public List<ClassroomUser> getTopPerfomanceStudent(int classroomId) {
+		List<ClassroomUser> topPerformers = new LinkedList<>();
+		try (PreparedStatement getStudents = connection.prepareStatement(Queries.getTopPerfomanceStudents)) {
+			getStudents.setInt(1, classroomId);
+			try (ResultSet rs = getStudents.executeQuery()) {
+				while (rs.next()) {
+
+					topPerformers.add(new ClassroomUser(rs.getString("name"), rs.getInt("score")));
+				}
+			}
+		} catch (SQLException e) {
+			// TODO implement logger
+			e.printStackTrace();
+		}
+
+		return topPerformers;
 	}
 }

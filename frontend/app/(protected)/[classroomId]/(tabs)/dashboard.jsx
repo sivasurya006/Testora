@@ -31,8 +31,9 @@ export default function Dashboard() {
     labels: [],
     datasets: [{ data: [] }],
   });
-  
+
   const [tests, setTests] = useState([]);
+  const [topPerfomance,setTopPerfomance]=useState([]);
 
   const { width } = useWindowDimensions();
 
@@ -42,6 +43,7 @@ export default function Dashboard() {
     useCallback(() => {
       fetchDashboardData();
       fetchDashboardTests();
+      fetchTopPerformStudent();
 
     }, [])
   );
@@ -59,7 +61,6 @@ export default function Dashboard() {
 
       if (res.status === 200) {
         const data = res.data || {};
-        console.log(res.data, "hi")
 
 
         setStats({
@@ -86,13 +87,28 @@ export default function Dashboard() {
       );
       if (res.status === 200) {
         setTests(res.data);
-        if (res.status === 200) {
-          setTests(res.data);
-        }
+       
 
       }
     }
     catch (err) { }
+  }
+
+
+  async function fetchTopPerformStudent() {
+    try{
+      const res=await api.get("/api/api/getTopPerfomanceStudent",
+        {headers:{"X-ClassroomId":classroomId}}
+      )
+      if(res.status===200){
+        setTopPerfomance(res.data);
+        console.log("Top performance",res.data)
+
+      }
+    }
+    catch(err){
+
+    }
   }
 
 
@@ -114,6 +130,7 @@ export default function Dashboard() {
         const total =
           (stats?.totalStudents ?? 0) *
           (stats?.totalTests ?? 0);
+          console.log("Analytics Data:", res.data);
 
         console.log("Total Students:", stats?.totalStudents);
         console.log("Total Tests:", stats?.totalTests);
@@ -140,6 +157,7 @@ export default function Dashboard() {
           },
         ]);
 
+
         const LineChartTestName = pieChartData
           .slice(0, 5)
           .map(item => item.testTitle);
@@ -148,6 +166,10 @@ export default function Dashboard() {
           .slice(0, 5)
           .map(item => item.attemptCount);
 
+
+          console.log(pieChartData);
+          console.log(LineChartTestAttemptCount);
+          console.log(LineChartTestName)
         setLineData({
           labels: LineChartTestName,
           datasets: [{ data: LineChartTestAttemptCount }],
@@ -190,6 +212,17 @@ export default function Dashboard() {
     },
   ];
 
+
+  // const hasLineData =
+  //   lineData?.datasets?.[0]?.data &&
+  //   lineData.datasets[0].data.length > 0;
+
+  // const maxValue = hasLineData
+  //   ? Math.max(...lineData.datasets[0].data)
+  //   : 1;
+
+  const values=lineData.datasets[0]?.data || [];
+  const LineChartSegmentMaxValue=values.length ? Math.max(...values):0; 
   return (
     <>
       <StatusBar style="dark" backgroundColor={Colors.bgColor} />
@@ -272,16 +305,16 @@ export default function Dashboard() {
               </View>
               <View style={styles.sectionMobile}>
                 <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
-                {array.map((item, index) => (
+                {topPerfomance.map((item, index) => (
                   <View key={index} style={styles.topperCardMobile}>
                     <View style={styles.avatar}>
                       <AppRegularText style={styles.avatarText}>
-                        {item.name.substring(0, 2).toUpperCase()}
+                        {item.topPerformerName.substring(0, 2).toUpperCase()}
                       </AppRegularText>
                     </View>
 
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.topperName}>{item.name}</Text>
+                      <Text style={styles.topperName}>{item.topPerformerName}</Text>
                       <Text style={styles.topperScore}>
                         Score: {item.score}
                       </Text>
@@ -333,17 +366,22 @@ export default function Dashboard() {
                   </View>
                 </View>
               </View>
-
+     
               <View style={styles.graph1}>
                 <View style={styles.LineCard}>
                   <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
-                  <LineChart
-                    data={lineData}
-                    width={960}
-                    height={400}
-                    chartConfig={chartConfig}
-                    bezier
-                  />
+                    <LineChart
+                      data={lineData}
+                      width={960}
+                      height={400}
+                      chartConfig={chartConfig}
+                      segments={LineChartSegmentMaxValue }
+
+                      bezier
+                      // fromZero
+                      // segments={Math.max(...lineData.datasets[0].data)}
+                    />
+                  
                 </View>
 
                 <View style={styles.chartCard}>
@@ -374,17 +412,17 @@ export default function Dashboard() {
                 <View style={styles.sectionTopPeform}>
                   <AppRegularText style={styles.sectionTitle}>Top Performing</AppRegularText>
                   <View style={styles.topperContainerDesktop}>
-                    {array.map((item, index) => (
+                    {topPerfomance.map((item, index) => (
                       <View key={index} style={styles.topperCardDesktop}>
                         <View style={styles.nameProfile}>
                           <AppRegularText style={styles.profileText}>
-                            {item.name.substring(0, 2).toUpperCase()}
+                            {item.topPerformerName.substring(0, 2).toUpperCase()}
                           </AppRegularText>
                         </View>
 
-                        <View>
+                        <View style={{gap:20}}>
                           <AppRegularText style={styles.topperNameDesktop}>
-                            {item.name}
+                            {item.topPerformerName}
                           </AppRegularText>
                           <AppRegularText style={styles.topperScoreDesktop}>
                             Score: {item.score}
@@ -404,18 +442,17 @@ export default function Dashboard() {
         </ScrollView>
       </SafeAreaView>
     </>
-  );
+  );        
 
 }
 
 const chartConfig = {
   backgroundGradientFrom: "#fff",
   backgroundGradientTo: "#fff",
-  decimalPlaces: 0,
-  color: (opacity = 1) => `rgba(33,150,243,${opacity})`,
+  color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
   labelColor: () => "#333",
+  decimalPlaces: 0,
 };
-
 const styles = StyleSheet.create({
 
   container: {
@@ -452,6 +489,7 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 4
   },
+
   createdAt: {
     fontSize: 14,
     marginLeft: 5,
@@ -465,6 +503,7 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 4
   },
+
   createdAt: {
     fontSize: 14,
     marginLeft: 5,
