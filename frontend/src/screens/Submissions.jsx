@@ -231,26 +231,39 @@ export default function StudentSubmissionScreen({ mode = 'submissions', search =
         <View style={styles.container}>
             {
                 mode == 'submissions' ? (
-                    <SectionList
-                        // style={{ marginTop: 0, paddingTop: 0 }}
-                        sections={sections}
-                        keyExtractor={(item, index) =>
-                            item.email + item.title + index
-                        }
-                        renderItem={renderItem}
-                        renderSectionHeader={renderSectionHeader}
-                        stickySectionHeadersEnabled
-                        showsVerticalScrollIndicator={false}
+                    sections.length == 0 ? (
+                        <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -60 }] }}>
+                            <AppMediumText>No Submissions</AppMediumText>
+                        </View>
+                    ) : (
+                        <SectionList
+                            // style={{ marginTop: 0, paddingTop: 0 }}
+                            sections={sections}
+                            keyExtractor={(item, index) =>
+                                item.email + item.title + index
+                            }
+                            renderItem={renderItem}
+                            renderSectionHeader={renderSectionHeader}
+                            stickySectionHeadersEnabled
+                            showsVerticalScrollIndicator={false}
 
-                    />
+                        />
+                    )
+
                 ) : (
-                    <FlatList
-                        data={filteredData}
-                        keyExtractor={(item, index) =>
-                            item.email + item.title + index
-                        }
-                        renderItem={renderItem}
-                    />
+                    filteredData.length == 0 ? (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <AppSemiBoldText>No Attempts</AppSemiBoldText>\
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={filteredData}
+                            keyExtractor={(item, index) =>
+                                item.email + item.title + index
+                            }
+                            renderItem={renderItem}
+                        />
+                    )
                 )
             }
         </View>

@@ -138,6 +138,12 @@ export default function AuthContextProvider({ children }) {
     async function signOut() {
         if (Platform.OS !== 'web') {
             await SecureStore.deleteItemAsync("token");
+        }else{
+            try{
+                const result = await api.delete('/signout');
+            }catch(err){
+                console.log(err.response?.message)
+            }
         }
         setUser(null);
         router.replace('/signin');

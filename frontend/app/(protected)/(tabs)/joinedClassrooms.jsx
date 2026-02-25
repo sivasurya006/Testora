@@ -1,16 +1,17 @@
-import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions, TextInput, Platform, Dimensions } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions, TextInput, Platform, Dimensions, Modal } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import api from '../../../util/api';
 import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
-import { fonts } from '../../../styles/fonts';
+import { AppSemiBoldText, fonts } from '../../../styles/fonts';
 import { useRouter } from 'expo-router';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import InputModal from '../../../src/components/modals/InputModal';
+import { AuthContext } from '../../../util/AuthContext';
 
 
 const { width } = Dimensions.get('window');
@@ -64,7 +65,7 @@ export default function JoinedClassrooms() {
             setSearch={setSearch}
           />
           {allJoinedClassrooms.length == 0 ? (
-            <EmptyClassroom message="No Joined classrooms\nAvailable" />
+            <EmptyClassroom message="No Joined Classrooms" />
           ) : <FlatList
             numColumns={numColumns}
             data={filteredJoinedClassrooms}
@@ -112,6 +113,9 @@ async function getAllJoinedClassrooms(setAllJoinedClassrooms) {
 function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
 
   const [isHovered, setIsHovered] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const { signOut } = useContext(AuthContext);
+
   return (
     <>
       {/* <StatusBar backgroundColor={Colors.bgColor} /> */}
@@ -149,16 +153,64 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
             </View>
           </Pressable>
           {
-            isLargeScreen ? (
-              <Pressable>
-                <MaterialIcons
-                  name='account-circle'
-                  size={34}
-                  color={Colors.secondaryColor}
-                />
+            isLargeScreen && (
+              <Pressable
+                onPress={() => {
+                  setTooltipVisible(true);
+                }}
+              >
+                <MaterialIcons name='account-circle' size={34} color={Colors.secondaryColor} />
               </Pressable>
-            ) : null
+            )
           }
+          <Modal transparent visible={tooltipVisible} animationType="fade">
+            <Pressable
+              style={{ flex: 1 }}
+              onPress={() => setTooltipVisible(false)}
+            >
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 65,
+                  right: 50,
+                  backgroundColor: 'white',
+                  borderRadius: 8,
+                  padding: 4,
+                  elevation: 10,
+                  shadowColor: Colors.shadowColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  minWidth: 140,
+                }}
+              >
+                <Pressable
+                  style={({ pressed }) => [
+                    {
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 10,
+                      paddingVertical: 10,
+                      paddingHorizontal: 12,
+                      borderRadius: 6,
+                      backgroundColor: pressed ? '#ffe6e6' : 'white',
+                    },
+                  ]}
+                  onPress={() => {
+
+                    console.log('Logging out...');
+                    setTooltipVisible(false);
+                    signOut();
+                  }}
+                >
+                  <MaterialIcons name="logout" size={20} color="#d32f2f" />
+                  <AppSemiBoldText style={{ color: '#d32f2f', fontSize: 16 }}>
+                    Log out
+                  </AppSemiBoldText>
+                </Pressable>
+              </View>
+            </Pressable>
+          </Modal>
         </View>
       </View>
     </>

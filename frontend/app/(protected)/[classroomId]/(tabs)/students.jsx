@@ -188,7 +188,7 @@ function TobBar({ setInviteStudentModalVisible }) {
   return (
     <View style={styles.topBar}>
       <TextInput
-        placeholder="Search student..."
+        placeholder="Search trainee..."
         value={searchText}
         onChangeText={setSearchText}
         style={styles.searchInput}

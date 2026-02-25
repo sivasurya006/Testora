@@ -8,7 +8,7 @@ import { router, useFocusEffect, useGlobalSearchParams } from 'expo-router'
 import Test from '../components/Test'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
-import { AppMediumText } from '../../styles/fonts'
+import { AppBoldText, AppMediumText } from '../../styles/fonts'
 import TestBanner from '../components/TestComponentBanner'
 
 
@@ -66,6 +66,28 @@ export default function CreatedTestList({ filter, search }) {
     setCreateTestModalVisible(false);
   }
 
+  // if (allCreatedTests.length == 0) {
+  //   return (
+  //     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' , margin : 'auto' }]}>
+  //       <Pressable
+  //         style={styles.addButton}
+  //         onPress={() =>{setCreateTestModalVisible(true); console.log('called') }}
+  //       >
+  //         <AntDesign name="plus" size={16} color={Colors.white} />
+  //         <Text style={styles.addButtonText}>Create your first Test</Text>
+  //       </Pressable>
+  //     </View>
+  //   )
+  // }
+
+  // if(filteredTests.length == 0){
+  //   return (
+  //     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' , flex:1 }]}>
+  //       <AppBoldText style={styles.emptyText}>No Tests</AppBoldText>
+  //     </View>
+  //   )
+  // } 
+
   return (
 
     <>
@@ -83,12 +105,7 @@ export default function CreatedTestList({ filter, search }) {
         </Pressable>
       </View>
 
-      {
-        filteredTests.length == 0 ? (
-          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-            <AppMediumText style={styles.emptyText}>No tests found</AppMediumText>
-          </View>
-        ) : (
+
       <FlatList
         data={filteredTests}
         numColumns={numColumns}
@@ -102,8 +119,31 @@ export default function CreatedTestList({ filter, search }) {
       //     numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
       // }
       />
-      )
+
+      {
+        filter == 'published' && filteredTests.length == 0 ? (
+          <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -20 }] }}>
+            <AppMediumText>No Published Tests</AppMediumText>
+          </View>
+        ) : (filter == 'drafts' && filteredTests.length == 0) ? (
+          <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -20 }] }}>
+            <AppMediumText>No Draft Tests</AppMediumText>
+          </View>
+        ) : (
+            filteredTests.length == 0 && (
+              <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -20 }] }}>
+                <Pressable
+                  style={styles.addButton}
+                  onPress={() => setCreateTestModalVisible(true)}
+                >
+                  <AntDesign name="plus" size={16} color={Colors.white} />
+                  <Text style={styles.addButtonText}>Create your first Test</Text>
+                </Pressable>
+              </View>
+            )
+        ) 
       }
+
       {
         isCreateTestModalVisible &&
         <InputModal

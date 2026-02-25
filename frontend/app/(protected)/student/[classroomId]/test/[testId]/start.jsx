@@ -179,21 +179,21 @@ export default function Test() {
     document.addEventListener('paste', handleCopyPaste);
     document.addEventListener('cut', handleCopyPaste);
 
-const handleFullscreenChange = () => {
-  if (!document.fullscreenElement) {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
 
-    fullScreenExitCount.current += 1;
+        fullScreenExitCount.current += 1;
 
 
-    if (fullScreenExitCount.current === 1) {
-      setFullScreenExitWarning(true);
-    }
+        if (fullScreenExitCount.current === 1) {
+          setFullScreenExitWarning(true);
+        }
 
-    if (fullScreenExitCount.current >= 2) {
-      submitAnswer();
-    }
-  }
-};
+        if (fullScreenExitCount.current >= 2) {
+          submitAnswer();
+        }
+      }
+    };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     const onBlur = () => {
@@ -220,37 +220,37 @@ const handleFullscreenChange = () => {
   const tabSwitchCount = useRef(0);
   const violationPoints = useRef(0);
   // const pageLoaded = useRef(false);
-const handleBlur = () => {
-  if (isResultPageOpen) return;
+  const handleBlur = () => {
+    if (isResultPageOpen) return;
 
-  tabSwitchCount.current += 1;
-  console.log("Tab switched:", tabSwitchCount.current);
+    tabSwitchCount.current += 1;
+    console.log("Tab switched:", tabSwitchCount.current);
 
-  if (tabSwitchCount.current === 1) {
-    setTabWarningVisible(true);
-  }
+    if (tabSwitchCount.current === 1) {
+      setTabWarningVisible(true);
+    }
 
-  if (tabSwitchCount.current >= 2) {
-    console.log("Auto submitting due to tab switch");
-    submitAnswer();
-  }
-};
+    if (tabSwitchCount.current >= 2) {
+      console.log("Auto submitting due to tab switch");
+      submitAnswer();
+    }
+  };
 
-const handleFocus = () => {
-  console.log("User returned to test");
-};
+  const handleFocus = () => {
+    console.log("User returned to test");
+  };
 
-const handleVisibilityChange = () => {
-  if (isResultPageOpen) return;
+  const handleVisibilityChange = () => {
+    if (isResultPageOpen) return;
 
-  if (document.hidden) {
-    console.log("Document hidden");
-    handleBlur();
-  } else {
-    console.log("Document visible");
-    handleFocus();
-  }
-};
+    if (document.hidden) {
+      console.log("Document hidden");
+      handleBlur();
+    } else {
+      console.log("Document visible");
+      handleFocus();
+    }
+  };
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -260,21 +260,21 @@ const handleVisibilityChange = () => {
   useEffect(() => {
     if (Platform.OS == 'web') return;
 
-  //   const appState = useRef(AppState.currentState);
+    //   const appState = useRef(AppState.currentState);
 
-  //   const handleAppStateChange = (nextAppState) => {
-  //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
-  //       console.log("User left the app");
-  //       setTabWarningVisible(true);
-  //     }
-  //   };
+    //   const handleAppStateChange = (nextAppState) => {
+    //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+    //       console.log("User left the app");
+    //       setTabWarningVisible(true);
+    //     }
+    //   };
 
-  //   const interval = setInterval(detectDevTools, 1000);
+    //   const interval = setInterval(detectDevTools, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-  
+
 
 
   async function startNewTest() {
