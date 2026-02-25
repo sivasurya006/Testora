@@ -228,36 +228,42 @@ const styles = StyleSheet.create({
     date: {
         // color : Colors.black
     },
-    attemptBadge: {
-        backgroundColor: '#E3F2FD',
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 6,
-    },
-    attemptText: {
-        fontSize: 12,
-        color: '#0D47A1',
-    },
-    finishedBadge: {
-        backgroundColor: '#E0E0E0',
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 6,
-    },
-    finishedText: {
-        fontSize: 12,
-        color: '#424242',
-    },
-    newBadge: {
-        backgroundColor: '#E0E0E0',
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 6,
-    },
-    newText: {
-        fontSize: 12,
-        color: '#424242',
-    },
+ attemptBadge: {
+    backgroundColor: "#FEF3C7",   // light orange
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+},
+attemptText: {
+    fontSize: 12,
+    color: "#B45309",   // dark amber text
+    fontWeight: "600",
+},
+finishedBadge: {
+    backgroundColor: "#DCFCE7",   // light green
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+},
+finishedText: {
+    color: "#15803D",   // dark green text
+    fontSize: 12,
+    fontWeight: "600",
+},
+newBadge: {
+    backgroundColor: "#DBEAFE",   // light blue
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+},
+newText: {
+    color: "#1D4ED8",   // dark blue text
+    fontSize: 12,
+    fontWeight: "600",
+}
 });
 
 

@@ -151,9 +151,10 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     backgroundColor: Colors.primaryColor,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 30,
+    paddingVertical: 18,
+    paddingHorizontal: 35,
+    borderRadius: 25,
+    marginLeft: 10, 
   },
   primaryButtonText: {
     color: Colors.white,

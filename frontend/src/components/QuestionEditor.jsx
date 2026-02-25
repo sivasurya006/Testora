@@ -8,7 +8,6 @@ import { BooleanComponent, FillBlankComponent, MatchingComponents, MCQComponent,
 import { Checkbox } from 'react-native-paper'
 import { AppBoldText, AppMediumText, AppRegularText, AppSemiBoldText } from '../../styles/fonts'
 import { AntDesign } from '@expo/vector-icons'
-import { platform, type } from 'node:os'
 import MatchingQuestion from './MatchingQuestion'
 
 

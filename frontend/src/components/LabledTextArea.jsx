@@ -4,7 +4,7 @@ import { AppBoldText, AppMediumText } from '../../styles/fonts';
 import Colors from '../../styles/Colors';
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default function LabeledTextArea({ label, placeholder, onChangeText, numberOfLines = 2, customInputStyles,
   customTextStyles, isFillBlank = false,
