@@ -144,20 +144,13 @@ export default function Dashboard() {
           ]);
         }
 
-        const LineChartTestName = pieChartData
+            const LineChartTestName = pieChartData
           .slice(0, 5)
-          .map(item => {
-            const value = Number(item.someValue);
-            return isFinite(value) ? value : 0;
-
-          });
+          .map(item => item.testTitle);
 
         const LineChartTestAttemptCount = pieChartData
           .slice(0, 5)
-          .map(item => {
-            const value = Number(item.someValue);
-            return isFinite(value) ? value : 0;
-          });
+          .map(item => item.attemptCount);
 
         setLineData({
           labels: LineChartTestName,
@@ -366,29 +359,29 @@ export default function Dashboard() {
               <View style={styles.graph1}>
                 <View style={styles.LineCard}>
                   <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
-                  {/* <LineChart
+                  <LineChart
                     data={lineData}
                     width={960}
                     height={400}
                     chartConfig={chartConfig}
                     bezier
-                  /> */}
+                  />
                 </View>
 
                 <View style={styles.chartCard}>
                   <AppRegularText style={styles.sectionTitle}>Submission Status</AppRegularText>
-                  {/* {pieData.length > 0 ? (
+                  {pieData.length > 0 ? (
                   <PieChart
                     data={pieData}
                     width={400}
                     height={220}
                     chartConfig={chartConfig}
                     accessor="population"
-                    backgroundColor="transparent" */}
-                  {/* /> */}
-                  {/* ) : (
+                    backgroundColor="transparent" 
+                   /> 
+                   ) : (
                     <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No data available</Text>
-                  )} */}
+                  )}
                 </View>
               </View>
 

@@ -6,7 +6,7 @@ import BooleanOption from './BooleanOptions'
 import { fonts } from '../../../styles/fonts'
 import RenderHTML from 'react-native-render-html'
 
-export default function QuestionView({ question, selectedAnswers, setSelectedAnswers , preview = false }) {
+export default function QuestionView({ question, selectedAnswers, setSelectedAnswers, preview = false }) {
 
     const { width } = useWindowDimensions();
     const isWeb = Platform.OS === 'web';
@@ -82,10 +82,13 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
 }
 
 const styles = StyleSheet.create({
+
     questionViewContainer: {
         width: '100%',
         paddingVertical: 30,
         paddingHorizontal: 15,
+        //   alignItems: 'center',
+
     },
 
     webContainer: {
@@ -95,6 +98,7 @@ const styles = StyleSheet.create({
     },
 
     questionContainer: {
+justifyContent: 'center',
         marginBottom: 30,
     },
 
@@ -112,4 +116,5 @@ const styles = StyleSheet.create({
         fontSize: 24,
         // fontWeight: '600',
     },
+
 })

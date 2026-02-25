@@ -13,6 +13,7 @@ import ResultModal from '../../../../../../src/components/ResultModal'
 import FillInBlankQuestionView from '../../../../../../src/components/testComponents/FillInBlankQuestionView'
 import MatchingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport'
+import AlertModal from '../../../../../../src/components/modals/alert'
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
@@ -398,16 +399,17 @@ const handleVisibilityChange = () => {
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
-      <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
+      <AlertModal header={"Times up!"} body={"Your answers have been submitted automatically."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
       <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
-      <ConfirmModal message={"tab warning"} confirmOnly={true} onConfirm={() => { setTabWarningVisible(false) }} visible={tabWarningVisible} normal={true} />
-      <ConfirmModal message={"full screen exit warning"} confirmOnly={true} onConfirm={() => { setFullScreenExitWarning(false); requestFullscreenMode(); }} visible={fullScreenExitWarning} normal={true} />
+      <AlertModal header={"Tab warning"} body={"You are about to leave the test. Are you sure?"} confirmOnly={true} onConfirm={() => { setTabWarningVisible(false) }} visible={tabWarningVisible} normal={true} />
+      <AlertModal header={"Full screen exit warning"} body={"You are about to exit full screen mode. Are you sure?"} confirmOnly={true} onConfirm={() => { setFullScreenExitWarning(false); requestFullscreenMode(); }} visible={fullScreenExitWarning} normal={true} />
 
     </View>
   )
 
 }
+
 
 
 const styles = StyleSheet.create({

@@ -6,6 +6,7 @@ import api from '../../../../../../util/api';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../../../styles/Colors';
 import { AppBoldText, AppMediumText, AppRegularText } from '../../../../../../styles/fonts';
+import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
 
 export default function Publish() {
 
@@ -21,6 +22,7 @@ export default function Publish() {
     const [correctionType, setCorrectionType] = React.useState('AUTO');
     const [testMinutes, setTestMinutes] = useState(0);
     const [maximumAttempts, setMaximumAttempts] = useState(0);
+    const [showAttemptInput,setShowAttemptInput]=useState(false);
     const [showInfo, setShowInfo] = useState(false);
 
     const { width } = useWindowDimensions();
@@ -54,6 +56,13 @@ export default function Publish() {
             },
         });
 
+    }
+
+    function setTimedTest(value) {
+        setIsTimed(value);
+    }
+    function MaximumAttempts(value) {
+        setMaximumAttempts(value);
     }
 
     return (
@@ -145,12 +154,17 @@ export default function Publish() {
 
                         <Checkbox
                             status={isTimed ? 'checked' : 'unchecked'}
-                            onPress={() => setIsTimed(!isTimed)}
+                            onPress={() => {
+                                setIsTimed(!isTimed);
+                                if (!isTimed) {
+                                    setTestMinutes(30);
+                                }
+                            }}
                         />
                     </View>
 
                     {isTimed && (
-                        <View style={{ marginTop: 10 , flexDirection  : 'row' , alignItems : 'center' , gap : 20 }}>
+                        <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
                             <TextInput
                                 defaultValue='30'
                                 style={{
@@ -163,44 +177,60 @@ export default function Publish() {
                                 keyboardType='numeric'
                                 onChangeText={(text) => setTestMinutes(parseInt(text) || 0)}
                             />
-                        <AppRegularText>Minutes</AppRegularText>
+                            <AppRegularText>Minutes</AppRegularText>
                         </View>
                     )}
 
                     <View style={{ width: '100%', marginTop: 20 }}>
-                        <AppMediumText style={styles.label}>Maximum Attempts</AppMediumText>
-
                         <View style={{
+                            width: '100%',
                             flexDirection: 'row',
+                            justifyContent: 'space-between',
                             alignItems: 'center',
-                            marginTop: 8
+                            marginTop: 20
                         }}>
-                            <TextInput
-                                defaultValue='0'
-                                style={{
-                                    backgroundColor: '#F3F4F6',
-                                    padding: 10,
-                                    borderRadius: 10,
-                                    width: 100,
-                                }}
-                                keyboardType='numeric'
-                                onChangeText={(text) => setMaximumAttempts(parseInt(text) || 0)}
-                            />
+                            <View>
+                                <AppMediumText style={styles.label}>Restrict multiple attempts</AppMediumText>
+                                <AppRegularText style={{ color: '#6B7280', marginTop: 4 }}>
+                                    Set maximum attempts 
+                                </AppRegularText>
+                            </View>
 
-                            <Menu
-                                visible={showInfo}
-                                onDismiss={() => setShowInfo(false)}
-                                anchor={
-                                    <IconButton
-                                        icon="information"
-                                        size={18}
-                                        onPress={() => setShowInfo(true)}
-                                    />
-                                }
-                            >
-                                <Menu.Item title="0 for unlimited" />
-                            </Menu>
+                            <Checkbox
+                                status={maximumAttempts ? 'checked' : 'unchecked'}
+                                onPress={() => {
+                                    setShowAttemptInput(!showAttemptInput)
+                                    if (!maximumAttempts) {
+                                        MaximumAttempts(3);
+                                    }
+                                }}
+                            />
                         </View>
+
+
+                        {showAttemptInput && (
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                marginTop: 35
+                            }}>
+                                <TextInput
+                                    defaultValue='3'
+                                    style={{
+                                        backgroundColor: '#F3F4F6',
+                                        padding: 10,
+                                        borderRadius: 10,
+                                        width: 100,
+                                    }}
+                                    keyboardType='numeric'
+                                    onChangeText={(text) => setMaximumAttempts(parseInt(text) || 0)}
+                                />
+                                <AppRegularText style={{ marginHorizontal: 20 }}>Attempts</AppRegularText>
+
+
+                            </View>
+                        ) }    
+
                     </View>
                 </View>
 
@@ -214,7 +244,7 @@ export default function Publish() {
                         onPress={handlePublish}
                     >
                         <AppRegularText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
-                             Publish
+                            Publish
                         </AppRegularText>
                     </Pressable>
                 </View>
