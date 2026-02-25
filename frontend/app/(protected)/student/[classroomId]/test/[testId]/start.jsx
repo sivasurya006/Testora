@@ -317,7 +317,6 @@ export default function Test() {
     } catch (err) {
       if (err.response?.status === 403) setMessage('Maximum Attempts reached');
       console.log('startNewTest error:', err);
-      alert("please allow screen share");
     }
   }
 

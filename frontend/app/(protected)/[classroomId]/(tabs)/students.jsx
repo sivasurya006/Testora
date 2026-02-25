@@ -12,7 +12,8 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView } from 'react-native';
 import { AppMediumText } from '../../../../styles/fonts';
 import { Menu, IconButton } from 'react-native-paper';
-
+import StudentListHeader from '../../../../src/screens/studentlist';
+import { FlatList } from 'react-native-gesture-handler';
 
 export default function StudentList() {
 
@@ -92,15 +93,15 @@ export default function StudentList() {
               </View>
             ) : (
               <View style={styles.tableContainer}>
-                <View style={[styles.tableRow, styles.tableHeader]}>
-                  <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text>
+                <View style={[styles.tableRow, styles.tableHeader ]}>
+                  {/* <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text> */}
                   <Text style={[styles.tableItem, styles.headerItem]}>Name</Text>
                   <Text style={[styles.tableItem, styles.headerItem]}>Email</Text>
                   <Text style={[styles.tableItem, styles.headerItem]}>Enrolled Date</Text>
                   <Text style={[styles.tableItem, styles.headerItem, styles.progressHeader]}>Progress</Text>
                   <Text style={[styles.tableItem, styles.headerItem, styles.actionHeader]} />
                 </View>
-                <View>
+                {/* <View>
                   {studentsList.map((student, i) => {
                     const totalTests = student.user?.totalTestCount || 0;
                     const totalAttempted = student.user?.totalAttemptedTestCount || 0;
@@ -134,7 +135,7 @@ export default function StudentList() {
                           <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
                         </View> */}
 
-                        <View>
+                        {/* <View>
                           <Menu
                             visible={menuVisibleFor === student.user.userId}
                             onDismiss={closeMenu}
@@ -158,7 +159,61 @@ export default function StudentList() {
                       </View>
                     )
                   })}
-                </View>
+                </View>  */}
+                <FlatList data={studentsList}
+                  keyExtractor={(item) => item.user.userId}
+                  renderItem={({ item, index }) => {
+                    const totalTests = item.user?.totalTestCount || 0;
+                    const totalAttempted = item.user?.totalAttemptedTestCount || 0;
+                    const studentProgress = totalTests > 0 ? (totalAttempted / totalTests) * 100 : 0;
+                    return (
+                      <View key={item.user.userId} style={[styles.tableRow]} >
+                        {/* <Text style={styles.tableItem}>{index + 1}</Text> */}
+                        <Pressable
+                          onPress={() => console.log('profile')}
+                          style={{ flex: 1 }}
+                        >
+                          <Text style={[styles.tableItem, styles.linkText]}>
+                            {item.user.name}
+                          </Text>
+                        </Pressable>
+                        <Text style={styles.tableItem}>{item.user.email}</Text>
+                        <Text style={styles.tableItem}>
+                          {new Date(item.user.registeredAt * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </Text>
+
+                        <View style={styles.progressCell}>
+                          <View style={styles.progressBarBackground}>
+                            <View style={[styles.progressBarFill, { width: Math.floor(studentProgress) + "%" }]} />
+                          </View>
+                          <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
+                        </View>
+
+                        <View>
+                          <Menu
+                            visible={menuVisibleFor === item.user.userId}
+                            onDismiss={closeMenu}
+                            onRequestClose={closeMenu}
+                            anchorPosition='bottom'
+                            anchor={
+                              <IconButton
+                                icon="dots-vertical"
+                                onPress={() => openMenu(item.user.userId)}
+                                iconColor='black'
+                              />
+                            }
+
+                            contentStyle={styles.menuContentStyle}
+                          >
+
+                            <Menu.Item title="Delete" onPress={() => { closeMenu(); handleDelete(item.user.userId); }} titleStyle={styles.menuTitleStyle} />
+
+                          </Menu>
+                        </View>
+                      </View>
+                    )
+                  }} />
+
               </View>
 
             )
@@ -362,7 +417,8 @@ const styles = StyleSheet.create({
   linkText: {
     flex: 1,
     marginRight: 8,
-    color: '#1DA1F2'
+    color: '#1DA1F2',
+  
   },
   options: {
     flexDirection: 'row',
@@ -412,10 +468,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.thirdColor,
   },
   tableItem: {
-    flex: 1,
+    flex: 2,
     fontSize: 14,
     fontFamily: fonts.regular,
     color: Colors.black,
+  
+    
   },
   headerItem: {
     color: '#000',
