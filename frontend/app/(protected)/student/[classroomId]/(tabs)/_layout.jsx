@@ -15,45 +15,47 @@ export default function StudentLayout() {
     const isLargeScreen = width > 812
 
 
-   
+
 
     return (
         // <SafeAreaView style={{ flex: 1 }}>
-          
-            <Tabs
-                 tabBar={isLargeScreen ? (props) => <ClassroomTabBar {...props} /> : undefined}
-                screenOptions={{
-                    tabBarPosition: isLargeScreen ? 'left' : 'bottom',
-                    headerShown: false,
-                    tabBarStyle: Platform.select({
-                        web: {
-                            minWidth: 300,
-                            backgroundColor: Colors.secondaryColor,
-                        },
-                        android: {
-                            // height: 60,
-                            backgroundColor: Colors.secondaryColor,
-                        },
-                        ios: {
-                            // height: 60,
-                            backgroundColor: Colors.secondaryColor,
-                        },
-                    }),
-                    tabBarShowLabel: true
-                    , tabBarLabelStyle: {
-                        fontSize: isLargeScreen ? 16 : 12,
-                        fontFamily: fonts.semibold
-                    },
-                    tabBarActiveTintColor: Colors.white,
-                    tabBarInactiveTintColor: Colors.lightFont,
-                    tabBarItemStyle: {
-                        paddingTop: 7
-                    },
-                    tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent',
-                }}
-            >
 
-                {/* <Tabs.Screen
+        <Tabs
+            initialRouteName='tests'
+            tabBar={isLargeScreen ? (props) => <ClassroomTabBar {...props} /> : undefined}
+            screenOptions={{
+
+                tabBarPosition: isLargeScreen ? 'left' : 'bottom',
+                headerShown: false,
+                tabBarStyle: Platform.select({
+                    web: {
+                        minWidth: 300,
+                        backgroundColor: Colors.secondaryColor,
+                    },
+                    android: {
+                        // height: 60,
+                        backgroundColor: Colors.secondaryColor,
+                    },
+                    ios: {
+                        // height: 60,
+                        backgroundColor: Colors.secondaryColor,
+                    },
+                }),
+                tabBarShowLabel: true
+                , tabBarLabelStyle: {
+                    fontSize: isLargeScreen ? 16 : 12,
+                    fontFamily: fonts.semibold
+                },
+                tabBarActiveTintColor: Colors.white,
+                tabBarInactiveTintColor: Colors.lightFont,
+                tabBarItemStyle: {
+                    paddingTop: 7
+                },
+                tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent',
+            }}
+        >
+
+            {/* <Tabs.Screen
                     name="dashboard"
                     
                     options={{
@@ -64,27 +66,28 @@ export default function StudentLayout() {
                     }}
                 /> */}
 
-                <Tabs.Screen
-                    name="tests"
-                    options={{
-                        title : 'Tests',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialIcons name="assignment" size={24} color={color} />
-                        ),
-                    }}
-                />
+            <Tabs.Screen
+                name="tests"
+                options={{
+                    title: 'Tests',
+                    tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="assignment" size={24} color={color} />
+                    ),
+                }}
+            />
 
-                <Tabs.Screen
-                    name="settings"
-                    options={{
-                        title : 'Settings',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialIcons name="settings" size={24} color={color} />
-                        ),
-                    }}
-                />
+            <Tabs.Screen
+                name="settings"
+                options={{
+                    title: 'Settings',
+                    tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="settings" size={24} color={color} />
+                    ),
+                    href: null
+                }}
+            />
 
-            </Tabs>
+        </Tabs>
 
         // </SafeAreaView>
     )

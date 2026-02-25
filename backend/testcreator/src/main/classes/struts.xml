@@ -497,6 +497,14 @@
 				<param name="excludeNullProperties">true</param>
 			</result>
 		</action>
+		
+		<action name="signout"
+			class="com.testcreator.actions.UserAction" method="signOut">
+			<result name="success" type="json">
+				<param name="root">authDto</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+		</action>
 
 	</package>
 

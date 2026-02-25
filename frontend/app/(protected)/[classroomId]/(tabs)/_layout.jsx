@@ -74,7 +74,7 @@ export default function ClassroomLayout() {
                     )
                 }} />
                 <Tabs.Screen name='students' options={{
-                    title: 'Students',
+                    title: 'Trainees',
                     tabBarIcon: ({ color }) => (
                         <MaterialIcons name="groups" size={22} color={color} />
                     )
@@ -83,7 +83,8 @@ export default function ClassroomLayout() {
                     title: 'Settings',
                     tabBarIcon: ({ color }) => (
                         <Ionicons name="settings-sharp" size={24} color={color} />
-                    )
+                    ),
+                    href : null
                 }} />
                  <Tabs.Screen name='tests/[testId]' options={{
                     title: 'Tests',
