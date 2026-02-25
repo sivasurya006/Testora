@@ -22,7 +22,6 @@ export default function Publish() {
     const [correctionType, setCorrectionType] = React.useState('AUTO');
     const [testMinutes, setTestMinutes] = useState(0);
     const [maximumAttempts, setMaximumAttempts] = useState(0);
-    const [showAttemptInput, setShowAttemptInput] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
 
     const { width } = useWindowDimensions();
@@ -57,19 +56,6 @@ export default function Publish() {
         });
 
     }
-
-    function setTimedTest(value) {
-        setIsTimed(value);
-    }
-    function MaximumAttempts(value) {
-        setMaximumAttempts(value);
-    }
-
-    useEffect(() => {   
-        if (!showAttemptInput) {
-            setMaximumAttempts(0);
-        }
-    },[showAttemptInput])
 
     return (
         <View style={styles.container}>
@@ -193,49 +179,34 @@ export default function Publish() {
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            marginTop: 20
+                            marginTop: 8
                         }}>
-                            <View>
-                                <AppMediumText style={styles.label}>Restrict multiple attempts</AppMediumText>
-                                <AppRegularText style={{ color: '#6B7280', marginTop: 4 }}>
-                                    Set maximum attempts
-                                </AppRegularText>
-                            </View>
-
-                            <Checkbox
-                                status={showAttemptInput ? 'checked' : 'unchecked'}
-                                onPress={() => {
-                                    setShowAttemptInput(!showAttemptInput)
-                                    MaximumAttempts(3);
-                                
+                            <TextInput
+                                defaultValue='0'
+                                style={{
+                                    backgroundColor: '#F3F4F6',
+                                    padding: 10,
+                                    borderRadius: 10,
+                                    width: 100,
                                 }}
+                                keyboardType='numeric'
+                                onChangeText={(text) => setMaximumAttempts(parseInt(text) || 0)}
                             />
+
+                            <Menu
+                                visible={showInfo}
+                                onDismiss={() => setShowInfo(false)}
+                                anchor={
+                                    <IconButton
+                                        icon="information"
+                                        size={18}
+                                        onPress={() => setShowInfo(true)}
+                                    />
+                                }
+                            >
+                                <Menu.Item title="0 for unlimited" />
+                            </Menu>
                         </View>
-
-
-                        {showAttemptInput && (
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                marginTop: 35
-                            }}>
-                                <TextInput
-                                    defaultValue='3'
-                                    style={{
-                                        backgroundColor: '#F3F4F6',
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        width: 100,
-                                    }}
-                                    keyboardType='numeric'
-                                    onChangeText={(text) => setMaximumAttempts(parseInt(text) || 0)}
-                                />
-                                <AppRegularText style={{ marginHorizontal: 20 }}>Attempts</AppRegularText>
-
-
-                            </View>
-                        )}
-
                     </View>
                 </View>
 

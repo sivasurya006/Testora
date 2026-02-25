@@ -144,7 +144,7 @@ export default function Dashboard() {
           ]);
         }
 
-        const LineChartTestName = pieChartData
+            const LineChartTestName = pieChartData
           .slice(0, 5)
           .map(item => item.testTitle);
 
@@ -361,31 +361,27 @@ export default function Dashboard() {
               <View style={styles.graph1}>
                 <View style={styles.LineCard}>
                   <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
-                  {hasLineData && (
-                    <LineChart
-                      data={lineData}
-                      width={960}
-                      height={400}
-                      chartConfig={chartConfig}
-                      bezier
-                      fromZero
-                      segments={Math.max(...lineData.datasets[0].data)}
-                    />
-                  )}
+                  <LineChart
+                    data={lineData}
+                    width={960}
+                    height={400}
+                    chartConfig={chartConfig}
+                    bezier
+                  />
                 </View>
 
                 <View style={styles.chartCard}>
                   <AppRegularText style={styles.sectionTitle}>Submission Status</AppRegularText>
                   {pieData.length > 0 ? (
-                    <PieChart
-                      data={pieData}
-                      width={400}
-                      height={220}
-                      chartConfig={chartConfig}
-                      accessor="population"
-                      backgroundColor="transparent"
-                    />
-                  ) : (
+                  <PieChart
+                    data={pieData}
+                    width={400}
+                    height={220}
+                    chartConfig={chartConfig}
+                    accessor="population"
+                    backgroundColor="transparent" 
+                   /> 
+                   ) : (
                     <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No data available</Text>
                   )}
                 </View>
