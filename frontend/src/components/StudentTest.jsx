@@ -125,6 +125,7 @@ export default function StudentTest({ data }) {
                             </View>
                         ) : null}
                     </View>
+                        {console.log(data.createdAt)}
 
                     {width >= 890 ? (
                         <View style={styles.createdAt}>
@@ -132,7 +133,7 @@ export default function StudentTest({ data }) {
                                 {new Date(data.createdAt * 1000).toLocaleDateString()}
                             </Text>
                         </View>
-                    ) : null}
+                    ) : null} 
                 </View>
 
             </View>

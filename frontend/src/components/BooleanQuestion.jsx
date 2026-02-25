@@ -15,7 +15,7 @@ export default function BooleanQuestion({ mode, question, options, questionNumbe
 
         return (
             <View style={styles.container}>
-                <QuestionRow question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
+                <QuestionRow mode={'edit'} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
                 <View style={styles.optionsList}>
 
                     {options.map((opt, i) => {

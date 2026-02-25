@@ -127,6 +127,31 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 			
 		return SUCCESS;
 	}	
+	
+	
+	public String signOut() {
+
+	    String clientType = request.getHeader("X-Client-Type");
+
+	    if (clientType == null) {
+	        setError(new ApiError("Client type missing", 400));
+	        return INPUT;
+	    }
+
+	    if (!clientType.equals("mobile")) {
+	        Cookie cookie = new Cookie("token", "");
+	        cookie.setHttpOnly(true);
+	        cookie.setSecure(false); 
+	        cookie.setPath("/");     
+	        cookie.setMaxAge(0);     
+
+	        response.addCookie(cookie);
+	    }
+
+	    this.authDto = new UserAuthenticationDto(true, null);
+
+	    return SUCCESS;
+	}
 
 	public int getUserId() {
 		return userId;

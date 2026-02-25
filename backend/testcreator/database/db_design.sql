@@ -27,7 +27,6 @@ create table Classroom_Users (
     user_id int,
     role enum ('tutor','student') not null,
     joined_at timestamp default current_timestamp,
-    unique_key varchar(255) not null,
 
     primary key (classroom_id, user_id),
 
@@ -79,6 +78,7 @@ create table Options (
     option_text text not null,
     is_correct boolean default false,
     option_mark decimal(6,2) default 0,
+    properties json,
 
     foreign key (question_id) references Questions(question_id) on delete cascade
 );
@@ -119,6 +119,17 @@ create table Answers (
     foreign key (option_id) references Options(option_id) on delete set null
 );
 
+
+ create index idx_attempt_status on Attempts(status);
+ create index idx_attempt_test on Attempts(test_id);
+ create index idx_answers_attempt on Answers(attempt_id);
+ create index idx_tests_classroom on Tests(classroom_id);
+ create index idx_questions_test on Questions(test_id);
+ create index idx_options_question on Options(question_id);
+ create index idx_answers_question on Answers(question_id);
+
+
+
 --create table Answer_Options (
 --    answer_id int not null,
 --    option_id int not null,
@@ -145,16 +156,6 @@ create table Answers (
 --	right_side_text text not null,
 --	foreign key (question_id) references Questions(question_id) on delete cascade
 --);
-
-
-
- create index idx_attempt_status on Attempts(status);
- create index idx_attempt_test on Attempts(test_id);
- create index idx_answers_attempt on Answers(attempt_id);
- create index idx_tests_classroom on Tests(classroom_id);
- create index idx_questions_test on Questions(test_id);
- create index idx_options_question on Options(question_id);
- create index idx_answers_question on Answers(question_id);
 
 
 

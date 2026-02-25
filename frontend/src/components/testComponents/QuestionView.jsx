@@ -84,6 +84,7 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
 const styles = StyleSheet.create({
 
     questionViewContainer: {
+        marginTop: 150,
         width: '100%',
         paddingVertical: 30,
         paddingHorizontal: 15,

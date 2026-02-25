@@ -40,16 +40,14 @@ public class Option {
 
 	public void setOptionProperties(QuestionType type) {
 		switch (type) {
-		case FILL_BLANK: {
-			this.optionProperties = blankOptionProperties;
-			return;
-		}
-		case MATCHING: {
-			this.optionProperties = matchingOptionProperties;
-			return;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + type);
+			case FILL_BLANK: {
+				this.optionProperties = blankOptionProperties;
+				return;
+			}
+			case MATCHING: {
+				this.optionProperties = matchingOptionProperties;
+				return;
+			}
 		}
 	}
 
@@ -84,7 +82,7 @@ public class Option {
 	public void setOptionMark(Integer optionMark) {
 		this.optionMark = optionMark;
 	}
-	
+
 	@JSON(serialize = false)
 	public int getAnswerId() {
 		return answerId;
@@ -101,7 +99,5 @@ public class Option {
 				+ ", matchingOptionProperties=" + matchingOptionProperties + ", optionProperties=" + optionProperties
 				+ "]";
 	}
-
-	
 
 }

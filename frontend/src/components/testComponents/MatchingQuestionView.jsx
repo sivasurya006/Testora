@@ -5,17 +5,17 @@ import { AppBoldText, AppMediumText } from '../../../styles/fonts';
 import Colors from '../../../styles/Colors';
 import { SimpleLineIcons } from '@expo/vector-icons';
 
-export default function MatchingQuestionView({ question, selectedAnswers, setSelectedAnswers , preview = false }) {
+export default function MatchingQuestionView({ question, selectedAnswers, setSelectedAnswers, preview = false }) {
 
   const lightMatchColors = [
-    "#1565C0",
-    "#2E7D32",
-    "#EF6C00",
-    "#6A1B9A",
-    "#00838F",
-    "#C2185B",
-    "#FBC02D",
-    "#546E7A"
+    "#E3F2FD", // soft blue
+    "#E8F5E9", // soft green
+    "#FFF3E0", // soft orange
+    "#F3E5F5", // soft purple
+    "#E0F7FA", // soft cyan
+    "#FCE4EC", // soft pink
+    "#FFFDE7", // soft yellow
+    "#ECEFF1"  // soft gray blue
   ];
 
 
@@ -153,7 +153,10 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
               >
                 <AppMediumText style={[
                   styles.centerText,
-                  (isMatched || selectedLeft === index) && { color: 'white', fontWeight: 'bold' }
+                  (isMatched || selectedLeft === index) && {
+                    color: '#0F172A',
+                    fontWeight: '600'
+                  }
                 ]}>
                   {opt.optionText}
                 </AppMediumText>
@@ -177,7 +180,7 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
               >
                 <AppMediumText style={[
                   styles.centerText,
-                  isMatched && { color: 'white', fontWeight: 'bold' }
+                  isMatched && { color: 'black', fontWeight: 'bold' }
                 ]}>
                   {opt.matchingOptionProperties.match}
                 </AppMediumText>
@@ -185,7 +188,7 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
             );
           })}
         </View>
-        <View style={{ justifyContent : 'center' }}>
+        <View style={{ justifyContent: 'center' }}>
           {/* {Object.keys(matchedPairs).length === 0 && (
             <AppMediumText style={{ fontSize: 16, fontStyle: 'italic', color: Colors.gray }}>
               No matches yet
@@ -236,9 +239,7 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   selectedBox: {
-    borderColor: Colors.primary,
-    borderWidth: 2,
-    backgroundColor: Colors.lightFont
+    backgroundColor: "#E0F2FE"
   },
   centerText: {
     textAlign: 'center'

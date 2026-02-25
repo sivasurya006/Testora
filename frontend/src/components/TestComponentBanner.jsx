@@ -33,7 +33,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 classroomId: data.classroomId,
                 testId: data.testId,
                 title: data.testTitle,
-                preview : 1
+                preview: 1
             },
         })
     }
@@ -46,7 +46,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 classroomId: data.classroomId,
                 testId: data.testId,
                 title: data.testTitle,
-                preview : 1
+                preview: 1
             },
         })
     }
@@ -101,6 +101,18 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
         })
     }
 
+    function handlePreview() {
+        router.push({
+            pathname: `/[classroomId]/test/[testId]/preview`,
+            params: {
+                classroomId: data.classroomId,
+                testId: data.testId,
+                title: data.testTitle,
+                preview: data.status == 'DRAFT' ? 0 : -1
+            }
+        })
+    }
+
 
 
     return (
@@ -136,7 +148,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                     anchorPosition='bottom'
                     contentStyle={styles.menuContentStyle}
                 >
-                    <Menu.Item title="Preview" onPress={() => { closeMenu(); }} />
+                    <Menu.Item title="Preview" onPress={() => { closeMenu(); handlePreview() }} />
                     {
                         data.status === 'DRAFT' ? (
                             <Menu.Item title="Edit" onPress={() => { closeMenu(); handleEdit() }} />

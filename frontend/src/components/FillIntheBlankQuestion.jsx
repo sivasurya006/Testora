@@ -50,6 +50,7 @@ if (mode === 'edit') {
     return (
         <View style={styles.container}>
             <QuestionRow
+                mode={'edit'}
                 question={{ ...question, questionText: questionWithAnswers }}
                 questionNumber={questionNumber}
                 setAllTestQuestions={setAllQuestions}

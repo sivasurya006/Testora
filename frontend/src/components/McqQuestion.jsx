@@ -25,7 +25,7 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
 
         return (
             <View style={styles.container}>
-                <QuestionRow question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
+                <QuestionRow mode={'edit'} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
                 <View style={styles.optionsList}>
                     {options.map((opt, i) => {
                         const isChecked = checked.includes(opt);

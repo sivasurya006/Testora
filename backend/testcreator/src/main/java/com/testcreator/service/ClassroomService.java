@@ -113,4 +113,7 @@ public class ClassroomService {
 
 		return classroomDao.deleteStudent(userId, classroomId);
 	}
+	public List<ClassroomUser> getTopPerfomanceStudent(int classroomId){
+		return classroomDao.getTopPerfomanceStudent(classroomId);
+	}
 }

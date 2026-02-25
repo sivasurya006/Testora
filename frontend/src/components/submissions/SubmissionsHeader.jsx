@@ -75,71 +75,79 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
                     style={{ alignItems: 'center' }}
 
                 >
-                    <View style={{ backgroundColor: '#fff'  , borderRadius: 16 }}>
+                    {
+                        performanceChartData?.markData?.length == 0 ? (
+                            <View style={{ flex: 1, backgroundColor: Colors.white, padding: 20 }} >
+                                <AppSemiBoldText style={{ textAlign: 'center', flex: 1 }} >No Attempts taken</AppSemiBoldText>
+                            </View>
+                        ) : (
+                            <View style={{ backgroundColor: '#fff', borderRadius: 16 }}>
 
-                        <AppSemiBoldText style={{textAlign : 'center' , fontSize : 20 , marginVertical : 15 }}>Performance { testName ? "in" : '' }  {testName}</AppSemiBoldText>
+                                <AppSemiBoldText style={{ textAlign: 'center', fontSize: 20, marginVertical: 15 }}>Performance {testName ? "in" : ''}  {testName}</AppSemiBoldText>
 
-                        <AppSemiBoldText
-                            style={{
-                                transform: [{ rotate: '-90deg' }],
-                                textAlign: 'center',
-                                fontWeight: '600',
-                                fontSize: 16,
-                                width : width - (width/100 * 97.4),
-                                marginTop : (height / 100 * 60)/2.25,
-                                position : 'absolute',
-                                zIndex : 100,
-                                // height : 100,
-                            }}
-                        >Marks</AppSemiBoldText>
-                        <View style={{ marginBottom: -100 }}>
-                            
-                            {/* <LineChart
-                                bezier
-                                data={
-                                    {
-                                        labels: performanceChartData.labels,
-                                        datasets: [
+                                <AppSemiBoldText
+                                    style={{
+                                        transform: [{ rotate: '-90deg' }],
+                                        textAlign: 'center',
+                                        fontWeight: '600',
+                                        fontSize: 16,
+                                        width: width - (width / 100 * 97.4),
+                                        marginTop: (height / 100 * 60) / 2.25,
+                                        position: 'absolute',
+                                        zIndex: 100,
+                                        // height : 100,
+                                    }}
+                                >Marks</AppSemiBoldText>
+                                <View style={{ marginBottom: -100 }}>
+                                    <LineChart
+                                        bezier
+                                        data={
                                             {
-                                                data: performanceChartData.markData
+                                                labels: performanceChartData.labels,
+                                                datasets: [
+                                                    {
+                                                        data: performanceChartData.markData
+                                                    }
+                                                ],
                                             }
-                                        ],
-                                    }
-                                }
-                                width={width / 100 * 70}
-                                height={height / 100 * 60}
-                                chartConfig={{
-                                    backgroundGradientFrom: "#fff",
-                                    backgroundGradientTo: "#fff",
-                                    decimalPlaces: 0,
-                                    color: () => "#2196F3",
-                                    labelColor: () => "#333",
-                                    // marginBottom:0,
+                                        }
+                                        width={width / 100 * 70}
+                                        height={height / 100 * 60}
+                                        chartConfig={{
+                                            backgroundGradientFrom: "#fff",
+                                            backgroundGradientTo: "#fff",
+                                            decimalPlaces: 0,
+                                            color: () => "#2196F3",
+                                            labelColor: () => "#333",
+                                            // marginBottom:0,
 
-                                }}
-                                style={{
-                                    // marginVertical: 8,
-                                    borderRadius: 16,
-                                    // margin : 'auto',
-                                    // marginBottom:0,
-                                    // padding : -10
-                                }}
-                                // withDots = {false}
-                                withInnerLines={false}
-                                fromZero={true}
-                            // onDataPointClick={(data) => {
+                                        }}
+                                        style={{
+                                            // marginVertical: 8,
+                                            borderRadius: 16,
+                                            // margin : 'auto',
+                                            // marginBottom:0,
+                                            // padding : -10
+                                        }}
+                                        // withDots = {false}
+                                        withInnerLines={false}
+                                        fromZero={true}
+                                    // onDataPointClick={(data) => {
 
-                            // }}
-                            /> */}
-                        </View>
-                        <AppSemiBoldText
-                            style={{
-                                textAlign: "center",
-                                marginTop: 5,
-                                fontWeight: "bold"
-                            }}
-                        >Attempts</AppSemiBoldText>
-                    </View>
+                                    // }}
+                                    />
+                                </View>
+                                <AppSemiBoldText
+                                    style={{
+                                        textAlign: "center",
+                                        marginTop: 5,
+                                        fontWeight: "bold"
+                                    }}
+                                >Attempts</AppSemiBoldText>
+                            </View>
+
+                        )
+                    }
                 </Modal>
             </Portal>
 

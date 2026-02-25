@@ -6,7 +6,7 @@ import api from '../../util/api';
 import Colors from '../../styles/Colors';
 import { FontAwesome6 } from '@expo/vector-icons';
 
-export default function StudentSubmissionScreen({ mode = 'submissions' }) {
+export default function StudentSubmissionScreen({ mode = 'submissions', search = '' }) {
 
     const [data, setData] = useState([])
     const { classroomId, testId } = useGlobalSearchParams()
@@ -18,7 +18,28 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
         if (mode == 'testSubmissions') {
             getTestSubmissions();
         }
-    }, [classroomId, testId])
+    }, [classroomId, testId]);
+
+    const filteredData = useMemo(() => {
+        if (!search || search.trim() === '') return data;
+
+        const lower = search.toLowerCase();
+
+        return data.filter(item => {
+            if (mode === 'submissions') {
+                return (
+                    item.title?.toLowerCase().includes(lower) ||
+                    item.name?.toLowerCase().includes(lower) ||
+                    item.email?.toLowerCase().includes(lower)
+                );
+            } else {
+                return (
+                    item.name?.toLowerCase().includes(lower) ||
+                    item.email?.toLowerCase().includes(lower)
+                );
+            }
+        });
+    }, [data, search, mode]);
 
     const router = useRouter();
 
@@ -81,7 +102,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
     const sections = useMemo(() => {
         const grouped = {};
 
-        data.forEach(item => {
+        filteredData.forEach(item => {
             if (!grouped[item.email]) {
                 grouped[item.email] = {
                     title: item.name.trim(),
@@ -94,7 +115,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
         });
 
         return Object.values(grouped);
-    }, [data]);
+    }, [filteredData]);
 
     const renderItem = ({ item }) => {
         const attempted = item.attemptsCount > 0;
@@ -210,26 +231,39 @@ export default function StudentSubmissionScreen({ mode = 'submissions' }) {
         <View style={styles.container}>
             {
                 mode == 'submissions' ? (
-                    <SectionList
-                        // style={{ marginTop: 0, paddingTop: 0 }}
-                        sections={sections}
-                        keyExtractor={(item, index) =>
-                            item.email + item.title + index
-                        }
-                        renderItem={renderItem}
-                        renderSectionHeader={renderSectionHeader}
-                        stickySectionHeadersEnabled
-                        showsVerticalScrollIndicator={false}
+                    sections.length == 0 ? (
+                        <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -60 }] }}>
+                            <AppMediumText>No Submissions</AppMediumText>
+                        </View>
+                    ) : (
+                        <SectionList
+                            // style={{ marginTop: 0, paddingTop: 0 }}
+                            sections={sections}
+                            keyExtractor={(item, index) =>
+                                item.email + item.title + index
+                            }
+                            renderItem={renderItem}
+                            renderSectionHeader={renderSectionHeader}
+                            stickySectionHeadersEnabled
+                            showsVerticalScrollIndicator={false}
 
-                    />
+                        />
+                    )
+
                 ) : (
-                    <FlatList
-                        data={data}
-                        keyExtractor={(item, index) =>
-                            item.email + item.title + index
-                        }
-                        renderItem={renderItem}
-                    />
+                    filteredData.length == 0 ? (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <AppSemiBoldText>No Attempts</AppSemiBoldText>\
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={filteredData}
+                            keyExtractor={(item, index) =>
+                                item.email + item.title + index
+                            }
+                            renderItem={renderItem}
+                        />
+                    )
                 )
             }
         </View>

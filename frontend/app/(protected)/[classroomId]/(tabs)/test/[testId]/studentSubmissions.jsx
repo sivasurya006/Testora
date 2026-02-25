@@ -9,6 +9,7 @@ import AttemptCard from '../../../../../../src/components/submissions/AttemptCar
 import { FlatList } from 'react-native-gesture-handler';
 import GradeScreen from '../../../../../../src/screens/GradeScreen';
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport';
+import { AppSemiBoldText } from '../../../../../../styles/fonts';
 
 export default function StudentSubmissions() {
 
@@ -27,7 +28,7 @@ export default function StudentSubmissions() {
   const [answerSheet, setAnswerSheet] = useState([]);
   const [isResultPageOpen, setResultPageOpen] = useState(false);
   const [reportData, setReportData] = useState([]);
-  const [ attemptId , setAttemptId ] = useState(null);
+  const [attemptId, setAttemptId] = useState(null);
 
   console.log(params)
 
@@ -119,11 +120,11 @@ export default function StudentSubmissions() {
 
 
   if (isGradeScreenOpen) {
-    return <GradeScreen attemptId={attemptId} setAttempts={setData} attempts={data.attempts}  questions={answerSheet.questions} onExit={onExit} isGradeScreenOpen={isGradeScreenOpen} />
+    return <GradeScreen attemptId={attemptId} setAttempts={setData} attempts={data.attempts} questions={answerSheet.questions} onExit={onExit} isGradeScreenOpen={isGradeScreenOpen} />
   }
 
   if (isResultPageOpen) {
-    return <DetailedTestReport noModal={true}  totalMarks={reportData.totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
+    return <DetailedTestReport noModal={true} totalMarks={reportData.totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
 
   }
 
@@ -134,13 +135,21 @@ export default function StudentSubmissions() {
       <SubmissionsHeader data={{ email: data?.userEmail, name: data?.userName }} selected={selected} setSelected={setSelected}
         performanceChartData={performanceChartData}
       />
-      <FlatList
-        data={filteredData}
-        keyExtractor={item => item.attemptId + ""}
-        renderItem={({ item }) => (
-          <AttemptCard attempt={item} setFilteredData={setFilteredData} handleGrade={handleGrade} handleShowReport={handleShowReport} />
-        )}
-      />
+      {
+        filteredData?.length == 0 ? (
+          <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+             <AppSemiBoldText>No Attempts</AppSemiBoldText>\
+            </View>
+        ) : (
+          <FlatList
+            data={filteredData}
+            keyExtractor={item => item.attemptId + ""}
+            renderItem={({ item }) => (
+              <AttemptCard attempt={item} setFilteredData={setFilteredData} handleGrade={handleGrade} handleShowReport={handleShowReport} />
+            )}
+          />
+        )
+      }
     </View>
   )
 }
@@ -197,22 +206,22 @@ async function getAnswerSheet(classroomId, testId, attemptId) {
 }
 
 async function getTestReport(classroomId, testId, attemptId) {
-    try {
-        const result = await api.get(`/api/tests/testReport?attempt=${attemptId}`, {
-            headers: {
-                'X-ClassroomId': classroomId,
-                'X-TestId': testId
-            }
-        });
+  try {
+    const result = await api.get(`/api/tests/testReport?attempt=${attemptId}`, {
+      headers: {
+        'X-ClassroomId': classroomId,
+        'X-TestId': testId
+      }
+    });
 
-        if (result.status == 200 && result.data) {
-            return result.data
-        }
-
-    } catch (err) {
-        console.log("can't get report", err.response?.data)
+    if (result.status == 200 && result.data) {
+      return result.data
     }
 
-    return [];
+  } catch (err) {
+    console.log("can't get report", err.response?.data)
+  }
+
+  return [];
 }
 
