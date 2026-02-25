@@ -13,6 +13,7 @@ import ResultModal from '../../../../../../src/components/ResultModal'
 import FillInBlankQuestionView from '../../../../../../src/components/testComponents/FillInBlankQuestionView'
 import MatchingQuestionView from '../../../../../../src/components/testComponents/MatchingQuestionView'
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport'
+import AlertModal from '../../../../../../src/components/modals/alert'
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
@@ -179,21 +180,21 @@ export default function Test() {
     document.addEventListener('paste', handleCopyPaste);
     document.addEventListener('cut', handleCopyPaste);
 
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
+const handleFullscreenChange = () => {
+  if (!document.fullscreenElement) {
 
-        fullScreenExitCount.current += 1;
+    fullScreenExitCount.current += 1;
 
 
-        if (fullScreenExitCount.current === 1) {
-          setFullScreenExitWarning(true);
-        }
+    if (fullScreenExitCount.current === 1) {
+      setFullScreenExitWarning(true);
+    }
 
-        if (fullScreenExitCount.current >= 2) {
-          submitAnswer();
-        }
-      }
-    };
+    if (fullScreenExitCount.current >= 2) {
+      submitAnswer();
+    }
+  }
+};
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     const onBlur = () => {
@@ -220,37 +221,37 @@ export default function Test() {
   const tabSwitchCount = useRef(0);
   const violationPoints = useRef(0);
   // const pageLoaded = useRef(false);
-  const handleBlur = () => {
-    if (isResultPageOpen) return;
+const handleBlur = () => {
+  if (isResultPageOpen) return;
 
-    tabSwitchCount.current += 1;
-    console.log("Tab switched:", tabSwitchCount.current);
+  tabSwitchCount.current += 1;
+  console.log("Tab switched:", tabSwitchCount.current);
 
-    if (tabSwitchCount.current === 1) {
-      setTabWarningVisible(true);
-    }
+  if (tabSwitchCount.current === 1) {
+    setTabWarningVisible(true);
+  }
 
-    if (tabSwitchCount.current >= 2) {
-      console.log("Auto submitting due to tab switch");
-      submitAnswer();
-    }
-  };
+  if (tabSwitchCount.current >= 2) {
+    console.log("Auto submitting due to tab switch");
+    submitAnswer();
+  }
+};
 
-  const handleFocus = () => {
-    console.log("User returned to test");
-  };
+const handleFocus = () => {
+  console.log("User returned to test");
+};
 
-  const handleVisibilityChange = () => {
-    if (isResultPageOpen) return;
+const handleVisibilityChange = () => {
+  if (isResultPageOpen) return;
 
-    if (document.hidden) {
-      console.log("Document hidden");
-      handleBlur();
-    } else {
-      console.log("Document visible");
-      handleFocus();
-    }
-  };
+  if (document.hidden) {
+    console.log("Document hidden");
+    handleBlur();
+  } else {
+    console.log("Document visible");
+    handleFocus();
+  }
+};
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -260,21 +261,21 @@ export default function Test() {
   useEffect(() => {
     if (Platform.OS == 'web') return;
 
-    //   const appState = useRef(AppState.currentState);
+    const appState = useRef(AppState.currentState);
 
-    //   const handleAppStateChange = (nextAppState) => {
-    //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
-    //       console.log("User left the app");
-    //       setTabWarningVisible(true);
-    //     }
-    //   };
+    const handleAppStateChange = (nextAppState) => {
+      if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+        console.log("User left the app");
+        setTabWarningVisible(true);
+      }
+    };
 
-    //   const interval = setInterval(detectDevTools, 1000);
+    const interval = setInterval(detectDevTools, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-
+  
 
 
   async function startNewTest() {
@@ -303,7 +304,6 @@ export default function Test() {
     } catch (err) {
       if (err.response?.status === 403) setMessage('Maximum Attempts reached');
       console.log('startNewTest error:', err);
-      alert("please allow screen share");
     }
   }
 
@@ -398,16 +398,17 @@ export default function Test() {
 
       <TestFooter havePrevious={havePrevious} haveNext={haveNext} onNext={nextQuestion} onPrevious={previousQuestion} />
       <ConfirmModal message={'Submit the answer?'} normal={true} onCancel={() => { setSubmitModalVisible(false) }} visible={submitModalVisible} onConfirm={submitAnswer} />
-      <ConfirmModal message={"Times up!\nYour answers submitted."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
+      <AlertModal header={"Times up!"} body={"Your answers have been submitted automatically."} confirmOnly={true} onConfirm={onExit} visible={timesupModalVisible} normal={true} />
       <DetailedTestReport totalMarks={totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
       <ConfirmModal message={"Your answers submitted successfully."} confirmOnly={true} onConfirm={() => { setSubmittedConfirmModalVisible(false); onExit() }} visible={submittedConfirmModalVisible} normal={true} />
-      <ConfirmModal message={"tab warning"} confirmOnly={true} onConfirm={() => { setTabWarningVisible(false) }} visible={tabWarningVisible} normal={true} />
-      <ConfirmModal message={"full screen exit warning"} confirmOnly={true} onConfirm={() => { setFullScreenExitWarning(false); requestFullscreenMode(); }} visible={fullScreenExitWarning} normal={true} />
+      <AlertModal header={"Tab warning"} body={"You are about to leave the test. Are you sure?"} confirmOnly={true} onConfirm={() => { setTabWarningVisible(false) }} visible={tabWarningVisible} normal={true} />
+      <AlertModal header={"Full screen exit warning"} body={"You are about to exit full screen mode. Are you sure?"} confirmOnly={true} onConfirm={() => { setFullScreenExitWarning(false); requestFullscreenMode(); }} visible={fullScreenExitWarning} normal={true} />
 
     </View>
   )
 
 }
+
 
 
 const styles = StyleSheet.create({

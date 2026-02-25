@@ -146,7 +146,7 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                             isMenuNeed ? (
                                 <>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: Colors.primaryColor }} >Students : {totalStudents}</AppMediumText>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >Trainees : {totalStudents}</AppMediumText>
                                     </View>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
                                         <AppMediumText style={{ color: '#009B4D' }} >Active Tests : {totalTests}</AppMediumText>
