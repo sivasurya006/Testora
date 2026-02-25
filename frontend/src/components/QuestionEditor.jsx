@@ -12,7 +12,7 @@ import MatchingQuestion from './MatchingQuestion'
 
 
 const options = [
-    { optionText: 'Multi choice options', value: 'MCQ' },
+    { optionText: 'Multiple choices', value: 'MCQ' },
     { optionText: 'Single choice', value: 'SINGLE' },
     { optionText: 'True / False', value: 'BOOLEAN' },
     { optionText: 'Fill in the blanks', value: "FILL_BLANK" },

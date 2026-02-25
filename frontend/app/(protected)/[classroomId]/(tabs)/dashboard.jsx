@@ -144,21 +144,6 @@ export default function Dashboard() {
           ]);
         }
 
-        // const LineChartTestName = pieChartData
-        //   .slice(0, 5)
-        //   .map(item => {
-        //     const value = Number(item.someValue);
-        //     return isFinite(value) ? value : 0;
-
-        //   });
-
-        // const LineChartTestAttemptCount = pieChartData
-        //   .slice(0, 5)
-        //   .map(item => {
-        //     const value = Number(item.someValue);
-        //     return isFinite(value) ? value : 0;
-        //   });
-
         const LineChartTestName = pieChartData
           .slice(0, 5)
           .map(item => item.testTitle);
@@ -208,6 +193,8 @@ export default function Dashboard() {
       score: 97,
     },
   ];
+
+  const hasLineData = lineData.datasets?.[0]?.data && lineData.datasets[0].data.length > 0
 
   return (
     <>
@@ -374,13 +361,17 @@ export default function Dashboard() {
               <View style={styles.graph1}>
                 <View style={styles.LineCard}>
                   <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
-                  <LineChart
-                    data={lineData}
-                    width={960}
-                    height={400}
-                    chartConfig={chartConfig}
-                    bezier
-                  />
+                  {hasLineData && (
+                    <LineChart
+                      data={lineData}
+                      width={960}
+                      height={400}
+                      chartConfig={chartConfig}
+                      bezier
+                      fromZero
+                      segments={Math.max(...lineData.datasets[0].data)}
+                    />
+                  )}
                 </View>
 
                 <View style={styles.chartCard}>
