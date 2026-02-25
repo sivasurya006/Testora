@@ -48,7 +48,10 @@ public class User {
 	}
 	
 	public User() {
-		this.userId = 0;}
+		this.name = "";
+		this.userId = 0;
+		this.email = "";
+		this.registeredAt = null;}
 	
 	public String getName() {
 		return name;

@@ -178,6 +178,18 @@
 			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
 
+		<action name="getTopPerfomanceStudent"
+			class="com.testcreator.actions.ClassroomAction"
+			method="getTopPerfomanceStudents">
+			<result name="success" type="json">
+				<param name="root">classroomUsers</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="apiStack" />
+			<interceptor-ref name="classroomIdInterceptor" />
+		</action>
+
+
 	</package>
 
 	<package name="tests" namespace="/api/api/tests"
@@ -392,7 +404,7 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
-		
+
 		<action name="gradeTest"
 			class="com.testcreator.actions.TestAction" method="gradeTest">
 			<result name="success" type="json">

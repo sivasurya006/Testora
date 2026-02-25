@@ -40,8 +40,6 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	private List<ClassroomDto> createdClassrooms;
 	private List<ClassroomUser> classroomUsers;
 
-
-
 	@Override
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -146,7 +144,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		try {
 			ClassroomService classroomService = new ClassroomService();
 			if (classroomService.deleteClassRoom(userId, classroomId)) {
-				
+
 				this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
 				return SUCCESS;
 			} else {
@@ -292,19 +290,18 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		return ERROR;
 	}
 
-	
 	public String fetchClassroomStudents() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 
-		System.out.println(classroomId+" "+userId);
-		
+		System.out.println(classroomId + " " + userId);
+
 		try {
 			Context context = new Context();
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
 			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
-			
+
 			this.classroomUsers = new ClassroomService().getAllStudents(classroomId);
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
@@ -321,8 +318,8 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
-	  
-public String deleteStudent() {
+
+	public String deleteStudent() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt(request.getParameter("studentId"));
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
@@ -344,7 +341,7 @@ public String deleteStudent() {
 		}
 
 		try {
-			
+
 			ClassroomService classroomService = new ClassroomService();
 
 			if (classroomService.deleteStudent(userId, classroomId)) {
@@ -367,9 +364,49 @@ public String deleteStudent() {
 			setError(new ApiError("Server error", 500));
 		}
 		return ERROR;
-}
-	
-	
+	}
+
+	public String getTopPerfomanceStudents() {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String classroomIdHeader = request.getHeader("X-ClassroomId");
+
+		if (classroomIdHeader == null) {
+
+			setError(new ApiError("ClassroomId not provided", 400));
+			return INPUT;
+		}
+
+		this.classroomId = Integer.parseInt(classroomIdHeader);
+
+		if (classroomId <= 0) {
+
+			setError(new ApiError("Invalid classroom id", 400));
+			return INPUT;
+		}
+
+		try {
+
+			ClassroomService classroomService = new ClassroomService();
+
+			this.classroomUsers=classroomService.getTopPerfomanceStudent(classroomId);
+
+			this.successDto = new SuccessDto("Classroom deleted sucessfully", 200, true);
+			return SUCCESS;
+
+		} catch (UnauthorizedException e) {
+			System.out.println("in server error");
+
+			setError(new ApiError("Authendication failed", 401));
+			return LOGIN;
+		} catch (Exception e) {
+			System.out.println("in server error");
+			e.printStackTrace();
+			setError(new ApiError("Server error", 500));
+		}
+		return ERROR;
+
+	}
+
 	public SuccessDto getSuccessDto() {
 		return successDto;
 	}
@@ -405,7 +442,7 @@ public String deleteStudent() {
 	public List<ClassroomDto> getJoinedClassrooms() {
 		return joinedClassrooms;
 	}
-	
+
 	public List<ClassroomUser> getClassroomUsers() {
 		return classroomUsers;
 	}
