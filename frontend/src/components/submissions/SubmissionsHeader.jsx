@@ -93,6 +93,7 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
                             }}
                         >Marks</AppSemiBoldText>
                         <View style={{ marginBottom: -100 }}>
+                            
                             <LineChart
                                 bezier
                                 data={
