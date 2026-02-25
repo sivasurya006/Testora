@@ -1,83 +1,66 @@
-import { Text, StyleSheet, TextInput, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React, { useRef } from 'react';
-import { AppBoldText, AppMediumText } from '../../styles/fonts';
+import { AppMediumText } from '../../styles/fonts';
 import Colors from '../../styles/Colors';
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 
-export default function LabeledTextArea({ label, placeholder, onChangeText, numberOfLines = 2, customInputStyles,
-  customTextStyles, isFillBlank = false,
-  defaultValue
-}) {
+export default function LabeledTextArea({label,placeholder,onChangeText,customInputStyles,customTextStyles,defaultValue}) {
+
+  const richText = useRef();
 
   return (
-    <>
+    <View>
       <AppMediumText style={[styles.label, customTextStyles]}>
         {label}
       </AppMediumText>
-      {
-        Platform.OS != 'web' ? (
-          <TextInput
-            style={[styles.textArea, customInputStyles]}
-            multiline={true}
-            placeholderTextColor={'gray'}
-            onChangeText={text => onChangeText(text)}
-            numberOfLines={numberOfLines}
-            placeholder={placeholder}
-            defaultValue={defaultValue}
-          />
-        ) : (
-          <CKEditor
-            editor={ClassicEditor}
-            data={defaultValue}
-            config={{
-              toolbar: [
-                "bold",
-                "italic",
-                "underline",
-                "bulletedList",
-                "numberedList",
-                "undo",
-                "redo"
-              ],
-              removePlugins: [
-                "Image",
-                "ImageToolbar",
-                "ImageUpload",
-                "MediaEmbed",
-                "Table",
-                "CKFinder",
-                "EasyImage"
-              ]
-            }}
-            onChange={(event, editor) => {
-              const data = editor.getData();
-              onChangeText(data)
-            }}
-          />
-        )
-      }
-    </>
+
+      <View style={[styles.editorContainer, customInputStyles]}>
+        <RichEditor
+          ref={richText}
+          initialContentHTML={defaultValue}
+          placeholder={placeholder}
+          editorStyle={{
+            backgroundColor: "#fff",
+            contentCSSText: "font-size: 14px;"
+          }}
+          onChange={(text) => onChangeText(text)}
+        />
+      </View>
+
+      <RichToolbar
+        editor={richText}
+        actions={[
+          actions.setBold,
+          actions.setItalic,
+          actions.setUnderline,
+          actions.insertBulletsList,
+          actions.insertOrderedList,
+          actions.undo,
+          actions.redo,
+        ]}
+        style={styles.toolbar}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  textArea: {
+  editorContainer: {
     borderColor: Colors.borderColor,
-    outlineColor: Colors.primaryColor,
     borderWidth: 1,
-    padding: 10,
-    marginBottom: 15,
     borderRadius: 8,
-    height: 50
+    minHeight: 150,
+    marginBottom: 10,
+    padding: 5,
+  },
+  toolbar: {
+    borderColor: Colors.borderColor,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
   },
   label: {
     fontSize: 16,
-    marginBottom: 5,
-    // fontWeight: 600,
-    marginBottom: 15
+    marginBottom: 15,
   },
-
-
 });

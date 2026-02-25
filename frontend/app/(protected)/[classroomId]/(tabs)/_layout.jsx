@@ -32,7 +32,7 @@ export default function ClassroomLayout() {
                             backgroundColor: Colors.secondaryColor
                         }
                     }),
-                    headerShown: isLargeScreen,
+                    headerShown: true,
                     headerStyle: {
                         backgroundColor: Colors.secondaryColor,
                     },

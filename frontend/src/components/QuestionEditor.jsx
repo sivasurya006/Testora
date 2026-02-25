@@ -1,14 +1,13 @@
-import { View, Text, StyleSheet, Modal, Button, ScrollView, useWindowDimensions, Pressable, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, ScrollView, useWindowDimensions, Pressable, Platform } from 'react-native'
+import { useEffect, useState } from 'react'
 import Colors from '../../styles/Colors'
 import LabeledInput from './LabledInput'
 import LabeledTextArea from './LabledTextArea'
 import MenuDropdown from './MenuDropdown'
 import { BooleanComponent, FillBlankComponent, MatchingComponents, MCQComponent, SingleComponent } from './OptionComponents';
 import { Checkbox } from 'react-native-paper'
-import { AppBoldText, AppMediumText, AppRegularText, AppSemiBoldText } from '../../styles/fonts'
+import { AppBoldText, AppRegularText, AppSemiBoldText } from '../../styles/fonts'
 import { AntDesign } from '@expo/vector-icons'
-import MatchingQuestion from './MatchingQuestion'
 
 
 const options = [
@@ -23,26 +22,9 @@ function getOptionIndex(type) {
     return options.findIndex(opt => opt.value === type);
 }
 
-// {
-//     mode: "edit",
-//     question: {
-//         questionText: "What is React?",
-//         marks: 5
-//     },
-//     options: [
-//         { optionText: "A JavaScript library for building user interfaces", isCorrect: true },
-//         { optionText: "A programming language", isCorrect: false },
-//         { optionText: "A database", isCorrect: false },
-//         { optionText: "An operating system", isCorrect: false }
-//     ]
-// },
-
-
 
 export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuestion }) {
 
-    // console.log('default question ', defaultQuestion)
-if(Platform.OS != 'web') return null;
     const [giveOptionMarks, setGiveOptionMarks] = useState(false);
     const [selectedType, setSelectedType] = useState(mode === 'editQuestion' ?
         options[getOptionIndex(defaultQuestion.type)] : options[0]);
@@ -52,8 +34,6 @@ if(Platform.OS != 'web') return null;
     const [error, setError] = useState("");
     const [textParts, setTextParts] = useState([]);
     const [makeAllCaseSensitive, setMakeAllCaseSensitive] = useState(false);
-
-    console.log("==============> " + questionText)
 
     useEffect(() => {
         setQuestionText('');
