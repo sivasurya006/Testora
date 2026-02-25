@@ -37,18 +37,18 @@ export default function ClassroomLayout() {
                         backgroundColor: Colors.secondaryColor,
                     },
                     headerTintColor: Colors.white,
-                    headerLeft: isLargeScreen ? () => (
-                        <TouchableOpacity onPress={() => setIsTabBarVisible(!isTabBarVisible)} style={{ marginHorizontal: 15 }}>
-                            {
-                                isTabBarVisible ? (
-                                     <SimpleLineIcons name="arrow-left" size={20} color="white"/> 
-                                ) : (
-                                     <Feather name="menu" size={24} color="white" /> 
-                                )
-                            }
-                        </TouchableOpacity>
-                    ) : undefined,
-                    tabBarShowLabel: true,
+                    // headerLeft: isLargeScreen ? () => (
+                    //     <TouchableOpacity onPress={() => setIsTabBarVisible(!isTabBarVisible)} style={{ marginHorizontal: 15 }}>
+                    //         {
+                    //             isTabBarVisible ? (
+                    //                  <SimpleLineIcons name="arrow-left" size={20} color="white"/> 
+                    //             ) : (
+                    //                  <Feather name="menu" size={24} color="white" /> 
+                    //             )
+                    //         }
+                    //     </TouchableOpacity>
+                    // ) : undefined,
+                    // tabBarShowLabel: true,
                     tabBarLabelStyle: {
                         fontSize: isLargeScreen ?  16 : 12,
                         fontFamily: fonts.semibold
@@ -74,7 +74,7 @@ export default function ClassroomLayout() {
                     )
                 }} />
                 <Tabs.Screen name='students' options={{
-                    title: 'Students',
+                    title: 'Trainees',
                     tabBarIcon: ({ color }) => (
                         <MaterialIcons name="groups" size={22} color={color} />
                     )
@@ -83,7 +83,8 @@ export default function ClassroomLayout() {
                     title: 'Settings',
                     tabBarIcon: ({ color }) => (
                         <Ionicons name="settings-sharp" size={24} color={color} />
-                    )
+                    ),
+                    href : null
                 }} />
                  <Tabs.Screen name='tests/[testId]' options={{
                     title: 'Tests',

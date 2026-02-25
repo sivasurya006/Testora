@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform, useWindowDimensions, Dimensions } from 'react-native'
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useContext, useEffect, useReducer, useState } from 'react'
 import api from '../../../util/api'
 import { AntDesign, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
@@ -7,12 +7,13 @@ import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import InputModal from '../../../src/components/modals/InputModal';
 import { useRouter } from 'expo-router';
-import { fonts } from '../../../styles/fonts';
+import { AppSemiBoldText, fonts } from '../../../styles/fonts';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { ActivityIndicator } from 'react-native-paper';
 import Header from '../../../src/components/Header';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthContext } from '../../../util/AuthContext';
 
 
 const { width } = Dimensions.get('window')
@@ -32,6 +33,7 @@ export default function Index() {
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [classroomName, setClassroomName] = useState("");
     const [isLoading, setLoading] = useState(false);
+    const [search, setSearch] = useState('');
 
     const onConfirmCreateClassModal = async () => {
         if (classroomName.trim().length == 0) return;
@@ -58,6 +60,10 @@ export default function Index() {
         }
         get()
     }, [])
+
+    const filteredClassrooms = createdClassrooms.filter(item =>
+        item.classroomName.toLowerCase().includes(search.toLowerCase())
+    );
 
     async function handleCreateClassroom() {
         try {
@@ -90,12 +96,17 @@ export default function Index() {
                 <View style={{ flex: 1, backgroundColor: Colors.bgColor }}>
 
                     <LoadingScreen visible={isLoading} />
-                    <TopBar setCreateModalVisible={setCreateModalVisible} isLargeScreen={isLargeScreen} />
+                    <TopBar
+                        setCreateModalVisible={setCreateModalVisible}
+                        isLargeScreen={isLargeScreen}
+                        search={search}
+                        setSearch={setSearch}
+                    />
                     {createdClassrooms.length == 0 ? (
                         <EmptyClassroom message="No classroom created" />
                     ) : <FlatList
                         numColumns={numColumns}
-                        data={createdClassrooms}
+                        data={filteredClassrooms}
                         key={numColumns}
                         keyExtractor={item => item.classroomId.toString()}
                         renderItem={({ item }) => (
@@ -143,11 +154,12 @@ async function getAllCreatedClassrooms(setCreatedClassrooms) {
     }
 }
 
-function TopBar({ setCreateModalVisible, isLargeScreen }) {
+function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
 
     const [isHovered, setIsHovered] = useState(false);
-    const [search, setSearch] = useState('');
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const { signOut } = useContext(AuthContext);
+
 
     return (
         <View style={styles.topBar}>
@@ -182,15 +194,63 @@ function TopBar({ setCreateModalVisible, isLargeScreen }) {
                 </Pressable>
                 {
                     isLargeScreen && (
-                        <Pressable>
-                            <MaterialIcons
-                                name='account-circle'
-                                size={34}
-                                color={Colors.secondaryColor}
-                            />
+                        <Pressable
+                            onPress={() => {
+                                setTooltipVisible(true);
+                            }}
+                        >
+                            <MaterialIcons name='account-circle' size={34} color={Colors.secondaryColor} />
                         </Pressable>
                     )
                 }
+                <Modal transparent visible={tooltipVisible} animationType="fade">
+                    <Pressable
+                        style={{ flex: 1 }}
+                        onPress={() => setTooltipVisible(false)}
+                    >
+                        <View
+                            style={{
+                                position: 'absolute',
+                                top: 65,
+                                right: 50,
+                                backgroundColor: 'white',
+                                borderRadius: 8,
+                                padding: 4,
+                                elevation: 10,
+                                shadowColor: Colors.shadowColor,
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: 0.25,
+                                shadowRadius: 6,
+                                minWidth: 140,
+                            }}
+                        >
+                            <Pressable
+                                style={({ pressed }) => [
+                                    {
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: 10,
+                                        paddingVertical: 10,
+                                        paddingHorizontal: 12,
+                                        borderRadius: 6,
+                                        backgroundColor: pressed ? '#ffe6e6' : 'white',
+                                    },
+                                ]}
+                                onPress={() => {
+
+                                    console.log('Logging out...');
+                                    setTooltipVisible(false);
+                                    signOut();
+                                }}
+                            >
+                                <MaterialIcons name="logout" size={20} color="#d32f2f" />
+                                <AppSemiBoldText style={{ color: '#d32f2f', fontSize: 16 }}>
+                                    Log out
+                                </AppSemiBoldText>
+                            </Pressable>
+                        </View>
+                    </Pressable>
+                </Modal>
 
             </View>
         </View>
@@ -271,7 +331,31 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
+        marginRight: 30
     },
+    tooltip: {
+        position: 'absolute',
+        top: 30,
+        backgroundColor: 'white',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 6,
+
+        shadowColor: Colors.shadowColor,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+
+        zIndex: 2000,
+
+        width: 100,
+        height: 100,
+
+        elevation: 5,
+        // minWidth: 80,
+        // maxWidth: 230,
+
+    }
 });
 
 

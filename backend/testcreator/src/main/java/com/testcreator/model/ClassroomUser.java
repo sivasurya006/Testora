@@ -2,10 +2,12 @@ package com.testcreator.model;
 
 
 public class ClassroomUser {
-	private final User user;
-	private final Long joinedAt;
-	private final UserRole role;
+	private  User user;
+	private  Long joinedAt;
+	private  UserRole role;
 	private Integer classroomId;
+	private String topPerformerName;
+	private Integer score;
 
 	
 	public ClassroomUser(User user, Long joinedAt, UserRole role) {
@@ -15,8 +17,31 @@ public class ClassroomUser {
 
 	}
 	
+	public ClassroomUser(String name,int score) {
+
+		this.topPerformerName=name;
+		this.score=score;
+		
+
+	}
 	
 	
+	public String getTopPerformerName() {
+		return topPerformerName;
+	}
+
+	public void setTopPerformerName(String topPerformerName) {
+		this.topPerformerName = topPerformerName;
+	}
+
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+
 	public Integer getClassroomId() {
 		return classroomId;
 	}

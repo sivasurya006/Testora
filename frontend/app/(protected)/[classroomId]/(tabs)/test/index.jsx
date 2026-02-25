@@ -65,7 +65,7 @@ export default function Test() {
                         <Ionicons name="search" size={18} color={Colors.dimBg} />
 
                         <TextInput
-                            placeholder= {selected == 'correction' ? "Search Students..." :  "Search Tests..." } 
+                            placeholder={selected == 'correction' ? "Search Students..." : "Search Tests..."}
                             placeholderTextColor={Colors.dimBg}
                             value={search}
                             onChangeText={setSearch}
@@ -73,12 +73,11 @@ export default function Test() {
                         />
                     </View>
                 </View>
-
                 {
                     selected === 'correction' ? (
-                        <StudentSubmissionScreen/>
+                        <StudentSubmissionScreen search={search} />
                     ) : (
-                        <CreatedTestList filter={selected} />
+                        <CreatedTestList filter={selected} search={search} />
                     )
                 }
             </SafeAreaView>
