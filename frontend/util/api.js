@@ -4,7 +4,11 @@ import * as SecureStore from "expo-secure-store";
 import { router, useRouter } from "expo-router";
 console.log("hello")
 const api = axios.create({
+<<<<<<< HEAD
     baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/api' : "http://192.168.43.241:8080/testcreator/api",
+=======
+    baseURL: Platform.OS == 'web' ? 'http://localhost:8080/testcreator/api' : "http://10.227.214.146:8080/testcreator/api",
+>>>>>>> 7ca3a6209014f856109c585204e7554435d4ddbd
     timeout: 10000,
     headers: {
         'X-Client-Type': Platform.OS == 'web' ? 'web' : 'mobile'

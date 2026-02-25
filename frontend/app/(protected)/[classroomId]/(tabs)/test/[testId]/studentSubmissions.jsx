@@ -95,7 +95,7 @@ export default function StudentSubmissions() {
       // if(labels.length > 24) break;
     }
 
-    setPerformanceChartData({ labels: labels.reverse(), markData: markData })
+    setPerformanceChartData({ labels: labels.reverse(), markData: markData.reverse() });
 
   }, [data])
 

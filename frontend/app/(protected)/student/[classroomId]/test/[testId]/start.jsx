@@ -35,10 +35,11 @@ export default function Test() {
   const [fullScreenExitWarning, setFullScreenExitWarning] = useState(false);
 
   const selectedAnswersRef = useRef(selectedAnswers);
+  const fullScreenExitCount = useRef(0);
 
   useEffect(() => {
-  selectedAnswersRef.current = selectedAnswers;
-}, [selectedAnswers]);
+    selectedAnswersRef.current = selectedAnswers;
+  }, [selectedAnswers]);
 
   const attemptId = useRef(null);
 
@@ -64,7 +65,7 @@ export default function Test() {
     console.log('Submitting with attemptId:', attemptId.current);
     console.log(testId, classroomId);
 
-    console.log('Selected answers payload:',makePayload(selectedAnswersRef.current));
+    console.log('Selected answers payload:', makePayload(selectedAnswersRef.current));
 
     try {
       console.log('inside try')
@@ -112,28 +113,25 @@ export default function Test() {
     }
   }
 
+  // useEffect(() => {
+  //   const detectDevTools = () => {
+  //     const threshold = 160;
 
-    const fullScreenExitCount = useRef(0);
+  //     if (
+  //       window.outerWidth - window.innerWidth > threshold ||
+  //       window.outerHeight - window.innerHeight > threshold
+  //     ) {
+  //       setTabWarningVisible(true);
+  //       submitAnswer();
+  //     }
+  //   };
 
-  useEffect(() => {
-    const detectDevTools = () => {
-      const threshold = 160;
+  //   window.addEventListener("resize", detectDevTools);
 
-      if (
-        window.outerWidth - window.innerWidth > threshold ||
-        window.outerHeight - window.innerHeight > threshold
-      ) {
-        setTabWarningVisible(true);
-        submitAnswer();
-      }
-    };
-
-    window.addEventListener("resize", detectDevTools);
-
-    return () => {
-      window.removeEventListener("resize", detectDevTools);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("resize", detectDevTools);
+  //   };
+  // }, []);
 
 
   useEffect(() => {
@@ -144,30 +142,30 @@ export default function Test() {
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
-    const handleKeyDowns = (e) => {
-      if (e.key !== 'Escape') return;
-      if (!document.fullscreenElement) {
-        fullScreenExitCount.current += 1;
-        console.log('Escape pressed while not fullscreen, count:', fullScreenExitCount.current);
+    // const handleKeyDowns = (e) => {
+    //   if (e.key !== 'Escape') return;
+    //   if (!document.fullscreenElement) {
+    //     fullScreenExitCount.current += 1;
+    //     console.log('Escape pressed while not fullscreen, count:', fullScreenExitCount.current);
 
-        if (fullScreenExitCount.current === 1) {
-          shouldAutoFullscreen.current = false;
-          setFullScreenExitWarning(true);
-        } else if (fullScreenExitCount.current >= 1) {
-          submitAnswer();
-        }
-      }
-    };
-    document.addEventListener('keydown', handleKeyDowns);
+    //     if (fullScreenExitCount.current === 1) {
+    //       shouldAutoFullscreen.current = false;
+    //       setFullScreenExitWarning(true);
+    //     } else if (fullScreenExitCount.current >= 1) {
+    //       submitAnswer();
+    //     }
+    //   }
+    // };
+    // document.addEventListener('keydown', handleKeyDowns);
 
 
     const handleCopyPaste = (e) => {
       e.preventDefault();
     };
 
-    const handleContextMenu = (e) => {
-      e.preventDefault();
-    };
+    // const handleContextMenu = (e) => {
+    //   e.preventDefault();
+    // };
 
     const handleKeyDown = (e) => {
       if (['c', 'v', 'x', 'a', 'i'].includes(e.key.toLowerCase())) {
@@ -175,30 +173,28 @@ export default function Test() {
       }
     };
 
-    document.addEventListener('contextmenu', handleContextMenu);
+    // document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('copy', handleCopyPaste);
     document.addEventListener('paste', handleCopyPaste);
     document.addEventListener('cut', handleCopyPaste);
 
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        fullScreenExitCount.current += 1;
-        console.log('Exited fullscreen, count:', fullScreenExitCount.current);
+const handleFullscreenChange = () => {
+  if (!document.fullscreenElement) {
 
-        if (fullScreenExitCount.current > 1) {
-          console.log('First fullscreen exit — showing warning');
-          fullScreenExitCount.current += 1; // reset to 1 in case it was incremented by Escape key handler
-          setFullScreenExitWarning(true);
-        } else if (fullScreenExitCount.current > 2) {
-          console.log('Second fullscreen exit — submitting test');
-          submitAnswer();
-        }
-      }
-    };
+    fullScreenExitCount.current += 1;
 
+
+    if (fullScreenExitCount.current === 1) {
+      setFullScreenExitWarning(true);
+    }
+
+    if (fullScreenExitCount.current >= 2) {
+      submitAnswer();
+    }
+  }
+};
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-
 
     const onBlur = () => {
       if (isResultPageOpen) return;
@@ -220,46 +216,49 @@ export default function Test() {
   console.log("selectedAnswers out side ", selectedAnswers)
 
 
-
-  const hiddenStart = useRef(null);  /// track the previuos
+  const hiddenStart = useRef(null);
   const tabSwitchCount = useRef(0);
   const violationPoints = useRef(0);
-  const pageLoaded = useRef(false);
+  // const pageLoaded = useRef(false);
+const handleBlur = () => {
+  if (isResultPageOpen) return;
 
-  const handleBlur = () => {
-    // if (!pageLoaded.current) { pageLoaded.current = true; return; }
-    hiddenStart.current = Date.now();
-    tabSwitchCount.current += 1;
-    violationPoints.current += 1;
-    console.log('Window blur…');
-    console.log('aelected answers inside handle blur  ', selectedAnswers);
-  };
+  tabSwitchCount.current += 1;
+  console.log("Tab switched:", tabSwitchCount.current);
 
-  const handleFocus = () => {
-    if (!hiddenStart.current) return;
-    const secondsAway = (Date.now() - hiddenStart.current) / 1000;
-    console.log('User returned after', secondsAway, 'seconds');
+  if (tabSwitchCount.current === 1) {
+    setTabWarningVisible(true);
+  }
+
+  if (tabSwitchCount.current >= 2) {
+    console.log("Auto submitting due to tab switch");
+    submitAnswer();
+  }
+};
+
+const handleFocus = () => {
+  console.log("User returned to test");
+};
+
+const handleVisibilityChange = () => {
+  if (isResultPageOpen) return;
+
+  if (document.hidden) {
+    console.log("Document hidden");
+    handleBlur();
+  } else {
+    console.log("Document visible");
+    handleFocus();
+  }
+};
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
 
-    console.log('before exeeding selected answers  ', selectedAnswers);
-
-    if (tabSwitchCount.current > 2) {
-      console.log("in fosus")
-      console.log('Tab switch count exceeded 2, auto-submitting test');
-      console.log('before submit answer selected answers  ', selectedAnswers);
-      submitAnswer();
-    } else if (tabSwitchCount.current > 1) {
-      violationPoints.current += 5;
-
-      setTabWarningVisible(true);
-    }
-
-    hiddenStart.current = null;
-  };
 
 
-  // useEffect(() => {
-  //   if (Platform.OS == 'web') return;
+  useEffect(() => {
+    if (Platform.OS == 'web') return;
 
   //   const appState = useRef(AppState.currentState);
 
@@ -272,10 +271,10 @@ export default function Test() {
 
   //   const interval = setInterval(detectDevTools, 1000);
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, []);
 
-
+  
 
 
   async function startNewTest() {
@@ -313,7 +312,7 @@ export default function Test() {
 
   function connectWebSocket(url) {
     if (!url) return;
-    const wsUrl = url.replace('localhost', 'localhost'); // Ensure correct WebSocket URL
+    const wsUrl = url.replace('localhost', 'localhost');
     console.log(wsUrl)
     try {
       const ws = new WebSocket(wsUrl);

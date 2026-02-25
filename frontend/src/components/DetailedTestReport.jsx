@@ -40,29 +40,29 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
                     </TouchableOpacity>
                 </View>
                 <View style={styles.reportContainer}>
-                    <View style={styles.reportItem}>
-                        <AppSemiBoldText style={styles.reportTitle}>
+                    <View style={styles.totalItem}>
+                        <AppSemiBoldText style={styles.totalTitle}>
                             TOTAL MARKS
                         </AppSemiBoldText>
-                        <AppBoldText style={styles.reportNumber}>
+                        <AppBoldText style={styles.totalNumber}>
                             {totalMarks}
                         </AppBoldText>
                     </View>
                     <View style={styles.line} />
-                    <View style={styles.reportItem}>
-                        <AppSemiBoldText style={styles.reportTitle}>
+                    <View style={styles.scoreItem}>
+                        <AppSemiBoldText style={styles.scoreTitle}>
                             SCORE PERCENTAGE
                         </AppSemiBoldText>
-                        <AppBoldText style={styles.reportNumber}>
+                        <AppBoldText style={styles.scoreNumber}>
                             {Math.floor((correctQuestions / numberOfQuestion) * 100)}%
                         </AppBoldText>
                     </View>
                     <View style={styles.line} />
-                    <View style={styles.reportItem}>
-                        <AppSemiBoldText style={styles.reportTitle}>
+                    <View style={styles.correctItem}>
+                        <AppSemiBoldText style={styles.correctTitle}>
                             CORRECT QUESTIONS
                         </AppSemiBoldText>
-                        <AppBoldText style={styles.reportNumber}>
+                        <AppBoldText style={styles.correctNumber}>
                             {correctQuestions}
                             <AppSemiBoldText style={styles.lightText}>
                                 {" / "}{numberOfQuestion}
@@ -274,18 +274,78 @@ const styles = StyleSheet.create({
         marginTop: 5,
         textAlign: 'center',
     },
+    // reportContainer: {
+    //     flexDirection: 'row',
+    //     backgroundColor: '#F1F3F6',
+    //     borderRadius: 16,
+    //     paddingVertical: 25,
+    //     marginVertical: 20,
+    //     borderWidth: 1,
+    //     borderColor: '#E0E6ED',
+    //     alignItems: 'center',
+    //     width: '100%',
+    //     maxWidth: 1200,
+    // },
+
     reportContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#F1F3F6',
-        borderRadius: 16,
-        paddingVertical: 25,
-        marginVertical: 20,
-        borderWidth: 1,
-        borderColor: '#E0E6ED',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: 1200,
-    },
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+    marginTop:50
+},
+totalItem: {
+    flex: 1,
+    backgroundColor: "#DBEAFE",
+    // paddingHorizontal:130,
+    // paddingVertical:50,
+    height:150,
+    width:800,
+    borderRadius: 14,
+      alignItems:"center",
+    justifyContent:"center"
+},
+totalTitle: {
+    color: "#1D4ED8",
+    fontSize: 12,
+   
+},
+totalNumber: {
+    color: "#1D4ED8",
+    fontSize: 20,
+},
+scoreItem: {
+    flex: 1,
+    backgroundColor: "#F3E8FF",
+    // paddingHorizontal:130,
+    borderRadius: 14,
+      alignItems:"center",
+    justifyContent:"center"
+},
+
+scoreTitle: {
+    color: "#7E22CE",
+    fontSize: 12,
+},
+scoreNumber: {
+    color: "#7E22CE",
+    fontSize: 20,
+},
+correctItem: {
+    flex: 1,
+    backgroundColor: "#DCFCE7",
+    // paddingHorizontal:130,
+    borderRadius: 14,
+    alignItems:"center",
+    justifyContent:"center"
+},
+correctTitle: {
+    color: "#15803D",
+    fontSize: 12,
+},
+correctNumber: {
+    color: "#15803D",
+    fontSize: 20,
+},
 
     reportItem: {
         flex: 1,
