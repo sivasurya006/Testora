@@ -57,16 +57,18 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 			
 			JwtUtil jwt = new JwtUtil(context);
 			String token = jwt.generateToken(userId+"");
-			Cookie cookie = new Cookie("token", token);
-			cookie.setHttpOnly(true);
-			cookie.setSecure(false);
-			cookie.setPath("/");
-			cookie.setMaxAge(24 * 60 * 60); 
+			
 			
 			if(clientType.equals("mobile")) {
 				this.authDto = new UserAuthenticationDto(true, token);
 			}else {
-				response.addCookie(cookie);
+				String cookie = "accessToken=" + token +
+		                "; Path=/" +
+		                "; Max-Age=86400" +
+		                "; HttpOnly" +
+		                "; Secure" +
+		                "; SameSite=None";
+				response.addHeader("Set-Coolkie", cookie);
 				this.authDto = new UserAuthenticationDto(true, null);
 			}
 			return SUCCESS;
@@ -114,14 +116,19 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 		
 		JwtUtil jwt = new JwtUtil(context);
 		String token = jwt.generateToken(userId+"");
-		Cookie cookie = new Cookie("token", token);
-		cookie.setMaxAge(60 * 60 * 24);
-		cookie.setHttpOnly(true);
+
+		
 		
 		if(clientType.equals("mobile")) {
 			this.authDto = new UserAuthenticationDto(true, token);
 		}else {
-			response.addCookie(cookie);
+			String cookie = "accessToken=" + token +
+	                "; Path=/" +
+	                "; Max-Age=86400" +
+	                "; HttpOnly" +
+	                "; Secure" +
+	                "; SameSite=None";
+			response.addHeader("Set-Coolkie", cookie);
 			this.authDto = new UserAuthenticationDto(true, null);
 		}
 			
