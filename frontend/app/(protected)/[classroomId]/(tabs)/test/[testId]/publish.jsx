@@ -1,14 +1,10 @@
 import { View, Text, TextInput, StyleSheet, useWindowDimensions, Pressable } from 'react-native'
 import React, { use, useEffect, useState } from 'react'
-import React, { use, useEffect, useState } from 'react'
 import { Checkbox, Icon, IconButton, Menu, Modal, Portal, Tooltip } from 'react-native-paper';
 import { router, location, useGlobalSearchParams } from 'expo-router';
 import api from '../../../../../../util/api';
-import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../../../styles/Colors';
 import { AppBoldText, AppMediumText, AppRegularText } from '../../../../../../styles/fonts';
-import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
-import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
 
 export default function Publish() {
 
@@ -24,7 +20,6 @@ export default function Publish() {
     const [correctionType, setCorrectionType] = React.useState('AUTO');
     const [testMinutes, setTestMinutes] = useState(0);
     const [maximumAttempts, setMaximumAttempts] = useState(0);
-    const [showAttemptInput, setShowAttemptInput] = useState(false);
     const [showAttemptInput, setShowAttemptInput] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
 
@@ -182,17 +177,10 @@ export default function Publish() {
                                     setTestMinutes(30);
                                 }
                             }}
-                            onPress={() => {
-                                setIsTimed(!isTimed);
-                                if (!isTimed) {
-                                    setTestMinutes(30);
-                                }
-                            }}
                         />
                     </View>
 
                     {isTimed && (
-                        <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
                         <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
                             <TextInput
                                 defaultValue='30'
@@ -206,7 +194,6 @@ export default function Publish() {
                                 keyboardType='numeric'
                                 onChangeText={(text) => setTestMinutes(parseInt(text) || 0)}
                             />
-                            <AppRegularText>Minutes</AppRegularText>
                             <AppRegularText>Minutes</AppRegularText>
                         </View>
                     )}

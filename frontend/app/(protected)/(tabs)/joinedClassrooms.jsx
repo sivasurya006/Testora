@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions, TextInput, Platform, Dimensions, Modal } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions, TextInput, Platform, Dimensions, Modal, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import api from '../../../util/api';
 import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
-import { AppSemiBoldText, fonts } from '../../../styles/fonts';
+import { AppBoldText, AppSemiBoldText, fonts } from '../../../styles/fonts';
 import { useRouter } from 'expo-router';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -115,15 +115,27 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
   const [isHovered, setIsHovered] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const { signOut } = useContext(AuthContext);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 600;
 
   return (
     <>
-      {/* <StatusBar backgroundColor={Colors.bgColor} /> */}
       <View style={styles.topBar}>
-        <Text style={styles.topBarHeader}>Joined Classrooms</Text>
-        <View style={styles.rightSection} >
-          <View style={styles.searchContainer}>
+        <AppBoldText style={[styles.topBarHeader,
+        isMobile && {
+          flex: 0
+        }]
+        }>Joined Classrooms</AppBoldText>
 
+        <View style={[styles.rightSection, isMobile && {
+          flex: 0
+        }]}>
+
+          <View style={[styles.searchContainer,
+          isMobile && {
+            flex: 1
+          }
+          ]}>
             <Ionicons name="search" size={18} color={Colors.dimBg} />
 
             <TextInput
@@ -134,7 +146,7 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
               style={styles.searchInput}
             />
           </View>
-          <Pressable
+          <TouchableOpacity
             style={[
               styles.joinBtn,
               isHovered && styles.hoveredButton
@@ -151,16 +163,16 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
               />
               <Text style={styles.joinBtnText}>Join</Text>
             </View>
-          </Pressable>
+          </TouchableOpacity>
           {
             isLargeScreen && (
-              <Pressable
+              <TouchableOpacity
                 onPress={() => {
                   setTooltipVisible(true);
                 }}
               >
                 <MaterialIcons name='account-circle' size={34} color={Colors.secondaryColor} />
-              </Pressable>
+              </TouchableOpacity>
             )
           }
           <Modal transparent visible={tooltipVisible} animationType="fade">
@@ -224,25 +236,30 @@ const styles = StyleSheet.create({
     margin: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
+
     ...(width < 800 ? {
       flexDirection: 'column',
       gap: 20,
       alignItems: 'flex-start',
-      marginHorizontal: 10
+      marginHorizontal: 10,
+      width: '100%',
+      margin: 10,
+      paddingRight: 20,
     } : {})
   },
 
   topBarHeader: {
     fontSize: 22,
     fontFamily: fonts.bold,
+    flex: 2
   },
   joinBtn: {
     backgroundColor: Colors.primaryColor,
-    // width: 90,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    width: 105,
+    paddingVertical: 9,
+    paddingHorizontal: 15,
     borderRadius: 8,
-    marginRight: 10,
+    // marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -257,7 +274,7 @@ const styles = StyleSheet.create({
   joinBtnText: {
     color: Colors.white,
     fontSize: 15,
-    marginRight: 6,
+    // marginRight: 6,
     fontWeight: 500,
     fontFamily: fonts.regular
   },
@@ -290,6 +307,30 @@ const styles = StyleSheet.create({
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 12,
+    marginRight: 30,
+    width: '100%',
+    flex: 1
   },
+  tooltip: {
+    position: 'absolute',
+    top: 30,
+    backgroundColor: 'white',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+
+    shadowColor: Colors.shadowColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+
+    zIndex: 2000,
+
+    width: 100,
+    height: 100,
+
+    elevation: 5,
+  }
 });

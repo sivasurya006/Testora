@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View, Text, Button, Alert, Dimensions } from 'react-native'
+import { Pressable, StyleSheet, View, Text, Button, Alert, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import api from '../../util/api'
 import Colors from '../../styles/Colors';
@@ -74,7 +74,7 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
     return (
         <>
             <LoadingScreen visible={isLoading} />
-            <Pressable
+            <TouchableOpacity
                 onPress={() => setClassroomID(id)}
                 style={[
                     styles.container,
@@ -186,7 +186,7 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                         : null
                 }
 
-            </Pressable>
+            </TouchableOpacity>
         </>
     );
 }
@@ -237,14 +237,16 @@ const styles = StyleSheet.create({
         // padding: 18,
         paddingBottom: 18,
         borderRadius: 12,
-        margin: 8,
+        // marginHorizontal:,
+        marginVertical : 8,
         maxWidth: width > 400 ? 380 : 340,
         width: '100%',
         // boxShadow: Colors.blackBoxShadow,
         // flex: 1,
         boxShadow: Colors.blackBoxShadow,
         marginHorizontal: 10,
-        elevation: 6
+        elevation: 6,
+
 
     },
     classHeader: {
@@ -260,13 +262,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingLeft: 20,
-        paddingVertical: 15
+        paddingVertical: 15,
     },
 
     className: {
         fontSize: 16,
         fontWeight: 300,
-        // color: Colors.secondaryColor,
         marginTop: 6,
         fontFamily: fonts.semibold
     },

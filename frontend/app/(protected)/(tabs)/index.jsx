@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform, useWindowDimensions, Dimensions } from 'react-native'
+import { StyleSheet, Text, TextInput, Pressable, View, FlatList, Modal, Button, Platform, useWindowDimensions, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useReducer, useState } from 'react'
 import api from '../../../util/api'
 import { AntDesign, FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
@@ -7,7 +7,7 @@ import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import InputModal from '../../../src/components/modals/InputModal';
 import { useRouter } from 'expo-router';
-import { AppSemiBoldText, fonts } from '../../../styles/fonts';
+import { AppBoldText, AppSemiBoldText, fonts } from '../../../styles/fonts';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { ActivityIndicator } from 'react-native-paper';
 import Header from '../../../src/components/Header';
@@ -24,7 +24,7 @@ export default function Index() {
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
 
-    const numColumns = Math.floor((width - 300) / classroom_width);
+    const numColumns = width < 600 ? 1 : Math.max(1, Math.floor(width / classroom_width));
 
     console.log(numColumns)
 
@@ -120,9 +120,6 @@ export default function Index() {
                                 totalTests={item.totalTests}
                             />
                         )}
-                    // columnWrapperStyle={
-                    //     numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
-                    // }
                     />
                     }
                     {createModalVisible ?
@@ -159,14 +156,26 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const { signOut } = useContext(AuthContext);
+    const { width } = useWindowDimensions();
+    const isMobile = width < 600;
 
 
     return (
         <View style={styles.topBar}>
-            <Text style={styles.topBarHeader}>My Classrooms</Text>
+            <AppBoldText style={[styles.topBarHeader,
+                isMobile && {
+                    flex : 0
+                }]
+            }>My Classrooms</AppBoldText>
 
-            <View style={styles.rightSection}>
-                <View style={styles.searchContainer}>
+            <View style={[styles.rightSection,isMobile && {
+                flex : 0
+            }]}>
+                <View style={[styles.searchContainer,
+                    isMobile && {
+                        flex : 1
+                    }
+                ]}>
 
                     <Ionicons name="search" size={18} color={Colors.dimBg} />
 
@@ -178,7 +187,7 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
                         style={styles.searchInput}
                     />
                 </View>
-                <Pressable
+                <TouchableOpacity
                     style={[
                         styles.addButton,
                         isHovered && styles.hoveredButton
@@ -189,9 +198,9 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
                 >
                     <View style={styles.addButtonContent}>
                         <AntDesign name="plus" size={15} color="#fff" />
-                        <Text style={styles.addButtonText}>Create</Text>
+                        <AppSemiBoldText style={styles.addButtonText}>Create</AppSemiBoldText>
                     </View>
-                </Pressable>
+                </TouchableOpacity>
                 {
                     isLargeScreen && (
                         <Pressable
@@ -263,26 +272,31 @@ const styles = StyleSheet.create({
         margin: 20,
         alignItems: 'center',
         justifyContent: 'space-between',
+
         ...(width < 800 ? {
             flexDirection: 'column',
             gap: 20,
             alignItems: 'flex-start',
-            marginHorizontal: 10
+            marginHorizontal: 10,
+            width: '100%',
+            margin: 10,
+            paddingRight: 20,
         } : {})
     },
 
     topBarHeader: {
         fontSize: 22,
         fontFamily: fonts.bold,
+        flex: 2
     },
 
     addButton: {
         backgroundColor: Colors.primaryColor,
         // width: 90,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingVertical: 9,
+        paddingHorizontal: 15,
         borderRadius: 8,
-        marginRight: 10,
+        // marginRight: 10,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -297,7 +311,7 @@ const styles = StyleSheet.create({
     addButtonText: {
         color: Colors.white,
         fontSize: 15,
-        marginRight: 6,
+        // marginRight: 6,
         fontWeight: 500,
         fontFamily: fonts.regular
     },
@@ -330,8 +344,11 @@ const styles = StyleSheet.create({
     rightSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         gap: 12,
-        marginRight: 30
+        marginRight: 30,
+        width: '100%',
+        flex: 1
     },
     tooltip: {
         position: 'absolute',
@@ -352,9 +369,6 @@ const styles = StyleSheet.create({
         height: 100,
 
         elevation: 5,
-        // minWidth: 80,
-        // maxWidth: 230,
-
     }
 });
 
