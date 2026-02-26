@@ -124,7 +124,7 @@ export default function Dashboard() {
         const pieChartData = res.data ?? [];
 
         const submittedCount = pieChartData.reduce(
-          (total, item) => total + item.attemptCount,
+          (total, item) => total + item.submittedTestCount,
           0
         );
 
@@ -239,7 +239,7 @@ export default function Dashboard() {
 
                 <View style={styles.chartCardMobile}>
                   <AppBoldText style={styles.sectionTitle}>Monthly Progress</AppBoldText>
-                  {lineData.length > 0 ? (
+                  {lineData.datasets && lineData.datasets.length > 0 ? (
 
                     <LineChart
                       data={lineData}
@@ -247,6 +247,8 @@ export default function Dashboard() {
                       height={220}
                       chartConfig={chartConfig}
                       bezier
+                      segments={LineChartSegmentMaxValue > 15 ? 5 : LineChartSegmentMaxValue}
+
                     />
                   ) : (
                     <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No data available</Text>
@@ -255,7 +257,8 @@ export default function Dashboard() {
 
                 <View style={styles.chartCardMobile}>
                   <AppBoldText style={styles.sectionTitle}>Submission</AppBoldText>
-                  {pieData.length > 0 ? (
+                  {lineData.datasets && lineData.datasets.length > 0 ? (
+
                     <PieChart
                       data={pieData}
                       width={screenWidth}
@@ -283,24 +286,30 @@ export default function Dashboard() {
                 </View>
                 <View style={styles.sectionMobile}>
                   <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
-                  {topPerfomance.map((item, index) => (
-                    <View key={index} style={styles.topperCardMobile}>
-                      <View style={styles.avatar}>
-                        <AppRegularText style={styles.avatarText}>
-                          {item.topPerformerName.substring(0, 2).toUpperCase()}
-                        </AppRegularText>
-                      </View>
+                  {topPerfomance.length === 0 ? (
+                    <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No top performers available</Text>
+                  ) : (
 
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.topperName}>{item.topPerformerName}</Text>
-                        <Text style={styles.topperScore}>
-                          Score: {item.score}
-                        </Text>
-                      </View>
+                    topPerfomance.map((item, index) => (
+                      <View key={index} style={styles.topperCardMobile}>
+                        <View style={styles.avatar}>
+                          <AppRegularText style={styles.avatarText}>
+                            {item.topPerformerName.substring(0, 2).toUpperCase()}
+                          </AppRegularText>
+                        </View>
 
-                      <MaterialIcons name="trending-up" size={20} color="green" />
-                    </View>
-                  ))}
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.topperName}>{item.topPerformerName}</Text>
+                          <Text style={styles.topperScore}>
+                            Score: {item.score}
+                          </Text>
+                        </View>
+
+                        <MaterialIcons name="trending-up" size={20} color="green" />
+                      </View>
+                    ))
+
+                  )}
                 </View>
               </>
 
@@ -359,7 +368,7 @@ export default function Dashboard() {
                     width={960}
                     height={400}
                     chartConfig={chartConfig}
-                    segments={LineChartSegmentMaxValue}
+                    segments={LineChartSegmentMaxValue > 15 ? 5 : LineChartSegmentMaxValue}
 
                     bezier
                   // fromZero
@@ -400,28 +409,34 @@ export default function Dashboard() {
                 <View style={styles.sectionTopPeform}>
                   <AppRegularText style={styles.sectionTitle}>Top Performing</AppRegularText>
                   <View style={styles.topperContainerDesktop}>
-                    {topPerfomance.map((item, index) => (
-                      <View key={index} style={styles.topperCardDesktop}>
-                        <View style={styles.nameProfile}>
-                          <AppRegularText style={styles.profileText}>
-                            {item.topPerformerName.substring(0, 2).toUpperCase()}
-                          </AppRegularText>
-                        </View>
+                    {topPerfomance.length === 0 ? (
+                      <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No top performers available</Text>
+                    ) : (
+                      topPerfomance.map((item, index) => (
+                        <View key={index} style={styles.topperCardDesktop}>
+                          <View style={styles.nameProfile}>
+                            <AppRegularText style={styles.profileText}>
+                              {item.topPerformerName.substring(0, 2).toUpperCase()}
+                            </AppRegularText>
+                          </View>
 
-                        <View style={{ gap: 20 }}>
-                          <AppRegularText style={styles.topperNameDesktop}>
-                            {item.topPerformerName}
-                          </AppRegularText>
-                          <AppRegularText style={styles.topperScoreDesktop}>
-                            Score: {item.score}
-                          </AppRegularText>
-                        </View>
+                          <View style={{ gap: 20 }}>
+                            <AppRegularText style={styles.topperNameDesktop}>
+                              {item.topPerformerName}
+                            </AppRegularText>
+                            <AppRegularText style={styles.topperScoreDesktop}>
+                              Score: {item.score}
+                            </AppRegularText>
+                          </View>
 
-                        <View style={styles.progressIcon}>
-                          <MaterialIcons name="trending-up" size={20} color="green" />
+                          <View style={styles.progressIcon}>
+                            <MaterialIcons name="trending-up" size={20} color="green" />
+                          </View>
                         </View>
-                      </View>
-                    ))}
+                      ))
+
+                    )}
+
                   </View>
                 </View>
 

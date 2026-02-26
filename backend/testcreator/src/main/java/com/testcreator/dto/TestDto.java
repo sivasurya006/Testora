@@ -171,9 +171,8 @@ public class TestDto {
 		this.correctionMethod = correctionMethod;
 	}
 
-	public void setSubmittedTestCount(Integer int1) {
-		// TODO Auto-generated method stub
-		
+	public void setSubmittedTestCount(Integer submittedTestCount) {
+this.submittedTestCount=submittedTestCount;
 	}
 	
 }
