@@ -1,8 +1,8 @@
-import { View, TextInput, StyleSheet, Platform, Dimensions, Pressable } from 'react-native'
+import { View, TextInput, StyleSheet, Dimensions, Pressable, TouchableOpacity, useWindowDimensions } from 'react-native'
 import React, { use, useState } from 'react'
 import Colors from '../../../../../styles/Colors';
-import { AppMediumText } from '../../../../../styles/fonts';
-import { Ionicons } from '@expo/vector-icons';
+import { AppMediumText, AppSemiBoldText } from '../../../../../styles/fonts';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import CreatedTestList from '../../../../../src/screens/CreatedTestList';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,11 +15,16 @@ export default function Test() {
 
     const [selected, setSelected] = useState('all');
     const [search, setSearch] = useState('');
+    const [isCreateTestModalVisible, setCreateTestModalVisible] = useState(false);
+
+
+    const { width } = useWindowDimensions();
+    const isSmallScreen = width < 768;
 
     return (
         <>
             <StatusBar style="light" translucent />
-            <SafeAreaView style={styles.container} edges={['top']}>
+            <SafeAreaView style={styles.container} edges={['']}>
                 <View style={styles.menu}>
                     <Pressable
                         style={[styles.menuItem, selected == 'all' && styles.selectedItem]}
@@ -60,24 +65,44 @@ export default function Test() {
                         <AppMediumText style={{ fontSize: 16 }}>Drafts</AppMediumText>
                     </Pressable>
 
-                    <View style={styles.searchContainer}>
+                    <View
+                        style={[
+                            styles.actionContainer,
+                            isSmallScreen && {
+                                width: '100%',
+                                marginTop: 15,
+                                justifyContent: 'space-between',
+                            }
+                        ]}
+                    >
+                        <View style={styles.searchContainer}>
 
-                        <Ionicons name="search" size={18} color={Colors.dimBg} />
+                            <Ionicons name="search" size={18} color={Colors.dimBg} />
 
-                        <TextInput
-                            placeholder={selected == 'correction' ? "Search Students..." : "Search Tests..."}
-                            placeholderTextColor={Colors.dimBg}
-                            value={search}
-                            onChangeText={setSearch}
-                            style={styles.searchInput}
-                        />
+                            <TextInput
+                                placeholder={selected == 'correction' ? "Search Students..." : "Search Tests..."}
+                                placeholderTextColor={Colors.dimBg}
+                                value={search}
+                                onChangeText={setSearch}
+                                style={styles.searchInput}
+                            />
+                        </View>
+                        <View>
+                            <TouchableOpacity
+                                style={styles.addButton}
+                                onPress={() => setCreateTestModalVisible(true)}
+                            >
+                                <AntDesign name="plus" size={16} color={Colors.white} />
+                                <AppSemiBoldText style={styles.addButtonText}>Create</AppSemiBoldText>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
                 {
                     selected === 'correction' ? (
                         <StudentSubmissionScreen search={search} />
                     ) : (
-                        <CreatedTestList filter={selected} search={search} />
+                        <CreatedTestList filter={selected} search={search} setCreateTestModalVisible={setCreateTestModalVisible} isCreateTestModalVisible={isCreateTestModalVisible} />
                     )
                 }
             </SafeAreaView>
@@ -92,20 +117,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: Colors.bgColor
     },
-
-    topBar: {
-        // flexDirection: 'row',
-        // alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingTop: 10,
-        gap: 10,
-        paddingBottom: 10,
-        ...(Platform.OS === 'web' && {
-            // maxWidth: 900,
-            alignSelf: 'center',
-            width: '100%',
-        })
-    },
     emptyText: {
         fontSize: 20,
         color: "black"
@@ -113,14 +124,16 @@ const styles = StyleSheet.create({
     menu: {
         paddingTop: 20,
         flexDirection: "row",
+        flexWrap: "wrap",
         backgroundColor: Colors.bgColor,
-        // borderBottomWidth : 1,
         paddingBottom: 20,
-        // borderBottomColor : Colors.dimBg ,
-        flexWrap: 'wrap',
-        ...(Platform.OS == 'web' ? {
-            paddingLeft: 10
-        } : {})
+        // width : '100%'
+    },
+    actionContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginLeft: 'auto'
     },
     filterContainer: {
         flexDirection: "row",
@@ -169,17 +182,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 12,
         height: 38,
-        width: '50%',
-        // margin: 20,
-        marginLeft: 'auto',
-        marginRight: 20,
         borderWidth: 2,
         borderColor: Colors.secondaryColor + '30',
-        ...(width < 1110 ? {
-            width: '90%',
-            marginTop: 20,
-        } : {}
-        )
+        flex:1
+
     },
 
     searchInput: {
@@ -189,5 +195,21 @@ const styles = StyleSheet.create({
         color: Colors.secondaryColor,
         outlineWidth: 0,
         height: 38,
+    },
+
+    addButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.primaryColor,
+        paddingHorizontal: 12,
+        height: 40,
+        borderRadius: 8,
+        alignSelf: 'flex-end'
+    },
+
+    addButtonText: {
+        color: Colors.white,
+        marginLeft: 6,
+        fontSize: 14,
     },
 })

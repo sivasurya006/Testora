@@ -199,7 +199,7 @@ export default function Dashboard() {
   return (
     <>
       <StatusBar style="dark" backgroundColor={Colors.bgColor} />
-      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+      <SafeAreaView style={{ flex: 1 }} edges={['']}>
         {isMobile ? (
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 

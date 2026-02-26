@@ -1,24 +1,15 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, useWindowDimensions } from 'react-native'
-import React from 'react'
+import { View, ScrollView, StyleSheet, Modal, TouchableOpacity, useWindowDimensions } from 'react-native'
 import Colors from '../../styles/Colors'
-import { AppBoldText, AppSemiBoldText, fonts } from '../../styles/fonts'
-import { Icon } from 'react-native-paper'
-import { ScrollView } from 'react-native-gesture-handler'
-import RenderHTML from 'react-native-render-html'
-import FillInBlankQuestionView from './testComponents/FillInBlankQuestionView'
-import MatchingQuestionView from './testComponents/MatchingQuestionView'
-import QuestionView from './testComponents/QuestionView'
+import { AppBoldText, AppSemiBoldText} from '../../styles/fonts'
 import McqQuestion from './McqQuestion'
 import SingleChoiceQuestion from './SingleChoiceQuestion'
 import FillInBlankQuestion from './FillIntheBlankQuestion'
 import MatchingQuestion from './MatchingQuestion'
 import BooleanQuestion from './BooleanQuestion';
 import { AntDesign } from '@expo/vector-icons'
-import api from '../../util/api'
 
 export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false, isResultPageOpen }) {
-
-
+    
     const numberOfQuestion = questions?.length;
     const correctQuestions = questions?.reduce((sum, question) => {
         const selectedOptionIsCorrect = question.selectedOptions?.some(

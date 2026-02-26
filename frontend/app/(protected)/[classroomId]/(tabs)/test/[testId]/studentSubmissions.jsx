@@ -1,20 +1,16 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, FlatList } from 'react-native'
+import { useEffect, useState } from 'react'
 import Colors from '../../../../../../styles/Colors'
 import SubmissionsHeader from '../../../../../../src/components/submissions/SubmissionsHeader'
 import { ActivityIndicator } from 'react-native-paper';
 import api from '../../../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import AttemptCard from '../../../../../../src/components/submissions/AttemptCard';
-import { FlatList } from 'react-native-gesture-handler';
 import GradeScreen from '../../../../../../src/screens/GradeScreen';
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport';
 import { AppSemiBoldText } from '../../../../../../styles/fonts';
 
 export default function StudentSubmissions() {
-
-
-
 
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState();
@@ -138,7 +134,7 @@ export default function StudentSubmissions() {
       {
         filteredData?.length == 0 ? (
           <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-             <AppSemiBoldText>No Attempts</AppSemiBoldText>\
+             <AppSemiBoldText>No Attempts</AppSemiBoldText>
             </View>
         ) : (
           <FlatList

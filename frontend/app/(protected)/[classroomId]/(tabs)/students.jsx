@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Platform, Pressable, Alert } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Platform, Pressable, FlatList } from 'react-native'
 import { useEffect, useState } from 'react'
 import Colors from '../../../../styles/Colors';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
@@ -12,8 +12,6 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView } from 'react-native';
 import { AppMediumText } from '../../../../styles/fonts';
 import { Menu, IconButton } from 'react-native-paper';
-import StudentListHeader from '../../../../src/screens/studentlist';
-import { FlatList } from 'react-native-gesture-handler';
 
 export default function StudentList() {
 
@@ -83,7 +81,7 @@ export default function StudentList() {
   return (
     <>
       <StatusBar translucent />
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} edges={[]} > 
         <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
         <ScrollView>
           {

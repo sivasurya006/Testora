@@ -4,7 +4,7 @@ import { fonts } from "../../../styles/fonts";
 // import { View } from "react-native-web";
 import { useEffect } from "react";
 
-export default function FillInBlankQuestionView({ question, selectedAnswers, setSelectedAnswers , preview = false}) {
+export default function FillInBlankQuestionView({ question, selectedAnswers, setSelectedAnswers, preview = false }) {
 
 
     const options = question.options;
@@ -13,51 +13,54 @@ export default function FillInBlankQuestionView({ question, selectedAnswers, set
     console.log(selectedAnswers)
 
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        ['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())
-      ) {
-        e.preventDefault();
-        alert("Copy/Paste is disabled during the test");
-      }
-    };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    // For Web only  
+    useEffect(() => {
+        if (Platform.OS != 'web') return;
+        const handleKeyDown = (e) => {
+            if (
+                (e.ctrlKey || e.metaKey) &&
+                ['c', 'v', 'x', 'a'].includes(e.key.toLowerCase())
+            ) {
+                e.preventDefault();
+                alert("Copy/Paste is disabled during the test");
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     useEffect(() => {
-      if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-  
-      const handleCopyPaste = (e) => {
-        e.preventDefault();
-      };
-  
-      const handleContextMenu = (e) => {
-        e.preventDefault();
-      };
-  
-      const handleKeyDown = (e) => {
-        if ( ['c', 'v', 'x', 'a','i'].includes(e.key.toLowerCase())) {
-          e.preventDefault();
-        }
-      };
-  
-      document.addEventListener('contextmenu', handleContextMenu);
-      document.addEventListener('keydown', handleKeyDown);
-      document.addEventListener('copy', handleCopyPaste);
-      document.addEventListener('paste', handleCopyPaste);
-      document.addEventListener('cut', handleCopyPaste);
-  
-      return () => {
-        document.removeEventListener('contextmenu', handleContextMenu);
-        document.removeEventListener('keydown', handleKeyDown);
-        document.removeEventListener('copy', handleCopyPaste);
-        document.removeEventListener('paste', handleCopyPaste);
-        document.removeEventListener('cut', handleCopyPaste);
-      };
+        if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+        const handleCopyPaste = (e) => {
+            e.preventDefault();
+        };
+
+        const handleContextMenu = (e) => {
+            e.preventDefault();
+        };
+
+        const handleKeyDown = (e) => {
+            if (['c', 'v', 'x', 'a', 'i'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener('contextmenu', handleContextMenu);
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('copy', handleCopyPaste);
+        document.addEventListener('paste', handleCopyPaste);
+        document.addEventListener('cut', handleCopyPaste);
+
+        return () => {
+            document.removeEventListener('contextmenu', handleContextMenu);
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('copy', handleCopyPaste);
+            document.removeEventListener('paste', handleCopyPaste);
+            document.removeEventListener('cut', handleCopyPaste);
+        };
     }, []);
 
     /**

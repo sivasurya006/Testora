@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform, Dimensions, ScrollView, Modal } from 'react-native'
+import { View, Text, StyleSheet, Platform, Dimensions, ScrollView, Modal, AppState } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import TestHeader from '../../../../../../src/components/testComponents/TestHeader'
 import TestFooter from '../../../../../../src/components/testComponents/TestFooter'
@@ -45,10 +45,12 @@ export default function Test() {
   const attemptId = useRef(null);
 
   function onExit() {
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch((err) => {
-        console.log('Exit fullscreen failed:', err);
-      });
+    if (Platform.OS == 'web') {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch((err) => {
+          console.log('Exit fullscreen failed:', err);
+        });
+      }
     }
     if (wsRef.current) {
       wsRef.current.close();
@@ -85,9 +87,6 @@ export default function Test() {
         setSubmittedConfirmModalVisible(true)
         return;
       }
-
-
-      console.log('Submission result: ======================================== ', result.data);
 
       setTotalMarks(result.data.totalMarks);
       setReportData(result.data);
@@ -180,21 +179,21 @@ export default function Test() {
     document.addEventListener('paste', handleCopyPaste);
     document.addEventListener('cut', handleCopyPaste);
 
-const handleFullscreenChange = () => {
-  if (!document.fullscreenElement) {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
 
-    fullScreenExitCount.current += 1;
+        fullScreenExitCount.current += 1;
 
 
-    if (fullScreenExitCount.current === 1) {
-      setFullScreenExitWarning(true);
-    }
+        if (fullScreenExitCount.current === 1) {
+          setFullScreenExitWarning(true);
+        }
 
-    if (fullScreenExitCount.current >= 2) {
-      submitAnswer();
-    }
-  }
-};
+        if (fullScreenExitCount.current >= 2) {
+          submitAnswer();
+        }
+      }
+    };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     const onBlur = () => {
@@ -221,61 +220,63 @@ const handleFullscreenChange = () => {
   const tabSwitchCount = useRef(0);
   const violationPoints = useRef(0);
   // const pageLoaded = useRef(false);
-const handleBlur = () => {
-  if (isResultPageOpen) return;
+  const handleBlur = () => {
+    if (isResultPageOpen) return;
 
-  tabSwitchCount.current += 1;
-  console.log("Tab switched:", tabSwitchCount.current);
+    tabSwitchCount.current += 1;
+    console.log("Tab switched:", tabSwitchCount.current);
 
-  if (tabSwitchCount.current === 1) {
-    setTabWarningVisible(true);
+    if (tabSwitchCount.current === 1) {
+      setTabWarningVisible(true);
+    }
+
+    if (tabSwitchCount.current >= 2) {
+      console.log("Auto submitting due to tab switch");
+      submitAnswer();
+    }
+  };
+
+  const handleFocus = () => {
+    console.log("User returned to test");
+  };
+
+  const handleVisibilityChange = () => {
+    if (isResultPageOpen) return;
+
+    if (document.hidden) {
+      console.log("Document hidden");
+      handleBlur();
+    } else {
+      console.log("Document visible");
+      handleFocus();
+    }
+  };
+
+  if (Platform.OS == 'web') {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
   }
 
-  if (tabSwitchCount.current >= 2) {
-    console.log("Auto submitting due to tab switch");
-    submitAnswer();
-  }
-};
-
-const handleFocus = () => {
-  console.log("User returned to test");
-};
-
-const handleVisibilityChange = () => {
-  if (isResultPageOpen) return;
-
-  if (document.hidden) {
-    console.log("Document hidden");
-    handleBlur();
-  } else {
-    console.log("Document visible");
-    handleFocus();
-  }
-};
-
-  document.addEventListener('visibilitychange', handleVisibilityChange);
 
 
 
+  // useEffect(() => {
+  //   if (Platform.OS == 'web') return;
 
-  useEffect(() => {
-    if (Platform.OS == 'web') return;
+  //   const appState = useRef(AppState.currentState);
 
-    const appState = useRef(AppState.currentState);
+  //   const handleAppStateChange = (nextAppState) => {
+  //     if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
+  //       console.log("User left the app");
+  //       setTabWarningVisible(true);
+  //     }
+  //   };
 
-    const handleAppStateChange = (nextAppState) => {
-      if (appState.current === "active" && nextAppState.match(/inactive|background/)) {
-        console.log("User left the app");
-        setTabWarningVisible(true);
-      }
-    };
+  //   const interval = setInterval(detectDevTools, 1000);
 
-    const interval = setInterval(detectDevTools, 1000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
-    return () => clearInterval(interval);
-  }, []);
 
-  
 
 
   async function startNewTest() {
@@ -312,8 +313,8 @@ const handleVisibilityChange = () => {
 
   function connectWebSocket(url) {
     if (!url) return;
-    const wsUrl = url.replace('localhost', 'localhost');
-    console.log(wsUrl)
+    const wsUrl = url.replace('localhost', '192.168.43.241');
+    console.log("connecting... ",wsUrl)
     try {
       const ws = new WebSocket(wsUrl);
 

@@ -16,12 +16,11 @@ import TestBanner from '../components/TestComponentBanner'
 const classroom_width = 360;
 const { width } = Dimensions.get('window')
 
-export default function CreatedTestList({ filter, search }) {
+export default function CreatedTestList({ filter, search , isCreateTestModalVisible , setCreateTestModalVisible }) {
 
   if (!filter) return
 
   const [allCreatedTests, setCreatedTest] = useState([]);
-  const [isCreateTestModalVisible, setCreateTestModalVisible] = useState(false);
   const [testName, setTestName] = useState("");
   const { width } = useWindowDimensions();
   const numColumns = Math.floor((width - 300) / classroom_width);
@@ -95,15 +94,7 @@ export default function CreatedTestList({ filter, search }) {
       {/* <SafeAreaView style={styles.container} edges={['top']}> */}
 
 
-      <View style={styles.topBar}>
-        <Pressable
-          style={styles.addButton}
-          onPress={() => setCreateTestModalVisible(true)}
-        >
-          <AntDesign name="plus" size={16} color={Colors.white} />
-          <Text style={styles.addButtonText}>Create</Text>
-        </Pressable>
-      </View>
+      
 
 
       <FlatList
@@ -241,21 +232,6 @@ const styles = StyleSheet.create({
     height: 40,
   },
 
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.primaryColor,
-    paddingHorizontal: 12,
-    height: 40,
-    borderRadius: 8,
-    alignSelf: 'flex-end'
-  },
-
-  addButtonText: {
-    color: Colors.white,
-    marginLeft: 6,
-    fontSize: 14,
-  },
 
   emptyText: {
     textAlign: 'center',
