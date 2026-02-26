@@ -68,7 +68,7 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 		                "; HttpOnly" +
 		                "; Secure" +
 		                "; SameSite=None";
-				response.addHeader("Set-Cookie", cookie);
+				response.setHeader("Set-Cookie", cookie);
 				this.authDto = new UserAuthenticationDto(true, null);
 			}
 			return SUCCESS;
@@ -128,7 +128,7 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 	                "; HttpOnly" +
 	                "; Secure" +
 	                "; SameSite=None";
-			response.addHeader("Set-Cookie", cookie);
+			response.setHeader("Set-Cookie", cookie);
 			this.authDto = new UserAuthenticationDto(true, null);
 		}
 			
