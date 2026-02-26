@@ -34,7 +34,7 @@ export default function Dashboard() {
 
 
   const [tests, setTests] = useState([]);
-  const [topPerfomance,setTopPerfomance]=useState([]);
+  const [topPerfomance, setTopPerfomance] = useState([]);
 
   const { width } = useWindowDimensions();
 
@@ -88,7 +88,7 @@ export default function Dashboard() {
       );
       if (res.status === 200) {
         setTests(res.data);
-       
+
 
       }
     }
@@ -97,17 +97,17 @@ export default function Dashboard() {
 
 
   async function fetchTopPerformStudent() {
-    try{
-      const res=await api.get("/api/api/getTopPerfomanceStudent",
-        {headers:{"X-ClassroomId":classroomId}}
+    try {
+      const res = await api.get("/api/api/getTopPerfomanceStudent",
+        { headers: { "X-ClassroomId": classroomId } }
       )
-      if(res.status===200){
+      if (res.status === 200) {
         setTopPerfomance(res.data);
-        console.log("Top performance",res.data)
+        console.log("Top performance", res.data)
 
       }
     }
-    catch(err){
+    catch (err) {
 
     }
   }
@@ -124,14 +124,14 @@ export default function Dashboard() {
         const pieChartData = res.data ?? [];
 
         const submittedCount = pieChartData.reduce(
-          (total, item) => total + item.attemptCount,
+          (total, item) => total + item.submittedTestCount,
           0
         );
 
         const total =
           (stats?.totalStudents ?? 0) *
           (stats?.totalTests ?? 0);
-          console.log("Analytics Data:", res.data);
+        console.log("Analytics Data:", res.data);
 
         console.log("Total Students:", stats?.totalStudents);
         console.log("Total Tests:", stats?.totalTests);
@@ -158,8 +158,8 @@ export default function Dashboard() {
           },
         ]);
 
-
-            const LineChartTestName = pieChartData
+        console.log("line chart data:", pieChartData);
+        const LineChartTestName = pieChartData
           .slice(0, 5)
           .map(item => item.testTitle);
 
@@ -168,9 +168,9 @@ export default function Dashboard() {
           .map(item => item.attemptCount);
 
 
-          console.log(pieChartData);
-          console.log(LineChartTestAttemptCount);
-          console.log(LineChartTestName)
+        console.log(pieChartData);
+        console.log(LineChartTestAttemptCount);
+        console.log(LineChartTestName)
         setLineData({
           labels: LineChartTestName,
           datasets: [{ data: LineChartTestAttemptCount }],
@@ -184,34 +184,6 @@ export default function Dashboard() {
   }
 
 
-  const array = [
-    {
-      id: 1,
-      name: "Deepa",
-      score: 95,
-    },
-    {
-      id: 2,
-      name: "Arun",
-      score: 89,
-    },
-    {
-      id: 3,
-      name: "Priya",
-      score: 92,
-    },
-
-    {
-      id: 4,
-      name: "Karthik",
-      score: 88,
-    },
-    {
-      id: 5,
-      name: "Meena",
-      score: 97,
-    },
-  ];
 
 
   // const hasLineData =
@@ -222,8 +194,8 @@ export default function Dashboard() {
   //   ? Math.max(...lineData.datasets[0].data)
   //   : 1;
 
-  const values=lineData.datasets[0]?.data || [];
-  const LineChartSegmentMaxValue=values.length ? Math.max(...values):0; 
+  const values = lineData.datasets[0]?.data || [];
+  const LineChartSegmentMaxValue = values.length ? Math.max(...values) : 0;
   return (
     <>
       <StatusBar style="dark" backgroundColor={Colors.bgColor} />
@@ -267,7 +239,7 @@ export default function Dashboard() {
 
                 <View style={styles.chartCardMobile}>
                   <AppBoldText style={styles.sectionTitle}>Monthly Progress</AppBoldText>
-                  {lineData.length > 0 ? (
+                  {lineData.datasets && lineData.datasets.length > 0 ? (
 
                     <LineChart
                       data={lineData}
@@ -275,6 +247,8 @@ export default function Dashboard() {
                       height={220}
                       chartConfig={chartConfig}
                       bezier
+                      segments={LineChartSegmentMaxValue > 15 ? 5 : LineChartSegmentMaxValue}
+
                     />
                   ) : (
                     <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No data available</Text>
@@ -283,7 +257,8 @@ export default function Dashboard() {
 
                 <View style={styles.chartCardMobile}>
                   <AppBoldText style={styles.sectionTitle}>Submission</AppBoldText>
-                  {pieData.length > 0 ? (
+                  {lineData.datasets && lineData.datasets.length > 0 ? (
+
                     <PieChart
                       data={pieData}
                       width={screenWidth}
@@ -315,27 +290,33 @@ export default function Dashboard() {
                     />
                   </View>
 
-              </View>
-              <View style={styles.sectionMobile}>
-                <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
-                {topPerfomance.map((item, index) => (
-                  <View key={index} style={styles.topperCardMobile}>
-                    <View style={styles.avatar}>
-                      <AppRegularText style={styles.avatarText}>
-                        {item.topPerformerName.substring(0, 2).toUpperCase()}
-                      </AppRegularText>
-                    </View>
+                </View>
+                <View style={styles.sectionMobile}>
+                  <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
+                  {topPerfomance.length === 0 ? (
+                    <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No top performers available</Text>
+                  ) : (
 
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.topperName}>{item.topPerformerName}</Text>
-                      <Text style={styles.topperScore}>
-                        Score: {item.score}
-                      </Text>
-                    </View>
+                    topPerfomance.map((item, index) => (
+                      <View key={index} style={styles.topperCardMobile}>
+                        <View style={styles.avatar}>
+                          <AppRegularText style={styles.avatarText}>
+                            {item.topPerformerName.substring(0, 2).toUpperCase()}
+                          </AppRegularText>
+                        </View>
 
-                      <MaterialIcons name="trending-up" size={20} color="green" />
-                    </View>
-                  ))}
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.topperName}>{item.topPerformerName}</Text>
+                          <Text style={styles.topperScore}>
+                            Score: {item.score}
+                          </Text>
+                        </View>
+
+                        <MaterialIcons name="trending-up" size={20} color="green" />
+                      </View>
+                    ))
+
+                  )}
                 </View>
               </>
 
@@ -385,36 +366,36 @@ export default function Dashboard() {
                   </View>
                 </View>
               </View>
-     
+
               <View style={styles.graph1}>
                 <View style={styles.LineCard}>
                   <AppRegularText style={styles.sectionTitle}>Monthly Progress</AppRegularText>
-                    <LineChart
-                      data={lineData}
-                      width={960}
-                      height={400}
-                      chartConfig={chartConfig}
-                      segments={LineChartSegmentMaxValue }
+                  <LineChart
+                    data={lineData}
+                    width={960}
+                    height={400}
+                    chartConfig={chartConfig}
+                    segments={LineChartSegmentMaxValue > 15 ? 5 : LineChartSegmentMaxValue}
 
-                      bezier
-                      // fromZero
-                      // segments={Math.max(...lineData.datasets[0].data)}
-                    />
-                  
+                    bezier
+                  // fromZero
+                  // segments={Math.max(...lineData.datasets[0].data)}
+                  />
+
                 </View>
 
                 <View style={styles.chartCard}>
                   <AppRegularText style={styles.sectionTitle}>Submission Status</AppRegularText>
                   {pieData.length > 0 ? (
-                  <PieChart
-                    data={pieData}
-                    width={400}
-                    height={220}
-                    chartConfig={chartConfig}
-                    accessor="population"
-                    backgroundColor="transparent" 
-                   /> 
-                   ) : (
+                    <PieChart
+                      data={pieData}
+                      width={400}
+                      height={220}
+                      chartConfig={chartConfig}
+                      accessor="population"
+                      backgroundColor="transparent"
+                    />
+                  ) : (
                     <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No data available</Text>
                   )}
                 </View>
@@ -435,28 +416,34 @@ export default function Dashboard() {
                 <View style={styles.sectionTopPeform}>
                   <AppRegularText style={styles.sectionTitle}>Top Performing</AppRegularText>
                   <View style={styles.topperContainerDesktop}>
-                    {topPerfomance.map((item, index) => (
-                      <View key={index} style={styles.topperCardDesktop}>
-                        <View style={styles.nameProfile}>
-                          <AppRegularText style={styles.profileText}>
-                            {item.topPerformerName.substring(0, 2).toUpperCase()}
-                          </AppRegularText>
-                        </View>
+                    {topPerfomance.length === 0 ? (
+                      <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No top performers available</Text>
+                    ) : (
+                      topPerfomance.map((item, index) => (
+                        <View key={index} style={styles.topperCardDesktop}>
+                          <View style={styles.nameProfile}>
+                            <AppRegularText style={styles.profileText}>
+                              {item.topPerformerName.substring(0, 2).toUpperCase()}
+                            </AppRegularText>
+                          </View>
 
-                        <View style={{gap:20}}>
-                          <AppRegularText style={styles.topperNameDesktop}>
-                            {item.topPerformerName}
-                          </AppRegularText>
-                          <AppRegularText style={styles.topperScoreDesktop}>
-                            Score: {item.score}
-                          </AppRegularText>
-                        </View>
+                          <View style={{ gap: 20 }}>
+                            <AppRegularText style={styles.topperNameDesktop}>
+                              {item.topPerformerName}
+                            </AppRegularText>
+                            <AppRegularText style={styles.topperScoreDesktop}>
+                              Score: {item.score}
+                            </AppRegularText>
+                          </View>
 
-                        <View style={styles.progressIcon}>
-                          <MaterialIcons name="trending-up" size={20} color="green" />
+                          <View style={styles.progressIcon}>
+                            <MaterialIcons name="trending-up" size={20} color="green" />
+                          </View>
                         </View>
-                      </View>
-                    ))}
+                      ))
+
+                    )}
+
                   </View>
                 </View>
 
@@ -468,7 +455,7 @@ export default function Dashboard() {
 
       </SafeAreaView >
     </>
-  );        
+  );
 
 }
 

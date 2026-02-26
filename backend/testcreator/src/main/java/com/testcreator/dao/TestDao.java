@@ -924,8 +924,9 @@ public class TestDao {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					TestDto analiticscDto = new TestDto();
-					analiticscDto.setAttemptCount(rs.getInt("AttemptedStudentCountOnTest"));
+					analiticscDto.setAttemptCount(rs.getInt("totalAttemptsCount"));
 					analiticscDto.setTestTitle((rs.getString("title")));
+					analiticscDto.setSubmittedTestCount(rs.getInt("totalSubmissionCount"));
 					analiticsList.add(analiticscDto);
 
 				}
