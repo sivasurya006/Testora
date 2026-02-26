@@ -32,29 +32,23 @@ public class StudentTestDao {
 		try (PreparedStatement selectTest = connection.prepareStatement(Queries.selectStudentTests)) {
 			selectTest.setInt(1, userId);
 			selectTest.setInt(2, classroomId);
-			System.out.println("userid" + userId);
 			try (ResultSet rs = selectTest.executeQuery()) {
 				while(rs.next()) {
 					testDto = new TestDto();
-
 					testDto.setTestId(rs.getInt("testId"));
-
 					testDto.setTestId(rs.getInt("testId"));
 					testDto.setTestTitle(rs.getString("testTitle"));
 					testDto.setCorrectionMethod(CorrectionMethod.valueOf(rs.getString("correction_type").toUpperCase()));
 					int maxAttempts = rs.getInt("maximum_attempts");
-					System.out.println("maxattemp"+maxAttempts);
 					int attemptCount = (rs.getInt("attemptCount"));
 					int remainingAttempts = maxAttempts - attemptCount;
 					testDto.setRemainingAttempts(remainingAttempts);
-					System.out.println(remainingAttempts);
 					testDto.setMaximumAttempts(maxAttempts);
 					testDto.setCreatorName(rs.getString("creatorName"));
 					testDto.setAttemptCount(attemptCount);
 					if (rs.getBoolean("is_timed")) {
 						testDto.setDurationMinutes(rs.getInt("duration_minutes"));
 					}
-					System.out.println("attemot"+testDto.getMaximumAttempts());
 					this.tests.add(testDto);
                      
 				}

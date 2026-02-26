@@ -18,29 +18,27 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class AppConfigListener implements ServletContextListener {
 
-   
-    public AppConfigListener() {
-        
-    }
+	public AppConfigListener() {
 
-    public void contextDestroyed(ServletContextEvent sce)  { 
-         
-    }
+	}
 
-    public void contextInitialized(ServletContextEvent sce)  { 
-         ServletContext context = sce.getServletContext();
-         Properties props = new Properties();
-         String path = context.getInitParameter("config.location");
-         try(InputStream is = new FileInputStream(path)){
-       		 props.load(is);
-         } catch (FileNotFoundException e) {
-       		 throw new RuntimeException("Failed to load application properties file", e);
-		 } catch (IOException e) {
-		    throw new RuntimeException("Failed to load application properties from the file", e);
-		 }
-         props.forEach((key,value) -> {
-        	context.setInitParameter(key.toString(), value.toString());
-        }); 
-    }
-	
+	public void contextDestroyed(ServletContextEvent sce) {
+
+	}
+
+	public void contextInitialized(ServletContextEvent sce) {
+		ServletContext context = sce.getServletContext();
+		Properties props = new Properties();
+		InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/app.properties");
+		
+		try {
+			props.load(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		props.forEach((key, value) -> {
+			context.setInitParameter(key.toString(), value.toString());
+		});
+	}
+
 }

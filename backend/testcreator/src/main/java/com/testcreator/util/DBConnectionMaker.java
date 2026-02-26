@@ -26,13 +26,11 @@ public class DBConnectionMaker {
 
 	private DBConnectionMaker() throws SQLException {
 		Properties props = new Properties();
-		String path = "/home/siva-zstk432/Desktop/FinalWorkingDirectory/backend/testcreator/config/app.properties";
-		try (InputStream is = new FileInputStream(path)) {
-			props.load(is);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("Failed to load application properties file", e);
+		InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/app.properties");
+		try {
+			props.load(input);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to load application properties from the file", e);
+			e.printStackTrace();
 		}
 		String url = props.getProperty("db.url");
 		String user = props.getProperty("db.user");

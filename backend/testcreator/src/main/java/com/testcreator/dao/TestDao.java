@@ -866,23 +866,16 @@ public class TestDao {
 				}
 			}
 		}
-		System.out.println("submitted answers : " + answers);
 		return answers;
 	}
 
 	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
 			throws SQLException {
 		
-		System.out.println(questionAnswers);
-		System.out.println("I am called");
-		
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
 
 			for (QuestionReportDto questionReportDto : questionAnswers) {
 				for (Answer option : questionReportDto.getSelectedOptions()) {
-					System.out.println("I am called 2 ");
-					System.out.println(option);
-
 					Boolean isCorrect = option.getCorrect();
 
 					ps.setBoolean(1, isCorrect);
@@ -893,13 +886,9 @@ public class TestDao {
 					}
 
 					ps.setInt(3, option.getAnswerId());
-					System.out.println("Updating");
 					ps.addBatch();
 				}
 			}
-
-			System.out.println("Updated");
-
 			if (Arrays.stream(ps.executeBatch()).allMatch(r -> r > 0)) {
 				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatusByEvaluated)) {
 					psUpdate.setInt(1, totalMarks);
