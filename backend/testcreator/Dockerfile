@@ -1,17 +1,11 @@
-FROM eclipse-temurin:21-jdk AS builder
-WORKDIR /app
-COPY src ./src
-RUN mkdir -p build/classes
-RUN JARS=$(echo src/main/webapp/WEB-INF/lib/*.jar | tr ' ' ':') && \
-    javac \
-    -encoding UTF-8 \
-    -cp "$JARS" \
-    -d build/classes \
-    $(find src/main/java -name "*.java")
-FROM tomcat:10.1
+FROM tomcat:10-jdk17
+
+# Clean default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
-COPY src/main/webapp /usr/local/tomcat/webapps/ROOT
-COPY --from=builder /app/build/classes \
-    /usr/local/tomcat/webapps/ROOT/WEB-INF/classes
+
+# Copy your WAR file
+COPY testora.war /usr/local/tomcat/webapps/ROOT.war
+
 EXPOSE 8080
+
 CMD ["catalina.sh", "run"]

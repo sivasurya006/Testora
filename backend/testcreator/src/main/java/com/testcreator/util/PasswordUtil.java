@@ -8,7 +8,7 @@ public class PasswordUtil {
 	private int costFactor;
 	
 	public PasswordUtil(ServletContext context) {
-		this.costFactor =  Integer.parseInt(context.getInitParameter("passwd.costFactor"));		
+		this.costFactor =  (Integer) context.getAttribute("passwd.costFactor");		
 	}
 	
 	public String getPasswordHash(String plainPassword) {

@@ -19,8 +19,8 @@ public class JwtUtil {
 	private final long expiryMillis;
 	
 	public JwtUtil(ServletContext context) {
-		this.secret = context.getInitParameter("jwt.secret");
-		this.expiryMillis = Integer.parseInt(context.getInitParameter("jwt.expiryHours")) * 60 * 60 * 1000;
+		this.secret = (String) context.getAttribute("jwt.secret");
+		this.expiryMillis = (Integer) context.getAttribute("jwt.expiryHours") * 60 * 60 * 1000;
 	}
 	
 	public String generateToken(String subject) {

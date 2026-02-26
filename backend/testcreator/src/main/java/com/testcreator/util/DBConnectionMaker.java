@@ -17,41 +17,48 @@ public class DBConnectionMaker {
 	private static DBConnectionMaker connectionMaker;
 
 	private DBConnectionMaker(ServletContext context) throws SQLException, ClassNotFoundException {
-		String url = context.getInitParameter("db.url");
-		String user = context.getInitParameter("db.user");
-		String password = context.getInitParameter("db.password");
+		String url = (String) context.getAttribute("db.url");
+
+		System.out.println("I am getting url : " + url);
+
+		String user = (String) context.getAttribute("db.user");
+		String password = (String) context.getAttribute("db.password");
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		this.connection = DriverManager.getConnection(url, user, password);
 	}
 
 	private DBConnectionMaker() throws SQLException {
-		Properties props = new Properties();
-		InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/app.properties");
-		try {
-			props.load(input);
-		} catch (IOException e) {
-			e.printStackTrace();
+		String dbHost = System.getenv("DB_HOST");
+		String dbPort = System.getenv("DB_PORT");
+		String dbName = System.getenv("DB_NAME");
+		String dbUser = System.getenv("DB_USER");
+		String dbPassword = System.getenv("DB_PASSWORD");
+
+		if (dbHost == null || dbPort == null || dbName == null || dbUser == null || dbPassword == null) {
+
+			throw new RuntimeException("Missing DB environment variables");
 		}
-		String url = props.getProperty("db.url");
-		String user = props.getProperty("db.user");
-		String password = props.getProperty("db.password");
-		this.connection = DriverManager.getConnection(url, user, password);
+
+		String jdbcUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?sslMode=REQUIRED";
+
+		System.out.println("Connection url " + jdbcUrl);
+		this.connection = DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
+		System.out.println("New connection maked");
 	}
 
 	public static DBConnectionMaker getInstance(ServletContext context) throws ClassNotFoundException, SQLException {
-		if (connectionMaker == null) {
-			connectionMaker = new DBConnectionMaker(context);
-			System.out.println("New connection maked");
-		}
-		return connectionMaker;
+		System.out.println("New connection maked");
+		return new DBConnectionMaker(context);
 	}
 
 	public static DBConnectionMaker getInstance() throws SQLException {
-		if (connectionMaker == null) {
-			connectionMaker = new DBConnectionMaker();
-			System.out.println("New connection maked");
-		}
-		return connectionMaker;
+//		if (connectionMaker == null) {
+//			connectionMaker = new DBConnectionMaker();
+//			System.out.println("New connection maked");
+//		}
+//		return connectionMaker;
+		System.out.println("New connection maked");
+		return new DBConnectionMaker();
 	}
 
 	public Connection getConnection() {
