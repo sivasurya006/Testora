@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { router, useRouter } from "expo-router";
 
-const devMode = true;
+const devMode = false;
 
 const api = axios.create({
     baseURL:  devMode ? 'http://localhost:8080/testcreator/api' :  'https://testora-backend.onrender.com/api',
