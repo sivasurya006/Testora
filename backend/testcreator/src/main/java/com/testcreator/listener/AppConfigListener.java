@@ -44,8 +44,6 @@ public class AppConfigListener implements ServletContextListener {
 	    }
 
 	    String jdbcUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?sslMode=REQUIRED";
-	    
-	    System.out.println("Connection url "+jdbcUrl);
 
 	    context.setAttribute("db.url", jdbcUrl);
 	    context.setAttribute("db.user", dbUser);

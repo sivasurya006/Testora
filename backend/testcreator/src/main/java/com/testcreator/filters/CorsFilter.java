@@ -19,7 +19,7 @@ public class CorsFilter extends HttpFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 
 		String origin = request.getHeader("Origin");
-		if ("https://testora-kqvp.onrender.com".equals(origin)) {
+		if ("https://testora-kqvp.onrender.com".equals(origin) || "http://localhost:8081".equals(origin)) {
 			response.setHeader("Access-Control-Allow-Origin", origin);
 			response.setHeader("Access-Control-Allow-Credentials", "true");
 		}
