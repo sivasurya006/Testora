@@ -79,6 +79,8 @@ export default function AuthContextProvider({ children }) {
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
                 // TODO implement logger  console.log('token added')
+            }else{
+                localStorage.setItem("token", res.data.token);
             }
 
             return { success: true };
@@ -124,6 +126,8 @@ export default function AuthContextProvider({ children }) {
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
                 // TODO implement logger  console.log('token added')
+            }else{
+                localStorage.setItem("token", res.data.token);
             }
             return { success: true };
         } catch (e) {
@@ -139,11 +143,12 @@ export default function AuthContextProvider({ children }) {
         if (Platform.OS !== 'web') {
             await SecureStore.deleteItemAsync("token");
         }else{
-            try{
-                const result = await api.delete('/signout');
-            }catch(err){
-                console.log(err.response?.message)
-            }
+            // try{
+            //     const result = await api.delete('/signout');
+            // }catch(err){
+            //     console.log(err.response?.message)
+            // }
+            localStorage.removeItem("token");
         }
         setUser(null);
         router.replace('/signin');
