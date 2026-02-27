@@ -11,6 +11,7 @@ import { useWindowDimensions } from "react-native";
 import { AppBoldText, AppRegularText } from "../../../../styles/fonts";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import LoadingScreen from "../../../../src/components/LoadingScreen";
 export default function Dashboard() {
 
   const { classroomId } = useGlobalSearchParams();
@@ -35,6 +36,7 @@ export default function Dashboard() {
 
   const [tests, setTests] = useState([]);
   const [topPerfomance, setTopPerfomance] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { width } = useWindowDimensions();
 
@@ -42,15 +44,24 @@ export default function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
-      fetchDashboardData();
-      fetchDashboardTests();
-      fetchTopPerformStudent();
-
+      const get = async () => {
+        setIsLoading(true);
+        await fetchDashboardData();
+        await fetchDashboardTests();
+        await fetchTopPerformStudent();
+        setIsLoading(false);
+      }
+      get();
     }, [])
   );
 
   useEffect(() => {
-    fetchDashboardAnalitics();
+    const get = async () => {
+      setIsLoading(true);
+      await fetchDashboardAnalitics();
+      setIsLoading(false);
+    }
+    get();
   }, [stats])
 
   async function fetchDashboardData() {
@@ -88,8 +99,6 @@ export default function Dashboard() {
       );
       if (res.status === 200) {
         setTests(res.data);
-
-
       }
     }
     catch (err) { }
@@ -103,8 +112,6 @@ export default function Dashboard() {
       )
       if (res.status === 200) {
         setTopPerfomance(res.data);
-        console.log("Top performance", res.data)
-
       }
     }
     catch (err) {
@@ -124,20 +131,13 @@ export default function Dashboard() {
         const pieChartData = res.data ?? [];
 
         const submittedCount = pieChartData.reduce(
-          (total, item) => total + item.submittedTestCount,
+          (total, item) => total + item.attemptCount,
           0
         );
 
         const total =
           (stats?.totalStudents ?? 0) *
           (stats?.totalTests ?? 0);
-        console.log("Analytics Data:", res.data);
-
-        console.log("Total Students:", stats?.totalStudents);
-        console.log("Total Tests:", stats?.totalTests);
-        console.log("Submitted Count:", submittedCount);
-        console.log("Total Possible Submissions:", total);
-        console.log("Pie Chart Data:", pieChartData);
 
         const notSubmittedCount = total - submittedCount;
 
@@ -157,8 +157,6 @@ export default function Dashboard() {
             legendFontSize: 14,
           },
         ]);
-
-        console.log("line chart data:", pieChartData);
         const LineChartTestName = pieChartData
           .slice(0, 5)
           .map(item => item.testTitle);
@@ -166,11 +164,6 @@ export default function Dashboard() {
         const LineChartTestAttemptCount = pieChartData
           .slice(0, 5)
           .map(item => item.attemptCount);
-
-
-        console.log(pieChartData);
-        console.log(LineChartTestAttemptCount);
-        console.log(LineChartTestName)
         setLineData({
           labels: LineChartTestName,
           datasets: [{ data: LineChartTestAttemptCount }],
@@ -200,9 +193,9 @@ export default function Dashboard() {
     <>
       <StatusBar style="dark" backgroundColor={Colors.bgColor} />
       <SafeAreaView style={{ flex: 1 }} edges={['']}>
+        <LoadingScreen visible={isLoading} />
         {isMobile ? (
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-
             <View style={styles.container}>
               <>
 
@@ -239,7 +232,7 @@ export default function Dashboard() {
 
                 <View style={styles.chartCardMobile}>
                   <AppBoldText style={styles.sectionTitle}>Monthly Progress</AppBoldText>
-                  {lineData.datasets && lineData.datasets.length > 0 ? (
+                  {lineData.length > 0 ? (
 
                     <LineChart
                       data={lineData}
@@ -247,8 +240,6 @@ export default function Dashboard() {
                       height={220}
                       chartConfig={chartConfig}
                       bezier
-                      segments={LineChartSegmentMaxValue > 15 ? 5 : LineChartSegmentMaxValue}
-
                     />
                   ) : (
                     <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No data available</Text>
@@ -257,8 +248,7 @@ export default function Dashboard() {
 
                 <View style={styles.chartCardMobile}>
                   <AppBoldText style={styles.sectionTitle}>Submission</AppBoldText>
-                  {lineData.datasets && lineData.datasets.length > 0 ? (
-
+                  {pieData.length > 0 ? (
                     <PieChart
                       data={pieData}
                       width={screenWidth}
@@ -286,30 +276,24 @@ export default function Dashboard() {
                 </View>
                 <View style={styles.sectionMobile}>
                   <AppBoldText style={styles.sectionTitle}>Top Performing</AppBoldText>
-                  {topPerfomance.length === 0 ? (
-                    <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No top performers available</Text>
-                  ) : (
-
-                    topPerfomance.map((item, index) => (
-                      <View key={index} style={styles.topperCardMobile}>
-                        <View style={styles.avatar}>
-                          <AppRegularText style={styles.avatarText}>
-                            {item.topPerformerName.substring(0, 2).toUpperCase()}
-                          </AppRegularText>
-                        </View>
-
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.topperName}>{item.topPerformerName}</Text>
-                          <Text style={styles.topperScore}>
-                            Score: {item.score}
-                          </Text>
-                        </View>
-
-                        <MaterialIcons name="trending-up" size={20} color="green" />
+                  {topPerfomance.map((item, index) => (
+                    <View key={index} style={styles.topperCardMobile}>
+                      <View style={styles.avatar}>
+                        <AppRegularText style={styles.avatarText}>
+                          {item.topPerformerName.substring(0, 2).toUpperCase()}
+                        </AppRegularText>
                       </View>
-                    ))
 
-                  )}
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.topperName}>{item.topPerformerName}</Text>
+                        <Text style={styles.topperScore}>
+                          Score: {item.score}
+                        </Text>
+                      </View>
+
+                      <MaterialIcons name="trending-up" size={20} color="green" />
+                    </View>
+                  ))}
                 </View>
               </>
 
@@ -368,7 +352,7 @@ export default function Dashboard() {
                     width={960}
                     height={400}
                     chartConfig={chartConfig}
-                    segments={LineChartSegmentMaxValue > 15 ? 5 : LineChartSegmentMaxValue}
+                    segments={LineChartSegmentMaxValue}
 
                     bezier
                   // fromZero
@@ -409,34 +393,28 @@ export default function Dashboard() {
                 <View style={styles.sectionTopPeform}>
                   <AppRegularText style={styles.sectionTitle}>Top Performing</AppRegularText>
                   <View style={styles.topperContainerDesktop}>
-                    {topPerfomance.length === 0 ? (
-                      <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>No top performers available</Text>
-                    ) : (
-                      topPerfomance.map((item, index) => (
-                        <View key={index} style={styles.topperCardDesktop}>
-                          <View style={styles.nameProfile}>
-                            <AppRegularText style={styles.profileText}>
-                              {item.topPerformerName.substring(0, 2).toUpperCase()}
-                            </AppRegularText>
-                          </View>
-
-                          <View style={{ gap: 20 }}>
-                            <AppRegularText style={styles.topperNameDesktop}>
-                              {item.topPerformerName}
-                            </AppRegularText>
-                            <AppRegularText style={styles.topperScoreDesktop}>
-                              Score: {item.score}
-                            </AppRegularText>
-                          </View>
-
-                          <View style={styles.progressIcon}>
-                            <MaterialIcons name="trending-up" size={20} color="green" />
-                          </View>
+                    {topPerfomance.map((item, index) => (
+                      <View key={index} style={styles.topperCardDesktop}>
+                        <View style={styles.nameProfile}>
+                          <AppRegularText style={styles.profileText}>
+                            {item.topPerformerName.substring(0, 2).toUpperCase()}
+                          </AppRegularText>
                         </View>
-                      ))
 
-                    )}
+                        <View style={{ gap: 20 }}>
+                          <AppRegularText style={styles.topperNameDesktop}>
+                            {item.topPerformerName}
+                          </AppRegularText>
+                          <AppRegularText style={styles.topperScoreDesktop}>
+                            Score: {item.score}
+                          </AppRegularText>
+                        </View>
 
+                        <View style={styles.progressIcon}>
+                          <MaterialIcons name="trending-up" size={20} color="green" />
+                        </View>
+                      </View>
+                    ))}
                   </View>
                 </View>
 

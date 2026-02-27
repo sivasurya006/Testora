@@ -27,7 +27,6 @@ api.interceptors.request.use(async (config) => {
         }
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log(token, "Added");
         }
     } catch (err) {
         console.log(err);

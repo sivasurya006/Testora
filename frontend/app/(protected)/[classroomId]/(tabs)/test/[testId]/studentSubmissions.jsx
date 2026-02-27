@@ -9,6 +9,7 @@ import AttemptCard from '../../../../../../src/components/submissions/AttemptCar
 import GradeScreen from '../../../../../../src/screens/GradeScreen';
 import DetailedTestReport from '../../../../../../src/components/DetailedTestReport';
 import { AppSemiBoldText } from '../../../../../../styles/fonts';
+import LoadingScreen from '../../../../../../src/components/LoadingScreen';
 
 export default function StudentSubmissions() {
 
@@ -26,22 +27,24 @@ export default function StudentSubmissions() {
   const [reportData, setReportData] = useState([]);
   const [attemptId, setAttemptId] = useState(null);
 
-  console.log(params)
-
   const { classroomId, testId } = useGlobalSearchParams();
 
   async function handleGrade(attemptId) {
+    setIsLoading(true);
     const answer = await getAnswerSheet(classroomId, testId, attemptId);
     setAnswerSheet(answer);
     setAttemptId(attemptId)
     setGradeScreenOpen(true)
+    setIsLoading(false);
   }
 
   async function handleShowReport(attemptId) {
+    setIsLoading(true);
     const report = await getTestReport(classroomId, testId, attemptId);
     setReportData(report);
     setAttemptId(attemptId)
     setResultPageOpen(true)
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -56,13 +59,12 @@ export default function StudentSubmissions() {
     };
 
     get();
-  }, [params.student, params.classroomId, params.testId]);
+  }, []);
 
 
 
   useEffect(() => {
     if (!data) return;
-
     const filtered = data?.attempts?.filter(attempt => attempt.status === selected);
     setFilteredData(filtered);
   }, [selected, data]);
@@ -96,13 +98,6 @@ export default function StudentSubmissions() {
   }, [data])
 
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size={'large'} />
-      </View>
-    )
-  }
 
 
   function onExit() {
@@ -128,6 +123,7 @@ export default function StudentSubmissions() {
 
   return (
     <View style={styles.container}>
+      <LoadingScreen visible={isLoading} />
       <SubmissionsHeader data={{ email: data?.userEmail, name: data?.userName }} selected={selected} setSelected={setSelected}
         performanceChartData={performanceChartData}
       />

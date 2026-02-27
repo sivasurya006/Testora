@@ -8,6 +8,7 @@ import QuestionEditor from './QuestionEditor';
 import { AppBoldText, AppMediumText, AppSemiBoldText, fonts } from '../../styles/fonts';
 import RenderHTML from 'react-native-render-html';
 import Colors from '../../styles/Colors';
+import LoadingScreen from './LoadingScreen';
 
 export default function QuestionRow({ question, questionNumber, setAllTestQuestions, allQuestions, mode }) {
 
@@ -17,13 +18,14 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [isEditModalVisible, setEditModalVisible] = useState(false);
     const [defaultQuestionDetails, setDefaultQuestionDetails] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const closeEditModal = () => setEditModalVisible(false);
 
     async function handleEdit() {
-        console.log(classroomId, question.questionId)
+        setIsLoading(true);
         const details = await getQuestionDetails(classroomId, question.questionId);
-        console.log("details ", details)
+        setIsLoading(false);
         if (details) {
             setDefaultQuestionDetails(details);
             setEditModalVisible(true);
@@ -33,7 +35,7 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
 
 
     async function editQuestionHandler(question) {
-
+        setIsLoading(true);
         const success = await editQuestion(makeQuestionPayload(question), classroomId, question.question.questionId);
         if (success) {
             setAllTestQuestions(allQuestions.map(q => {
@@ -58,12 +60,14 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
                 return q;
             }))
         }
+        setIsLoading(false);
     }
 
 
     return (
         <>
             <View style={styles.questionRow}>
+                <LoadingScreen visible={isLoading} />
                 <View style={styles.questionContent}>
                     <Text style={styles.questionNumber}>
                         {`Q${questionNumber || ''}.  `}

@@ -1,66 +1,95 @@
-import { StyleSheet, View } from 'react-native';
-import React, { useRef } from 'react';
+import React from 'react';
+import { Platform, StyleSheet, TextInput, View } from 'react-native';
 import { AppMediumText } from '../../styles/fonts';
 import Colors from '../../styles/Colors';
-import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 
-export default function LabeledTextArea({label,placeholder,onChangeText,customInputStyles,customTextStyles,defaultValue}) {
+let CKEditor = null;
+let ClassicEditor = null;
 
-  const richText = useRef();
+// Only require on web
+if (Platform.OS === 'web') {
+  CKEditor = require('@ckeditor/ckeditor5-react').CKEditor;
+  ClassicEditor = require('@ckeditor/ckeditor5-build-classic');
+}
 
+export default function LabeledTextArea({
+  label,
+  placeholder,
+  onChangeText,
+  numberOfLines = 2,
+  customInputStyles,
+  customTextStyles,
+  defaultValue = '',
+}) {
   return (
-    <View>
+    <View style={{ marginBottom: 15 }}>
       <AppMediumText style={[styles.label, customTextStyles]}>
         {label}
       </AppMediumText>
 
-      <View style={[styles.editorContainer, customInputStyles]}>
-        <RichEditor
-          ref={richText}
-          initialContentHTML={defaultValue}
+      {Platform.OS !== 'web' ? (
+        <TextInput
+          style={[styles.textArea, customInputStyles]}
+          multiline
+          placeholderTextColor="gray"
+          onChangeText={text => onChangeText(text)}
+          numberOfLines={numberOfLines}
           placeholder={placeholder}
-          editorStyle={{
-            backgroundColor: "#fff",
-            contentCSSText: "font-size: 14px;"
-          }}
-          onChange={(text) => onChangeText(text)}
+          defaultValue={defaultValue}
         />
-      </View>
-
-      <RichToolbar
-        editor={richText}
-        actions={[
-          actions.setBold,
-          actions.setItalic,
-          actions.setUnderline,
-          actions.insertBulletsList,
-          actions.insertOrderedList,
-          actions.undo,
-          actions.redo,
-        ]}
-        style={styles.toolbar}
-      />
+      ) : CKEditor ? (
+        <View style={[styles.ckEditorWrapper, customInputStyles]}>
+          <CKEditor
+            editor={ClassicEditor}
+            data={defaultValue}
+            config={{
+              toolbar: [
+                'bold',
+                'italic',
+                'underline',
+                'bulletedList',
+                'numberedList',
+                'undo',
+                'redo',
+              ],
+              removePlugins: [
+                'Image',
+                'ImageToolbar',
+                'ImageUpload',
+                'MediaEmbed',
+                'Table',
+                'CKFinder',
+                'EasyImage',
+              ],
+            }}
+            onChange={(event, editor) => {
+              onChangeText(editor.getData());
+            }}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  editorContainer: {
-    borderColor: Colors.borderColor,
-    borderWidth: 1,
-    borderRadius: 8,
-    minHeight: 150,
-    marginBottom: 10,
-    padding: 5,
-  },
-  toolbar: {
-    borderColor: Colors.borderColor,
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
   label: {
     fontSize: 16,
-    marginBottom: 15,
+    marginBottom: 10,
+  },
+  textArea: {
+    borderColor: Colors.borderColor,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  ckEditorWrapper: {
+    borderColor: Colors.borderColor,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 5,
+    minHeight: 150,
   },
 });

@@ -5,20 +5,32 @@ import { useGlobalSearchParams, useRouter } from 'expo-router';
 import api from '../../util/api';
 import Colors from '../../styles/Colors';
 import { FontAwesome6 } from '@expo/vector-icons';
+import LoadingScreen from '../components/LoadingScreen';
 
 export default function StudentSubmissionScreen({ mode = 'submissions', search = '' }) {
 
     const [data, setData] = useState([])
-    const { classroomId, testId } = useGlobalSearchParams()
+    const { classroomId, testId } = useGlobalSearchParams();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (mode == 'submissions') {
-            getSubmissions();
+            const get = async () => {
+                setIsLoading(true);
+                const result = await getSubmissions();
+                setIsLoading(false);
+            };
+            get();
         }
         if (mode == 'testSubmissions') {
-            getTestSubmissions();
+            const get = async () => {
+                setIsLoading(true);
+                const result = await getTestSubmissions();
+                setIsLoading(false);
+            };
+            get();
         }
-    }, [classroomId, testId]);
+    }, []);
 
     const filteredData = useMemo(() => {
         if (!search || search.trim() === '') return data;
@@ -229,6 +241,7 @@ export default function StudentSubmissionScreen({ mode = 'submissions', search =
 
     return (
         <View style={styles.container}>
+            <LoadingScreen visible={isLoading} />   
             {
                 mode == 'submissions' ? (
                     sections.length == 0 ? (

@@ -5,6 +5,7 @@ import { router, location, useGlobalSearchParams } from 'expo-router';
 import api from '../../../../../../util/api';
 import Colors from '../../../../../../styles/Colors';
 import { AppBoldText, AppMediumText, AppRegularText } from '../../../../../../styles/fonts';
+import LoadingScreen from '../../../../../../src/components/LoadingScreen';
 
 export default function Publish() {
 
@@ -22,6 +23,7 @@ export default function Publish() {
     const [maximumAttempts, setMaximumAttempts] = useState(0);
     const [showAttemptInput, setShowAttemptInput] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
+    const [ isLoading, setIsLoading] = useState(false); 
 
     const { width } = useWindowDimensions();
 
@@ -37,12 +39,14 @@ export default function Publish() {
 
     async function handlePublish() {
         if (validateInput()) {
+            setIsLoading(true);
             const success = await publishTest(testId, classroomId, Boolean(isTimed), correctionType, Number(testMinutes), Number(maximumAttempts),);
             if (success) {
                 handleCancel();
             } else {
                 console.log('test not published');
             }
+            setIsLoading(false);
         }
     }
 
@@ -84,6 +88,7 @@ export default function Publish() {
 
     return (
         <View style={styles.container}>
+            <LoadingScreen visible={isLoading} />
             <View style={styles.form}>
                 <View style={[width > 861 ? styles.pageHeader : null]}>
                     <AppBoldText style={styles.header}>Publish Test</AppBoldText>

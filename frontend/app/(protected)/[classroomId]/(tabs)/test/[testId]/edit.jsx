@@ -11,6 +11,7 @@ import { useGlobalSearchParams } from 'expo-router';
 import FillInBlankQuestion from '../../../../../../src/components/FillIntheBlankQuestion';
 import MatchingQuestion from '../../../../../../src/components/MatchingQuestion';
 import { AppRegularText } from '../../../../../../styles/fonts';
+import LoadingScreen from '../../../../../../src/components/LoadingScreen';
 
 
 // {
@@ -43,28 +44,34 @@ export default function Edit() {
     const [hovered, setHovered] = useState(false);
     const openAddQuesModal = () => setAddQuesModalVisible(true);
     const closeAddQuesModal = () => setAddQuesModalVisible(false);
+    const [ isLoading, setIsLoading] = useState(false);
 
     async function addQuestion(question, constructPayload = true) {
+        setIsLoading(true);
         const newQuestion = await createNewQuestion(constructPayload ? makeQuestionPayload(question) : question, classroomId, testId);
         console.log(newQuestion)
         if (!newQuestion) return;
         setAllQuestions([...allQuestions, makeResultToQuestion(newQuestion)]);
+        setIsLoading(false);
     }
 
     useEffect(() => {
         if (!testId) return
         const fetchQuestions = async function () {
+            setIsLoading(true);
             const questions = await getAllTestQuestion(classroomId, testId);
             // console.log( makeResultToQuestion(questions[questions.length-1]))
             setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
+            setIsLoading(false);
         }
         if (testId) {
             fetchQuestions();
         }
-    }, [classroomId, testId]);
+    }, []);
 
     return (
         <View style={styles.container}>
+            <LoadingScreen  visible={isLoading} />
             <View style={styles.questionPaper}>
                 {
                     allQuestions.length == 0 ? (
