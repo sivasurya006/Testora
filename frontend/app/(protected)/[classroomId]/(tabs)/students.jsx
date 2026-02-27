@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, TextInput, Platform, Pressable, FlatList } from 'react-native'
-import { useEffect, useState } from 'react'
+import { Activity, useEffect, useState } from 'react'
 import Colors from '../../../../styles/Colors';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { fonts } from '../../../../styles/fonts';
-import { Modal, Portal } from 'react-native-paper';
+import { ActivityIndicator, Modal, Portal } from 'react-native-paper';
 import api from '../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
@@ -81,7 +81,7 @@ export default function StudentList() {
   return (
     <>
       <StatusBar translucent />
-      <SafeAreaView style={{ flex: 1 }} edges={[]} > 
+      <SafeAreaView style={{ flex: 1 }} edges={[]} >
         <TobBar setInviteStudentModalVisible={setInviteStudentModalVisible} />
         <ScrollView>
           {
@@ -93,9 +93,9 @@ export default function StudentList() {
               <View style={styles.tableContainer}>
                 <View style={[styles.tableRow, styles.tableHeader]}>
                   <Text style={[styles.tableItem, styles.headerItem]}>S.No</Text>
-                  <Text style={[styles.tableItem, styles.headerItem,{paddingLeft: 70}]}>Name</Text>
-                  <Text style={[styles.tableItem, styles.headerItem,{paddingLeft: 90}]}>Email</Text>
-                  <Text style={[styles.tableItem, styles.headerItem,{paddingLeft: 70}]}>Enrolled Date</Text>
+                  <Text style={[styles.tableItem, styles.headerItem, { paddingLeft: 70 }]}>Name</Text>
+                  <Text style={[styles.tableItem, styles.headerItem, { paddingLeft: 90 }]}>Email</Text>
+                  <Text style={[styles.tableItem, styles.headerItem, { paddingLeft: 70 }]}>Enrolled Date</Text>
                   <Text style={[styles.tableItem, styles.headerItem, styles.progressHeader]}>Progress</Text>
                   <Text style={[styles.tableItem, styles.headerItem, styles.actionHeader]} />
                 </View>
@@ -134,7 +134,7 @@ export default function StudentList() {
                           <AppMediumText style={styles.progressText}>{Math.floor(studentProgress)}%</AppMediumText>
                         </View> */}
 
-                        {/* <View>
+                {/* <View>
                           <Menu
                             visible={menuVisibleFor === student.user.userId}
                             onDismiss={closeMenu}
@@ -263,11 +263,13 @@ function InviteStudentModal({ visible, onConfirm, onCancel }) {
 
   const [link, setLink] = useState("Please refresh the link");
   const [refreshing, setRefreshing] = useState(false);
-  const baseLink = "http://localhost:8081/join/classroom?code=";
+  const baseLink = "https://testora-kqvp.onrender.com/join/classroom?code=";
   const { classroomId } = useGlobalSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
 
   const changeClassroomInviteLink = async () => {
     try {
+      setIsLoading(true);
       const result = await api.get('/api/classroom/updateInviteLink', {
         headers: {
           'X-ClassroomId': classroomId
@@ -275,18 +277,23 @@ function InviteStudentModal({ visible, onConfirm, onCancel }) {
       });
       if (result?.status == 200 && result.data.code) {
         setLink(baseLink + result.data.code);
+
         return;
       } else {
         console.log("can't change invite link");
       }
     } catch (err) {
       console.log("changeClassroomInviteLink err ", err.response?.data);
+    } finally {
+      setIsLoading(false);
     }
+
     setLink("Please refresh the link");
   }
 
   const getClassroomInviteLink = async () => {
     try {
+      s
       const result = await api.get('/api/classroom/inviteLink', {
         headers: {
           'X-ClassroomId': classroomId
@@ -294,12 +301,16 @@ function InviteStudentModal({ visible, onConfirm, onCancel }) {
       });
       if (result?.status == 200 && result.data.code) {
         setLink(baseLink + result.data.code);
+        setIsLoading(false);
         return;
       } else {
         console.log("can't get invite link");
       }
     } catch (err) {
+
       console.log("getClassroomInviteLink err ", err.response?.data);
+    } finally {
+      setIsLoading(false);
     }
     setLink("Please refresh the link");
   }
@@ -324,7 +335,9 @@ function InviteStudentModal({ visible, onConfirm, onCancel }) {
             numberOfLines={2}
             ellipsizeMode="tail"
           >
-            {link}
+            { isLoading ? (
+              <ActivityIndicator size="small" color={Colors.primaryColor} />
+            ) : link}
           </Text>
           <Pressable onPress={changeClassroomInviteLink}>
             <FontAwesome name='refresh' size={16} />
@@ -417,7 +430,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
     color: '#1DA1F2',
-  
+
   },
   options: {
     flexDirection: 'row',
@@ -471,8 +484,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: fonts.regular,
     color: Colors.black,
-  
-    
+
+
   },
   headerItem: {
     color: '#000',

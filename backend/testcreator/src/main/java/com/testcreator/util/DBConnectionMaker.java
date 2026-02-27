@@ -18,9 +18,6 @@ public class DBConnectionMaker {
 
 	private DBConnectionMaker(ServletContext context) throws SQLException, ClassNotFoundException {
 		String url = (String) context.getAttribute("db.url");
-
-		System.out.println("I am getting url : " + url);
-
 		String user = (String) context.getAttribute("db.user");
 		String password = (String) context.getAttribute("db.password");
 		Class.forName("com.mysql.cj.jdbc.Driver");

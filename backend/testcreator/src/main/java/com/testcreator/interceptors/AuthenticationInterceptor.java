@@ -129,11 +129,13 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 		String tokenValue = null;
 		String requestURI = request.getRequestURI() + "?" + request.getQueryString();
 
-		if (requestURI.startsWith("/testcreator")) {
-			requestURI = requestURI.substring("/testcreator/api".length());
-		}
 
 		boolean haveRedirect = requestURI.contains("/join");
+		
+		if(haveRedirect) {
+			requestURI = "join/classroom?code="+request.getQueryString();
+			System.out.println("setting redirect uri "+requestURI);
+		}
 
 		System.out.println("Path info : " + requestURI);
 
