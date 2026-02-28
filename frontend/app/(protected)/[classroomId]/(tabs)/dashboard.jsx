@@ -245,15 +245,6 @@ export default function Dashboard() {
           {isMobile ? (
             <>
               <View style={[styles.sectionCard, styles.mobileSectionCard]}>
-                <AppBoldText style={styles.sectionTitle}>Recently Published</AppBoldText>
-                {tests.length === 0 ? (
-                  <AppRegularText style={styles.emptyText}>No published tests yet.</AppRegularText>
-                ) : (
-                  tests.map((item, index) => <Test key={`${item?.testId || index}`} data={item} isDashboard={false} />)
-                )}
-              </View>
-
-              <View style={[styles.sectionCard, styles.mobileSectionCard]}>
                 <AppBoldText style={styles.sectionTitle}>Top Performing Students</AppBoldText>
                 {topPerformance.length === 0 ? (
                   <AppRegularText style={styles.emptyText}>No performance records yet.</AppRegularText>
@@ -274,6 +265,15 @@ export default function Dashboard() {
                       <MaterialIcons name="trending-up" size={20} color={Colors.green} />
                     </View>
                   ))
+                )}
+              </View>
+
+              <View style={[styles.sectionCard, styles.mobileSectionCard]}>
+                <AppBoldText style={styles.sectionTitle}>Recently Published</AppBoldText>
+                {tests.length === 0 ? (
+                  <AppRegularText style={styles.emptyText}>No published tests yet.</AppRegularText>
+                ) : (
+                  tests.map((item, index) => <Test key={`${item?.testId || index}`} data={item} isDashboard={false} />)
                 )}
               </View>
             </>
@@ -462,6 +462,7 @@ const styles = StyleSheet.create({
   },
   sectionCard: {
     flex: 1,
+    minWidth: 0,
     backgroundColor: Colors.white,
     borderRadius: 12,
     borderWidth: 1,

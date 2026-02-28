@@ -246,6 +246,16 @@
 			<interceptor-ref name="testActionStack" />
 			<interceptor-ref name="testIdInterceptor" />
 		</action>
+		
+		<action name="createAllQuestion"
+			class="com.testcreator.actions.QuestionBankAction" method="createQuestions">
+			<result name="success" type="json">
+				<param name="root">questionBank</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+			<interceptor-ref name="testActionStack" />
+			<interceptor-ref name="testIdInterceptor" />
+		</action>
 
 		<action name="getQuestion"
 			class="com.testcreator.actions.TestAction"

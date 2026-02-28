@@ -104,7 +104,7 @@ public class Queries {
 	public static final String selectStudentTests="select  t.test_id as testId ,t.title as testTitle, t.is_timed, t.duration_minutes, t.creator_id, t.maximum_attempts,  t.correction_type,t.classroom_id, u.name as creatorName, COUNT(a.attempt_id) as attemptCount from Tests t join Users u    on u.user_id = t.creator_id left join Attempts a    on a.test_id = t.test_id  and  a.user_id=? where t.classroom_id=? and t.status='published' group by  t.test_id,  t.title,    t.is_timed,   t.duration_minutes,   t.maximum_attempts,  t.correction_type,  u.name;";
 	public static final String getDashBoardAnaliticsData="select  t.title , count(a.test_id) as totalAttemptsCount , count(distinct a.user_id) as totalSubmissionCount from Tests t left join Attempts a on t.test_id=a.test_id where t.classroom_id=? group by t.title;";
 	public static final String getTopPerfomanceStudents="select distinct cu.user_id,name, max(marks) as score from Attempts a join Classroom_Users cu on a.user_id=cu.user_id join Users u on u.user_id=cu.user_id where cu.classroom_id=? and cu.role='student' group by cu.user_id, u.name having score >0 order by score desc";
-	public static final String deleteStudent="delete from Classroom_Users where user_id = ?";
+	public static final String deleteStudent="delete from Classroom_Users where user_id = ? and classroom_id = ?";
 	
 
 	// Student Test Questions And Answers

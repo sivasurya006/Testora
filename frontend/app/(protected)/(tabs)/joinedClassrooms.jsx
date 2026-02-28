@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import InputModal from '../../../src/components/modals/InputModal';
 import { AuthContext } from '../../../util/AuthContext';
+import { ActivityIndicator } from 'react-native-paper';
 
 
 const { width } = Dimensions.get('window');
@@ -27,12 +28,15 @@ export default function JoinedClassrooms() {
   const [isLoading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
-  const numColumns = Math.floor((width - 300) / classroom_width);
+  const numColumns = width < 600 ? 1 : Math.max(1, Math.floor(width / classroom_width));
 
   useEffect(() => {
-    setLoading(true)
-    getAllJoinedClassrooms(setAllJoinedClassrooms);
-    setLoading(false)
+    const get = async () => {
+      setLoading(true);
+      await getAllJoinedClassrooms(setAllJoinedClassrooms);
+      setLoading(false);
+    };
+    get();
   }, [])
 
   const router = useRouter();
@@ -57,15 +61,22 @@ export default function JoinedClassrooms() {
         {/* <Header /> */}
         <View style={{ flex: 1, backgroundColor: Colors.bgColor }}>
 
-          <LoadingScreen visible={isLoading} />
+         
           <TopBar
             setCreateModalVisible={setCreateModalVisible}
             isLargeScreen={isLargeScreen}
             search={search}
             setSearch={setSearch}
           />
-          {allJoinedClassrooms.length == 0 ? (
-            <EmptyClassroom message="No Joined Classrooms" />
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={Colors.primaryColor} />
+            </View>
+          ) : allJoinedClassrooms.length == 0 ? (
+            <EmptyClassroom
+              ctaText="No Joined Classrooms"
+              message="Use the Join button to enter a classroom with an invite link."
+            />
           ) : <FlatList
             numColumns={numColumns}
             data={filteredJoinedClassrooms}
@@ -121,11 +132,12 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
   return (
     <>
       <View style={styles.topBar}>
-        <AppBoldText style={[styles.topBarHeader,
-        isMobile && {
-          flex: 0
-        }]
-        }>Joined Classrooms</AppBoldText>
+        <View style={[styles.leftSection, isMobile && { flex: 0 }]}>
+          <AppBoldText style={styles.topBarHeader}>Joined Classrooms</AppBoldText>
+          <AppSemiBoldText style={styles.topBarSubText}>
+            Learn together and stay on track with your active classes.
+          </AppSemiBoldText>
+        </View>
 
         <View style={[styles.rightSection, isMobile && {
           flex: 0
@@ -231,6 +243,11 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
 
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   topBar: {
     flexDirection: 'row',
     margin: 20,
@@ -251,7 +268,15 @@ const styles = StyleSheet.create({
   topBarHeader: {
     fontSize: 22,
     fontFamily: fonts.bold,
-    flex: 2
+  },
+  leftSection: {
+    flex: 2,
+  },
+  topBarSubText: {
+    fontSize: 13,
+    color: Colors.lightFont,
+    marginTop: 4,
+    marginBottom: 2,
   },
   joinBtn: {
     backgroundColor: Colors.primaryColor,

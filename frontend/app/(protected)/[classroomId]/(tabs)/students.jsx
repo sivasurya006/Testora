@@ -9,6 +9,7 @@ import { useGlobalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import ConfirmModal from '../../../../src/components/modals/ConfirmModal';
 
 export default function StudentList() {
   const [studentsList, setStudentsList] = useState([]);
@@ -146,6 +147,9 @@ export default function StudentList() {
 }
 
 function StudentCard({ student, progress, menuVisible, onOpenMenu, onCloseMenu, onDelete, isHalf }) {
+
+  const [ confirmVisible, setConfirmVisible] = useState(false);
+
   const registeredAt = student?.user?.registeredAt
     ? new Date(student.user.registeredAt * 1000).toLocaleDateString('en-GB', {
         day: 'numeric',
@@ -174,7 +178,7 @@ function StudentCard({ student, progress, menuVisible, onOpenMenu, onCloseMenu, 
           }
           contentStyle={styles.menuContentStyle}
         >
-          <Menu.Item title="Delete" onPress={onDelete} titleStyle={styles.menuTitleStyle} />
+          <Menu.Item title="Remove" onPress={() => setConfirmVisible(true)}  />
         </Menu>
       </View>
 
@@ -191,6 +195,18 @@ function StudentCard({ student, progress, menuVisible, onOpenMenu, onCloseMenu, 
       <View style={styles.progressBarBackground}>
         <View style={[styles.progressBarFill, { width: `${progress}%` }]} />
       </View>
+
+        <ConfirmModal
+          visible={confirmVisible}
+          onConfirm={() => {
+            onDelete(student.user.userId);
+            setConfirmVisible(false);
+          }}
+          onCancel={() => setConfirmVisible(false)}
+          title="Remove Student"
+          message={`Are you sure you want to remove ${student.user.name} from the classroom?`}
+        />
+
     </View>
   );
 }
@@ -207,7 +223,7 @@ function TopBar({ searchText, setSearchText, setInviteStudentModalVisible }) {
         />
         {searchText.trim().length > 0 && (
           <Pressable style={styles.clearBtn} onPress={() => setSearchText('')}>
-            <AntDesign name="closecircle" size={16} color={Colors.lightFont} />
+            <AntDesign name="close-circle" size={16} color={Colors.lightFont} />
           </Pressable>
         )}
       </View>

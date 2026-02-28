@@ -268,7 +268,6 @@ export default function Publish() {
                     >
                         <AppRegularText style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
                             Publish
-                            Publish
                         </AppRegularText>
                     </Pressable>
                 </View>

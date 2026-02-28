@@ -1,15 +1,31 @@
-import { StyleSheet, Text, View } from 'react-native'
-import {  MaterialCommunityIcons } from '@expo/vector-icons';
+import { StyleSheet, View, Pressable, Dimensions } from 'react-native'
+import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
+import { AppBoldText, AppRegularText } from '../../styles/fonts';
 
 
-export default function EmptyClassroom({message}) {
+const { width } = Dimensions.get('window');
+
+export default function EmptyClassroom({ message, onPress, ctaText = 'Create New Classroom' }) {
     return (
         <View style={styles.container}>
-            <View style={styles.emptyClassContainer}>
-                <MaterialCommunityIcons name="google-classroom" size={30} color="black" />
-                <Text>{message}</Text>
-            </View>
+            {onPress ? (
+                <Pressable style={[styles.emptyClassContainer, styles.emptyClassContainerPressable]} onPress={onPress}>
+                    <View style={styles.plusWrap}>
+                        <AntDesign name="plus" size={26} color={Colors.primaryColor} />
+                    </View>
+                    <AppBoldText style={styles.ctaTitle}>{ctaText}</AppBoldText>
+                    <AppRegularText style={styles.messageText}>{message}</AppRegularText>
+                </Pressable>
+            ) : (
+                <View style={styles.emptyClassContainer}>
+                    <View style={styles.plusWrap}>
+                        <AntDesign name="plus" size={26} color={Colors.primaryColor} />
+                    </View>
+                    <AppBoldText style={styles.ctaTitle}>{ctaText}</AppBoldText>
+                    <AppRegularText style={styles.messageText}>{message}</AppRegularText>
+                </View>
+            )}
         </View>
     )
 }
@@ -18,14 +34,44 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingHorizontal: 10,
     },
     emptyClassContainer : {
+        width: '100%',
+        maxWidth: width > 400 ? 380 : 340,
+        minHeight: 250,
         alignItems: 'center',
-        padding: 50,
-        rowGap: 25,
-        borderRadius: 8,
+        justifyContent: 'center',
+        padding: 26,
+        rowGap: 12,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderStyle: 'dotted',
+        borderColor: Colors.primaryColor + '66',
         backgroundColor: Colors.white,
-        boxShadow : Colors.blackBoxShadow,
-    }
+        marginVertical: 8,
+        marginHorizontal: 10,
+        boxShadow: Colors.blackBoxShadow,
+        elevation: 6,
+    },
+    emptyClassContainerPressable: {
+        cursor: 'pointer',
+    },
+    plusWrap: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: Colors.primaryColor + '14',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    ctaTitle: {
+        color: Colors.secondaryColor,
+        fontSize: 18,
+    },
+    messageText: {
+        color: Colors.lightFont,
+        textAlign: 'center',
+    },
 })

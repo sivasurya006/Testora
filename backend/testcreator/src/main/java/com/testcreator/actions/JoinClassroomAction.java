@@ -53,6 +53,7 @@ public class JoinClassroomAction extends JsonApiAction implements ServletRequest
 			int classId = classroomService.addStudent(classroomDto.getCode(), userId);
 			this.classroomDto = new ClassroomDto();
 			classroomDto.setClassroomId(classId);
+			System.out.println("Successsfully joined");
 			return SUCCESS;
 		}catch (ClassroomNotNoundException e) {
 			setError(new ApiError("No record match", 404));

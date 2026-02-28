@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Pressable, ScrollView, useWindowDimensions } from 'react-native'
 import React, { useState } from 'react'
 import { Checkbox, IconButton } from 'react-native-paper';
 import Colors from '../../styles/Colors';
@@ -8,6 +8,8 @@ import { MCQComponent } from './OptionComponents';
 import { AppRegularText, AppSemiBoldText } from '../../styles/fonts';
 
 export default function MatchingQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
+    const { width } = useWindowDimensions();
+    const enableHorizontalScroll = mode === 'report' && width < 768;
 
     if (mode === 'edit') {
         return (
@@ -41,6 +43,14 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
             return acc;
         }, {}) || {};
 
+    const sectionWrapperProps = enableHorizontalScroll
+        ? {
+            horizontal: true,
+            showsHorizontalScrollIndicator: true,
+            contentContainerStyle: styles.horizontalScrollContent
+        }
+        : {};
+
     return (
         <>
             <QuestionRow
@@ -50,61 +60,67 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
             />
 
             <AppSemiBoldText>Correct Matchings :</AppSemiBoldText>
-
-            {options.map((opt, i) => {
-                return (
-                    <View style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }} >
-                        <PaperInput
-                            label={`Left pair ${i + 1}`}
-                            mode='outlined'
-                            value={opt.optionText}
-                            editable={false}
-                        />
-                        <PaperInput
-                            label={`right pair ${i + 1}`}
-                            mode='outlined'
-                            value={opt.matchingOptionProperties?.match}
-                            editable={false}
-                        />
-                        <AppRegularText style={{ marginLeft: 'auto' }} >{opt.optionMark}</AppRegularText>
-                    </View>
-                );
-            })}
+            <ScrollView {...sectionWrapperProps}>
+                <View style={enableHorizontalScroll ? styles.matchingRowsContainer : undefined}>
+                    {options.map((opt, i) => {
+                        return (
+                            <View key={opt.optionId || i} style={styles.matchingRow} >
+                                <PaperInput
+                                    style={styles.pairInput}
+                                    label={`Left pair ${i + 1}`}
+                                    mode='outlined'
+                                    value={opt.optionText}
+                                    editable={false}
+                                />
+                                <PaperInput
+                                    style={styles.pairInput}
+                                    label={`right pair ${i + 1}`}
+                                    mode='outlined'
+                                    value={opt.matchingOptionProperties?.match}
+                                    editable={false}
+                                />
+                                <AppRegularText style={styles.optionMarkText} >{opt.optionMark}</AppRegularText>
+                            </View>
+                        );
+                    })}
+                </View>
+            </ScrollView>
 
             {
                 mode !== 'preview' && (
                     <>
                         <AppSemiBoldText>{mode == 'grade' ? 'Student' : 'Your'} Matchings :</AppSemiBoldText>
+                        <ScrollView {...sectionWrapperProps}>
+                            <View style={enableHorizontalScroll ? styles.matchingRowsContainer : undefined}>
+                                {options.map((opt, i) => {
+                                    const selected = selectedMap[opt.optionId];
+                                    const userMatch = selected?.answerPropertiesDto?.match;
 
-                        {options.map((opt, i) => {
-                            const selected = selectedMap[opt.optionId];
+                                    return (
+                                        <View
+                                            key={opt.optionId}
+                                            style={styles.matchingRow}
+                                        >
+                                            <PaperInput
+                                                style={styles.pairInput}
+                                                label={`Left pair ${i + 1}`}
+                                                mode="outlined"
+                                                value={opt.optionText}
+                                                editable={false}
+                                            />
 
-                            const correctMatch = opt.matchingOptionProperties?.match;
-                            const userMatch = selected?.answerPropertiesDto?.match;
-
-                            const isCorrect = correctMatch === userMatch;
-
-                            return (
-                                <View
-                                    key={opt.optionId}
-                                    style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }}
-                                >
-                                    <PaperInput
-                                        label={`Left pair ${i + 1}`}
-                                        mode="outlined"
-                                        value={opt.optionText}
-                                        editable={false}
-                                    />
-
-                                    <PaperInput
-                                        label={`Right pair ${i + 1}`}
-                                        mode="outlined"
-                                        value={userMatch}
-                                        editable={false}
-                                    />
-                                </View>
-                            );
-                        })}
+                                            <PaperInput
+                                                style={styles.pairInput}
+                                                label={`Right pair ${i + 1}`}
+                                                mode="outlined"
+                                                value={userMatch}
+                                                editable={false}
+                                            />
+                                        </View>
+                                    );
+                                })}
+                            </View>
+                        </ScrollView>
                     </>
                 )
             }
@@ -170,5 +186,23 @@ const styles = StyleSheet.create({
     correctAnswerLabel: {
         fontWeight: 600,
         fontSize: 16
+    },
+    horizontalScrollContent: {
+        paddingBottom: 6,
+    },
+    matchingRowsContainer: {
+        minWidth: 620,
+    },
+    matchingRow: {
+        flexDirection: 'row',
+        columnGap: 20,
+        marginVertical: 10,
+        alignItems: 'center',
+    },
+    pairInput: {
+        width: 260,
+    },
+    optionMarkText: {
+        marginLeft: 'auto',
     }
 });

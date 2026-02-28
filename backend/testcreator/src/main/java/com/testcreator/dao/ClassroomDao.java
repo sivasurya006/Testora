@@ -100,6 +100,9 @@ public class ClassroomDao {
 			insertClassroomUserRel.setInt(1, classroomId);
 			insertClassroomUserRel.setInt(2, userId);
 			insertClassroomUserRel.setString(3, UserRole.STUDENT.name().toLowerCase());
+			
+			System.out.println("Suceessfully inserted ...");
+			
 			return insertClassroomUserRel.executeUpdate() > 0;
 		}
 	}

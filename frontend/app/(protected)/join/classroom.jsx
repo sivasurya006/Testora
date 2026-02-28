@@ -9,6 +9,7 @@ export default function JoinClassroom() {
   const { code } = useGlobalSearchParams();
   const [classroomData, setClassroomData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState(null);
 
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function JoinClassroom() {
   }
 
   async function joinClassroom() {
+    setIsJoining(true);
     try {
       const result = await api.post('/join/classroomConfirm', { code });
       if (result?.status === 200) {
@@ -53,6 +55,8 @@ export default function JoinClassroom() {
     } catch (err) {
         setError("An error occurred while joining the classroom");
         console.log("join classroom err", err);
+    } finally {
+      setIsJoining(false);
     }
   }
 
@@ -76,11 +80,15 @@ export default function JoinClassroom() {
           <Text style={styles.creatorName}>Created by: {classroomData?.creatorName}</Text>
 
           <View style={{ flexDirection: 'row' }}>
-            <Pressable style={[styles.btn, styles.cancelBtn]} onPress={handleCancel}>
+            <Pressable style={[styles.btn, styles.cancelBtn, isJoining && styles.disabledBtn]} onPress={handleCancel} disabled={isJoining}>
               <Text style={styles.cancelText}>Cancel</Text>
             </Pressable>
-            <Pressable style={[styles.btn, styles.confirmBtn]} onPress={handleConfirm}>
-              <Text style={styles.confirmText}>Join</Text>
+            <Pressable style={[styles.btn, styles.confirmBtn, isJoining && styles.disabledBtn]} onPress={handleConfirm} disabled={isJoining}>
+              {isJoining ? (
+                <ActivityIndicator size="small" color={Colors.white} />
+              ) : (
+                <Text style={styles.confirmText}>Join</Text>
+              )}
             </Pressable>
           </View>
         </View>
@@ -158,5 +166,8 @@ const styles = StyleSheet.create({
     color: Colors.secondaryColor, 
     fontSize: 15,
     fontWeight: '500',
+  },
+  disabledBtn: {
+    opacity: 0.7,
   },
 });

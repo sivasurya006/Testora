@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Modal, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 import { AppBoldText, AppRegularText, AppSemiBoldText } from '../../styles/fonts';
@@ -213,12 +213,46 @@ function parseQuestionListFromApiData(data) {
   return [];
 }
 
+function getPreviewQuestionText(question) {
+  if (!question || question.type !== 'FILL_BLANK' || typeof question.questionText !== 'string') {
+    return question?.questionText || '';
+  }
+
+  const parts = question.questionText.split('__BLANK__');
+  if (parts.length <= 1) return question.questionText;
+
+  const answersByIndex = {};
+  (question.options || []).forEach((option, optionIdx) => {
+    const blankIdx = Number(option?.blankOptionProperties?.blankIdx);
+    const answerText = option?.blankOptionProperties?.blankText || option?.optionText || '';
+
+    if (Number.isFinite(blankIdx) && blankIdx > 0) {
+      answersByIndex[blankIdx - 1] = answerText;
+      return;
+    }
+
+    if (answersByIndex[optionIdx] === undefined) {
+      answersByIndex[optionIdx] = answerText;
+    }
+  });
+
+  let formatted = '';
+  for (let i = 0; i < parts.length - 1; i += 1) {
+    formatted += parts[i];
+    formatted += answersByIndex[i] ?? '__BLANK__';
+  }
+  formatted += parts[parts.length - 1];
+
+  return formatted;
+}
+
 export default function AIQuestionGeneratorBot({ onUseQuestion }) {
   const [isOpen, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [generatedQuestions, setGeneratedQuestions] = useState([]);
 
   const askAi = async () => {
     setError('');
@@ -260,22 +294,11 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
       if (generatedQuestions.length === 0) {
         const responseText = extractTextFromResponse(data);
         console.log('AI raw response:', responseText);
-        setError('Could not parse AI JSON. I logged raw AI response in console.');
+        setError('Could not parse AI JSON.');
         return;
       }
 
-      try {
-        setSaving(true);
-        for (const question of generatedQuestions) {
-          await onUseQuestion(question);
-        }
-        setPrompt('');
-        setIsOpen(false);
-      } catch (saveErr) {
-        setError('Question generation worked, but saving question failed. Please try again.');
-      } finally {
-        setSaving(false);
-      }
+      setGeneratedQuestions(generatedQuestions);
     } catch (err) {
       setError('Failed to contact AI service. Please try again.');
     } finally {
@@ -283,10 +306,35 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
     }
   };
 
+  const addGeneratedQuestion = async () => {
+    if (generatedQuestions.length === 0) {
+      setError('Generate a question first.');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      await onUseQuestion(generatedQuestions);
+      setGeneratedQuestions([]);
+      setPrompt('');
+      setIsOpen(false);
+    } catch (saveErr) {
+      setError('Question generation worked, but saving question failed. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <>
-      <Pressable style={styles.fab} onPress={() => setIsOpen(true)}>
-        <Ionicons name="sparkles-outline" size={22} color={Colors.white} />
+      <Pressable
+        style={styles.fab}
+        onPress={() => {
+          setError('');
+          setIsOpen(true);
+        }}
+      >
+        <Ionicons name="sparkles-outline" size={22} color={Colors.primaryColor} />
       </Pressable>
 
       <Modal
@@ -300,22 +348,69 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
             <View style={styles.headerRow}>
               <View style={styles.titleRow}>
                 <AntDesign name="robot" size={20} color={Colors.primaryColor} />
-                <AppBoldText style={styles.title}>AI Question Generator</AppBoldText>
+                <AppBoldText style={styles.title}>Ask. Analyze. Achieve.</AppBoldText>
               </View>
               <Pressable onPress={() => setIsOpen(false)}>
                 <AntDesign name="close" size={20} color={Colors.secondaryColor} />
               </Pressable>
             </View>
 
-            <AppSemiBoldText style={styles.label}>Prompt</AppSemiBoldText>
+            <AppSemiBoldText style={styles.label}>Create</AppSemiBoldText>
             <TextInput
               style={styles.input}
               multiline
               value={prompt}
-              onChangeText={setPrompt}
+              onChangeText={(value) => {
+                setPrompt(value);
+                setError('');
+              }}
               placeholder="Generate one MCQ on Operating Systems ...."
               placeholderTextColor={Colors.lightFont}
             />
+
+            {generatedQuestions.length > 0 ? (
+              <View style={styles.previewCard}>
+                <AppSemiBoldText style={styles.previewTitle}>
+                  Generated Questions ({generatedQuestions.length})
+                </AppSemiBoldText>
+                <ScrollView style={styles.previewScroll}>
+                  {generatedQuestions.map((question, index) => (
+                    <View key={`generated-question-${index}`} style={styles.previewQuestionCard}>
+                      <AppSemiBoldText style={styles.previewQuestionTitle}>
+                        Q{index + 1}. {getPreviewQuestionText(question)}
+                      </AppSemiBoldText>
+                      <AppRegularText style={styles.previewMeta}>
+                        Type: {question.type} | Marks: {question.marks}
+                      </AppRegularText>
+
+                      {question.options?.map((option, optionIdx) => {
+                        const isCorrect = !!option.correct
+                          || !!option.isCorrect
+                          || !!option.blankOptionProperties?.blankText
+                          || !!option.matchingOptionProperties?.match;
+
+                        let answerText = option.optionText;
+                        if (question.type === 'FILL_BLANK') {
+                          answerText = option.blankOptionProperties?.blankText || option.optionText;
+                        } else if (question.type === 'MATCHING') {
+                          const right = option.matchingOptionProperties?.match;
+                          answerText = right
+                            ? `${option.optionText} -> ${right}`
+                            : option.optionText;
+                        }
+
+                        return (
+                          <AppRegularText key={`generated-option-${index}-${optionIdx}`} style={styles.previewOption}>
+                            {isCorrect ? '✓ ' : '• '}
+                            {answerText}
+                          </AppRegularText>
+                        );
+                      })}
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            ) : null}
 
             <View style={styles.actionRow}>
               <Pressable style={styles.cancelBtn} onPress={() => setIsOpen(false)}>
@@ -325,9 +420,20 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
                 {loading || saving ? (
                   <ActivityIndicator size="small" color={Colors.white} />
                 ) : (
-                  <AppRegularText style={{ color: Colors.white }}>Ask AI</AppRegularText>
+                  <AppRegularText style={{ color: Colors.white }}>
+                    {generatedQuestions.length > 0 ? 'Regenerate' : 'Generate'}
+                  </AppRegularText>
                 )}
               </Pressable>
+              {generatedQuestions.length > 0 ? (
+                <Pressable style={styles.addBtn} onPress={addGeneratedQuestion}>
+                  {saving ? (
+                    <ActivityIndicator size="small" color={Colors.white} />
+                  ) : (
+                    <AppRegularText style={{ color: Colors.white }}>Add Questions</AppRegularText>
+                  )}
+                </Pressable>
+              ) : null}
             </View>
 
             {!!error && <AppSemiBoldText style={styles.error}>{error}</AppSemiBoldText>}
@@ -346,7 +452,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.secondaryColor , //'#52465C',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 6,
@@ -415,6 +521,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 8,
+  },
+  addBtn: {
+    minWidth: 110,
+    alignItems: 'center',
+    backgroundColor: '#3A7D44',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  previewCard: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.borderColor,
+    backgroundColor: Colors.bgColor,
+    padding: 10,
+    gap: 4,
+  },
+  previewScroll: {
+    maxHeight: 260,
+  },
+  previewTitle: {
+    color: Colors.secondaryColor,
+    fontSize: 13,
+  },
+  previewQuestionCard: {
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderColor,
+    paddingTop: 8,
+  },
+  previewQuestionTitle: {
+    color: Colors.secondaryColor,
+    fontSize: 14,
+  },
+  previewMeta: {
+    color: Colors.lightFont,
+    fontSize: 12,
+    marginTop: 2,
+    marginBottom: 4,
+  },
+  previewOption: {
+    color: Colors.secondaryColor,
+    fontSize: 13,
+    marginTop: 2,
   },
   error: {
     color: '#DC2626',

@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Modal, TouchableOpacity, useWindowDimensions } from 'react-native'
+import { View, ScrollView, StyleSheet, Modal, TouchableOpacity, useWindowDimensions, Platform } from 'react-native'
 import Colors from '../../styles/Colors'
 import { AppBoldText, AppSemiBoldText} from '../../styles/fonts'
 import McqQuestion from './McqQuestion'
@@ -9,7 +9,14 @@ import BooleanQuestion from './BooleanQuestion';
 import { AntDesign } from '@expo/vector-icons'
 
 export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMarks, questions, noModal = false, isResultPageOpen }) {
-    
+
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
+    const isLargeScreen = width >= 1280;
+    const contentMaxWidth = isLargeScreen ? 1320 : 1100;
+    const horizontalPadding = isMobile ? 10 : isLargeScreen ? 28 : 18;
+    const questionGap = isMobile ? 10 : 16;
+
     const numberOfQuestion = questions?.length;
     const correctQuestions = questions?.reduce((sum, question) => {
         const selectedOptionIsCorrect = question.selectedOptions?.some(
@@ -17,11 +24,14 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
         );
         return (question.givenMarks > 0 || selectedOptionIsCorrect) ? sum + 1 : sum;
     }, 0) || 0;
+    const scorePercentage = numberOfQuestion > 0
+        ? Math.floor((correctQuestions / numberOfQuestion) * 100)
+        : 0;
 
     function renderComponent() {
         return (
-            <View style={styles.container}>
-                <View style={styles.headerContainer}>
+            <View style={[styles.container, { paddingHorizontal: horizontalPadding, paddingTop: isMobile ? 10 : 18 }]}>
+                <View style={[styles.headerContainer, { maxWidth: contentMaxWidth }]}>
                     <AppBoldText style={styles.topHeaderText}>
                         Test Report
                     </AppBoldText>
@@ -30,7 +40,18 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
                         <AntDesign name="close" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.reportContainer}>
+                <View
+                    style={[
+                        styles.reportContainer,
+                        {
+                            maxWidth: contentMaxWidth,
+                            flexDirection: isMobile ? 'column' : 'row',
+                            paddingVertical: isMobile ? 14 : 22,
+                            paddingHorizontal: isMobile ? 10 : 16,
+                            gap: isMobile ? 10 : 0,
+                        }
+                    ]}
+                >
                     <View style={styles.reportItem}>
                         <AppSemiBoldText style={styles.reportTitle}>
                             TOTAL MARKS
@@ -39,16 +60,16 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
                             {totalMarks}
                         </AppBoldText>
                     </View>
-                    <View style={styles.line} />
+                    {!isMobile && <View style={styles.line} />}
                     <View style={styles.reportItem}>
                         <AppSemiBoldText style={styles.reportTitle}>
                             SCORE PERCENTAGE
                         </AppSemiBoldText>
                         <AppBoldText style={styles.reportNumber}>
-                            {Math.floor((correctQuestions / numberOfQuestion) * 100)}%
+                            {scorePercentage}%
                         </AppBoldText>
                     </View>
-                    <View style={styles.line} />
+                    {!isMobile && <View style={styles.line} />}
                     <View style={styles.reportItem}>
                         <AppSemiBoldText style={styles.reportTitle}>
                             CORRECT QUESTIONS
@@ -61,21 +82,23 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
                         </AppBoldText>
                     </View>
                 </View>
-                <ScrollView style={{
-                    flex: 1,
-                    maxWidth: 1200,
-                    width: '100%',
-                    boxShadow: Colors.blackBoxShadow,
-                    marginHorizontal: 10,
-                    elevation: 6,
-                    borderRadius: 8,
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    backgroundColor: Colors.white,
-                }}>
+                <ScrollView
+                    style={[
+                        styles.questionsCard,
+                        {
+                            maxWidth: contentMaxWidth,
+                            borderRadius: isMobile ? 10 : 14,
+                            paddingHorizontal: horizontalPadding,
+                            paddingTop: isMobile ? 10 : 14,
+                            ...(Platform.OS === 'web' ? { boxShadow: Colors.blackBoxShadow } : {}),
+                        }
+                    ]}
+                    contentContainerStyle={{ paddingBottom: 16 }}
+                    showsVerticalScrollIndicator={false}
+                >
                     {
                         questions?.map((ques, index) => (
-                            <View key={ques.id} style={{ margin: 20 }}>
+                            <View key={ques.id ?? index} style={{ marginBottom: questionGap }}>
                                 {
                                     getQuestion(ques, index + 1)
                                 }
@@ -88,15 +111,11 @@ export default function DetailedTestReport({ isGradeScreenOpen, onExit, totalMar
         )
     }
 
-    console.log("Total ", questions)
-
-    const { width } = useWindowDimensions();
-
     return (
         noModal ? (
             renderComponent()
         ) : (
-            <Modal Modal
+            <Modal
                 visible={isGradeScreenOpen || isResultPageOpen}
                 animationType="fade"
                 onRequestClose={onExit}
@@ -174,7 +193,6 @@ const styles = StyleSheet.create({
     container: {
         userSelect: 'none',
         backgroundColor: Colors.bgColor,
-        padding: 20,
         flex: 1,
         alignItems: 'center',
 
@@ -227,15 +245,17 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         width: '100%',
-        justifyContent: 'center',
+        alignSelf: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         position: 'relative',
-        // marginBottom: 20,
+        marginBottom: 10,
     },
 
     closeButton: {
         position: 'absolute',
         right: 0,
+        padding: 6,
     },
     statCard: {
         width: 150,
@@ -266,16 +286,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     reportContainer: {
-        flexDirection: 'row',
         backgroundColor: '#F1F3F6',
         borderRadius: 16,
-        paddingVertical: 25,
-        marginVertical: 20,
+        marginVertical: 14,
         borderWidth: 1,
         borderColor: '#E0E6ED',
         alignItems: 'center',
         width: '100%',
-        maxWidth: 1200,
     },
 
     reportItem: {
@@ -305,5 +322,12 @@ const styles = StyleSheet.create({
         width: 1,
         height: '60%',
         backgroundColor: '#D6DDE6',
+    },
+    questionsCard: {
+        flex: 1,
+        width: '100%',
+        alignSelf: 'center',
+        backgroundColor: Colors.white,
+        elevation: 6,
     },
 })

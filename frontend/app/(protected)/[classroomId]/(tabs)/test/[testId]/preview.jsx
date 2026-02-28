@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { Activity, useEffect, useState } from 'react'
+import { View, TouchableOpacity, StyleSheet, useWindowDimensions, Platform } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import api from '../../../../../../util/api';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { AppBoldText } from '../../../../../../styles/fonts';
 import { AntDesign } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
 import SingleChoiceQuestion from '../../../../../../src/components/SingleChoiceQuestion';
 import McqQuestion from '../../../../../../src/components/McqQuestion';
 import BooleanQuestion from '../../../../../../src/components/BooleanQuestion';
@@ -16,8 +16,14 @@ import { ActivityIndicator } from 'react-native-paper';
 export default function Preview() {
 
     const { classroomId, testId } = useGlobalSearchParams();
+    const { width } = useWindowDimensions();
     const [allQuestions, setAllQuestions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const isMobile = width < 768;
+    const isLargeScreen = width >= 1280;
+    const contentMaxWidth = isLargeScreen ? 1320 : 1100;
+    const horizontalPadding = isMobile ? 10 : isLargeScreen ? 28 : 18;
+    const questionGap = isMobile ? 10 : 16;
 
     useEffect(() => {
         if (!testId) return
@@ -34,8 +40,8 @@ export default function Preview() {
 
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
+        <View style={[styles.container, { paddingHorizontal: horizontalPadding, paddingTop: isMobile ? 10 : 18 }]}>
+            <View style={[styles.headerContainer, { maxWidth: contentMaxWidth }]}>
                 <TouchableOpacity
                     onPress={() => router.canGoBack() && router.back()}
                     style={styles.closeButton}
@@ -45,7 +51,18 @@ export default function Preview() {
             </View>
 
             {/* Preview Paper */}
-            <View style={styles.previewPaper}>
+            <View
+                style={[
+                    styles.previewPaper,
+                    {
+                        maxWidth: contentMaxWidth,
+                        paddingHorizontal: horizontalPadding,
+                        paddingTop: isMobile ? 10 : 16,
+                        borderRadius: isMobile ? 10 : 14,
+                        ...(Platform.OS === 'web' ? { boxShadow: Colors.blackBoxShadow } : {}),
+                    }
+                ]}
+            >
 
                 {isLoading ? (
                     <View style={styles.centerContent}>
@@ -60,11 +77,11 @@ export default function Preview() {
                     </View>
                 ) : (
                     <ScrollView
-                        contentContainerStyle={{ paddingVertical: 10 }}
+                        contentContainerStyle={{ paddingTop: 4, paddingBottom: 16 }}
                         showsVerticalScrollIndicator={false}
                     >
                         {allQuestions.map((ques, index) => (
-                            <View key={ques.id} style={{ margin: 20 }}>
+                            <View key={ques.id ?? index} style={{ marginBottom: questionGap }}>
                                 {getQuestion(ques, index + 1)}
                             </View>
                         ))}
@@ -168,7 +185,6 @@ async function getAllTestQuestion(classroomId, testId) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.bgColor,
-        padding: 20,
         flex: 1,
         alignItems: 'center',
 
@@ -221,15 +237,15 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         width: '100%',
+        alignSelf: 'center',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         position: 'relative',
-        // marginBottom: 20,
+        marginBottom: 10,
     },
 
     closeButton: {
-        position: 'absolute',
-        right: 0,
+        padding: 6,
     },
     statCard: {
         width: 150,
@@ -303,12 +319,10 @@ const styles = StyleSheet.create({
     previewPaper: {
         flex: 1,
         width: '100%',
-        maxWidth: 1200,
+        alignSelf: 'center',
         backgroundColor: Colors.white,
-        borderRadius: 8,
         elevation: 6,
-        marginHorizontal: 10,
-        paddingHorizontal: 20,
+        marginHorizontal: 0,
     },
 
     centerContent: {

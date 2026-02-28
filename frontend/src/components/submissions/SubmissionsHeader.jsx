@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Pressable, Platform, TouchableOpacity, useWindowDimensions } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Pressable, Platform, TouchableOpacity, useWindowDimensions } from 'react-native'
+import React, { useState } from 'react'
 import Colors from '../../../styles/Colors';
 import { AppBoldText, AppMediumText, AppSemiBoldText } from '../../../styles/fonts';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
@@ -17,48 +17,60 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
     const [performanceModalVisible, setPerformanceModalVisible] = useState(false);
 
     const { width, height } = useWindowDimensions();
-
-    console.log(performanceChartData)
+    const isMobile = width < 900;
+    const chartWidth = Math.max(260, Math.min(width - (isMobile ? 40 : 140), 900));
+    const chartHeight = Math.max(240, Math.min(height * (isMobile ? 0.45 : 0.55), 420));
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
+        <View style={[
+            styles.root,
+            {
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'stretch' : 'center',
+                rowGap: isMobile ? 10 : 0,
+            }
+        ]}>
 
-            <View style={styles.menu}>
-                <View style={{ justifyContent: 'center', marginRight: 10 }} >
-                    <TouchableOpacity onPress={() => {
-                        router.push({
-                            pathname: '[classroomId]/test',
-                            params: {
-                                classroomId: params.classroomId
-                            }
-                        })
-                    }}>
-                        <Feather name='arrow-left' size={24} />
-                    </TouchableOpacity>
+            <View style={[styles.leftSection, isMobile && styles.leftSectionMobile]}>
+                <View style={styles.menu}>
+                    <View style={{ justifyContent: 'center', marginRight: 10 }} >
+                        <TouchableOpacity onPress={() => {
+                            router.push({
+                                pathname: '[classroomId]/test',
+                                params: {
+                                    classroomId: params.classroomId
+                                }
+                            })
+                        }}>
+                            <Feather name='arrow-left' size={24} />
+                        </TouchableOpacity>
+                    </View>
+                    <Pressable
+                        style={[styles.menuItem, selected == 'SUBMITTED' && styles.selectedItem]}
+                        onPress={() => {
+                            setSelected("SUBMITTED");
+                        }}
+                    >
+                        <AppMediumText style={{ fontSize: isMobile ? 14 : 16 }}>To be grade</AppMediumText>
+                    </Pressable>
+                    <Pressable
+                        style={[styles.menuItem, selected == 'EVALUATED' && styles.selectedItem]}
+                        onPress={() => {
+                            setSelected("EVALUATED");
+                        }}
+                    >
+                        <AppMediumText style={{ fontSize: isMobile ? 14 : 16 }}>Completed</AppMediumText>
+                    </Pressable>
                 </View>
-                <Pressable
-                    style={[styles.menuItem, selected == 'SUBMITTED' && styles.selectedItem]}
-                    onPress={() => {
-                        setSelected("SUBMITTED");
-                    }}
-                >
-                    <AppMediumText style={{ fontSize: 16 }}>To be grade</AppMediumText>
-                </Pressable>
-                <Pressable
-                    style={[styles.menuItem, selected == 'EVALUATED' && styles.selectedItem]}
-                    onPress={() => {
-                        setSelected("EVALUATED");
-                    }}
-                >
-                    <AppMediumText style={{ fontSize: 16 }}>Completed</AppMediumText>
-                </Pressable>
+
+                <AppBoldText numberOfLines={1} style={[styles.testName, { fontSize: isMobile ? 16 : 18 }]} >
+                    {testName}
+                </AppBoldText>
             </View>
 
-            <AppBoldText style={{ fontSize: 18 }} >{testName}</AppBoldText>
-
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <View style={[styles.rightSection, isMobile && styles.rightSectionMobile]}>
                 <Profile name={data.name} email={data.email} />
-                <TouchableOpacity style={styles.button}
+                <TouchableOpacity style={[styles.button, isMobile && styles.buttonMobile]}
 
                     onPress={() => setPerformanceModalVisible(true)}
                 >
@@ -72,33 +84,19 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
                 <Modal
                     visible={performanceModalVisible}
                     onDismiss={() => setPerformanceModalVisible(false)}
-                    style={{ alignItems: 'center' }}
+                    style={styles.modalOverlay}
 
                 >
                     {
                         performanceChartData?.markData?.length == 0 ? (
-                            <View style={{ flex: 1, backgroundColor: Colors.white, padding: 20 }} >
+                            <View style={styles.emptyAttemptCard} >
                                 <AppSemiBoldText style={{ textAlign: 'center', flex: 1 }} >No Attempts taken</AppSemiBoldText>
                             </View>
                         ) : (
-                            <View style={{ backgroundColor: '#fff', borderRadius: 16 }}>
+                            <View style={[styles.chartCard, { width: chartWidth + 24 }]}>
 
                                 <AppSemiBoldText style={{ textAlign: 'center', fontSize: 20, marginVertical: 15 }}>Performance {testName ? "in" : ''}  {testName}</AppSemiBoldText>
-
-                                <AppSemiBoldText
-                                    style={{
-                                        transform: [{ rotate: '-90deg' }],
-                                        textAlign: 'center',
-                                        fontWeight: '600',
-                                        fontSize: 16,
-                                        width: width - (width / 100 * 97.4),
-                                        marginTop: (height / 100 * 60) / 2.25,
-                                        position: 'absolute',
-                                        zIndex: 100,
-                                        // height : 100,
-                                    }}
-                                >Marks</AppSemiBoldText>
-                                <View style={{ marginBottom: -100 }}>
+                                <View style={{ marginBottom: isMobile ? 0 : -30 }}>
                                     <LineChart
                                         bezier
                                         data={
@@ -111,8 +109,8 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
                                                 ],
                                             }
                                         }
-                                        width={width / 100 * 70}
-                                        height={height / 100 * 60}
+                                        width={chartWidth}
+                                        height={chartHeight}
                                         chartConfig={{
                                             backgroundGradientFrom: "#fff",
                                             backgroundGradientTo: "#fff",
@@ -140,7 +138,7 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
                                 <AppSemiBoldText
                                     style={{
                                         textAlign: "center",
-                                        marginTop: 5,
+                                        marginTop: 8,
                                         fontWeight: "bold"
                                     }}
                                 >Attempts</AppSemiBoldText>
@@ -156,11 +154,25 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
 }
 
 const styles = StyleSheet.create({
+    root: {
+        justifyContent: 'space-between',
+        paddingHorizontal: 12,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: Colors.bgColor,
+    },
+    leftSection: {
+        flex: 1,
+        minWidth: 260,
+    },
+    leftSectionMobile: {
+        width: '100%',
+    },
     menu: {
-        paddingTop: 20,
+        paddingTop: 8,
         flexDirection: "row",
         backgroundColor: Colors.bgColor,
-        paddingBottom: 20,
+        paddingBottom: 8,
         flexWrap: 'wrap',
         ...(Platform.OS == 'web' ? {
             paddingLeft: 10
@@ -177,6 +189,22 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         borderBottomColor: Colors.primaryColor
     },
+    testName: {
+        paddingHorizontal: 10,
+        marginTop: 4,
+    },
+    rightSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 14,
+        marginLeft: 12,
+    },
+    rightSectionMobile: {
+        width: '100%',
+        justifyContent: 'space-between',
+        marginLeft: 0,
+        marginTop: 4,
+    },
     button: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -187,6 +215,26 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primaryColor,
         marginHorizontal: 4,
         gap: 10
+    },
+    buttonMobile: {
+        marginHorizontal: 0,
+    },
+    modalOverlay: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    emptyAttemptCard: {
+        backgroundColor: Colors.white,
+        padding: 20,
+        borderRadius: 12,
+        minWidth: 220,
+        minHeight: 120,
+    },
+    chartCard: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        paddingHorizontal: 12,
+        paddingBottom: 12,
     }
 
 })

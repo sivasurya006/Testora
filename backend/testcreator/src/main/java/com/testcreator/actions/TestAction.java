@@ -99,7 +99,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 			if (limit > 0) {
 				if (status != null) {
-					System.out.println("Status :" + status);
 					try {
 						TestStatus testStatus = TestStatus.valueOf(status.toUpperCase());
 						this.allTests = testService.getTestsByStatus(context, limit, testStatus);
@@ -115,7 +114,6 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			else {
 
 				if (status != null) {
-					System.out.println("Status :" + status);
 					try {
 						TestStatus testStatus = TestStatus.valueOf(status.toUpperCase());
 						this.allTests = testService.getTestsByStatus(context, testStatus);
@@ -909,6 +907,8 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
+	
+	
 	
 	
 	

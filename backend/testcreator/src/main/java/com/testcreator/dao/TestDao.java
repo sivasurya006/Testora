@@ -22,6 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.testcreator.dto.AnswerPropertiesDto;
 import com.testcreator.dto.AttemptDto;
+import com.testcreator.dto.QuestionBankDto;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.TestDto;
@@ -377,7 +378,7 @@ public class TestDao {
 				try (ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next()) {
 						Option createdOption = new Option();
-						createdOption.setOptionId(rs.getInt(1));
+//						createdOption.setOptionId(rs.getInt(1));
 						createdOption.setOptionText(option.getOptionText());
 //						createdOption.setOptionMark(option.getOptionMark());
 						System.out.println(option.getCorrect());
@@ -692,13 +693,7 @@ public class TestDao {
 			int[] results = ps.executeBatch();
 
 			boolean allInserted = Arrays.stream(results).allMatch(r -> r > 0);
-
-			System.out.println("all inserted ----------");
-
 			if (allInserted) {
-
-				System.out.println("updating status ----------");
-
 				try (PreparedStatement psUpdate = connection.prepareStatement(Queries.updateAttemptStatus)) {
 					psUpdate.setInt(1, attemptId);
 					psUpdate.executeUpdate();
@@ -871,7 +866,7 @@ public class TestDao {
 
 	public boolean updateAnswers(List<QuestionReportDto> questionAnswers, int totalMarks, int attemptId)
 			throws SQLException {
-		
+
 		try (PreparedStatement ps = connection.prepareStatement(Queries.updateAnswer)) {
 
 			for (QuestionReportDto questionReportDto : questionAnswers) {
@@ -1284,5 +1279,79 @@ public class TestDao {
 		}
 		return report;
 	}
+	public QuestionBankDto createAllQuestions(int testId, QuestionBankDto questionBank) throws SQLException {
 
+	    try {
+	        connection.setAutoCommit(false);
+
+	        try (PreparedStatement ps = connection.prepareStatement(
+	                Queries.insertQuestion,
+	                Statement.RETURN_GENERATED_KEYS)) {
+
+	            for (QuestionDto question : questionBank.getQuestions()) {
+	                ps.setInt(1, testId);
+	                ps.setString(2, question.getType().name().toLowerCase());
+	                ps.setString(3, question.getQuestionText());
+	                ps.setInt(4, question.getMarks());
+	                ps.addBatch();
+	            }
+
+	            int[] affectedRows = ps.executeBatch();
+
+	            if (!Arrays.stream(affectedRows).allMatch(r -> r > 0)) {
+	                throw new SQLException("Not all questions inserted");
+	            }
+
+	            // Assign generated IDs properly
+	            try (ResultSet genKeys = ps.getGeneratedKeys()) {
+	                int index = 0;
+	                while (genKeys.next()) {
+	                    int questionId = genKeys.getInt(1);
+	                    questionBank.getQuestions().get(index++).setId(questionId);
+	                }
+	            }
+
+	            try (PreparedStatement optionPs = connection.prepareStatement(Queries.insertOption)) {
+
+	                for (QuestionDto question : questionBank.getQuestions()) {
+	                	
+	                	System.out.println(question.getOptions());
+
+	                    for (Option option : question.getOptions()) {
+
+	                    	
+	                    	optionPs.setInt(1, question.getId());
+	                    	optionPs.setString(2, option.getOptionText());
+
+	                    	optionPs.setInt(4, option.getOptionMark());
+	        				if (option.getOptionProperties() != null) {
+	        					optionPs.setBoolean(3, true); // any way all blanks and Matching are correct
+	        					optionPs.setString(5, option.getOptionProperties().getProperties().toString());
+	        				} else {
+	        					optionPs.setBoolean(3, option.getCorrect());
+	        					optionPs.setString(5, "{}");
+	        				}
+
+	                        optionPs.addBatch();
+	                    }
+	                }
+
+	                int[] optionAffectedRows = optionPs.executeBatch();
+
+	                if (!Arrays.stream(optionAffectedRows).allMatch(r -> r > 0)) {
+	                    throw new SQLException("Not all options inserted");
+	                }
+	            }
+	        }
+
+	        connection.commit();
+	        return questionBank;
+
+	    } catch (SQLException e) {
+	        connection.rollback();
+	        throw e;
+	    } finally {
+	        connection.setAutoCommit(true);
+	    }
+	}
 }

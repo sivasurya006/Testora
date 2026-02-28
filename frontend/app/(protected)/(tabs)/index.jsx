@@ -103,7 +103,11 @@ export default function Index() {
                         setSearch={setSearch}
                     />
                     {createdClassrooms.length == 0 ? (
-                        <EmptyClassroom message="No classroom created" />
+                        <EmptyClassroom
+                            message="Start your teaching space by creating your first classroom."
+                            ctaText="Create New Classroom"
+                            onPress={() => setCreateModalVisible(true)}
+                        />
                     ) : <FlatList
                         numColumns={numColumns}
                         data={filteredClassrooms}
@@ -162,11 +166,12 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
 
     return (
         <View style={styles.topBar}>
-            <AppBoldText style={[styles.topBarHeader,
-                isMobile && {
-                    flex : 0
-                }]
-            }>My Classrooms</AppBoldText>
+            <View style={[styles.leftSection, isMobile && { flex: 0 }]}>
+                <AppBoldText style={styles.topBarHeader}>My Classrooms</AppBoldText>
+                <AppSemiBoldText style={styles.topBarSubText}>
+                    Build, assign, and track your classes in one place.
+                </AppSemiBoldText>
+            </View>
 
             <View style={[styles.rightSection,isMobile && {
                 flex : 0
@@ -287,7 +292,15 @@ const styles = StyleSheet.create({
     topBarHeader: {
         fontSize: 22,
         fontFamily: fonts.bold,
+    },
+    leftSection: {
         flex: 2
+    },
+    topBarSubText: {
+        fontSize: 13,
+        color: Colors.lightFont,
+        marginTop: 4,
+        marginBottom: 2,
     },
 
     addButton: {
@@ -371,5 +384,3 @@ const styles = StyleSheet.create({
         elevation: 5,
     }
 });
-
-

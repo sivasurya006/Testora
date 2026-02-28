@@ -14,6 +14,7 @@ import { AppRegularText } from '../../../../../../styles/fonts';
 import LoadingScreen from '../../../../../../src/components/LoadingScreen';
 import AIQuestionGeneratorBot from '../../../../../../src/components/AIQuestionGeneratorBot';
 
+const inFlightQuestionRequests = new Map();
 
 // {
 //     "marks": 5,
@@ -61,18 +62,25 @@ export default function Edit() {
     }
 
     useEffect(() => {
-        if (!testId) return
+        if (!testId || !classroomId) return;
+
         const fetchQuestions = async function () {
-            setIsLoading(true);
-            const questions = await getAllTestQuestion(classroomId, testId);
-            // console.log( makeResultToQuestion(questions[questions.length-1]))
-            setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
-            setIsLoading(false);
-        }
-        if (testId) {
-            fetchQuestions();
-        }
-    }, []);
+            try {
+                setIsLoading(true);
+                const questions = await getAllTestQuestion(classroomId, testId);
+                if (!questions || questions.length === 0) {
+                    setAllQuestions([]);
+                    setIsLoading(false);
+                    return;
+                }
+                setAllQuestions(questions.map(ques => makeResultToQuestion(ques)));
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchQuestions();
+    }, [classroomId, testId]);
 
     return (
         <View style={styles.container}>
@@ -166,7 +174,27 @@ export default function Edit() {
                 >
                     <Text style={styles.addNewText}>+</Text>
                 </Pressable>
-                <AIQuestionGeneratorBot onUseQuestion={(questionPayload) => addQuestion(questionPayload, false)} />
+                <AIQuestionGeneratorBot
+                    onUseQuestion={async (questions) => {
+                        const createdQuestions = await createAllQuestion(questions, classroomId, testId);
+                        if (!createdQuestions) {
+                            throw new Error('Failed to create AI question');
+                        }
+
+                        const questionList = Array.isArray(createdQuestions)
+                            ? createdQuestions
+                            : Array.isArray(createdQuestions.questions)
+                                ? createdQuestions.questions
+                                : [];
+
+                        if (questionList.length > 0) {
+                            setAllQuestions((prevQuestions) => [
+                                ...prevQuestions,
+                                ...questionList.map((question) => makeResultToQuestion(question))
+                            ]);
+                        }
+                    }}
+                />
             </View>
             {
                 isAddQuesModalVisible ? (
@@ -226,24 +254,41 @@ const styles = StyleSheet.create({
 })
 
 async function getAllTestQuestion(classroomId, testId) {
-    try {
-        const result = await api.get('/api/tests/getTestQuestions', {
-            headers: {
-                "X-ClassroomId": classroomId,
-                "X-TestId": testId
-            }
-        });
+    const requestKey = `${classroomId}:${testId}`;
+    if (inFlightQuestionRequests.has(requestKey)) {
+        return inFlightQuestionRequests.get(requestKey);
+    }
 
-        if (result?.status == 200 && result.data) {
-            console.log(result.data);
-            console.log("questions fetched successfully");
-            return result.data;
-        } else {
-            console.log("can't fetch questions");
+    const requestPromise = (async () => {
+        try {
+            const result = await api.get('/api/tests/getTestQuestions', {
+                headers: {
+                    "X-ClassroomId": classroomId,
+                    "X-TestId": testId
+                }
+            });
+
+            if (result?.status == 200 && result.data) {
+                console.log(result.data);
+                console.log("questions fetched successfully");
+                return result.data;
+            } else {
+                console.log("can't fetch questions");
+                return [];
+            }
+        } catch (err) {
+            console.log(err);
             return [];
+        } finally {
+            inFlightQuestionRequests.delete(requestKey);
         }
-    } catch (err) {
-        console.log(err);
+    })();
+
+    inFlightQuestionRequests.set(requestKey, requestPromise);
+
+    try {
+        return await requestPromise;
+    } catch {
         return [];
     }
 }
@@ -288,6 +333,27 @@ async function createNewQuestion(question, classroomId, testId) {
         if (result?.status == 200) {
             console.log("question created successfully");
             console.log(result.data);
+            return result.data;
+        } else {
+            console.log("can't create question");
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+
+async function createAllQuestion(questions, classroomId, testId) {
+    try {
+        const result = await api.post('/api/tests/createAllQuestion', { questions }, {
+            headers: {
+                "X-ClassroomId": classroomId,
+                "X-TestId": testId
+            }
+        })
+        if (result?.status == 200) {
+            console.log("question created successfully");
             return result.data;
         } else {
             console.log("can't create question");

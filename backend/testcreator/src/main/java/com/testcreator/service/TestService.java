@@ -7,6 +7,7 @@ import java.util.List;
 import com.testcreator.dao.ClassroomUsersDao;
 import com.testcreator.dao.SubmissionDto;
 import com.testcreator.dao.TestDao;
+import com.testcreator.dto.QuestionBankDto;
 import com.testcreator.dto.QuestionDto;
 import com.testcreator.dto.QuestionReportDto;
 import com.testcreator.dto.TestDto;
@@ -75,6 +76,10 @@ public class TestService {
 	public QuestionDto createNewQuestion(Context context,int testId,String questionText,QuestionType type,int marks,List<Option> options) throws SQLException{
 		new AccessService().require(Permission.CLASSROOM_TUTOR, context);
 		return testDao.createNewQuetion(testId, questionText, type, marks,options);
+	}
+	
+	public QuestionBankDto createAllQuestions(int testId, QuestionBankDto quetionBank) throws SQLException {
+		return testDao.createAllQuestions(testId, quetionBank);
 	}
 	
 	public QuestionDto getQuestionWithOption(int userId,int classroomId,int questionId) throws SQLException {
