@@ -6,7 +6,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import api from '../../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import AttemptCard from '../../../../../src/components/submissions/AttemptCard';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native';
 import GradeScreen from '../../../../../src/screens/GradeScreen';
 import DetailedTestReport from '../../../../../src/components/DetailedTestReport';
 import { AppSemiBoldText } from '../../../../../styles/fonts';
