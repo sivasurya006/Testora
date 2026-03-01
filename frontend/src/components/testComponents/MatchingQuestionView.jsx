@@ -21,7 +21,6 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
 
 
   const { width } = useWindowDimensions();
-  const isWide = width >= 600;
   const options = question.options;
 
   const [selectedLeft, setSelectedLeft] = useState(null);
@@ -35,17 +34,15 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
     console.log(answers)
   }, [answers])
 
-  // Initialize answers and restore saved selections when question changes
+  // Initialize answers and restore saved selections
   useEffect(() => {
-    const saved = selectedAnswers?.[question.questionId];
-    const newMatchedPairs = {};
-    const newUsedColors = {};
+    const saved = selectedAnswers[question.questionId];
     const initialAnswers = options.map((o, idx) => {
       const savedAnswer = saved ? saved[idx] : null;
       if (savedAnswer && savedAnswer.selectedRightIndex !== undefined) {
-        newMatchedPairs[idx] = savedAnswer.selectedRightIndex;
-        newUsedColors[idx] = savedAnswer.pairColor;
-        newUsedColors["right-" + savedAnswer.selectedRightIndex] = savedAnswer.pairColor;
+        matchedPairs[idx] = savedAnswer.selectedRightIndex;
+        usedColors[idx] = savedAnswer.pairColor;
+        usedColors["right-" + savedAnswer.selectedRightIndex] = savedAnswer.pairColor;
         return {
           optionId: o.optionId,
           selectedRightIndex: savedAnswer.selectedRightIndex,
@@ -54,18 +51,16 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
       }
       return { optionId: o.optionId, selectedRightIndex: undefined, pairColor: '' };
     });
-
-    setMatchedPairs(newMatchedPairs);
-    setUsedColors(newUsedColors);
     setAnswers(initialAnswers);
-    setSelectedLeft(null);
-    // maintain original right order instead of shuffling
-    setShuffledRight(options.map((item, index) => ({ ...item, originalIndex: index })));
-  }, [question.questionId, selectedAnswers]);
+    shuffleRight();
+  }, []);
 
-  // right items remain in their original order; no random shuffle needed
-  // function shuffleRight() { ... } removed
-
+  function shuffleRight() {
+    const shuffled = [...options]
+      .map((item, index) => ({ ...item, originalIndex: index }))
+      .sort(() => Math.random() - 0.5);
+    setShuffledRight(shuffled);
+  }
 
   function handleLeft(index) {
     if (matchedPairs[index] !== undefined) return;
@@ -102,7 +97,6 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
     };
     setAnswers(newAnswers);
 
-
     setSelectedAnswers({
       ...selectedAnswers,
       [question.questionId]: newAnswers
@@ -116,22 +110,18 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
     setUsedColors({});
     setAnswers(options.map(o => ({ optionId: o.optionId, selectedRightIndex: undefined, pairColor: '' })));
     setSelectedLeft(null);
-    // maintain original right ordering on reset
-    setShuffledRight(options.map((item, index) => ({ ...item, originalIndex: index })));
+    shuffleRight();
     setSelectedAnswers({
       ...selectedAnswers,
       [question.questionId]: options.map(o => ({ optionId: o.optionId, selectedRightIndex: undefined, pairColor: '' }))
     });
   }
 
-  // reorder feature removed per user request
-
-
   return (
     <View>
       <View style={styles.topBar}>
         <Pressable onPress={handleReset} style={styles.refreshBtn}>
-          <AppMediumText style={{ color: 'white', fontWeight: 'bold', marginRight: 8 }}>Reset</AppMediumText>
+          <AppMediumText style={{ color: 'white', fontWeight: 'bold' }}>Reset</AppMediumText>
           <SimpleLineIcons name="refresh" size={20} />
         </Pressable>
       </View>
@@ -144,9 +134,9 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
       />
 
 
-      <View style={[styles.container, isWide ? styles.row : styles.column]}>
+      <View style={styles.container}>
 
-        <View style={isWide ? { marginRight: 12 } : { marginBottom: 12, width: '100%' }}>
+        <View>
           {options.map((opt, index) => {
             const isMatched = matchedPairs[index] !== undefined;
             const pairColor = usedColors[index];
@@ -174,7 +164,7 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
             );
           })}
         </View>
-        <View style={isWide ? { marginRight: 12 } : { marginBottom: 12, width: '100%' }}>
+        <View>
           {shuffledRight.map((opt) => {
             const isMatched = Object.values(matchedPairs).includes(opt.originalIndex);
             const pairColor = usedColors["right-" + opt.originalIndex];
@@ -198,7 +188,7 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
             );
           })}
         </View>
-        <View style={[{ justifyContent: 'center' }, isWide ? {} : { width: '100%' }] }>
+        <View style={{ justifyContent: 'center' }}>
           {/* {Object.keys(matchedPairs).length === 0 && (
             <AppMediumText style={{ fontSize: 16, fontStyle: 'italic', color: Colors.gray }}>
               No matches yet
@@ -233,17 +223,12 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   container: {
-    // base container; direction changed via helpers
-    // spacing handled by margins on children
-  },
-  row: {
     flexDirection: 'row',
-  },
-  column: {
-    flexDirection: 'column',
+    gap: 20
   },
   box: {
     padding: 16,
+    // width: 160,
     minHeight: 60,
     borderWidth: 1,
     marginVertical: 8,
@@ -251,9 +236,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.borderColor,
     backgroundColor: Colors.white,
     justifyContent: 'center',
-    elevation: 2,
-    flex: 1,
-    maxWidth: 300 // prevent overly long boxes on wide screens
+    elevation: 2
   },
   selectedBox: {
     backgroundColor: "#E0F2FE"
@@ -272,9 +255,6 @@ const styles = StyleSheet.create({
     elevation: 3,
     flexDirection: 'row',
     alignItems: 'center',
-    // spacing handled via child margins
-  },
-  disabledBtn: {
-    opacity: 0.5
+    gap: 10
   }
 });

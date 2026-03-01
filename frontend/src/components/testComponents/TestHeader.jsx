@@ -58,7 +58,10 @@ export default function TestHeader({ data, onExit, onSubmit, onTimeEnd , forceSu
               <Text style={[styles.timer, timeLeft <= 60 && { color: '#DC2626' }]}>{formatTime(timeLeft)}</Text>
             </View>
           )}
-          <Pressable style={styles.primaryButton} onPress={onSubmit}>
+          <Pressable style={styles.primaryButton} onPress={() => {
+            setConfirmModalVisible(false);
+            onSubmit()
+          }}>
             <Text style={styles.primaryButtonText}>Submit</Text>
           </Pressable>
         </View>
