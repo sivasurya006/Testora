@@ -68,7 +68,7 @@ export default function JoinedClassrooms() {
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={Colors.primaryColor} />
             </View>
-          ) : allJoinedClassrooms.length != 0 ? (
+          ) : allJoinedClassrooms.length == 0 ? (
             <View style={styles.emptyStateContainer}>
               <View style={styles.emptyStateCard}>
                 <AppBoldText style={styles.emptyStateTitle}>No Joined Classrooms</AppBoldText>
