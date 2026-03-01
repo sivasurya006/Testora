@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Testora.svg" width="90" alt="Testora Logo"/>
+  <img src="assets/Testora.svg" width="90" alt="Testora Logo"/>
 </p>
 <h1 align="center">Testora</h1>
 <h3 align="center">Smart Testing Platform</h3>
