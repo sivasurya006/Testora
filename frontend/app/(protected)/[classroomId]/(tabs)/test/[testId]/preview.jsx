@@ -41,14 +41,6 @@ export default function Preview() {
 
     return (
         <View style={[styles.container, { paddingHorizontal: horizontalPadding, paddingTop: isMobile ? 10 : 18 }]}>
-            <View style={[styles.headerContainer, { maxWidth: contentMaxWidth }]}>
-                <TouchableOpacity
-                    onPress={() => router.canGoBack() && router.back()}
-                    style={styles.closeButton}
-                >
-                    <AntDesign name="close" size={24} color="black" />
-                </TouchableOpacity>
-            </View>
 
             {/* Preview Paper */}
             <View
@@ -63,6 +55,15 @@ export default function Preview() {
                     }
                 ]}
             >
+                <View style={[styles.headerContainer, { maxWidth: contentMaxWidth }]}>
+                    <TouchableOpacity
+                        onPress={() => router.canGoBack() && router.back()}
+                        style={styles.closeButton}
+                    >
+                        <AntDesign name="close" size={24} color="black" />
+                    </TouchableOpacity>
+                </View>
+
 
                 {isLoading ? (
                     <View style={styles.centerContent}>
