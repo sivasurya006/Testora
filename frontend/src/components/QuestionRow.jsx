@@ -118,7 +118,11 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
                         <ConfirmModal
                             message={"Are you sure you want to delete this question?"}
                             visible={deleteLoading}
-                            onConfirm={() => deleteQuestion(classroomId, question.questionId, allQuestions, setAllTestQuestions)} onCancel={() => setDeleteLoading(false)} />
+                            onConfirm={async () => {
+                                setIsLoading(true);
+                                await deleteQuestion(classroomId, question.questionId, allQuestions, setAllTestQuestions);
+                                setIsLoading(false)
+                            }} onCancel={() => setDeleteLoading(false)} />
                     ) : null
                 }
                 {
@@ -137,7 +141,7 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
                 }
             </View >
             {
-                (mode == 'grade' && question.type != 'FILL_BLANK' ) && (
+                (mode == 'grade' && question.type != 'FILL_BLANK') && (
                     <AppSemiBoldText style={{ fontSize: 12, alignSelf: 'flex-end', color: '#6B7280' }}>Option marks</AppSemiBoldText>
                 )
             }

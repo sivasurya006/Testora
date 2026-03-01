@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native'
+import { View, Text, Pressable, StyleSheet, FlatList, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Colors from '../../../../../../styles/Colors';
 import QuestionEditor from '../../../../../../src/components/QuestionEditor';
@@ -40,6 +40,8 @@ const inFlightQuestionRequests = new Map();
 export default function Edit() {
 
     const { classroomId, testId } = useGlobalSearchParams();
+    const { width } = useWindowDimensions();
+    const isSmallScreen = width < 768;
 
     const [allQuestions, setAllQuestions] = useState([]);
     const [isAddQuesModalVisible, setAddQuesModalVisible] = useState(false);
@@ -201,12 +203,17 @@ export default function Edit() {
                     <Portal>
                         <Modal
                             visible={isAddQuesModalVisible}
-                            transparent
-                            animationType='fade'
                             onRequestClose={closeAddQuesModal}
                             onDismiss={closeAddQuesModal}
+                            style={styles.editorModal}
+                            contentContainerStyle={[
+                                styles.editorModalContent,
+                                isSmallScreen && styles.editorModalContentMobile
+                            ]}
                         >
-                            <QuestionEditor onCancel={closeAddQuesModal} onConfirm={addQuestion} />
+                            <View style={styles.editorWrapper}>
+                                <QuestionEditor onCancel={closeAddQuesModal} onConfirm={addQuestion} />
+                            </View>
                         </Modal>
                     </Portal>
                 ) : null
@@ -226,6 +233,27 @@ const styles = StyleSheet.create({
         flex: 1,
         // width: "100%",
         paddingTop: 10,
+    },
+    editorModal: {
+        margin: 0,
+        justifyContent: 'center',
+    },
+    editorModalContent: {
+        flex: 1,
+        width: '100%',
+        maxWidth: '100%',
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+    },
+    editorModalContentMobile: {
+        paddingHorizontal: 0,
+        paddingVertical: 0,
+    },
+    editorWrapper: {
+        width: '100%',
+        maxHeight: '95%',
     },
     addNew: {
         position: 'absolute',

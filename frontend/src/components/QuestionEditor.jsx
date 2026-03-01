@@ -130,15 +130,15 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
     ];
 
     return (
-        <SafeAreaView edges={['top', 'bottom']} style={containerResponsiveStyle}>
+        <ScrollView style={containerResponsiveStyle}>
             <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
                     <View style={styles.headerLeft}>
                         <AntDesign name='question-circle' size={24} color={Colors.primaryColor} />
-                        <AppBoldText style={styles.modalHeadText} >{isEditMode ? 'Edit ' : "New " } Question</AppBoldText>
+                        <AppBoldText style={styles.modalHeadText} >{isEditMode ? 'Edit ' : "New "} Question</AppBoldText>
                     </View>
                     <Pressable onPress={onCancel} style={styles.closeBtn} accessibilityLabel="close">
-                        <AntDesign name='close' size={20} color={Colors.borderColor} />
+                        <AntDesign name='close' size={20} color={'black'} />
                     </Pressable>
                 </View>
 
@@ -159,7 +159,7 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
                         </View>
                     </View>
                     <View style={{ marginVertical: 10 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 10 }}>
                             <AppSemiBoldText style={{ fontSize: 14 }} >Question prompt</AppSemiBoldText>
                             {selectedType.value === 'FILL_BLANK' && (
                                 <View style={styles.addBlankActions}>
@@ -274,7 +274,7 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
                     </View>
                 </View>
             </View>
-        </SafeAreaView>
+        </ScrollView>
     )
 }
 
@@ -429,6 +429,7 @@ const styles = StyleSheet.create({
     modalHeadText: {
         fontSize: 22,
         fontWeight: '600',
+        marginLeft: 8
     },
     questionTypeModal: {
         flexDirection: 'row',
@@ -491,7 +492,8 @@ const styles = StyleSheet.create({
     },
     addBlankActions: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'wrap',
     },
     footerRow: {
         flexDirection: 'row',

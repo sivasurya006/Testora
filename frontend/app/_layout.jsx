@@ -4,6 +4,7 @@ import { Provider as PaperProvider } from "react-native-paper"
 import { MD3LightTheme } from 'react-native-paper';
 import { useFonts } from 'expo-font';
 import Colors from '../styles/Colors';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const theme = {
     ...MD3LightTheme,
@@ -12,8 +13,8 @@ const theme = {
         onSurface: '#000000',          // menu text
         onSurfaceVariant: 'gray',   // menu secondary text
         surface: '#ffffff',            // modal bg
-        primary : Colors.primaryColor
-        
+        primary: Colors.primaryColor
+
     },
 };
 
@@ -22,21 +23,23 @@ console.log({ ...MD3LightTheme.colors })
 
 export default function RootLayout() {
 
-  const [loaded] = useFonts({
-    PuviRegular: require('..//assets/fonts/Zoho Puvi Regular.ttf'),
-    PuviMedium: require('../assets/fonts/Zoho Puvi Medium.ttf'),
-    PuviSemiBold: require('../assets/fonts/Zoho Puvi Semibold.ttf'),
-    PuviBold: require('../assets/fonts/Zoho Puvi Bold.ttf'),
-  });
+    const [loaded] = useFonts({
+        PuviRegular: require('..//assets/fonts/Zoho Puvi Regular.ttf'),
+        PuviMedium: require('../assets/fonts/Zoho Puvi Medium.ttf'),
+        PuviSemiBold: require('../assets/fonts/Zoho Puvi Semibold.ttf'),
+        PuviBold: require('../assets/fonts/Zoho Puvi Bold.ttf'),
+    });
 
-  if (!loaded) return null;
+    if (!loaded) return null;
 
     return (
-        <AuthContextProvider>
-            <PaperProvider theme = {theme}>
-                <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
-            </PaperProvider>
-        </AuthContextProvider>
+        <SafeAreaProvider>
+            <AuthContextProvider>
+                <PaperProvider theme={theme}>
+                    <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
+                </PaperProvider>
+            </AuthContextProvider>
+        </SafeAreaProvider>
     )
-    
+
 }

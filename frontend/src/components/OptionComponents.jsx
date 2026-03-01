@@ -310,9 +310,7 @@ const BooleanComponent = ({ giveOptionMarks, options, setOptions, defaultOptions
  * 
  */
 
-
 const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, setMakeAllCaseSensitive, makeAllCaseSensitive }) => {
-
 
     const updateRadio = useRef(true);
 
@@ -337,118 +335,103 @@ const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, setMakeA
     const updateTextPart = (idx, text) => {
         const newTextParts = [...textParts]
         newTextParts[idx].value = text
-        // setQuestionText(questionText+text)
         setTextParts(newTextParts)
     }
 
     return (
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-            {
-                textParts.map((part, index) => {
-                    if (part.type === "text") {
-                        return (
+        <View style={styles.container}>
+            {textParts.map((part, index) => {
 
+                if (part.type === "text") {
+                    return (
+                        <View key={index} style={styles.card}>
                             <PaperTextInput
-                                key={index}
                                 value={part.value}
                                 onChangeText={(text) => updateTextPart(index, text)}
-                                style={[{
-                                    minWidth: 220,
-                                    // width : 220,
-                                    flex: 1,
-                                    marginHorizontal: 10,
-                                    backgroundColor: Colors.white,
-
-                                }]}
                                 multiline
-                                label={'Text'}
-                                mode='outlined'
+                                label="Text"
+                                mode="outlined"
                                 outlineColor={Colors.borderColor}
+                                style={styles.textInput}
                             />
-                        );
-                    }
+                        </View>
+                    );
+                }
 
-                    if (part.type === "blank") {
-                        return (
-                            <>
-                                <View
-                                    style={
-                                        [{
-                                            marginHorizontal: 10,
-                                            minWidth: 250,
-                                            flex: 1,
-                                            backgroundColor: Colors.white,
-                                            borderTopWidth: 0,
-                                            borderLeftWidth: 0,
-                                            borderRightWidth: 0,
-                                            borderBottomWidth: 2,
-                                            borderBottomColor: part.value.length > 0 ? 'green' : '#EE6C6E'
-                                        }]}
+                if (part.type === "blank") {
+                    const hasValue = part.value?.length > 0;
 
-                                >
-                                    <PaperTextInput
-                                        key={index}
-                                        value={part.value}
-                                        onChangeText={(text) => updateTextPart(index, text)}
-                                        multiline
-                                        label={'Blank ' + part.idx}
-                                        mode='outlined'
-                                        // outlineColor={Colors.borderColor}
-                                        outlineColor={'transparent'}
-                                        activeOutlineColor="transparent"
-                                        l
+                    return (
+                        <View key={index} style={styles.card}>
+                            
+                            <PaperTextInput
+                                value={part.value}
+                                onChangeText={(text) => updateTextPart(index, text)}
+                                multiline
+                                label={`Blank ${part.idx}`}
+                                mode="outlined"
+                                outlineColor="transparent"
+                                activeOutlineColor="transparent"
+                                style={[
+                                    styles.blankInput,
+                                    {
+                                        borderBottomColor: hasValue ? '#22C55E' : '#EF4444'
+                                    }
+                                ]}
+                            />
 
+                            <View style={styles.bottomRow}>
+
+                                {/* Case Sensitive Toggle */}
+                                <View style={styles.caseRow}>
+                                    <RadioButton
+                                        status={part.isCaseSensitive ? 'checked' : 'unchecked'}
+                                        onPress={() => {
+                                            const newTextParts = [...textParts];
+                                            newTextParts[index].isCaseSensitive = !part.isCaseSensitive;
+
+                                            if(!part.isCaseSensitive){
+                                                setMakeAllCaseSensitive(false)
+                                                updateRadio.current = !updateRadio.current;
+                                            }
+
+                                            setTextParts(newTextParts);
+                                        }}
+                                        color={Colors.primaryColor}
                                     />
-                                    <View style={{ marginTop: 2, flexDirection: 'row', justifyContent : 'space-between', alignItems: 'center' }} >
-                                        <View style={{ marginTop: 2, flexDirection: 'row', alignItems: 'center' }}>
-                                            <RadioButton
-                                                status={part.isCaseSensitive ? 'checked' : 'unchecked'}
-                                                onPress={() => {
-                                                    const newTextParts = [...textParts];
-                                                    newTextParts[index].isCaseSensitive = !part.isCaseSensitive;
-                                                    if(!part.isCaseSensitive){
-                                                        setMakeAllCaseSensitive(false)
-
-                                                        updateRadio.current = !updateRadio.current;
-                                                    }
-                                                    setTextParts(newTextParts);
-                                                }}
-                                                color={Colors.primaryColor}
-                                            />
-                                            <AppMediumText style={{ color: 'gray' }} >isCaseSensitive</AppMediumText>
-                                        </View>
-                                        {
-                                            giveOptionMarks ? (
-                                                <View style={{ marginTop: 2, flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                                                    <AppMediumText style={{ color: 'gray' }} >Marks</AppMediumText>
-                                                    <TextInput
-                                                        placeholder={`0`}
-                                                        inputMode='numeric'
-                                                        placeholderTextColor={'gray'}
-                                                        value={part.blankMark}
-                                                        onChangeText={text => {
-                                                            const newTextParts = [...textParts];
-                                                            newTextParts[index].blankMark = text;
-                                                            setTextParts(newTextParts);
-                                                        }}
-                                                        style={[styles.input, { maxWidth: 80, height: 20 }]}
-                                                    />
-                                                </View>
-                                            ) : null
-                                        }
-                                    </View>
+                                    <AppMediumText style={styles.caseText}>
+                                        Case Sensitive
+                                    </AppMediumText>
                                 </View>
-                            </>
-                        );
-                    }
-                })}
+
+                                {/* Marks */}
+                                {giveOptionMarks && (
+                                    <View style={styles.marksContainer}>
+                                        <AppMediumText style={styles.marksLabel}>
+                                            Marks
+                                        </AppMediumText>
+                                        <TextInput
+                                            placeholder="0"
+                                            inputMode="numeric"
+                                            placeholderTextColor="gray"
+                                            value={part.blankMark}
+                                            onChangeText={text => {
+                                                const newTextParts = [...textParts];
+                                                newTextParts[index].blankMark = text;
+                                                setTextParts(newTextParts);
+                                            }}
+                                            style={styles.marksInput}
+                                        />
+                                    </View>
+                                )}
+                            </View>
+                        </View>
+                    );
+                }
+            })}
         </View>
     );
-
-
-
 };
-
 //  { optionId: '', optionText: 'True', optionMark: '' , matchingOptionProperties : { match : "" } },
 
 const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
@@ -667,6 +650,77 @@ const styles = StyleSheet.create({
     textPartContainer: {
         gap: 10,
         margin: 5
+    },
+      container: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 16,
+        paddingVertical: 8
+    },
+
+    card: {
+        flex: 1,
+        minWidth: 260,
+        backgroundColor: Colors.white,
+        borderRadius: 12,
+        padding: 14,
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowRadius: 6,
+        elevation: 2,
+    },
+
+    textInput: {
+        backgroundColor: Colors.white,
+    },
+
+    blankInput: {
+        backgroundColor: Colors.white,
+        borderBottomWidth: 2,
+        borderRadius: 8,
+    },
+
+    bottomRow: {
+        marginTop: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    caseRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    caseText: {
+        color: '#6B7280',
+        fontSize: 13,
+    },
+
+    marksContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#F9FAFB',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
+    },
+
+    marksLabel: {
+        color: '#6B7280',
+        fontSize: 13,
+    },
+
+    marksInput: {
+        width: 50,
+        height: 32,
+        paddingHorizontal: 6,
+        borderWidth: 1,
+        borderColor: Colors.borderColor,
+        borderRadius: 6,
+        textAlign: 'center',
+        backgroundColor: Colors.white,
     }
 });
 
