@@ -9,31 +9,50 @@ import { AppRegularText, AppSemiBoldText } from '../../styles/fonts';
 
 export default function MatchingQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
     const { width } = useWindowDimensions();
-    const enableHorizontalScroll = (mode === 'report' || mode == 'grade') && width < 768;
+    const enableHorizontalScroll = (mode === 'report' || mode == 'grade' || mode == 'preview' || mode == 'edit') && width < 768;
+    const sectionWrapperProps = enableHorizontalScroll
+        ? {
+            horizontal: true,
+            showsHorizontalScrollIndicator: true,
+            contentContainerStyle: styles.horizontalScrollContent
+        }
+        : {};
 
     if (mode === 'edit') {
-        return (
-            <View style={styles.container}>
-                <QuestionRow mode={'edit'} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
-                <View style={styles.optionsList}>
-                    {options.map((opt, i) => {
-                        return (
-                            <View style={{ flexDirection: 'row', columnGap: 20, marginVertical: 10 }} >
-                                <PaperInput
-                                    label={`Left pair ${i + 1}`}
-                                    mode='outlined'
-                                    value={opt.optionText}
-                                />
-                                <PaperInput
-                                    label={`right pair ${i + 1}`}
-                                    mode='outlined'
-                                    value={opt.matchingOptionProperties?.match}
-                                />
-                            </View>
-                        );
-                    })}
-                </View>
+        const editRows = (
+            <View style={[styles.optionsList, enableHorizontalScroll && styles.matchingRowsContainer]}>
+                {options.map((opt, i) => {
+                    return (
+                        <View key={i + ""} style={styles.matchingRow} >
+                            <PaperInput
+                                style={styles.pairInput}
+                                label={`Left pair ${i + 1}`}
+                                mode='outlined'
+                                value={opt.optionText}
+                            />
+                            <PaperInput
+                                style={styles.pairInput}
+                                label={`right pair ${i + 1}`}
+                                mode='outlined'
+                                value={opt.matchingOptionProperties?.match}
+                            />
+                        </View>
+                    );
+                })}
             </View>
+        );
+
+        return (
+            <ScrollView style={styles.container} contentContainerStyle={styles.containerContent}>
+                <QuestionRow mode={'edit'} question={question} questionNumber={questionNumber} setAllTestQuestions={setAllQuestions} allQuestions={allQuestions} />
+                {enableHorizontalScroll ? (
+                    <ScrollView {...sectionWrapperProps}>
+                        {editRows}
+                    </ScrollView>
+                ) : (
+                    editRows
+                )}
+            </ScrollView>
         );
     }
 
@@ -42,14 +61,6 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
             acc[item.optionId] = item;
             return acc;
         }, {}) || {};
-
-    const sectionWrapperProps = enableHorizontalScroll
-        ? {
-            horizontal: true,
-            showsHorizontalScrollIndicator: true,
-            contentContainerStyle: styles.horizontalScrollContent
-        }
-        : {};
 
     return (
         <>
@@ -142,6 +153,9 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginHorizontal: 10
     },
+    containerContent: {
+        paddingBottom: 16,
+    },
 
     questionRow: {
         flexDirection: 'row',
@@ -200,7 +214,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     pairInput: {
-        width: 260,
+        flex: 1,
     },
     optionMarkText: {
         marginLeft: 'auto',

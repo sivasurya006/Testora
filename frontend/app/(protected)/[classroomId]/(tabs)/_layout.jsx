@@ -6,10 +6,12 @@ import Colors from '../../../../styles/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ClassroomTabBar } from '../../../../src/components/ClassroomTobBar';
 import { fonts } from '../../../../styles/fonts';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 export default function ClassroomLayout() {
 
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
+    const isSmallScreen = !isLargeScreen;
     const [isTabBarVisible, setIsTabBarVisible] = useState(true);
 
     return (
@@ -24,11 +26,11 @@ export default function ClassroomLayout() {
                             backgroundColor: Colors.secondaryColor
                         },
                         android: {
-                            // height: 60,
+                            height: 95,
                             backgroundColor: Colors.secondaryColor
                         },
                         ios: {
-                            // height: 60,
+                            height: 85,
                             backgroundColor: Colors.secondaryColor
                         }
                     }),
@@ -67,12 +69,21 @@ export default function ClassroomLayout() {
                         <MaterialCommunityIcons name="view-dashboard" size={22} color={color} />
                     )
                 }} />
-                <Tabs.Screen name='test' options={{
-                    title: 'Tests',
-                    tabBarIcon: ({ color }) => (
-                        <FontAwesome name="book" size={22} color={color} />
-                    )
-                }} />
+                <Tabs.Screen
+                    name='test'
+                    options={({ route }) => {
+                        const focusedRouteName = getFocusedRouteNameFromRoute(route) ?? '';
+                        const isInsideTestDetails = focusedRouteName.includes('[testId]');
+
+                        return {
+                            title: 'Tests',
+                            headerShown: !(isSmallScreen && isInsideTestDetails),
+                            tabBarIcon: ({ color }) => (
+                                <FontAwesome name="book" size={22} color={color} />
+                            )
+                        };
+                    }}
+                />
                 <Tabs.Screen name='students' options={{
                     title: 'Trainees',
                     tabBarIcon: ({ color }) => (

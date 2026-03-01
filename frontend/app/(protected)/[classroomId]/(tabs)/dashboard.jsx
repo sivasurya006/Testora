@@ -134,7 +134,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <StatusBar style="dark" backgroundColor={Colors.bgColor} />
+       <StatusBar style="light" translucent />
       <SafeAreaView style={styles.safeArea} edges={[]}> 
         <LoadingScreen visible={isLoading} />
 

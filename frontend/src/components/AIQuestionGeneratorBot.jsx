@@ -348,14 +348,14 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
             <View style={styles.headerRow}>
               <View style={styles.titleRow}>
                 <AntDesign name="robot" size={20} color={Colors.primaryColor} />
-                <AppBoldText style={styles.title}>Ask. Analyze. Achieve.</AppBoldText>
+                <AppBoldText style={styles.title}>Ask, Analyze, Achieve</AppBoldText>
               </View>
               <Pressable onPress={() => setIsOpen(false)}>
                 <AntDesign name="close" size={20} color={Colors.secondaryColor} />
               </Pressable>
             </View>
 
-            <AppSemiBoldText style={styles.label}>Create</AppSemiBoldText>
+            <AppSemiBoldText style={styles.label}>Ask AI to generate questions</AppSemiBoldText>
             <TextInput
               style={styles.input}
               multiline
@@ -380,7 +380,7 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
                         Q{index + 1}. {getPreviewQuestionText(question)}
                       </AppSemiBoldText>
                       <AppRegularText style={styles.previewMeta}>
-                        Type: {question.type} | Marks: {question.marks}
+                        Type: {getType(question.type)} | Marks: {question.marks}
                       </AppRegularText>
 
                       {question.options?.map((option, optionIdx) => {
@@ -413,11 +413,11 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
             ) : null}
 
             <View style={styles.actionRow}>
-              <Pressable style={styles.cancelBtn} onPress={() => setIsOpen(false)}>
+              {/* <Pressable style={styles.cancelBtn} onPress={() => setIsOpen(false)}>
                 <AppRegularText>Close</AppRegularText>
-              </Pressable>
-              <Pressable style={styles.askBtn} onPress={askAi}>
-                {loading || saving ? (
+              </Pressable> */}
+              <Pressable style={styles.askBtn} onPress={askAi} disabled={loading || saving}>
+                {loading  ? (
                   <ActivityIndicator size="small" color={Colors.white} />
                 ) : (
                   <AppRegularText style={{ color: Colors.white }}>
@@ -442,6 +442,23 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
       </Modal>
     </>
   );
+}
+
+function getType(type) {
+  switch (type) {
+    case 'MCQ':
+      return 'Multiple Choice';
+    case 'SINGLE':
+      return 'Single Choice';
+    case 'BOOLEAN':
+      return 'True/False';
+    case 'FILL_BLANK':
+      return 'Fill in the Blank';
+    case 'MATCHING':
+      return 'Matching';
+    default:
+      return type;
+  }
 }
 
 const styles = StyleSheet.create({

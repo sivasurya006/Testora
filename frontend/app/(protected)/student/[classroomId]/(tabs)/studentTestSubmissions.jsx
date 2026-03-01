@@ -1,35 +1,21 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Colors from '../../../../../styles/Colors';
-import SubmissionsHeader from '../../../../../src/components/submissions/SubmissionsHeader';
 import { ActivityIndicator } from 'react-native-paper';
 import api from '../../../../../util/api';
-import { useGlobalSearchParams } from 'expo-router';
-
+import { useGlobalSearchParams, useFocusEffect } from 'expo-router';
 import { FlatList } from 'react-native-gesture-handler';
-import GradeScreen from '../../../../../src/screens/GradeScreen';
-import { AppSemiBoldText } from '../../../../../styles/fonts';
-import DetailedTestReport from '../../../../../src/components/DetailedTestReport';
 import StudentTest from '../../../../../src/components/StudentTest';
-import StudentTestLists from './tests';
-import { useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
 import { TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 export default function StudentSubmissions() {
 
-
   const [SubmittedTest, setSubmittedTest] = useState([]);
-  const { classroomId, testId } = useGlobalSearchParams();
-  const [Loading, setLoading] = useState();
+  const { classroomId } = useGlobalSearchParams();
+  const [Loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     setLoading(true);
-  //     const get = async () => await getSubmittedTests(setSubmittedTest, classroomId);
-  //     get();
-  //     setLoading(false);
-  //   }, [classroomId])
-  // );
 
   useFocusEffect(
     useCallback(() => {
@@ -43,91 +29,127 @@ export default function StudentSubmissions() {
     }, [classroomId])
   );
 
-  if (Loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-  // const filteredTests = SubmittedTest?.filter((item) => {
-  //   if (!searchText) return true;
-
-  //   return item.tesTitle
-  //     ?.toLowerCase()
-  //     .includes(searchText.toLowerCase());
-  // });
-
-
   const filteredTests = SubmittedTest.filter((item) =>
     item?.testTitle
       ?.toLowerCase()
       .includes(searchText.toLowerCase())
   );
+
   async function getSubmittedTests() {
     try {
       const result = await api.get(`/studenttest/getStudentSubmittedTests`, {
-
         headers: {
           'X-ClassroomId': classroomId
-
         }
       });
+
       if (result?.status == 200) {
         setSubmittedTest(result.data.reverse());
-        console.log("submitted ", result.data);
-        console.log("FIRST OBJECT:", result.data[0]);
-      } else {
-
-        console.log(`can't fetch created classrooms`);
       }
     } catch (err) {
-
-
-
       console.log(err)
     }
   }
 
-  console.log("check if it pass", SubmittedTest)
+  if (Loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
 
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={18} color={Colors.dimBg} />
-
-        <TextInput
-          placeholder="Search by test name"
-          value={searchText}
-          onChangeText={setSearchText}
-          style={styles.searchInput}
-        />
+      {/* Search Bar */}
+      <View style={styles.searchWrapper}>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={18} color="#9CA3AF" />
+          <TextInput
+            placeholder="Search by test name"
+            placeholderTextColor="#9CA3AF"
+            value={searchText}
+            onChangeText={setSearchText}
+            style={styles.searchInput}
+          />
+        </View>
       </View>
 
+      {/* List */}
       <FlatList
         data={filteredTests}
         keyExtractor={(item) => item.testId.toString()}
         renderItem={({ item }) => (
-          <StudentTest data={item} isStudentTest={false} />
+          <View style={styles.cardWrapper}>
+            <StudentTest data={item} isStudentTest={false} />
+          </View>
         )}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No submissions found</Text>
+          </View>
+        }
       />
 
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  searchContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  searchWrapper: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
     backgroundColor: Colors.white,
   },
 
-  searchInput: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: "#F3F4F6",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    fontSize: 14,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 44,
   },
-})
+
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: "#111827",
+  },
+
+  listContent: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+
+  cardWrapper: {
+    marginBottom: 12,
+  },
+
+  emptyContainer: {
+    marginTop: 60,
+    alignItems: 'center',
+  },
+
+  emptyText: {
+    fontSize: 14,
+    color: "#6B7280",
+  },
+});

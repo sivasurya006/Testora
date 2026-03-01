@@ -435,13 +435,21 @@ export default function Test() {
           <Text style={styles.quesNumber}>{currentIndex + 1} / {questions.length}</Text>
 
           <View style={[styles.content, { width: containerWidth }, (currentQuestion.type == 'FILL_BLANK' || currentQuestion.type == 'MATCHING') && styles.wideQuestionContent]}>
-            {currentQuestion.type == 'FILL_BLANK' ? (
-              <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
-            ) : currentQuestion.type == 'MATCHING' ? (
-              <MatchingQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
-            ) : (
-              <QuestionView selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} question={currentQuestion} />
-            )}
+            <ScrollView
+              horizontal
+              nestedScrollEnabled
+              showsHorizontalScrollIndicator={!isWide}
+              style={styles.questionHorizontalScroll}
+              contentContainerStyle={styles.questionHorizontalContent}
+            >
+              {currentQuestion.type == 'FILL_BLANK' ? (
+                <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
+              ) : currentQuestion.type == 'MATCHING' ? (
+                <MatchingQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
+              ) : (
+                <QuestionView selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} question={currentQuestion} />
+              )}
+            </ScrollView>
           </View>
         </ScrollView>
 
@@ -500,7 +508,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   wideQuestionContent: {
     alignItems: 'center',
@@ -550,6 +559,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 100,
     paddingTop: 8,
+  },
+  questionHorizontalScroll: {
+    width: '100%',
+  },
+  questionHorizontalContent: {
+    minWidth: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sidebar: {
     width: 240,

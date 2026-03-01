@@ -84,7 +84,7 @@ export default function StudentList() {
 
   return (
     <>
-      <StatusBar translucent />
+       <StatusBar style="light" translucent />
       <SafeAreaView style={styles.container} edges={[]}>
         <TopBar
           searchText={searchText}
@@ -105,7 +105,7 @@ export default function StudentList() {
                 <ActivityIndicator size="large" color={Colors.primaryColor} />
               ) : (
                 <Text style={styles.emptyText}>
-                  {hasSearchQuery ? 'No students match your search' : 'No students found'}
+                  {hasSearchQuery ? 'No trainees match your search' : 'No trainees found'}
                 </Text>
               )}
             </View>

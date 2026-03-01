@@ -33,11 +33,11 @@ export default function StudentLayout() {
                         backgroundColor: Colors.secondaryColor,
                     },
                     android: {
-                        // height: 60,
+                        height: 95,
                         backgroundColor: Colors.secondaryColor,
                     },
                     ios: {
-                        // height: 60,
+                        height: 85,
                         backgroundColor: Colors.secondaryColor,
                     },
                 }),
