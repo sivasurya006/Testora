@@ -91,8 +91,7 @@ export default function AttemptCard({ attempt, handleGrade, handleShowReport, is
                     {isStudent ?
                         null : (
                             <>
-                                <TouchableOpacity style={styles.button}
-
+                                <TouchableOpacity style={[styles.button, !isLargeScreen && { marginTop: 20,marginLeft: 'auto',}]}
                                     onPress={() => {
                                         if (attempt.status == 'EVALUATED') {
                                             handleShowReport(attempt.attemptId)
@@ -225,7 +224,8 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         // paddingHorizontal: 18,
         borderRadius: 8,
-        width: 120
+        width: 120,
+        // alignSelf : 'center',
     },
 
     buttonText: {
