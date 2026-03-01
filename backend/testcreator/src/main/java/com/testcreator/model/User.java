@@ -55,7 +55,7 @@ public class User {
 		return name;
 	}
 
-	public int getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
