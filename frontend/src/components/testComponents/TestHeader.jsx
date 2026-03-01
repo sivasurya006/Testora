@@ -5,7 +5,7 @@ import Colors from '../../../styles/Colors'
 import { fonts } from '../../../styles/fonts'
 import ConfirmModal from '../modals/ConfirmModal'
 
-export default function TestHeader({ data, onExit, onSubmit, onTimeEnd }) {
+export default function TestHeader({ data, onExit, onSubmit, onTimeEnd , forceSubmit }) {
   const [timeLeft, setTimeLeft] = useState(data.duration * 60);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
@@ -65,7 +65,11 @@ export default function TestHeader({ data, onExit, onSubmit, onTimeEnd }) {
       </View>
 
       <ConfirmModal
-        onConfirm={onExit}
+        onConfirm={ async () => {
+           setConfirmModalVisible(false);
+          await forceSubmit();
+          onExit();
+        }}
         onCancel={() => setConfirmModalVisible(false)}
         visible={confirmModalVisible}
         message={"Exit test?\nIf you leave now, your current progress will not be saved."}

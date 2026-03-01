@@ -116,7 +116,8 @@ export default function Test() {
     }
   }
 
-  function onTimeEnd() {
+  async function onTimeEnd() {
+    await submitAnswer();
     setTimesupModalVisible(true);
   }
 
@@ -306,10 +307,10 @@ export default function Test() {
 
   const wsRef = useRef(null);
 
-function connectWebSocket(url) {
+  function connectWebSocket(url) {
     if (!url) return;
     const wsUrl = url;
-    console.log("connecting... ",wsUrl)
+    console.log("connecting... ", wsUrl)
     try {
       const ws = new WebSocket(wsUrl);
 
@@ -413,7 +414,7 @@ function connectWebSocket(url) {
   return (
     <View style={styles.screen}>
       <LoadingScreen visible={isSubmitting} />
-      <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} onExit={onExit} />
+      <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} forceSubmit={submitAnswer} onExit={onExit} />
 
       <View style={[styles.mainArea, isWide && styles.mainAreaWide]}>
         {isWide && renderQuestionNavigator()}
@@ -455,8 +456,9 @@ function connectWebSocket(url) {
         normal={true}
         visible={backConfirmVisible}
         onCancel={() => setBackConfirmVisible(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
           setBackConfirmVisible(false);
+          await submitAnswer();
           onExit();
         }}
       />
@@ -496,13 +498,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 18,
     alignSelf: 'center',
-    flex : 1,
-    justifyContent : 'center',
-    alignItems : 'center'
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   wideQuestionContent: {
     alignItems: 'center',
-    justifyContent : 'center'
+    justifyContent: 'center'
   },
   quesNumber: {
     fontSize: 20,

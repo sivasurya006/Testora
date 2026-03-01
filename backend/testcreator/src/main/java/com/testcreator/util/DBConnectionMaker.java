@@ -40,7 +40,7 @@ public class DBConnectionMaker {
 
 		System.out.println("Connection url " + jdbcUrl);
 		this.connection = DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
-		System.out.println("New connection maked");
+		System.out.println("New connection maked on WS");
 	}
 
 	public static DBConnectionMaker getInstance(ServletContext context) throws ClassNotFoundException, SQLException {
