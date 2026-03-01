@@ -56,7 +56,7 @@ export default function ProtectedLayout() {
                         backgroundColor: Colors.secondaryColor
                     },
                     android: {
-                        height: 95,
+                        height: 105,
                         backgroundColor: Colors.secondaryColor
                     },
                     ios: {

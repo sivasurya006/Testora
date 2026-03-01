@@ -25,13 +25,13 @@ export default function MatchingQuestion({ mode, question, options, questionNumb
                     return (
                         <View key={i + ""} style={styles.matchingRow} >
                             <PaperInput
-                                style={styles.pairInput}
+                                style={[styles.pairInput, styles.editPairInput]}
                                 label={`Left pair ${i + 1}`}
                                 mode='outlined'
                                 value={opt.optionText}
                             />
                             <PaperInput
-                                style={styles.pairInput}
+                                style={[styles.pairInput, styles.editPairInput]}
                                 label={`right pair ${i + 1}`}
                                 mode='outlined'
                                 value={opt.matchingOptionProperties?.match}
@@ -215,6 +215,10 @@ const styles = StyleSheet.create({
     },
     pairInput: {
         flex: 1,
+    },
+    editPairInput: {
+        flexBasis: 0,
+        minWidth: 250,
     },
     optionMarkText: {
         marginLeft: 'auto',

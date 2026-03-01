@@ -188,8 +188,17 @@
 			<interceptor-ref name="apiStack" />
 			<interceptor-ref name="classroomIdInterceptor" />
 		</action>
-
-
+		
+		
+		
+		<action name="profile"
+			class="com.testcreator.actions.UserAction" method="getUserProfileDetails">
+			<result name="success" type="json">
+				<param name="root">user</param>
+				<param name="excludeNullProperties">true</param>
+			</result>
+		</action>
+		
 	</package>
 
 	<package name="tests" namespace="/api/api/tests"

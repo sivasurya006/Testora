@@ -2,6 +2,8 @@ package com.testcreator.actions;
 
 
 
+import java.sql.SQLException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +14,16 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.util.ServletContextAware;
 
 import com.testcreator.dto.ApiError;
+import com.testcreator.dto.SuccessDto;
 import com.testcreator.dto.UserAuthenticationDto;
+import com.testcreator.exception.ClassroomNotNoundException;
+import com.testcreator.exception.UnauthorizedException;
 import com.testcreator.exception.UserNotFoundException;
+import com.testcreator.model.Context;
+import com.testcreator.model.Permission;
+import com.testcreator.model.User;
+import com.testcreator.service.AccessService;
+import com.testcreator.service.TestService;
 import com.testcreator.service.Userservice;
 import com.testcreator.util.InputValidatorUtil;
 import com.testcreator.util.JwtUtil;
@@ -24,11 +34,12 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 	private String userName;
 	private String userEmail;
 	private String userPassword;
-	private int userId;
+	private Integer userId;
 	private HttpServletResponse response;
 	private HttpServletRequest request;
 	private ServletContext context;
 	private UserAuthenticationDto authDto;
+	private User user;
 	
 	public String signin() {
 		
@@ -160,6 +171,23 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 
 	    return SUCCESS;
 	}
+	
+	public String getUserProfileDetails() {
+		int userId = Integer.parseInt((String) request.getAttribute("userId"));
+		try {
+			Userservice userservice = new Userservice();
+			this.user = userservice.getUserDetails(userId);
+			user.setUserId(null);
+			return SUCCESS;
+		} catch (UnauthorizedException e) {
+			setError(new ApiError("Authentication failed", 401));
+			e.printStackTrace();
+			return LOGIN;
+		} catch (ClassroomNotNoundException e) {
+			setError(new ApiError("No record match", 404));
+			return NOT_FOUND;
+		}
+	}
 
 	public int getUserId() {
 		return userId;
@@ -190,6 +218,10 @@ public class UserAction extends JsonApiAction implements ServletResponseAware, S
 	@Override
 	public void setServletRequest(HttpServletRequest request) {		
 		this.request = request;
+	}
+
+	public User getUser() {
+		return user;
 	}
 
 	

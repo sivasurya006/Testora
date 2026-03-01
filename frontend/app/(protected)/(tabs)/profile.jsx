@@ -1,29 +1,60 @@
-import { View, Text, StyleSheet, Pressable, Platform, Image } from 'react-native'
-import React, { useContext } from 'react'
-import { AppBoldText } from '../../../styles/fonts'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { AppBoldText, AppSemiBoldText } from '../../../styles/fonts'
 import Colors from '../../../styles/Colors'
 import { AuthContext } from '../../../util/AuthContext'
-import { Avatar } from 'react-native-paper'
+import { ActivityIndicator } from 'react-native-paper'
+import api from '../../../util/api'
 
 export default function profile() {
-
   const { signOut, user } = useContext(AuthContext);
-  const email = user?.email || '';
-  const photoUri = user?.photoUrl;
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // fall back to initials if no photo
-  const initials = user?.name ? user.name.split(' ').map(n => n[0]).join('') : email.charAt(0).toUpperCase();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setIsLoading(true);
+        const result = await api.get('/api/profile');
+        if (result?.status === 200 && result?.data) {
+          setProfile(result.data);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const email = profile?.email || user?.email || '';
+  const name = profile?.name || user?.name || '';
+  const registeredAt = profile?.registeredAt
+    ? new Date(profile.registeredAt * 1000).toLocaleDateString('en-GB', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    : '-';
 
   return (
     <View style={styles.container}>
       <View style={styles.profileBox}>
-        {photoUri ? (
-          <Avatar.Image size={100} source={{ uri: photoUri }} />
+        {isLoading ? (
+          <ActivityIndicator size="large" color={Colors.primaryColor} />
         ) : (
-          <Avatar.Text size={100} label={initials} />
+          <>
+            <AppBoldText style={styles.nameText}>{name || '-'}</AppBoldText>
+            <Text style={styles.emailText}>{email || '-'}</Text>
+            <View style={styles.metaBlock}>
+              <View style={styles.metaRow}>
+                <AppSemiBoldText style={styles.metaKey}>Registered</AppSemiBoldText>
+                <Text style={styles.metaValue}>{registeredAt}</Text>
+              </View>
+            </View>
+          </>
         )}
-        <Text style={styles.emailText}>{email}</Text>
-        <Text style={styles.roleText}>Learner</Text>
       </View>
 
       <Pressable
@@ -43,17 +74,47 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   profileBox: {
-    alignItems: 'center',
+    alignItems: 'stretch',
     marginBottom: 40,
+    width: '100%',
+    maxWidth: 360,
+    paddingHorizontal: 16,
+  },
+  nameText: {
+    marginTop: 2,
+    fontSize: 20,
+    color: Colors.secondaryColor,
+    textAlign: 'left',
   },
   emailText: {
-    marginTop: 10,
-    fontSize: 18,
+    marginTop: 8,
+    fontSize: 16,
     color: Colors.darkFont,
+    textAlign: 'left',
   },
-  roleText: {
-    fontSize: 14,
+  metaBlock: {
+    width: '100%',
+    marginTop: 18,
+    borderWidth: 1,
+    borderColor: Colors.borderColor,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: Colors.white,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 4,
+  },
+  metaKey: {
     color: Colors.lightFont,
+    fontSize: 14,
+  },
+  metaValue: {
+    color: Colors.secondaryColor,
+    fontSize: 14,
   },
   logoutButton: {
     backgroundColor: Colors.dimBg,

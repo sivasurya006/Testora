@@ -58,5 +58,8 @@ public class Userservice {
 	}
 
 
+	public User getUserDetails(int userId) {
+		return userDao.getUserById(userId);
+	}
 	
 }

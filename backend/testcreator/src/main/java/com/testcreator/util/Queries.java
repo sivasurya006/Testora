@@ -144,4 +144,6 @@ public class Queries {
 			+ "left join Attempts at on at.test_id = q.test_id and at.attempt_id = ? left join Answers an on at.attempt_id = an.attempt_id and an.question_id = q.question_id and an.option_id = o.option_id where q.test_id = ?;";
 	
 	public static final String getAnswersForGrade = "select q.question_id , q.type, q.question_text, q.marks, o.option_id, o.option_text, o.is_correct, o.option_mark, o.properties, an.answer_id, an.properties as selected_properties from Questions q left join Options o on q.question_id = o.question_id left join Attempts at on at.test_id = q.test_id and at.attempt_id = ? left join Answers an on at.attempt_id = an.attempt_id and an.question_id = q.question_id and an.option_id = o.option_id where q.test_id = ?";
+	
+	public static final String userProfile = "select name , email from Users where user_id = ?";
 } 
