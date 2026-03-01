@@ -1,31 +1,18 @@
-import { View, Text, Pressable, StyleSheet, useWindowDimensions, Platform } from 'react-native'
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
 import { router, useGlobalSearchParams } from 'expo-router';
-import { AppMediumText } from '../../styles/fonts';
+import { AppMediumText, AppSemiBoldText } from '../../styles/fonts';
 
 export default function StudentTest({ data, isStudentTest = true }) {
 
     const { classroomId } = useGlobalSearchParams();
     const { width } = useWindowDimensions();
 
-    const { classroomId } = useGlobalSearchParams();
+    const remaining = data.remainingAttempts;
 
-    async function requestFullscreenOnStart() {
-        if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-        if (!document.documentElement?.requestFullscreen) return;
-        if (document.fullscreenElement) return;
-
-        try {
-            await document.documentElement.requestFullscreen();
-        } catch (err) {
-            console.log('Fullscreen request failed:', err);
-        }
-    }
-
-    async function handleStart() {
-        await requestFullscreenOnStart();
+    function handleStart() {
         router.replace({
             pathname: '/student/[classroomId]/test/[testId]/start',
             params: {
@@ -275,42 +262,97 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Colors.gray,
     },
- attemptBadge: {
-    backgroundColor: "#FEF3C7",   // light orange
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-},
-attemptText: {
-    fontSize: 12,
-    color: "#B45309",   // dark amber text
-    fontWeight: "600",
-},
-finishedBadge: {
-    backgroundColor: "#DCFCE7",   // light green
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-},
-finishedText: {
-    color: "#15803D",   // dark green text
-    fontSize: 12,
-    fontWeight: "600",
-},
-newBadge: {
-    backgroundColor: "#DBEAFE",   // light blue
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-},
-newText: {
-    color: "#1D4ED8",   // dark blue text
-    fontSize: 12,
-    fontWeight: "600",
-}
+    attemptBadge: {
+        backgroundColor: "#FEF3C7",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 6,
+    },
+    attemptText: {
+        fontSize: 12,
+        color: "#B45309",
+        fontWeight: "600",
+    },
+    finishedBadge: {
+        backgroundColor: "#DCFCE7",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 6,
+    },
+    finishedText: {
+        color: "#15803D",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    newBadge: {
+        backgroundColor: "#DBEAFE",
+        paddingHorizontal: 18,
+        paddingVertical: 8,
+        borderRadius: 6,
+    },
+    newText: {
+        color: "#1D4ED8",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    rightSide: {
+        marginTop: 15,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%"
+    },
+    attemptsContainer: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    attemptNumber: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: Colors.primaryColor,
+
+    },
+    attemptLabel: {
+        fontSize: 13,
+        color: Colors.gray,
+    },
+    enter: {
+        backgroundColor: Colors.primaryColor,
+        height: 30,
+        width: 30,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    button: {
+        backgroundColor: Colors.primaryColor,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 6,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 12,
+    },
+    topRight: {
+        flexDirection: "row",
+        alignItems: "flex-end",
+        gap: 25,
+    },
+    dateContainer: {
+        marginTop: 12,
+    },
+
+    dateRight: {
+        alignItems: 'flex-end',
+    },
+
+    dateLeft: {
+        alignItems: 'flex-start',
+    },
+
+    dateText: {
+        fontSize: 12,
+        color: Colors.gray,
+    },
 });
-
-

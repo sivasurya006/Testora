@@ -52,7 +52,6 @@ public class StudentTestDao {
 					testDto.setAttemptedTestStatus(rs.getString("status"));
 //					testDto.setAttemptId(rs.getInt("attemptId"));
 					testDto.setUserId(rs.getInt("userId"));
-					System.out.println("in dao"+rs.getInt("userId"));
 					if (rs.getBoolean("is_timed")) {
 						testDto.setDurationMinutes(rs.getInt("duration_minutes"));
 					}

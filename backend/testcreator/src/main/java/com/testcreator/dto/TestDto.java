@@ -25,6 +25,34 @@ public class TestDto {
 	private Integer testCount;
 	private Integer attemptCount;
 	private Integer remainingAttempts;
+	private int userId;
+	private String AttemptedTestStatus;
+
+	
+	public int getUserId() {
+		return userId;
+	}
+
+
+
+	public void setUserId(int userId) {
+
+		this.userId = userId;
+	}
+
+	
+
+	public String getAttemptedTestStatus() {
+		return AttemptedTestStatus;
+	}
+
+
+
+	public void setAttemptedTestStatus(String attemptedTestStatus) {
+		AttemptedTestStatus = attemptedTestStatus;
+	}
+
+
 
 	public Integer getSubmittedTestCount() {
 		return submittedTestCount;
