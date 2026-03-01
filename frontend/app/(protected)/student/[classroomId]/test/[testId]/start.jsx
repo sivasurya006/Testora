@@ -414,7 +414,15 @@ export default function Test() {
   return (
     <View style={styles.screen}>
       <LoadingScreen visible={isSubmitting} />
-      <TestHeader data={data.test} onTimeEnd={onTimeEnd} onSubmit={onSubmit} forceSubmit={submitAnswer} onExit={onExit} />
+      <TestHeader
+        data={data.test}
+        onTimeEnd={onTimeEnd}
+        onSubmit={onSubmit}
+        forceSubmit={submitAnswer}
+        onExit={onExit}
+        questionAreaLeftInset={isWide ? 266 : 0}
+        questionAreaRightInset={isWide ? 12 : 0}
+      />
 
       <View style={[styles.mainArea, isWide && styles.mainAreaWide]}>
         {isWide && renderQuestionNavigator()}
@@ -435,21 +443,21 @@ export default function Test() {
           <Text style={styles.quesNumber}>{currentIndex + 1} / {questions.length}</Text>
 
           <View style={[styles.content, { width: containerWidth }, (currentQuestion.type == 'FILL_BLANK' || currentQuestion.type == 'MATCHING') && styles.wideQuestionContent]}>
-            <ScrollView
-              horizontal
-              nestedScrollEnabled
-              showsHorizontalScrollIndicator={!isWide}
-              style={styles.questionHorizontalScroll}
-              contentContainerStyle={styles.questionHorizontalContent}
-            >
-              {currentQuestion.type == 'FILL_BLANK' ? (
-                <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
-              ) : currentQuestion.type == 'MATCHING' ? (
+            {currentQuestion.type == 'FILL_BLANK' ? (
+              <FillInBlankQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
+            ) : currentQuestion.type == 'MATCHING' ? (
+              <ScrollView
+                horizontal
+                nestedScrollEnabled
+                showsHorizontalScrollIndicator={!isWide}
+                style={styles.matchingHorizontalScroll}
+                contentContainerStyle={styles.matchingHorizontalContent}
+              >
                 <MatchingQuestionView question={currentQuestion} selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} />
-              ) : (
-                <QuestionView selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} question={currentQuestion} />
-              )}
-            </ScrollView>
+              </ScrollView>
+            ) : (
+              <QuestionView selectedAnswers={selectedAnswers} setSelectedAnswers={setSelectedAnswers} question={currentQuestion} />
+            )}
           </View>
         </ScrollView>
 
@@ -509,7 +517,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
   },
   wideQuestionContent: {
     alignItems: 'center',
@@ -560,10 +567,10 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     paddingTop: 8,
   },
-  questionHorizontalScroll: {
+  matchingHorizontalScroll: {
     width: '100%',
   },
-  questionHorizontalContent: {
+  matchingHorizontalContent: {
     minWidth: '100%',
     alignItems: 'center',
     justifyContent: 'center',

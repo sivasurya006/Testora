@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 10,
-        backgroundColor: Colors.bgColor
+        backgroundColor: Colors.bgColor,
     },
     emptyText: {
         fontSize: 20,

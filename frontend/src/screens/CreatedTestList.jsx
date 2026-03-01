@@ -14,7 +14,7 @@ import LoadingScreen from '../components/LoadingScreen'
 
 
 
-const classroom_width = 360;
+const classroom_width = 340;
 const { width } = Dimensions.get('window')
 
 export default function CreatedTestList({ filter, search, isCreateTestModalVisible, setCreateTestModalVisible }) {
@@ -112,43 +112,45 @@ export default function CreatedTestList({ filter, search, isCreateTestModalVisib
 
       <LoadingScreen visible={isLoading} />
 
-      <FlatList
-        data={filteredTests}
-        numColumns={numColumns}
-        key={numColumns}
-        keyExtractor={(item, index) => item.testId.toString()}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        renderItem={({ item }) => (
-          <TestBanner allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
-        )}
-      //   columnWrapperStyle={
-      //     numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
-      // }
-      />
+      <View style={styles.listArea}>
+        <FlatList
+          data={filteredTests}
+          numColumns={numColumns}
+          key={numColumns}
+          keyExtractor={(item, index) => item.testId.toString()}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          renderItem={({ item }) => (
+            <TestBanner allTests={allCreatedTests} setAllTests={setCreatedTest} data={item} />
+          )}
+        //   columnWrapperStyle={
+        //     numColumns > 1 ? { justifyContent: 'center' , gap : 25 } : null
+        // }
+        />
 
-      {
-        filter == 'published' && filteredTests.length == 0 ? (
-          <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -20 }] }}>
-            <AppMediumText>No Published Tests</AppMediumText>
-          </View>
-        ) : (filter == 'drafts' && filteredTests.length == 0) ? (
-          <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -20 }] }}>
-            <AppMediumText>No Draft Tests</AppMediumText>
-          </View>
-        ) : (
-          (filteredTests.length == 0 && !isLoading) && (
-            <View style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -100 }, { translateY: -20 }] }}>
-              <Pressable
-                style={styles.addButton}
-                onPress={() => setCreateTestModalVisible(true)}
-              >
-                <AntDesign name="plus" size={16} color={Colors.white} />
-                <Text style={styles.addButtonText}>Create your first Test</Text>
-              </Pressable>
+        {
+          filter == 'published' && filteredTests.length == 0 ? (
+            <View style={styles.emptyStateOverlay}>
+              <AppMediumText>No Published Tests</AppMediumText>
             </View>
+          ) : (filter == 'drafts' && filteredTests.length == 0) ? (
+            <View style={styles.emptyStateOverlay}>
+              <AppMediumText>No Draft Tests</AppMediumText>
+            </View>
+          ) : (
+            (filteredTests.length == 0 && !isLoading) && (
+              <View style={styles.emptyStateOverlay}>
+                <Pressable
+                  style={styles.addButton}
+                  onPress={() => setCreateTestModalVisible(true)}
+                >
+                  <AntDesign name="plus" size={16} color={Colors.white} />
+                  <Text style={styles.addButtonText}>Create your first Test</Text>
+                </Pressable>
+              </View>
+            )
           )
-        )
-      }
+        }
+      </View>
 
       {
         isCreateTestModalVisible &&
@@ -223,6 +225,10 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 16,
     backgroundColor: Colors.bgColor
   },
+  listArea: {
+    flex: 1,
+    position: 'relative',
+  },
 
   topBar: {
     // flexDirection: 'row',
@@ -230,6 +236,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     // paddingTop: 10,
     gap: 10,
+    backgroundColor: Colors.bgColor,
     paddingBottom: 10,
     ...(Platform.OS === 'web' && {
       // maxWidth: 900,
@@ -253,9 +260,20 @@ const styles = StyleSheet.create({
     marginTop: 40,
     color: Colors.gray,
   },
+  emptyStateOverlay: {
+     position: 'absolute',
+     top: 0,
+     left: 0,
+     right: 0,
+     bottom: 0,
+     justifyContent: 'center',
+     alignItems: 'center',
+     backgroundColor: 'rgba(255, 255, 255, 0.8)',
+     zIndex: 1,
+  },
   addButton: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     backgroundColor: Colors.primaryColor,
     paddingHorizontal: 12,
     paddingVertical: 8,

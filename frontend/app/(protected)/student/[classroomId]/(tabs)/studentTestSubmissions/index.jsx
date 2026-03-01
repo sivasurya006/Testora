@@ -1,16 +1,11 @@
 import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Colors from '../../../../../styles/Colors';
-import SubmissionsHeader from '../../../../../src/components/submissions/SubmissionsHeader';
+import Colors from '../../../../../../styles/Colors';
 import { ActivityIndicator } from 'react-native-paper';
-import api from '../../../../../util/api';
+import api from '../../../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
 import { FlatList } from 'react-native';
-import GradeScreen from '../../../../../src/screens/GradeScreen';
-import { AppSemiBoldText } from '../../../../../styles/fonts';
-import DetailedTestReport from '../../../../../src/components/DetailedTestReport';
-import StudentTest from '../../../../../src/components/StudentTest';
-import StudentTestLists from './tests';
+import StudentTest from '../../../../../../src/components/StudentTest';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { TextInput } from 'react-native';

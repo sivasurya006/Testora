@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, FlatList, Pressable, useWindowDimensions, TextInput, Platform, Dimensions, Modal, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import api from '../../../util/api';
-import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
@@ -10,7 +9,6 @@ import { useRouter } from 'expo-router';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import InputModal from '../../../src/components/modals/InputModal';
 import { AuthContext } from '../../../util/AuthContext';
 import { ActivityIndicator } from 'react-native-paper';
 
@@ -24,7 +22,6 @@ export default function JoinedClassrooms() {
   const [selectedClassroomId, setSelectedClassroomId] = useState(null);
   const { width } = useWindowDimensions();
   const isLargeScreen = width > 821;
-  const [createModalVisible, setCreateModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
@@ -63,7 +60,6 @@ export default function JoinedClassrooms() {
 
          
           <TopBar
-            setCreateModalVisible={setCreateModalVisible}
             isLargeScreen={isLargeScreen}
             search={search}
             setSearch={setSearch}
@@ -72,11 +68,15 @@ export default function JoinedClassrooms() {
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={Colors.primaryColor} />
             </View>
-          ) : allJoinedClassrooms.length == 0 ? (
-            <EmptyClassroom
-              ctaText="No Joined Classrooms"
-              message="Use the Join button to enter a classroom with an invite link."
-            />
+          ) : allJoinedClassrooms.length != 0 ? (
+            <View style={styles.emptyStateContainer}>
+              <View style={styles.emptyStateCard}>
+                <AppBoldText style={styles.emptyStateTitle}>No Joined Classrooms</AppBoldText>
+                {/* <AppSemiBoldText style={styles.emptyStateMessage}>
+                  Classroom joining is not available yet.
+                </AppSemiBoldText> */}
+              </View>
+            </View>
           ) : <FlatList
             numColumns={numColumns}
             data={filteredJoinedClassrooms}
@@ -121,9 +121,7 @@ async function getAllJoinedClassrooms(setAllJoinedClassrooms) {
   }
 }
 
-function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
-
-  const [isHovered, setIsHovered] = useState(false);
+function TopBar({ isLargeScreen, search, setSearch }) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const { signOut } = useContext(AuthContext);
   const { width } = useWindowDimensions();
@@ -140,7 +138,8 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
         </View>
 
         <View style={[styles.rightSection, isMobile && {
-          flex: 0
+          flex: 1,
+          width: '100%'
         }]}>
 
           <View style={[styles.searchContainer,
@@ -158,7 +157,7 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
               style={styles.searchInput}
             />
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[
               styles.joinBtn,
               isHovered && styles.hoveredButton
@@ -175,7 +174,7 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
               />
               <Text style={styles.joinBtnText}>Join</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {
             isLargeScreen && (
               <TouchableOpacity
@@ -248,6 +247,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  emptyStateContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  emptyStateCard: {
+    width: '100%',
+    maxWidth: width > 400 ? 380 : 340,
+    minHeight: 250,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 26,
+    rowGap: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderStyle: 'dotted',
+    borderColor: Colors.primaryColor + '66',
+    backgroundColor: Colors.white,
+    marginVertical: 8,
+    marginHorizontal: 10,
+    boxShadow: Colors.blackBoxShadow,
+    elevation: 6,
+  },
+  emptyStateTitle: {
+    color: Colors.secondaryColor,
+    fontSize: 18,
+  },
+  emptyStateMessage: {
+    color: Colors.lightFont,
+    textAlign: 'center',
+    fontSize: 14,
+  },
   topBar: {
     flexDirection: 'row',
     margin: 20,
@@ -311,13 +343,14 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   searchContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.white,
     borderRadius: 10,
     paddingHorizontal: 12,
     height: 38,
-    width: '58%',
+    width: 'auto',
     borderWidth: 1,
     borderColor: Colors.primaryColor + '30',
   },
@@ -332,7 +365,7 @@ const styles = StyleSheet.create({
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     gap: 12,
     marginRight: 30,
     width: '100%',

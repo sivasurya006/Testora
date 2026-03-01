@@ -1,15 +1,15 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Colors from '../../../../../styles/Colors'
-import SubmissionsHeader from '../../../../../src/components/submissions/SubmissionsHeader'
+import Colors from '../../../../../../styles/Colors'
+import SubmissionsHeader from '../../../../../../src/components/submissions/SubmissionsHeader'
 import { ActivityIndicator } from 'react-native-paper';
-import api from '../../../../../util/api';
+import api from '../../../../../../util/api';
 import { useGlobalSearchParams } from 'expo-router';
-import AttemptCard from '../../../../../src/components/submissions/AttemptCard';
+import AttemptCard from '../../../../../../src/components/submissions/AttemptCard';
 import { FlatList } from 'react-native';
-import GradeScreen from '../../../../../src/screens/GradeScreen';
-import DetailedTestReport from '../../../../../src/components/DetailedTestReport';
-import { AppSemiBoldText } from '../../../../../styles/fonts';
+import GradeScreen from '../../../../../../src/screens/GradeScreen';
+import DetailedTestReport from '../../../../../../src/components/DetailedTestReport';
+import { AppSemiBoldText } from '../../../../../../styles/fonts';
 
 export default function StudentSubmissions() {
 

@@ -5,7 +5,15 @@ import Colors from '../../../styles/Colors'
 import { fonts } from '../../../styles/fonts'
 import ConfirmModal from '../modals/ConfirmModal'
 
-export default function TestHeader({ data, onExit, onSubmit, onTimeEnd , forceSubmit }) {
+export default function TestHeader({
+  data,
+  onExit,
+  onSubmit,
+  onTimeEnd,
+  forceSubmit,
+  questionAreaLeftInset = 0,
+  questionAreaRightInset = 0
+}) {
   const [timeLeft, setTimeLeft] = useState(data.duration * 60);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
@@ -51,20 +59,49 @@ export default function TestHeader({ data, onExit, onSubmit, onTimeEnd , forceSu
           </Text>
         </View>
 
-        <View style={[styles.rightSection, !isWide && styles.narrowRight]}>
-          {data.duration && (
+        {isWide ? (
+          <View style={styles.submitSection}>
+            <Pressable style={styles.primaryButton} onPress={() => {
+              setConfirmModalVisible(false);
+              onSubmit()
+            }}>
+              <Text style={styles.primaryButtonText}>Submit</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <View style={[styles.rightSection, styles.narrowRight]}>
+            {data.duration && (
+              <View style={styles.timerContainer}>
+                <Ionicons name='timer-outline' size={24} color={Colors.secondaryColor} />
+                <Text style={[styles.timer, timeLeft <= 60 && { color: '#DC2626' }]}>{formatTime(timeLeft)}</Text>
+              </View>
+            )}
+            <Pressable style={styles.primaryButton} onPress={() => {
+              setConfirmModalVisible(false);
+              onSubmit()
+            }}>
+              <Text style={styles.primaryButtonText}>Submit</Text>
+            </Pressable>
+          </View>
+        )}
+
+        {isWide && data.duration && (
+          <View
+            pointerEvents="none"
+            style={[
+              styles.timerOverlay,
+              {
+                left: questionAreaLeftInset,
+                right: questionAreaRightInset,
+              }
+            ]}
+          >
             <View style={styles.timerContainer}>
-              <Ionicons name='timer-outline' size={20} color={Colors.secondaryColor} />
+              <Ionicons name='timer-outline' size={24} color={Colors.secondaryColor} />
               <Text style={[styles.timer, timeLeft <= 60 && { color: '#DC2626' }]}>{formatTime(timeLeft)}</Text>
             </View>
-          )}
-          <Pressable style={styles.primaryButton} onPress={() => {
-            setConfirmModalVisible(false);
-            onSubmit()
-          }}>
-            <Text style={styles.primaryButtonText}>Submit</Text>
-          </Pressable>
-        </View>
+          </View>
+        )}
       </View>
 
       <ConfirmModal
@@ -108,6 +145,18 @@ const styles = StyleSheet.create({
     minWidth: 0,
     flex: 1,
   },
+  submitSection: {
+    marginLeft: 'auto',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  timerOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   closeBtn: {
     width: 34,
     height: 34,
@@ -133,26 +182,26 @@ const styles = StyleSheet.create({
   timerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 20,
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 24,
     backgroundColor: Colors.bgColor,
   },
   timer: {
-    fontSize: 15,
+    fontSize: 19,
     fontFamily: fonts.bold,
     color: Colors.secondaryColor,
   },
   primaryButton: {
     backgroundColor: Colors.primaryColor,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 22,
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 28,
   },
   primaryButtonText: {
     color: Colors.white,
     fontFamily: fonts.medium,
-    fontSize: 14,
+    fontSize: 18,
   },
 });
