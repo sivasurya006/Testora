@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="testora.png" width="160" alt="Testora Logo"/>
+  <img src="Testora.svg" width="160" alt="Testora Logo"/>
 </p>
 
 <h1 align="center">📘 Testora</h1>
