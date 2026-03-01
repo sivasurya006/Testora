@@ -1,359 +1,338 @@
-📘 Testora
-Smart Assessment & Classroom Testing Platform
-📌 Overview
+<p align="center">
+  <img src="assets/testora-logo.png" width="160" alt="Testora Logo"/>
+</p>
 
-Testora is a secure, AI-powered digital assessment platform designed for corporate training institutes and modern learning environments.
+<h1 align="center">📘 Testora</h1>
+<h3 align="center">Smart Assessment & Classroom Testing Platform</h3>
 
-It enables any user to instantly create classrooms, build intelligent tests, enforce strict exam security, analyze performance, and manage submissions — all within a streamlined, analytics-driven ecosystem.
+---
 
-Unlike traditional trainer-trainee restricted systems, Testora offers flexible role capability, allowing any registered user to:
+## 📌 Overview
 
-Create classrooms
+Testora is a **secure, AI-powered digital assessment platform** designed for corporate training institutes and modern learning environments.
 
-Publish tests
+It enables any user to:
 
-Attempt tests in joined classrooms
+- 🏫 Instantly create classrooms  
+- 📝 Build intelligent tests  
+- 🔐 Enforce strict exam security  
+- 📊 Analyze performance  
+- 📦 Manage submissions  
 
-Monitor performance
+All within a streamlined, analytics-driven ecosystem.
 
-Enforce secure examination rules
+Unlike traditional trainer–trainee restricted systems, **Testora offers flexible role capability**, allowing any registered user to:
 
-Testora combines automation, AI-assisted test creation, advanced analytics, and exam security enforcement into a single professional platform.
+- Create classrooms  
+- Publish tests  
+- Attempt tests in joined classrooms  
+- Monitor performance  
+- Enforce secure examination rules  
 
-🎯 Problem It Solves
+Testora combines **automation, AI-assisted test creation, advanced analytics, and exam security enforcement** into a single professional platform.
+
+---
+
+<p align="center">
+  <img src="assets/dashboard-preview.png" width="850"/>
+</p>
+
+---
+
+# 🎯 Problem It Solves
 
 Traditional digital test systems face major challenges:
 
-Manual test creation effort
+- ❌ Manual test creation effort  
+- ❌ Weak exam security (tab switching, cheating)  
+- ❌ No AI-assisted question generation  
+- ❌ Complicated classroom coordination  
+- ❌ Limited analytics visibility  
+- ❌ Manual grading delays  
+- ❌ Poor submission tracking  
 
-Weak exam security (tab switching, cheating)
+### ✅ Testora solves these by delivering:
 
-No AI-assisted question generation
+- AI-powered test creation  
+- Automated validation & grading  
+- Advanced classroom analytics  
+- Secure exam environment  
+- Structured attempt tracking  
+- Seamless reporting  
 
-Complicated classroom coordination
+---
 
-Limited analytics visibility
+# 👤 User Model (Flexible Role System)
 
-Manual grading delays
-
-Poor submission tracking
-
-Testora solves these by delivering:
-
-AI-powered test creation
-
-Automated validation & grading
-
-Advanced classroom analytics
-
-Secure exam environment
-
-Structured attempt tracking
-
-Seamless reporting
-
-👤 User Model (Flexible Role System)
-
-Testora does not restrict users strictly as "Trainer" or "Trainee".
+Testora does **not** restrict users strictly as "Trainer" or "Trainee".
 
 Any registered user can:
 
-Create classrooms
+- Create classrooms  
+- Join classrooms  
+- Create and publish tests  
+- Attempt tests in enrolled classrooms  
+- View analytics and reports  
 
-Join classrooms
+### Ideal For:
 
-Create and publish tests
+- Corporate trainers  
+- Training coordinators  
+- HR teams  
+- Skill development programs  
+- Peer evaluation environments  
 
-Attempt tests in enrolled classrooms
+---
 
-View analytics and reports
-
-This flexible model supports:
-
-Corporate trainers
-
-Training coordinators
-
-HR teams
-
-Skill development programs
-
-Peer evaluation environments
-
-🏗️ Core Platform Structure
+# 🏗️ Core Platform Structure
 
 After login, users see:
 
-1️⃣ Created Classrooms
+## 1️⃣ Created Classrooms
 
 Classrooms created by the user.
 
 Each Classroom Card Displays:
 
-Classroom Name
+- Classroom Name  
+- Created Date  
+- Number of Participants  
+- Number of Active Tests  
+- Rename Option  
+- Delete Option  
 
-Created Date
+---
 
-Number of Participants
-
-Number of Active Tests
-
-Rename Option
-
-Delete Option
-
-2️⃣ Enrolled Classrooms
+## 2️⃣ Enrolled Classrooms
 
 Classrooms joined via invite link.
 
 Inside each enrolled classroom:
 
-Tests Section
+- Tests Section  
+- Submissions Section  
 
-Submissions Section
+---
 
-📊 Classroom Dashboard (Analytics Engine)
+# 📊 Classroom Dashboard (Analytics Engine)
 
 Each classroom includes a powerful analytics dashboard:
 
-Total Participants
+- 📈 Line Chart – Test vs Maximum Attempts  
+- 🥧 Pie Chart – Participants vs Tests Distribution  
+- 👥 Total Participants  
+- 📝 Total Tests  
+- 📊 Submission Percentage  
+- 🏆 Top 5 Performing Participants  
+- 📋 Recently Published 5 Tests  
+- 📉 Performance Trends Overview  
 
-Total Tests
+This enables real-time corporate training performance tracking.
 
-Line Chart – Test vs Maximum Attempts
+---
 
-Pie Chart – Participants vs Tests Distribution
+<p align="center">
+  <img src="assets/analytics.png" width="850"/>
+</p>
 
-Submission Percentage
+---
 
-Recently Published 5 Tests
+# 📝 Test Management System
 
-Top 5 Performing Participants
+## 🗂 Test Tabs
 
-Performance Trends Overview
+- All Tests  
+- Submissions  
+- Published  
+- Drafts  
 
-This enables corporate training performance tracking in real time.
+---
 
-📝 Test Management System
-Test Tabs
-
-All Tests
-
-Submissions
-
-Published
-
-Drafts
-
-📋 Test Creation
+## 📋 Test Creation
 
 Tests can be created:
 
-Manually
+- Manually  
+- Using AI-generated questions  
 
-Using AI-generated questions
+### Supported Question Types:
 
-Supported Question Types:
+- Multiple Choice  
+- Single Choice  
+- True or False  
+- Fill in the Blank  
+- Matching  
 
-Multiple Choice
+---
 
-Single Choice
-
-True or False
-
-Fill in the Blank
-
-Matching
-
-🧠 AI-Powered Question Generation
+# 🧠 AI-Powered Question Generation
 
 Testora includes AI-assisted test creation to:
 
-Generate structured questions instantly
-
-Reduce manual effort
-
-Improve question quality
-
-Speed up assessment creation
+- Generate structured questions instantly  
+- Reduce manual effort  
+- Improve question quality  
+- Speed up assessment creation  
 
 This dramatically reduces preparation time for corporate trainers.
 
-🔄 Test Attempt Workflow
+---
+
+# 🔄 Test Attempt Workflow
 
 Each Test Card Displays:
 
-Start / Reattempt Button
+- ▶️ Start / Reattempt Button  
+- 🔁 Remaining Attempts  
+- ⚙️ Auto-Correction Status  
+- ⏳ Timed / Untimed Mode  
+- 🔄 Limited / Unlimited Attempts  
+- 📅 Creation Date  
 
-Remaining Attempts
+---
 
-Auto-Correction Status
-
-Timed / Untimed Mode
-
-Limited / Unlimited Attempts
-
-Creation Date
-
-After Attempt
+## After Attempt
 
 Each attempt provides:
 
-Marks Scored
+- 📊 Marks Scored  
+- 📈 Performance Chart  
+- ⏱️ Time Taken  
+- 🕒 Submission Time  
+- 📄 Detailed Report View  
 
-Performance Chart
+### Two Tabs Available:
 
-Time Taken
+- To Be Graded  
+- Completed  
 
-Submission Time
+---
 
-Detailed Report View
-
-Two Tabs Available:
-
-To Be Graded
-
-Completed
-
-🔐 Advanced Exam Security System
+# 🔐 Advanced Exam Security System
 
 Testora includes enterprise-grade security controls:
 
-🚫 Tab Switch Detection
+### 🚫 Tab Switch Detection
 
 If a user switches tabs during a test:
 
-Violation is recorded
+- Violation is recorded  
+- Warning triggered  
+- Auto submission (if configured)  
 
-Warning triggered
+---
 
-Auto submission (if configured)
-
-⛔ Copy / Paste Restriction
+### ⛔ Copy / Paste Restriction
 
 Prevents content extraction during tests.
 
-⚠️ Auto Submission on Violation
+---
+
+### ⚠️ Auto Submission on Violation
 
 Test is automatically submitted when:
 
-Security violations exceed allowed limits.
+- Security violations exceed allowed limits  
 
 These features ensure fair, secure, and malpractice-resistant assessments.
 
-📈 Performance & Reporting
+---
+
+# 📈 Performance & Reporting
 
 Each test attempt includes:
 
-Visual Performance Chart
+- Visual Performance Chart  
+- Attempt History  
+- Graded vs Pending Attempts  
+- Time Analysis  
+- Detailed Score Breakdown  
 
-Attempt History
+Helps organizations measure:
 
-Graded vs Pending Attempts
+- Skill progression  
+- Attempt behavior  
+- Engagement levels  
+- Improvement patterns  
 
-Time Analysis
+---
 
-Detailed Score Breakdown
+# 📦 Submission Management
 
-This helps organizations measure:
+In the Submissions Section, users can view:
 
-Skill progression
-
-Attempt behavior
-
-Engagement levels
-
-Improvement patterns
-
-📦 Submission Management
-
-In the Submissions Section:
-
-Users can view:
-
-Submitted Tests
-
-To Be Graded Attempts
-
-Completed Corrections
-
-Report Downloads
+- Submitted Tests  
+- To Be Graded Attempts  
+- Completed Corrections  
+- Report Downloads  
 
 All attempts are clearly categorized and tracked.
 
-🔗 Classroom Collaboration
+---
 
-Invite Link Generation
+# 🔗 Classroom Collaboration
 
-Real-time participant enrollment
+- Invite Link Generation  
+- Real-time participant enrollment  
+- Attempt visibility control  
+- Publish / Unpublish test controls  
 
-Attempt visibility control
+---
 
-Publish / Unpublish test controls
+# 🚀 Key Features
 
-🚀 Key Features
+- 📋 Dynamic Classroom Creation  
+- 🧠 AI Question Generation  
+- 🔐 Secure Exam Environment  
+- 📊 Real-Time Analytics Dashboard  
+- 📈 Performance Tracking  
+- 📦 Structured Submission Management  
+- 🔄 Multiple Attempt Handling  
+- 📝 Auto & Manual Grading  
+- 📉 Visual Reports & Charts  
+- ⚙️ Flexible User Role Model  
 
-📋 Dynamic Classroom Creation
+---
 
-🧠 AI Question Generation
+# 🛠️ Technology Stack
 
-🔐 Secure Exam Environment
+- Frontend: Modern Web Framework  
+- Backend: RESTful API Architecture  
+- Database: Structured Relational Database  
+- AI Integration: AI-powered question engine  
+- Security Layer: Client-side & server-side validation  
+- Analytics Engine: Chart-based visualization system  
 
-📊 Real-Time Analytics Dashboard
+---
 
-📈 Performance Tracking
+# 🌍 Ideal Use Cases
 
-📦 Structured Submission Management
+- Corporate Training Institutes  
+- HR Skill Assessments  
+- Internal Company Evaluations  
+- Certification Programs  
+- Employee Upskilling Platforms  
+- Bootcamps & Training Academies  
 
-🔄 Multiple Attempt Handling
+---
 
-📝 Auto & Manual Grading
+# 🎯 Why Testora?
 
-📉 Visual Reports & Charts
-
-⚙️ Flexible User Role Model
-
-🛠️ Technology Stack (Example Section – Customize if needed)
-
-Frontend: Modern Web Framework
-
-Backend: RESTful API Architecture
-
-Database: Structured Relational Database
-
-AI Integration: AI-powered question engine
-
-Security Layer: Client-side & server-side validation
-
-Analytics Engine: Chart-based visualization system
-
-(You can replace this with your actual stack if needed.)
-
-🌍 Ideal Use Cases
-
-Corporate Training Institutes
-
-HR Skill Assessments
-
-Internal Company Evaluations
-
-Certification Programs
-
-Employee Upskilling Platforms
-
-Bootcamps & Training Academies
-
-🎯 Why Testora?
-
-Testora is not just a testing tool.
-It is a secure, intelligent, analytics-driven corporate assessment ecosystem.
+Testora is not just a testing tool.  
+It is a **secure, intelligent, analytics-driven corporate assessment ecosystem**.
 
 It combines:
 
-✔ AI
-✔ Security
-✔ Automation
-✔ Analytics
-✔ Flexibility
+✔ AI  
+✔ Security  
+✔ Automation  
+✔ Analytics  
+✔ Flexibility  
 
 Into one powerful platform.
+
+---
+
+<p align="center">
+  <strong>© 2026 Testora — Smart. Secure. Scalable.</strong>
+</p>
