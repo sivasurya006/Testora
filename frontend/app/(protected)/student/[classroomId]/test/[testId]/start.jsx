@@ -72,8 +72,8 @@ export default function Test() {
   async function submitAnswer() {
     if (isSubmittingRef.current || hasSubmittedRef.current) return;
     isSubmittingRef.current = true;
+    setSubmitModalVisible(false);
     setIsSubmitting(true);
-
     console.log('Submitting with attemptId:', attemptId.current);
     console.log(testId, classroomId);
 
@@ -652,4 +652,3 @@ function makePayload(input) {
   });
   return payload;
 }
-

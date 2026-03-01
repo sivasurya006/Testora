@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useGlobalSearchParams } from 'expo-router';
@@ -11,18 +11,6 @@ import Colors from '../../../../styles/Colors';
 import Test from '../../../../src/components/Test';
 import LoadingScreen from '../../../../src/components/LoadingScreen';
 import { AppBoldText, AppRegularText } from '../../../../styles/fonts';
-
-const DASHBOARD_CACHE_TTL = 5 * 60 * 1000;
-const dashboardCache = new Map();
-
-function getCacheKey(classroomId) {
-  return String(classroomId || '');
-}
-
-function isCacheFresh(cacheEntry) {
-  if (!cacheEntry?.cachedAt) return false;
-  return Date.now() - cacheEntry.cachedAt < DASHBOARD_CACHE_TTL;
-}
 
 const chartConfig = {
   backgroundGradientFrom: '#fff',
@@ -65,8 +53,12 @@ export default function Dashboard() {
   const lineSegments = Math.max(...lineValues, 1);
 
   const pieData = useMemo(() => {
-    const submittedCount = analytics.reduce((total, item) => total + (Number(item.attemptCount) || 0), 0);
-    const totalExpectedSubmissions = (Number(stats.totalStudents) || 0) * (Number(stats.totalTests) || 0);
+    const studentsCount = Number(stats.totalStudents) || 0;
+    const submittedCount = analytics.reduce((total, item) => {
+      const perTestSubmitted = Number(item.submittedTestCount ?? item.totalSubmissionCount ?? 0) || 0;
+      return total + Math.min(Math.max(perTestSubmitted, 0), studentsCount);
+    }, 0);
+    const totalExpectedSubmissions = studentsCount * analytics.length;
     const notSubmittedCount = Math.max(totalExpectedSubmissions - submittedCount, 0);
 
     return [
@@ -90,18 +82,7 @@ export default function Dashboard() {
   const hasPieData = pieData.some((item) => item.population > 0);
 
   const loadDashboard = useCallback(
-    async (force = false) => {
-      const cacheKey = getCacheKey(classroomId);
-      const cacheEntry = dashboardCache.get(cacheKey);
-
-      if (!force && isCacheFresh(cacheEntry)) {
-        setStats(cacheEntry.stats);
-        setTests(cacheEntry.tests);
-        setTopPerformance(cacheEntry.topPerformance);
-        setAnalytics(cacheEntry.analytics);
-        return;
-      }
-
+    async () => {
       try {
         setIsLoading(true);
 
@@ -133,14 +114,6 @@ export default function Dashboard() {
         setTests(testsData);
         setTopPerformance(topData);
         setAnalytics(analyticsData);
-
-        dashboardCache.set(cacheKey, {
-          cachedAt: Date.now(),
-          stats: statsData,
-          tests: testsData,
-          topPerformance: topData,
-          analytics: analyticsData,
-        });
       } catch (err) {
         console.log('Dashboard fetch error:', err?.response?.data || err.message);
       } finally {
@@ -152,7 +125,7 @@ export default function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
-      loadDashboard(false);
+      loadDashboard();
     }, [loadDashboard])
   );
 
@@ -168,12 +141,6 @@ export default function Dashboard() {
         <ScrollView contentContainerStyle={[styles.container, isMobile && styles.containerMobile]}>
           <View style={[styles.topRow, isMobile && styles.topRowMobile]}>
             <AppBoldText style={styles.pageTitle}>Classroom Dashboard</AppBoldText>
-            {!isMobile && (
-              <Pressable style={styles.refreshBtn} onPress={() => loadDashboard(true)}>
-                <MaterialIcons name="refresh" size={18} color={Colors.white} />
-                <AppRegularText style={styles.refreshText}>Refresh</AppRegularText>
-              </Pressable>
-            )}
           </View>
 
           <View style={[styles.summaryRow, isMobile && styles.summaryRowMobile]}>
@@ -315,11 +282,6 @@ export default function Dashboard() {
           )}
         </ScrollView>
 
-        {isMobile && (
-          <Pressable style={styles.mobileRefreshFab} onPress={() => loadDashboard(true)}>
-            <MaterialIcons name="refresh" size={22} color={Colors.white} />
-          </Pressable>
-        )}
       </SafeAreaView>
     </>
   );
@@ -352,19 +314,6 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 22,
     color: Colors.secondaryColor,
-  },
-  refreshBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: Colors.primaryColor,
-  },
-  refreshText: {
-    color: Colors.white,
-    fontSize: 13,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -447,18 +396,6 @@ const styles = StyleSheet.create({
   mobileSectionCard: {
     width: '100%',
     flex: 0,
-  },
-  mobileRefreshFab: {
-    position: 'absolute',
-    right: 18,
-    bottom: 20,
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: Colors.primaryColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 6,
   },
   sectionCard: {
     flex: 1,

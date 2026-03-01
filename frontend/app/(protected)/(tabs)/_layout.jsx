@@ -88,7 +88,7 @@ export default function ProtectedLayout() {
                     ),
                 }} />
 
-                <Tabs.Screen name='joinedClassrooms' options={{
+                <Tabs.Screen name='enrolled' options={{
                     title: isLargeScreen ? 'Enrolled Classrooms' : 'Enrolled',
                     tabBarIcon: ({ color }) => (
                         // <MaterialIcons name="school" size={30} color={color} />

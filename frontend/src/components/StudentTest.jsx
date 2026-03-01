@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity } from 'react-native'
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, Platform } from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
@@ -15,9 +15,23 @@ export default function StudentTest({ data, isStudentTest = true }) {
 
     const remaining = data.remainingAttempts;
 
-    function handleStart() {
+
+        async function requestFullscreenOnStart() {
+        if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+        if (!document.documentElement?.requestFullscreen) return;
+        if (document.fullscreenElement) return;
+
+        try {
+            await document.documentElement.requestFullscreen();
+        } catch (err) {
+            console.log('Fullscreen request failed:', err);
+        }
+    }
+
+     async function handleStart() {
+        await requestFullscreenOnStart();
         router.replace({
-            pathname: '/student/[classroomId]/test/[testId]/start',
+            pathname: 'student/[classroomId]/test/[testId]/start',
             params: {
                 classroomId: classroomId,
                 testId: data.testId,

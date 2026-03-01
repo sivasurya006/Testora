@@ -9,7 +9,7 @@ import { AppRegularText, AppSemiBoldText } from '../../styles/fonts';
 
 export default function MatchingQuestion({ mode, question, options, questionNumber, setAllQuestions, allQuestions, selectedOptions }) {
     const { width } = useWindowDimensions();
-    const enableHorizontalScroll = mode === 'report' && width < 768;
+    const enableHorizontalScroll = (mode === 'report' || mode == 'grade') && width < 768;
 
     if (mode === 'edit') {
         return (
