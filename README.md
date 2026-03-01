@@ -1,9 +1,8 @@
 <p align="center">
-  <img src="Testora.svg" width="160" alt="Testora Logo"/>
+  <img src="Testora.svg" width="90" alt="Testora Logo"/>
 </p>
-
-<h1 align="center">📘 Testora</h1>
-<h3 align="center">Smart Assessment & Classroom Testing Platform</h3>
+<h1 align="center">Testora</h1>
+<h3 align="center">Smart Testing Platform</h3>
 
 ---
 
@@ -21,7 +20,6 @@ It enables any user to:
 
 All within a streamlined, analytics-driven ecosystem.
 
-Unlike traditional trainer–trainee restricted systems, **Testora offers flexible role capability**, allowing any registered user to:
 
 - Create classrooms  
 - Publish tests  
