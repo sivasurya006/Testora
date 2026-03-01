@@ -148,7 +148,7 @@ export default function StudentTestLists() {
                                 <ActivityIndicator size="large" color={Colors.primaryColor} />
                             ) : (
                                 <AppMediumText style={styles.emptyText}>
-                                    No tests available 
+                                    No tests available
                                 </AppMediumText>
                             )}
                         </View>

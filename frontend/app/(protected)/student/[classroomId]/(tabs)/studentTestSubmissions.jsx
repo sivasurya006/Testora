@@ -18,29 +18,52 @@ import { TextInput } from 'react-native';
 export default function StudentSubmissions() {
 
 
-  const [SubmittedTest, setSubmittedTest] = useState();
+  const [SubmittedTest, setSubmittedTest] = useState([]);
   const { classroomId, testId } = useGlobalSearchParams();
   const [Loading, setLoading] = useState();
-  const [searchDate, setSearchDate] = useState("");
+  const [searchText, setSearchText] = useState("");
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setLoading(true);
+  //     const get = async () => await getSubmittedTests(setSubmittedTest, classroomId);
+  //     get();
+  //     setLoading(false);
+  //   }, [classroomId])
+  // );
+
   useFocusEffect(
     useCallback(() => {
-      setLoading(true)
-      const get = async () => await getSubmittedTests(setSubmittedTest, classroomId);
-      get();
-      setLoading(false);
+      const fetchData = async () => {
+        setLoading(true);
+        await getSubmittedTests();
+        setLoading(false);
+      };
+
+      fetchData();
     }, [classroomId])
   );
 
+  if (Loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  // const filteredTests = SubmittedTest?.filter((item) => {
+  //   if (!searchText) return true;
 
-  const filteredTests = SubmittedTest?.filter((item) => {
-    if (!searchDate) return true;
+  //   return item.tesTitle
+  //     ?.toLowerCase()
+  //     .includes(searchText.toLowerCase());
+  // });
 
-    const formattedDate = new Date(item.createdAt * 1000)
-      .toISOString()
-      .split("T")[0]; 
 
-    return formattedDate.includes(searchDate);
-  });
+  const filteredTests = SubmittedTest.filter((item) =>
+    item?.testTitle
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase())
+  );
   async function getSubmittedTests() {
     try {
       const result = await api.get(`/studenttest/getStudentSubmittedTests`, {
@@ -53,11 +76,15 @@ export default function StudentSubmissions() {
       if (result?.status == 200) {
         setSubmittedTest(result.data.reverse());
         console.log("submitted ", result.data);
+        console.log("FIRST OBJECT:", result.data[0]);
       } else {
 
         console.log(`can't fetch created classrooms`);
       }
     } catch (err) {
+
+
+
       console.log(err)
     }
   }
@@ -67,10 +94,12 @@ export default function StudentSubmissions() {
     <View style={{ flex: 1 }}>
 
       <View style={styles.searchContainer}>
+        <Ionicons name="search" size={18} color={Colors.dimBg} />
+
         <TextInput
-          placeholder="Search by date (YYYY-MM-DD)"
-          value={searchDate}
-          onChangeText={setSearchDate}
+          placeholder="Search by test name"
+          value={searchText}
+          onChangeText={setSearchText}
           style={styles.searchInput}
         />
       </View>

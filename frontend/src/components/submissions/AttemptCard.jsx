@@ -88,8 +88,28 @@ export default function AttemptCard({ attempt, handleGrade, handleShowReport, is
                         </View>
 
                     </View>
-                    {isStudent ?
-                        null : (
+                    {!isStudent ?
+                        <>
+                            {attempt.status == 'EVALUATED' ? (
+
+                                <TouchableOpacity style={styles.button}
+
+                                    onPress={() => {
+                                        if (attempt.status == 'EVALUATED') {
+                                            handleShowReport(attempt.attemptId)
+                                        } else {
+                                            handleGrade(attempt.attemptId);
+                                        }
+                                    }}
+
+                                >
+                                    <AppSemiBoldText style={styles.buttonText}>{attempt.status == 'EVALUATED' ? "View Report" : "View Report"}</AppSemiBoldText>
+
+
+                                </TouchableOpacity>
+                            ) : null}
+                        </>
+                        : (
                             <>
                                 <TouchableOpacity style={styles.button}
 

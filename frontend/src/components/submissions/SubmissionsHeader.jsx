@@ -32,15 +32,21 @@ export default function SubmissionsHeader({ data, selected, setSelected, perform
         ]}>
 
             <View style={[styles.leftSection, isMobile && styles.leftSectionMobile]}>
+
                 <View style={styles.menu}>
                     <View style={{ justifyContent: 'center', marginRight: 10 }} >
+
                         <TouchableOpacity onPress={() => {
-                            router.push({
-                                pathname: '[classroomId]/test',
-                                params: {
-                                    classroomId: params.classroomId
-                                }
-                            })
+                            {
+                                isStudent ? router.push(`/student/${params.classroomId}/studentTestSubmissions`) : (
+                                    router.push({
+                                        pathname: '[classroomId]/test',
+                                        params: {
+                                            classroomId: params.classroomId
+                                        }
+                                    })
+                                )
+                            }
                         }}>
                             <Feather name='arrow-left' size={24} />
                         </TouchableOpacity>
