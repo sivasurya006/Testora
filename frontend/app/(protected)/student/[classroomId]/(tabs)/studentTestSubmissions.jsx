@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Colors from '../../../../../styles/Colors';
 import SubmissionsHeader from '../../../../../src/components/submissions/SubmissionsHeader';
@@ -15,6 +15,7 @@ import StudentTestLists from './tests';
 import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 export default function StudentSubmissions() {
 
 
@@ -31,6 +32,8 @@ export default function StudentSubmissions() {
   //   }, [classroomId])
   // );
 
+  const { width } = Dimensions.get('window');
+  
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -117,14 +120,35 @@ export default function StudentSubmissions() {
 }
 
 const styles = StyleSheet.create({
-  searchContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: Colors.white,
-  },
-
+  // searchContainer: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   paddingHorizontal: 16,
+  //   paddingVertical: 12,
+  //   backgroundColor: Colors.white,
+  // },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.white,
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        height: 38,
+        width: '50%',
+        // margin: 20,
+        marginLeft: 'auto',
+        marginRight: 20,
+        borderWidth: 2,
+        marginTop:20,
+        borderColor: Colors.secondaryColor + '30',
+        // ...(width < 1110 ? {
+        //     width: '90%',
+        //     marginTop: 20,
+        // } : {}
+        // )
+    },
   searchInput: {
-    backgroundColor: "#F3F4F6",
+    // backgroundColor: "#F3F4F6",
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
