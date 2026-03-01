@@ -89,16 +89,12 @@ export default function StudentLayout() {
                     ),
                 }}
             />
-        
-                <Tabs.Screen name='studentSubmission' 
-                    options={{
-                        href:null
-                    }}
-                />
+
+      
 
         </Tabs>
 
-        
+
 
         // </SafeAreaView>
     )
