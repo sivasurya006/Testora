@@ -94,6 +94,14 @@ export default function StudentSubmissions() {
           renderItem={({ item }) => (
             <StudentTest data={item} isStudentTest={false} />
           )}
+
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                {searchText ? "No matching tests found" : "No submissions found"}
+              </Text>
+            </View>
+          }
         />
 
       </View>
@@ -123,6 +131,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 10,
     fontSize: 14,
-    outlineWidth : 0,
+    outlineWidth: 0,
   },
 })
