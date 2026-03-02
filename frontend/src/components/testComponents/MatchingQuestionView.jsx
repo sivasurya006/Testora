@@ -1,4 +1,4 @@
-import { View, useWindowDimensions, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, useWindowDimensions, StyleSheet, Pressable } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import RenderHTML from 'react-native-render-html';
 import { AppBoldText, AppMediumText } from '../../../styles/fonts';
@@ -21,7 +21,6 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
 
 
   const { width } = useWindowDimensions();
-  const isSmallScreen = width < 768;
   const options = question.options;
 
   const [selectedLeft, setSelectedLeft] = useState(null);
@@ -31,18 +30,23 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
   const [answers, setAnswers] = useState([]);
 
 
-  useEffect(() => {
-  }, [answers])
+  // Answers update tracking (removed console.log)
 
   // Initialize answers and restore saved selections
   useEffect(() => {
+
     const saved = selectedAnswers[question.questionId];
+
+    const newMatchedPairs = {};
+    const newUsedColors = {};
+
     const initialAnswers = options.map((o, idx) => {
       const savedAnswer = saved ? saved[idx] : null;
+
       if (savedAnswer && savedAnswer.selectedRightIndex !== undefined) {
-        matchedPairs[idx] = savedAnswer.selectedRightIndex;
-        usedColors[idx] = savedAnswer.pairColor;
-        usedColors["right-" + savedAnswer.selectedRightIndex] = savedAnswer.pairColor;
+        newMatchedPairs[idx] = savedAnswer.selectedRightIndex;
+        newUsedColors[idx] = savedAnswer.pairColor;
+        newUsedColors["right-" + savedAnswer.selectedRightIndex] = savedAnswer.pairColor;
         return {
           optionId: o.optionId,
           selectedRightIndex: savedAnswer.selectedRightIndex,
@@ -51,9 +55,12 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
       }
       return { optionId: o.optionId, selectedRightIndex: undefined, pairColor: '' };
     });
+
+    setMatchedPairs(newMatchedPairs);
+    setUsedColors(newUsedColors);
     setAnswers(initialAnswers);
     shuffleRight();
-  }, []);
+  }, [question]);
 
   function shuffleRight() {
     const shuffled = [...options]
@@ -134,13 +141,9 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
       />
 
 
-      <ScrollView
-        horizontal={isSmallScreen}
-        showsHorizontalScrollIndicator={isSmallScreen}
-        contentContainerStyle={styles.horizontalScrollContent}
-      >
-        <View style={[styles.container, isSmallScreen && styles.containerSmallScreen]}>
-          <View style={styles.optionColumn}>
+      <View style={styles.container}>
+
+        <View>
           {options.map((opt, index) => {
             const isMatched = matchedPairs[index] !== undefined;
             const pairColor = usedColors[index];
@@ -167,8 +170,8 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
               </Pressable>
             );
           })}
-          </View>
-          <View style={styles.optionColumn}>
+        </View>
+        <View>
           {shuffledRight.map((opt) => {
             const isMatched = Object.values(matchedPairs).includes(opt.originalIndex);
             const pairColor = usedColors["right-" + opt.originalIndex];
@@ -191,8 +194,8 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
               </Pressable>
             );
           })}
-          </View>
-          <View style={{ justifyContent: 'center' }}>
+        </View>
+        <View style={{ justifyContent: 'center' }}>
           {/* {Object.keys(matchedPairs).length === 0 && (
             <AppMediumText style={{ fontSize: 16, fontStyle: 'italic', color: Colors.gray }}>
               No matches yet
@@ -211,9 +214,8 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
               </AppBoldText>
             );
           })} */}
-          </View>
         </View>
-      </ScrollView>
+      </View>
 
 
 
@@ -231,18 +233,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20
   },
-  containerSmallScreen: {
-    minWidth: 620,
-  },
-  horizontalScrollContent: {
-    paddingBottom: 8,
-  },
-  optionColumn: {
-    width: 300,
-  },
   box: {
     padding: 16,
-    width: '100%',
+    // width: 160,
     minHeight: 60,
     borderWidth: 1,
     marginVertical: 8,

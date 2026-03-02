@@ -25,7 +25,7 @@ export default function JoinedClassrooms() {
   const [isLoading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
-  const numColumns = width < 600 ? 1 : Math.max(1, Math.floor(width / classroom_width));
+  const numColumns = width < 600 ? 1 :  Math.max(1,Math.floor((width - 300) / classroom_width));
 
   useEffect(() => {
     const get = async () => {
