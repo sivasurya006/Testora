@@ -11,6 +11,7 @@ import Colors from '../../../../styles/Colors';
 import Test from '../../../../src/components/Test';
 import LoadingScreen from '../../../../src/components/LoadingScreen';
 import { AppBoldText, AppRegularText } from '../../../../styles/fonts';
+import { ActivityIndicator } from 'react-native-paper';
 
 const chartConfig = {
   backgroundGradientFrom: '#fff',
@@ -129,14 +130,23 @@ export default function Dashboard() {
     }, [loadDashboard])
   );
 
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
+      </View>
+    )
+  }
+
   const wideChartWidth = isMobile ? screenWidth - 56 : Math.max(420, Math.min(screenWidth * 0.55, 820));
   const pieChartWidth = isMobile ? screenWidth - 56 : Math.max(320, Math.min(screenWidth * 0.28, 420));
 
   return (
     <>
-       <StatusBar style="light" translucent />
-      <SafeAreaView style={styles.safeArea} edges={[]}> 
-        <LoadingScreen visible={isLoading} />
+      <StatusBar style="light" translucent />
+      <SafeAreaView style={styles.safeArea} edges={[]}>
+        {/* <LoadingScreen visible={isLoading} /> */}
 
         <ScrollView contentContainerStyle={[styles.container, isMobile && styles.containerMobile]}>
           <View style={[styles.topRow, isMobile && styles.topRowMobile]}>

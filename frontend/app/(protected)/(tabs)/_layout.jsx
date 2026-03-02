@@ -1,6 +1,6 @@
 import { Redirect, Tabs } from 'expo-router'
 import { useContext } from 'react'
-import { ActivityIndicator, Platform, StatusBar, View, useWindowDimensions } from 'react-native'
+import {  Platform, StatusBar, View, useWindowDimensions } from 'react-native'
 import { AuthContext } from '../../../util/AuthContext'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -9,6 +9,7 @@ import Colors from '../../../styles/Colors'
 import Header from '../../../src/components/Header'
 import { fonts } from '../../../styles/fonts'
 import { ClassroomTabBar } from '../../../src/components/ClassroomTobBar'
+import { ActivityIndicator } from 'react-native-paper'
 
 export default function ProtectedLayout() {
 
@@ -23,7 +24,7 @@ export default function ProtectedLayout() {
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
-                <ActivityIndicator size={24} />
+                <ActivityIndicator size={'large'}  />
             </View>
         )
     }

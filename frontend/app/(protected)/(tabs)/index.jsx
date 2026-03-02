@@ -7,7 +7,7 @@ import EmptyClassroom from '../../../src/components/EmptyClassroom';
 import Classroom from '../../../src/components/Classroom';
 import InputModal from '../../../src/components/modals/InputModal';
 import { useRouter } from 'expo-router';
-import { AppBoldText, AppSemiBoldText, fonts } from '../../../styles/fonts';
+import { AppBoldText, AppMediumText, AppSemiBoldText, fonts } from '../../../styles/fonts';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { ActivityIndicator } from 'react-native-paper';
 import Header from '../../../src/components/Header';
@@ -67,6 +67,7 @@ export default function Index() {
 
     async function handleCreateClassroom() {
         try {
+            setCreateModalVisible(false);
             setLoading(true);
             const result = await api.post('/api/create-classroom', { classroomName }, {
                 headers: {
@@ -95,36 +96,43 @@ export default function Index() {
                 {/* <Header /> */}
                 <View style={{ flex: 1, backgroundColor: Colors.bgColor }}>
 
-                    <LoadingScreen visible={isLoading} />
+                    {/* <LoadingScreen visible={isLoading} /> */}
                     <TopBar
                         setCreateModalVisible={setCreateModalVisible}
                         isLargeScreen={isLargeScreen}
                         search={search}
                         setSearch={setSearch}
                     />
-                    {createdClassrooms.length == 0 ? (
-                        <EmptyClassroom
-                            message="Start your teaching space by creating your first classroom."
-                            ctaText="Create New Classroom"
-                            onPress={() => setCreateModalVisible(true)}
-                        />
-                    ) : <FlatList
-                        numColumns={numColumns}
-                        data={filteredClassrooms}
-                        key={numColumns}
-                        keyExtractor={item => item.classroomId.toString()}
-                        renderItem={({ item }) => (
-                            <Classroom id={item.classroomId} name={item.classroomName}
-                                createdAt={item.createdAt} createdBy={item.createdBy}
-                                setClassroomID={setSelectedClassroomId}
-                                setCreatedClassrooms={setCreatedClassrooms}
-                                createdClassrooms={createdClassrooms}
-                                isMenuNeed={true}
-                                totalStudents={item.totalStudents}
-                                totalTests={item.totalTests}
+                    {
+                        isLoading ? (
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <ActivityIndicator size="large" color={Colors.primaryColor} />
+                            </View>
+                        ) : (
+                            createdClassrooms.length == 0 && !isLoading) ? (
+                            <EmptyClassroom
+                                message="Start your teaching space by creating your first classroom."
+                                ctaText="Create New Classroom"
+                                onPress={() => setCreateModalVisible(true)}
                             />
-                        )}
-                    />
+                        ) : <FlatList
+                            numColumns={numColumns}
+                            data={filteredClassrooms}
+                            key={numColumns}
+                            keyExtractor={item => item.classroomId.toString()}
+                            renderItem={({ item }) => (
+                                <Classroom id={item.classroomId} name={item.classroomName}
+                                    createdAt={item.createdAt} createdBy={item.createdBy}
+                                    setClassroomID={setSelectedClassroomId}
+                                    setCreatedClassrooms={setCreatedClassrooms}
+                                    createdClassrooms={createdClassrooms}
+                                    isMenuNeed={true}
+                                    totalStudents={item.totalStudents}
+                                    totalTests={item.totalTests}
+                                />
+                            )
+                            }
+                        />
                     }
                     {createModalVisible ?
                         <InputModal placeholder={"Class name"}
@@ -159,9 +167,11 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipVisible, setTooltipVisible] = useState(false);
-    const { signOut } = useContext(AuthContext);
+    const { signOut , user } = useContext(AuthContext);
     const { width } = useWindowDimensions();
     const isMobile = width < 600;
+
+
 
 
     return (
@@ -173,13 +183,13 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
                 </AppSemiBoldText>
             </View>
 
-            <View style={[styles.rightSection,isMobile && {
-                flex : 0
+            <View style={[styles.rightSection, isMobile && {
+                flex: 0
             }]}>
                 <View style={[styles.searchContainer,
-                    isMobile && {
-                        flex : 1
-                    }
+                isMobile && {
+                    flex: 1
+                }
                 ]}>
 
                     <Ionicons name="search" size={18} color={Colors.dimBg} />
@@ -238,6 +248,14 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
                                 minWidth: 140,
                             }}
                         >
+                            <View style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: Colors.dimBg }}>
+                                <AppSemiBoldText style={{ fontSize: 16, color: Colors.secondaryColor }}>
+                                    {user?.name || "User"}
+                                </AppSemiBoldText>
+                                <AppMediumText style={{ fontSize: 14, color: Colors.dimBg }}>
+                                    {user?.email || "user@example.com"}
+                            </AppMediumText>
+                            </View>
                             <Pressable
                                 style={({ pressed }) => [
                                     {

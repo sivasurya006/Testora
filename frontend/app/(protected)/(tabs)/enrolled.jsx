@@ -4,7 +4,7 @@ import api from '../../../util/api';
 import Classroom from '../../../src/components/Classroom';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../styles/Colors';
-import { AppBoldText, AppSemiBoldText, fonts } from '../../../styles/fonts';
+import { AppBoldText, AppMediumText, AppSemiBoldText, fonts } from '../../../styles/fonts';
 import { useRouter } from 'expo-router';
 import LoadingScreen from '../../../src/components/LoadingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -123,7 +123,7 @@ async function getAllJoinedClassrooms(setAllJoinedClassrooms) {
 
 function TopBar({ isLargeScreen, search, setSearch }) {
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const { signOut } = useContext(AuthContext);
+  const { signOut , user } = useContext(AuthContext);
   const { width } = useWindowDimensions();
   const isMobile = width < 600;
 
@@ -207,6 +207,14 @@ function TopBar({ isLargeScreen, search, setSearch }) {
                   minWidth: 140,
                 }}
               >
+                <View style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: Colors.dimBg }}>
+                  <AppSemiBoldText style={{ fontSize: 16, color: Colors.secondaryColor }}>
+                    {user?.name || "User"}
+                  </AppSemiBoldText>
+                  <AppMediumText style={{ fontSize: 14, color: Colors.dimBg }}>
+                    {user?.email || "user@example.com"}
+                  </AppMediumText>
+                </View>
                 <Pressable
                   style={({ pressed }) => [
                     {

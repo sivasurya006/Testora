@@ -121,23 +121,32 @@ export default function StudentSubmissions() {
 
   // console.log(data)
 
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
-      <LoadingScreen visible={isLoading} />
+      {/* <LoadingScreen visible={isLoading} /> */}
       <SubmissionsHeader data={{ email: data?.userEmail, name: data?.userName }} selected={selected} setSelected={setSelected}
         performanceChartData={performanceChartData}
       />
       {
         filteredData?.length == 0 ? (
-          <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-             <AppSemiBoldText>No Attempts</AppSemiBoldText>
-            </View>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <AppSemiBoldText>No Attempts</AppSemiBoldText>
+          </View>
         ) : (
           <FlatList
             data={filteredData}
             keyExtractor={item => item.attemptId + ""}
             renderItem={({ item }) => (
-              <AttemptCard attempt={item} setFilteredData={setFilteredData} handleGrade={handleGrade} handleShowReport={handleShowReport}  isStudent={true}/>
+              <AttemptCard attempt={item} setFilteredData={setFilteredData} handleGrade={handleGrade} handleShowReport={handleShowReport} isStudent={true} />
             )}
           />
         )

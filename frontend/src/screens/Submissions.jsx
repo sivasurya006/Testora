@@ -6,6 +6,7 @@ import api from '../../util/api';
 import Colors from '../../styles/Colors';
 import { FontAwesome6 } from '@expo/vector-icons';
 import LoadingScreen from '../components/LoadingScreen';
+import { ActivityIndicator } from 'react-native-paper';
 
 export default function StudentSubmissionScreen({ mode = 'submissions', search = '' ,role=''}) {
 
@@ -263,9 +264,18 @@ export default function StudentSubmissionScreen({ mode = 'submissions', search =
         </View>
     );
 
+
+    if(isLoading){
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>      
+                <ActivityIndicator size="large" color={Colors.primaryColor} />
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
-            <LoadingScreen visible={isLoading} />   
+            {/* <LoadingScreen visible={isLoading} />    */}
             {
                 mode == 'submissions' ? (
                     sections.length == 0 ? (

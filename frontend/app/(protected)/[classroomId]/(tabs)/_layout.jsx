@@ -1,18 +1,20 @@
-import { View, Text, useWindowDimensions, Platform, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { Tabs } from 'expo-router'
+import { View, Text, useWindowDimensions, Platform, TouchableOpacity, ActivityIndicator } from 'react-native'
+import React, { useContext, useState } from 'react'
+import { Redirect, Tabs } from 'expo-router'
 import { Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons"
 import Colors from '../../../../styles/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ClassroomTabBar } from '../../../../src/components/ClassroomTobBar';
 import { fonts } from '../../../../styles/fonts';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { AuthContext } from '../../../../util/AuthContext';
 export default function ClassroomLayout() {
 
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
     const isSmallScreen = !isLargeScreen;
     const [isTabBarVisible, setIsTabBarVisible] = useState(true);
+   
 
     return (
         // <SafeAreaView style={{ flex: 1 }}>

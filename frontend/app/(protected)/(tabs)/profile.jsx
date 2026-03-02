@@ -53,16 +53,17 @@ export default function profile() {
                 <Text style={styles.metaValue}>{registeredAt}</Text>
               </View>
             </View>
+            <Pressable
+              style={styles.logoutButton}
+              onPress={signOut}
+            >
+              <AppBoldText style={styles.logoutText}>Sign out</AppBoldText>
+            </Pressable>
           </>
         )}
       </View>
 
-      <Pressable
-        style={styles.logoutButton}
-        onPress={signOut}
-      >
-        <AppBoldText style={styles.logoutText}>Sign out</AppBoldText>
-      </Pressable>
+
     </View>
   )
 }
@@ -120,8 +121,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dimBg,
     padding: 12,
     borderRadius: 8,
+    marginTop: 30,
   },
   logoutText: {
     color: Colors.white,
+    fontSize: 16,
+    textAlign: 'center',
   }
 })

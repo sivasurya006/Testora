@@ -11,6 +11,7 @@ import { StatusBar } from 'expo-status-bar'
 import { AppBoldText, AppMediumText } from '../../styles/fonts'
 import TestBanner from '../components/TestComponentBanner'
 import LoadingScreen from '../components/LoadingScreen'
+import { ActivityIndicator } from 'react-native-paper'
 
 
 
@@ -103,6 +104,15 @@ export default function CreatedTestList({ filter, search, isCreateTestModalVisib
   //   )
   // } 
 
+
+    if(isLoading){
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>      
+                <ActivityIndicator size="large" color={Colors.primaryColor} />
+            </View>
+        )
+    }
+
   return (
 
     <>
@@ -110,7 +120,7 @@ export default function CreatedTestList({ filter, search, isCreateTestModalVisib
       {/* <SafeAreaView style={styles.container} edges={['top']}> */}
 
 
-      <LoadingScreen visible={isLoading} />
+      {/* <LoadingScreen visible={isLoading} /> */}
 
       <View style={styles.listArea}>
         <FlatList

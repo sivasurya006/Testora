@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { createContext, useEffect, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
 import api from "./api";
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
@@ -50,6 +50,19 @@ export default function AuthContextProvider({ children }) {
     //     };
     //     checkIsLoggedIn();
     //   }, []);
+
+    useEffect(() => {
+        
+        const getUserDetails = async () => {
+            setLoading(true);
+            const result = await api.get('/api/profile');
+            if (result?.status === 200 && result?.data) {
+                setUser(result.data);
+            }
+            setLoading(false);
+        }
+        getUserDetails();
+    }, []);
 
     async function signUp(userName, userEmail, userPassword) {
         setLoading(true);
@@ -156,7 +169,7 @@ export default function AuthContextProvider({ children }) {
 
     return (
 
-        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut , user }}>
             {children}
         </AuthContext.Provider>
 

@@ -53,7 +53,7 @@ export default function Signin() {
             <View style={styles.form}>
                 <TextInput
                     autoComplete="email"
-                    onChangeText={(text) => setEmail(text)}
+                    onChangeText={(text) => setEmail(text.trim())}
                     style={styles.inputBox} placeholder="Email" />
 
                 <View style={[styles.passwordContainer, focused && styles.focusedContainer]}>

@@ -18,7 +18,8 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
     const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
     const [isInputModalVisible, setInputModalVisible] = useState(false);
     const [newTestName, setNewTestName] = useState("");
-    const [confirmUnpublish, setConfirmUnpublish] = useState(false)
+    const [confirmUnpublish, setConfirmUnpublish] = useState(false);
+    const [ isLoading, setLoading] = useState(false);   
 
     const isPublished = data.status === 'PUBLISHED';
 
@@ -70,6 +71,7 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
     }
 
     async function unpuplishCreatedTest() {
+        setLoading(true);
         const success = await unPublishTest(classroomId, data.testId);
         if (success) {
             setAllTests(allTests.map(test => {
@@ -79,14 +81,17 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
                 return test;
             }));
         }
+        setLoading(false);
     }
 
     async function handleDelete() {
+        setLoading(true);
         const success = await deleteTest(classroomId, data.testId);
         if (success) {
             setAllTests(allTests.filter(test => test.testId !== data.testId));
         }
         setConfirmModalVisible(false)
+        setLoading(false);
     }
 
     function handleSubmissions() {
@@ -113,6 +118,14 @@ export default function TestBanner({ data, allTests, setAllTests, isDashboard = 
         })
     }
 
+
+    if(isLoading){
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </View>
+        )
+    }
 
 
     return (

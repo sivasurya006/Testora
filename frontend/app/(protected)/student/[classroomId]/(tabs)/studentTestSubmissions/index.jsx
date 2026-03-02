@@ -83,6 +83,7 @@ export default function StudentSubmissions() {
 
           <TextInput
             placeholder="Search by test name"
+            placeholderTextColor={'gray'}
             value={searchText}
             onChangeText={setSearchText}
             style={styles.searchInput}
@@ -124,5 +125,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 10,
     fontSize: 14,
+    outlineWidth : 0,
   },
 })

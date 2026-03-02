@@ -146,16 +146,16 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                             isMenuNeed ? (
                                 <>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: Colors.primaryColor }} >Trainees : {totalStudents}</AppMediumText>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >Trainees : {totalStudents || 0}</AppMediumText>
                                     </View>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: '#009B4D' }} >Active Tests : {totalTests}</AppMediumText>
+                                        <AppMediumText style={{ color: '#009B4D' }} >Active Tests : {totalTests || 0}</AppMediumText>
                                     </View>
                                 </>
                             ) : (
                                 <>
                                     <View style={{ backgroundColor: Colors.lightBadge, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 16 }}>
-                                        <AppMediumText style={{ color: Colors.primaryColor }} >New Tests : {newTests}</AppMediumText>
+                                        <AppMediumText style={{ color: Colors.primaryColor }} >New Tests : {newTests || 0}</AppMediumText>
                                     </View>
                                 </>
                             )
@@ -180,7 +180,7 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
 
                 {
                     isRenameModalVisible ?
-                        <InputModal placeholder={"New class name"} visible={isRenameModalVisible}
+                        <InputModal placeholder={"New class name"} defaultValue={name || ""} visible={isRenameModalVisible}
                             onConfirm={onConfirmRenameClassroom} onCancel={onCancelRenameClassroom}
                             onValueChange={setNewClassName} />
                         : null

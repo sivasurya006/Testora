@@ -1,6 +1,6 @@
 import { View, TextInput, StyleSheet, useWindowDimensions, Pressable, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Checkbox } from 'react-native-paper';
+import { ActivityIndicator, Checkbox } from 'react-native-paper';
 import { router, useGlobalSearchParams } from 'expo-router';
 import api from '../../../../../../util/api';
 import Colors from '../../../../../../styles/Colors';
@@ -82,9 +82,17 @@ export default function Publish() {
         fetchQuestionCount();
     }, [classroomId, testId]);
 
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-            <LoadingScreen visible={isLoading} />
+            {/* <LoadingScreen visible={isLoading} /> */}
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
