@@ -42,9 +42,12 @@ api.interceptors.response.use(null, (error) => {
             return;
         }
         let navLink = '/signin';
+
+
         if (redirect) {
             navLink += `?redirect=${redirect}`;
             router.replace(navLink);
+            return;
         }
         async function signOut() {
             if (Platform.OS !== 'web') {
@@ -53,6 +56,7 @@ api.interceptors.response.use(null, (error) => {
                 localStorage.removeItem("token");
             }
         }
+        signOut();
     }
     throw error;
 });
