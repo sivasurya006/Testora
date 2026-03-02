@@ -1,5 +1,5 @@
 import { Redirect, Tabs } from 'expo-router'
-import { useContext } from 'react'
+import { use, useContext, useEffect, useState } from 'react'
 import { ActivityIndicator, Platform, View, useWindowDimensions } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -13,19 +13,20 @@ import { ClassroomTabBar } from '../../../../../src/components/ClassroomTobBar'
 export default function StudentLayout() {
     const { width } = useWindowDimensions()
     const isLargeScreen = width > 812
-    const { isLoading, user } = useContext(AuthContext)
 
-    if (isLoading) {
-        return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <ActivityIndicator size={24} />
-            </View>
-        );
-    }
 
-    if (!user) {
-        return <Redirect href='/signin' />
-    }
+    // if (isLoading) {
+    //     return (
+    //         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    //             <ActivityIndicator size={24} />
+    //         </View>
+    //     );
+    // }
+
+    // if (!user) {
+    //     return <Redirect href='/signin' />
+    // }
+
 
     return (
         // <SafeAreaView style={{ flex: 1 }}>
@@ -100,7 +101,7 @@ export default function StudentLayout() {
                 }}
             />
 
-      
+
 
         </Tabs>
 

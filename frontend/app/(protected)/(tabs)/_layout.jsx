@@ -1,6 +1,6 @@
 import { Redirect, Tabs } from 'expo-router'
 import { useContext } from 'react'
-import {  Platform, StatusBar, View, useWindowDimensions } from 'react-native'
+import { Platform, StatusBar, View, useWindowDimensions } from 'react-native'
 import { AuthContext } from '../../../util/AuthContext'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -15,6 +15,7 @@ export default function ProtectedLayout() {
 
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
+    const { isLoading, user } = useContext(AuthContext)
 
 
     {/** For authentication check we don't need separate api. 
@@ -30,17 +31,30 @@ export default function ProtectedLayout() {
     //     return <Redirect href='/signin' />
     // }
 
+
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size={24} />
+            </View>
+        );
+    }
+
+    if (!user) {
+        return <Redirect href='/signin' />
+    }
+
     return (
 
         // <SafeAreaView style={{ flex: 1 }}>
-            <Tabs 
+        <Tabs
             tabBar={isLargeScreen ? (props) => <ClassroomTabBar {...props} /> : undefined}
             screenOptions={{
                 tabBarPosition: isLargeScreen ? "left" : 'bottom',
                 headerShown: false,
                 tabBarStyle: Platform.select({
                     web: {
-                        paddingTop : isLargeScreen ? 30 : 0,
+                        paddingTop: isLargeScreen ? 30 : 0,
                         minWidth: 300,
                         backgroundColor: Colors.secondaryColor
                     },
@@ -54,8 +68,8 @@ export default function ProtectedLayout() {
                     }
                 }),
                 tabBarShowLabel: true,
-                tabBarLabelStyle : {
-                    fontSize: isLargeScreen ?  16 : 12,
+                tabBarLabelStyle: {
+                    fontSize: isLargeScreen ? 16 : 12,
                     fontFamily: fonts.semibold
                 },
                 tabBarActiveTintColor: Colors.white,
@@ -65,38 +79,38 @@ export default function ProtectedLayout() {
                 },
                 tabBarActiveBackgroundColor: isLargeScreen ? '#ffffff20' : 'transparent',
             }}>
-                <Tabs.Screen name='index' options={{
-                    title: isLargeScreen ? 'Created Classrooms' : 'Created',
+            <Tabs.Screen name='index' options={{
+                title: isLargeScreen ? 'Created Classrooms' : 'Created',
+                tabBarIcon: ({ color }) => (
+                    // <MaterialCommunityIcons
+                    //     name="account-school"
+                    //     size={30}
+                    //     color={color}
+                    // />
+                    <MaterialIcons name="cast-for-education" size={24} color={color} />
+                ),
+            }} />
+
+            <Tabs.Screen name='enrolled' options={{
+                title: isLargeScreen ? 'Enrolled Classrooms' : 'Enrolled',
+                tabBarIcon: ({ color }) => (
+                    // <MaterialIcons name="school" size={30} color={color} />
+                    // <MaterialCommunityIcons name="bookshelf" size={24} color={color} />
+                    <MaterialIcons name="menu-book" size={24} color={color} />
+                ),
+            }} />
+
+            <Tabs.Screen
+                name='profile' options={{
+                    title: 'Profile',
                     tabBarIcon: ({ color }) => (
-                        // <MaterialCommunityIcons
-                        //     name="account-school"
-                        //     size={30}
-                        //     color={color}
-                        // />
-                        <MaterialIcons name="cast-for-education" size={24} color={color} />
+                        <MaterialIcons name='account-circle' size={30} color={color} />
                     ),
-                }} />
+                    ...(isLargeScreen ? { href: null } : {})
+                }}
+            />
 
-                <Tabs.Screen name='enrolled' options={{
-                    title: isLargeScreen ? 'Enrolled Classrooms' : 'Enrolled',
-                    tabBarIcon: ({ color }) => (
-                        // <MaterialIcons name="school" size={30} color={color} />
-                        // <MaterialCommunityIcons name="bookshelf" size={24} color={color} />
-                        <MaterialIcons name="menu-book" size={24} color={color} />
-                    ),
-                }} />
-
-                <Tabs.Screen
-                    name='profile' options={{
-                        title: 'Profile',
-                        tabBarIcon: ({ color }) => (
-                            <MaterialIcons name='account-circle' size={30} color={color} />
-                        ),
-                        ...(isLargeScreen ? {href : null} : {})
-                    }}
-                />
-
-            </Tabs>
+        </Tabs>
         // </SafeAreaView>
 
     )

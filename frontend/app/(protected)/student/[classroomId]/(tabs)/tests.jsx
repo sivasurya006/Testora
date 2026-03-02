@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View, TextInput, FlatList, Platform, Dimensions } from 'react-native'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import Colors from "../../../../../styles/Colors"
 import { AntDesign } from "react-native-vector-icons"
 import InputModal from "../../../../../src/components/modals/InputModal"
@@ -13,6 +13,7 @@ import LoadingScreen from '../../../../../src/components/LoadingScreen'
 import { ActivityIndicator } from 'react-native-paper'
 import { AppMediumText } from '../../../../../styles/fonts'
 import { Ionicons } from '@expo/vector-icons'
+import { AuthContext } from '../../../../../util/AuthContext'
 
 const { width } = Dimensions.get('window');
 
@@ -25,6 +26,7 @@ export default function StudentTestLists() {
     const [selectedFilter, setSelectedFilter] = useState("all");
     const [showFilters, setShowFilters] = useState(false);
     const [isLoading, setLoading] = useState(false);
+    const { setUser } = useContext(AuthContext)
 
     const filteredTests = useMemo(() => {
         return allPublishedTests
@@ -70,6 +72,41 @@ export default function StudentTestLists() {
             return () => { isActive = false; };
         }, [classroomId])
     );
+
+
+
+
+
+
+    useEffect(() => {
+        getUserDetails();
+    }, [])
+
+
+    const getUserDetails = async () => {
+        try {
+            setLoading(true);
+            const result = await api.get('/api/profile');
+            if (result?.status === 200 && result?.data) {
+                setUser(result.data);
+            }
+        } catch (err) {
+            console.log("Error fetching user details:", err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+    // if(isLoading) {
+    //     return (
+    //         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    //             <ActivityIndicator size={24} />
+    //         </View>
+    //     );
+    // }
+
+
 
 
     return (
