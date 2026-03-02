@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet, useWindowDimensions, Platform } from
 import React, { useState } from 'react'
 import { Ionicons, MaterialCommunityIcons, Feather, Entypo } from '@expo/vector-icons';
 import Colors from '../../styles/Colors';
-import { IconButton, Menu } from 'react-native-paper';
+import { ActivityIndicator, IconButton, Menu } from 'react-native-paper';
 import { router, useGlobalSearchParams } from 'expo-router';
 import ConfirmModal from './modals/ConfirmModal';
 import api from '../../util/api';
