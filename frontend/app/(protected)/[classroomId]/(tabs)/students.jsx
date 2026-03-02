@@ -50,7 +50,6 @@ export default function StudentList() {
         setStudentsList(result.data);
       }
     } catch (err) {
-      console.log('getStudentsList', err.response?.data);
     } finally {
       setIsFetchingStudents(false);
     }
@@ -73,7 +72,6 @@ export default function StudentList() {
     try {
       await deleteStudent(studentId);
     } catch (err) {
-      console.log('delete failed', err.response?.data || err.message);
       setStudentsList(previous);
     }
   };
@@ -268,7 +266,6 @@ function InviteStudentModal({ visible, classroomId, onConfirm, onCancel }) {
         setHasValidLink(false);
       }
     } catch (err) {
-      console.log('invite link error', err.response?.data);
       setLink('Unable to load invite link');
       setHasValidLink(false);
     } finally {

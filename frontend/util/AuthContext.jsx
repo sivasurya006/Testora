@@ -52,14 +52,20 @@ export default function AuthContextProvider({ children }) {
     //   }, []);
 
     useEffect(() => {
-        
+
         const getUserDetails = async () => {
-            setLoading(true);
-            const result = await api.get('/api/profile');
-            if (result?.status === 200 && result?.data) {
-                setUser(result.data);
+
+            try {
+                setLoading(true);
+                const result = await api.get('/api/profile');
+                if (result?.status === 200 && result?.data) {
+                    setUser(result.data);
+                }
+            } catch (err) {
+                console.log("Error fetching user details:", err);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         }
         getUserDetails();
     }, []);
@@ -75,7 +81,6 @@ export default function AuthContextProvider({ children }) {
             if (!res) return
             if (!res.data.success) {
                 const errorText = res.data.message;
-                console.log("Signup error:", errorText);
                 return { success: false, error: errorText };
             }
 
@@ -91,8 +96,7 @@ export default function AuthContextProvider({ children }) {
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
-                // TODO implement logger  console.log('token added')
-            }else{
+            } else {
                 localStorage.setItem("token", res.data.token);
             }
 
@@ -100,7 +104,6 @@ export default function AuthContextProvider({ children }) {
 
         } catch (err) {
             // TODO implement logger (sign up failed)
-            console.log("catch calledd")
 
             if (err.response?.status == 409) {
                 return { success: false, error: "User already exist", status: 409 };
@@ -122,7 +125,6 @@ export default function AuthContextProvider({ children }) {
             if (!res) return
             if (!res.data.success) {
                 const errorText = res.data.message;
-                console.log("Signin error:", errorText);
                 return { success: false, error: errorText };
             }
 
@@ -133,19 +135,16 @@ export default function AuthContextProvider({ children }) {
                 setUser({ email: userEmail });
             }
 
-            console.log("catch called")
             router.replace('/');
             {/** If the client from mobile we need to store the token in SecureStore Memory in mobile (ios/android) */ }
             if (Platform.OS != 'web') {
                 await SecureStore.setItemAsync("token", res.data.token);
-                // TODO implement logger  console.log('token added')
-            }else{
+            } else {
                 localStorage.setItem("token", res.data.token);
             }
             return { success: true };
         } catch (e) {
             // TODO implement logger (sign in failed)
-            console.log("catch called")
             return { success: false, error: e.message };
         } finally {
             setLoading(false);
@@ -155,11 +154,10 @@ export default function AuthContextProvider({ children }) {
     async function signOut() {
         if (Platform.OS !== 'web') {
             await SecureStore.deleteItemAsync("token");
-        }else{
+        } else {
             // try{
             //     const result = await api.delete('/signout');
             // }catch(err){
-            //     console.log(err.response?.message)
             // }
             localStorage.removeItem("token");
         }
@@ -169,7 +167,7 @@ export default function AuthContextProvider({ children }) {
 
     return (
 
-        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut , user }}>
+        <AuthContext.Provider value={{ isLoading, signIn, signUp, signOut, user }}>
             {children}
         </AuthContext.Provider>
 

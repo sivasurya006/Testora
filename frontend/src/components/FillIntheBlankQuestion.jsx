@@ -9,7 +9,6 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
     if (!question) return null;
     const blankAnswers = {};
     options?.forEach(opt => {
-        console.log('option ', opt)
         const idx = opt.blankOptionProperties?.blankIdx;
         if (idx) {
             blankAnswers[idx] = {
@@ -20,11 +19,8 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
     });
 
     let blankCounter = 1;
-    console.log("options ", options)
-    console.log("blank answers ", blankAnswers)
     const questionWithAnswers = question.questionText.replace(/__BLANK__/g, () => {
         const answer = blankAnswers[blankCounter] || '';
-        console.log("blank answer of " + blankCounter)
         blankCounter++;
         let answerText = " <b>" + answer.text + "</b> ";
         if (mode == 'grade'){
@@ -33,7 +29,6 @@ export default function FillInBlankQuestion({ mode, question, options, questionN
         return answerText;
 });
 
-console.log("question with answers ", questionWithAnswers)
 
 const [answers, setAnswers] = useState([]);
 

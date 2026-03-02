@@ -53,7 +53,6 @@ export default function Edit() {
     async function addQuestion(question, constructPayload = true) {
         setIsLoading(true);
         const newQuestion = await createNewQuestion(constructPayload ? makeQuestionPayload(question) : question, classroomId, testId);
-        console.log(newQuestion)
         if (!newQuestion) {
             setIsLoading(false);
             throw new Error('Failed to create question');
@@ -100,7 +99,6 @@ export default function Edit() {
                             data={allQuestions}
                             keyExtractor={(item, index) => index}
                             renderItem={({ item, index }) => {
-                                // console.log(item.questionType)
                                 switch (item.questionType) {
                                     case 'SINGLE':
                                         return (
@@ -297,15 +295,11 @@ async function getAllTestQuestion(classroomId, testId) {
             });
 
             if (result?.status == 200 && result.data) {
-                console.log(result.data);
-                console.log("questions fetched successfully");
                 return result.data;
             } else {
-                console.log("can't fetch questions");
                 return [];
             }
         } catch (err) {
-            console.log(err);
             return [];
         } finally {
             inFlightQuestionRequests.delete(requestKey);
@@ -337,12 +331,10 @@ function makeResultToQuestion(result) {
             };
             if (result.type === "FILL_BLANK" && opt.blankOptionProperties) {
                 option.blankOptionProperties = opt.blankOptionProperties;
-                // console.log("setting option properties ",option)
             }
 
             if (result.type === "MATCHING" && opt.matchingOptionProperties) {
                 option.matchingOptionProperties = opt.matchingOptionProperties;
-                // console.log("setting option properties ",option)
             }
 
             return option;
@@ -359,15 +351,11 @@ async function createNewQuestion(question, classroomId, testId) {
             }
         })
         if (result?.status == 200) {
-            console.log("question created successfully");
-            console.log(result.data);
             return result.data;
         } else {
-            console.log("can't create question");
         }
     }
     catch (err) {
-        console.log(err);
     }
 }
 
@@ -381,21 +369,17 @@ async function createAllQuestion(questions, classroomId, testId) {
             }
         })
         if (result?.status == 200) {
-            console.log("question created successfully");
             return result.data;
         } else {
-            console.log("can't create question");
         }
     }
     catch (err) {
-        console.log(err);
     }
 }
 
 
 function makeQuestionPayload(input) {
 
-    console.log('payload inp : ', input)
 
     const payload = {
         marks: Number(input.question.marks),

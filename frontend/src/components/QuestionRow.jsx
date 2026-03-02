@@ -41,7 +41,6 @@ export default function QuestionRow({ question, questionNumber, setAllTestQuesti
             setAllTestQuestions(allQuestions.map(q => {
                 if (q.question.questionId == question.question.questionId) {
 
-                    console.log("Question for update ", q.question.marks)
 
                     q.question = {
                         ...q.question,
@@ -161,7 +160,6 @@ async function deleteQuestion(classroomId, questionId, allQuestions, setAllTestQ
         });
 
         if (response.status === 200 && response.data.success) {
-            console.log('Question deleted successfully');
             setAllTestQuestions(allQuestions.filter(q => q.question.questionId !== questionId));
         } else {
             console.error('Failed to delete question');
@@ -183,7 +181,6 @@ async function editQuestion(question, classroomId, questionId) {
         });
 
         if (response.status === 200 && response.data.success) {
-            console.log('Question edited successfully');
             return true;
         } else {
             console.error('Failed to edit question');
@@ -204,7 +201,6 @@ async function getQuestionDetails(classroomId, questionId) {
             },
         });
         if (response.status === 200) {
-            console.log('Question details fetched successfully');
             return response.data;
         } else {
             console.error('Failed to fetch question details');
@@ -217,7 +213,6 @@ async function getQuestionDetails(classroomId, questionId) {
 
 
 function makeQuestionPayload(input) {
-    console.log('Input ', input)
     return {
         id: input.question.questionId,
         marks: Number(input.question.marks),

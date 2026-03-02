@@ -26,7 +26,6 @@ export default function Index() {
 
     const numColumns = width < 600 ? 1 : Math.max(1, Math.floor(width / classroom_width));
 
-    console.log(numColumns)
 
     const [createdClassrooms, setCreatedClassrooms] = useState([]);
     const [selectedClassroomId, setSelectedClassroomId] = useState(null);
@@ -46,7 +45,6 @@ export default function Index() {
         setSelectedClassroomId(null);  // reset
         setTimeout(() => setSelectedClassroomId(selectedClassroomId), 0);
         if (!selectedClassroomId) return;
-        console.log(selectedClassroomId);
         router.push(`/${selectedClassroomId}/`)
     }, [selectedClassroomId])
 
@@ -81,7 +79,6 @@ export default function Index() {
             }
             setClassroomName("");
         } catch (err) {
-            console.log(err);
         } finally {
             setLoading(false);
         }
@@ -110,39 +107,39 @@ export default function Index() {
                             </View>
                         ) : (
                             createdClassrooms.length == 0 && !isLoading) ? (
-                            <EmptyClassroom
-                                message="Start your teaching space by creating your first classroom."
-                                ctaText="Create New Classroom"
-                                onPress={() => setCreateModalVisible(true)}
-                            />
-                        ) : <FlatList
-                            numColumns={numColumns}
-                            data={filteredClassrooms}
-                            key={numColumns}
-                            keyExtractor={item => item.classroomId.toString()}
-                            renderItem={({ item }) => (
-                                <Classroom id={item.classroomId} name={item.classroomName}
-                                    createdAt={item.createdAt} createdBy={item.createdBy}
-                                    setClassroomID={setSelectedClassroomId}
-                                    setCreatedClassrooms={setCreatedClassrooms}
-                                    createdClassrooms={createdClassrooms}
-                                    isMenuNeed={true}
-                                    totalStudents={item.totalStudents}
-                                    totalTests={item.totalTests}
+                                <EmptyClassroom
+                                    message="Start your teaching space by creating your first classroom."
+                                    ctaText="Create New Classroom"
+                                    onPress={() => setCreateModalVisible(true)}
                                 />
-                            )
-                            }
-                        />
-                    }
-                    {createModalVisible ?
-                        <InputModal placeholder={"Class name"}
-                            visible={createModalVisible}
-                            onValueChange={setClassroomName}
-                            onConfirm={onConfirmCreateClassModal}
-                            onCancel={onCancelCreateClassModal} />
-                        : null}
+                            ) : <FlatList
+                                numColumns={numColumns}
+                                data={filteredClassrooms}
+                                key={numColumns}
+                                keyExtractor={item => item.classroomId.toString()}
+                                renderItem={({ item }) => (
+                                    <Classroom id={item.classroomId} name={item.classroomName}
+                                        createdAt={item.createdAt} createdBy={item.createdBy}
+                                        setClassroomID={setSelectedClassroomId}
+                                        setCreatedClassrooms={setCreatedClassrooms}
+                                        createdClassrooms={createdClassrooms}
+                                        isMenuNeed={true}
+                                        totalStudents={item.totalStudents}
+                                        totalTests={item.totalTests}
+                                    />
+                                )
+                                } 
+                            />
+                        }
+                        {createModalVisible ?
+                            <InputModal placeholder={"Class name"}
+                                visible={createModalVisible}
+                                onValueChange={setClassroomName}
+                                onConfirm={onConfirmCreateClassModal}
+                                onCancel={onCancelCreateClassModal} />
+                            : null}
 
-                </View >
+                    </View >
             </SafeAreaView>
         </>
     )
@@ -156,10 +153,8 @@ async function getAllCreatedClassrooms(setCreatedClassrooms) {
         if (result?.status == 200) {
             setCreatedClassrooms(result.data.reverse());
         } else {
-            console.log(`can't fetch created classrooms`);
         }
     } catch (err) {
-        console.log(err)
     }
 }
 
@@ -167,14 +162,14 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipVisible, setTooltipVisible] = useState(false);
-    const { signOut , user } = useContext(AuthContext);
+    const { signOut, user } = useContext(AuthContext);
     const { width } = useWindowDimensions();
     const isMobile = width < 600;
 
 
 
 
-    return (
+       return (
         <View style={styles.topBar}>
             <View style={[styles.leftSection, isMobile && { flex: 0 }]}>
                 <AppBoldText style={styles.topBarHeader}>My Classrooms</AppBoldText>
@@ -254,7 +249,7 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
                                 </AppSemiBoldText>
                                 <AppMediumText style={{ fontSize: 14, color: Colors.dimBg }}>
                                     {user?.email || "user@example.com"}
-                            </AppMediumText>
+                                </AppMediumText>
                             </View>
                             <Pressable
                                 style={({ pressed }) => [
@@ -269,8 +264,6 @@ function TopBar({ setCreateModalVisible, isLargeScreen, search, setSearch }) {
                                     },
                                 ]}
                                 onPress={() => {
-
-                                    console.log('Logging out...');
                                     setTooltipVisible(false);
                                     signOut();
                                 }}

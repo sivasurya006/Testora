@@ -16,8 +16,6 @@ export default function FillInBlankQuestionView({ question, selectedAnswers, set
     const inputFontSize = isWide ? 20 : 16;
     const inputMinWidth = isWide ? 120 : 60;
 
-    console.log(" options ", options)
-    console.log(selectedAnswers)
 
 
 

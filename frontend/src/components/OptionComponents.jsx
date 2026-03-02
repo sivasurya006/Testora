@@ -43,7 +43,6 @@ const MCQComponent = ({ giveOptionMarks, options, setOptions, defaultOptions }) 
     };
 
     const removeOption = index => {
-        console.log(options.length)
         const newOptions = options.filter((_, idx) => idx !== index);
         setOptions(newOptions);
     }
@@ -76,7 +75,6 @@ const MCQComponent = ({ giveOptionMarks, options, setOptions, defaultOptions }) 
                                 onChangeText={text => {
                                     const newOptions = [...options];
                                     newOptions[idx].optionMark = Number(text);
-                                    console.log("newOptions ", newOptions)
                                     setOptions(newOptions);
                                 }}
                                 style={[styles.input, { width: 80 }]}
@@ -118,7 +116,6 @@ const SingleComponent = ({ giveOptionMarks, options, setOptions, defaultOptions 
     useEffect(() => {
         if (defaultOptions && defaultOptions.length > 0) {
 
-            console.log('setting default options ', defaultOptions)
 
             setOptions(defaultOptions);
         } else {
@@ -150,7 +147,6 @@ const SingleComponent = ({ giveOptionMarks, options, setOptions, defaultOptions 
     };
 
     const removeOption = index => {
-        console.log(options.length)
         const newOptions = options.filter((_, idx) => idx !== index);
         setOptions(newOptions);
     }
@@ -190,7 +186,6 @@ const SingleComponent = ({ giveOptionMarks, options, setOptions, defaultOptions 
                         ) : null
                     }
 
-                    {console.log('option ', opt.optionText, ' correct ', opt.correct)}
 
                     <Checkbox
                         status={opt.correct ? 'checked' : 'unchecked'}
@@ -436,7 +431,6 @@ const FillBlankComponent = ({ giveOptionMarks, textParts, setTextParts, setMakeA
 
 const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptions }) => {
 
-    console.log("default matching options : ", defaultOptions)
 
     useEffect(() => {
         if (defaultOptions && defaultOptions.length > 0) {
@@ -473,12 +467,10 @@ const MatchingComponents = ({ giveOptionMarks, options, setOptions, defaultOptio
     };
 
     const removeOption = index => {
-        console.log(options.length)
         const newOptions = options.filter((_, idx) => idx !== index);
         setOptions(newOptions);
     }
 
-    console.log("Matching options ", options)
 
     return (
         <View>

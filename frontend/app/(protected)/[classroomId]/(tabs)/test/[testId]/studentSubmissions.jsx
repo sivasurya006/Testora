@@ -52,7 +52,6 @@ export default function StudentSubmissions() {
       setIsLoading(true);
       const data = await getStudentAttempts(params.classroomId, params.testId, params.student);
 
-      console.log(data)
 
       setData(data);
       setIsLoading(false);
@@ -119,7 +118,6 @@ export default function StudentSubmissions() {
 
   }
 
-  // console.log(data)
 
 
   if (isLoading) {
@@ -178,7 +176,6 @@ async function getStudentAttempts(classroomId, testId, studentId) {
     }
 
   } catch (err) {
-    console.log("can't get attempts", err.response?.data)
   }
 
   return [];
@@ -203,7 +200,6 @@ async function getAnswerSheet(classroomId, testId, attemptId) {
     }
 
   } catch (err) {
-    console.log("can't get report", err.response?.data)
   }
 
   return [];
@@ -223,7 +219,6 @@ async function getTestReport(classroomId, testId, attemptId) {
     }
 
   } catch (err) {
-    console.log("can't get report", err.response?.data)
   }
 
   return [];

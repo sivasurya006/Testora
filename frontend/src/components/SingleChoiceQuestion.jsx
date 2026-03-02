@@ -10,7 +10,6 @@ export default function SingleChoiceQuestion({ mode, question, options, question
     const [selected, setSelected] = useState(options.find((opt) => opt.isCorrect || null));
     const correctAnswer = options.find((opt) => opt.isCorrect)?.optionText || "Not given"
 
-    console.log("selectedOptions =================== ", selectedOptions)
 
     if (mode === 'edit') {
         return (

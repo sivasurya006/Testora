@@ -10,7 +10,6 @@ export default function McqQuestion({ mode, question, options, questionNumber, s
     const [checked, setChecked] = useState([]);
 
 
-    console.log(" I am getting question  ", question)
 
     const toggle = (opt) => {
         if (checked.includes(opt)) {

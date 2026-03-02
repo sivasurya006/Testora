@@ -63,13 +63,11 @@ export default function StudentSubmissions() {
 
       } else {
 
-        console.log(`can't fetch created classrooms`);
       }
     } catch (err) {
 
 
 
-      console.log(err)
     }
   }
 

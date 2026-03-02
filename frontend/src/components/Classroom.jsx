@@ -49,7 +49,6 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
                 return classroom;
             }));
         } else {
-            console.log("can't rename");
         }
         setLoading(false);
     }
@@ -60,7 +59,6 @@ export default function Classroom({ id, name, createdAt, createdBy, setClassroom
         if (res) {
             setCreatedClassrooms(createdClassrooms.filter(classroom => classroom.classroomId != id));
         } else {
-            console.log("can't delete classroom")
         }
         setLoading(false)
     }
@@ -206,7 +204,6 @@ async function deleteClassRoom(classroomId) {
         return result.data.success;
 
     } catch (err) {
-        console.log(err);
     }
     return false;
 }
@@ -224,7 +221,6 @@ async function renameClass(id, newName) {
         return result.data.success;
 
     } catch (err) {
-        console.log(err);
     }
 
     return false;

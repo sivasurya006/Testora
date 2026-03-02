@@ -36,7 +36,6 @@ export default function JoinClassroom() {
       else {
         setError("An error occurred while joining the classroom");
       }
-      console.log("join classroom err", err);
     } finally {
       setLoading(false);
     }
@@ -47,14 +46,12 @@ export default function JoinClassroom() {
     try {
       const result = await api.post('/join/classroomConfirm', { code });
       if (result?.status === 200) {
-        console.log('Classroom joined successfully');
         router.replace(`student/${result.data.classroomId}/tests`);
       } else {
         setError("Failed to join classroom");
       }
     } catch (err) {
         setError("An error occurred while joining the classroom");
-        console.log("join classroom err", err);
     } finally {
       setIsJoining(false);
     }

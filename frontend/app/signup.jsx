@@ -52,7 +52,6 @@ export default function Signup() {
                 setErrorMessage("Account already registered with this email. Try to signin")
                 return;
             }
-            console.log(result.error);
             setErrorMessage("Can't create an account. Try again");
         }
 
@@ -105,7 +104,7 @@ export default function Signup() {
                     onPress={handleSignup}
                     disabled={authContext.isLoading}
                 >
-                    {authContext.isLoading ? (
+                    {(authContext.isLoading && email)  ? (
                         <ActivityIndicator size="small" color="#fff" />
                     ) : (
                         <Text style={styles.primaryButtonText}>Sign up</Text>

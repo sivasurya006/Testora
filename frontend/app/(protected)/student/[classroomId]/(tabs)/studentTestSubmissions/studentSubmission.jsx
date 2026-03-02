@@ -34,7 +34,6 @@ export default function StudentSubmissions() {
   const { classroomId, testId } = useGlobalSearchParams();
 
   async function handleGrade(attemptId) {
-    console.log("grading attempt =============================== ", attemptId)
     const answer = await getAnswerSheet(classroomId, testId, attemptId);
     setAnswerSheet(answer);
     setAttemptId(attemptId);
@@ -53,7 +52,6 @@ export default function StudentSubmissions() {
       setIsLoading(true);
       const data = await getStudentAttempts(params.classroomId, params.testId, params.student || null);
       setData(data);
-      console.log("data in submission page", data);
       setIsLoading(false);
 
     };
@@ -66,9 +64,6 @@ export default function StudentSubmissions() {
   useEffect(() => {
     if (!data) return;
     const filtered = data?.attempts?.filter(attempt => attempt.status === selected);
-    console.log("filtered ", filtered);
-    console.log("attempts",data.attempts)
-    console.log("data",data)
     setFilteredData(filtered);
   }, [selected, data]);
 
@@ -128,11 +123,6 @@ export default function StudentSubmissions() {
     return <DetailedTestReport noModal={true} totalMarks={reportData.totalMarks} onExit={onExit} isResultPageOpen={isResultPageOpen} questions={reportData.questions} />
 
   }
-  console.log("PARAMS:", params);
-  console.log("classroomId:", params.classroomId);
-  console.log("testId:", params.testId);
-  console.log("student:", params.student);
-  console.log("filderdata", filteredData)
 
   return (
     <View style={styles.container}>
@@ -184,7 +174,6 @@ const styles = StyleSheet.create({
 //     }
 
 //   } catch (err) {
-//     console.log("can't get attempts", err.response?.data)
 //   }
 
 //   return [];
@@ -207,7 +196,6 @@ async function getStudentAttempts(classroomId, testId, studentId) {
     }
 
   } catch (err) {
-    console.log("can't get attempts", err.response?.data);
   }
 
   return [];
@@ -229,7 +217,6 @@ async function getAnswerSheet(classroomId, testId, attemptId) {
     }
 
   } catch (err) {
-    console.log("can't get report", err.response?.data)
   }
 
   return [];
@@ -249,7 +236,6 @@ async function getTestReport(classroomId, testId, attemptId) {
     }
 
   } catch (err) {
-    console.log("can't get report", err.response?.data)
   }
 
   return [];

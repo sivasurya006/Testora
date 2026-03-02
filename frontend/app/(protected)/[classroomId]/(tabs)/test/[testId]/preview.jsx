@@ -170,14 +170,11 @@ async function getAllTestQuestion(classroomId, testId) {
         });
 
         if (result?.status == 200 && result.data) {
-            console.log("questions fetched successfully");
             return result.data;
         } else {
-            console.log("can't fetch questions");
             return [];
         }
     } catch (err) {
-        console.log(err);
         return [];
     }
 }
@@ -351,12 +348,10 @@ const styles = StyleSheet.create({
 //       };
 //       if (result.type === "FILL_BLANK" && opt.blankOptionProperties) {
 //         option.blankOptionProperties = opt.blankOptionProperties;
-//         // console.log("setting option properties ",option)
 //       }
 
 //       if (result.type === "MATCHING" && opt.matchingOptionProperties) {
 //         option.matchingOptionProperties = opt.matchingOptionProperties;
-//         // console.log("setting option properties ",option)
 //       }
 
 //       return option;

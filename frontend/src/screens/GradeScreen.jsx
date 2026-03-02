@@ -268,7 +268,6 @@ async function gradeAnswerSheet(classroomId, attemptId, totalMarks, gradedAnswer
             return result.data.success
         }
     } catch (err) {
-        console.log(err.response?.data);
     }
     return false;
 }

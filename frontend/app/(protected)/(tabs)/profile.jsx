@@ -20,7 +20,6 @@ export default function profile() {
           setProfile(result.data);
         }
       } catch (err) {
-        console.log(err);
       } finally {
         setIsLoading(false);
       }

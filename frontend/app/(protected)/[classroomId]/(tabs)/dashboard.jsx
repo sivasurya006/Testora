@@ -116,7 +116,6 @@ export default function Dashboard() {
         setTopPerformance(topData);
         setAnalytics(analyticsData);
       } catch (err) {
-        console.log('Dashboard fetch error:', err?.response?.data || err.message);
       } finally {
         setIsLoading(false);
       }

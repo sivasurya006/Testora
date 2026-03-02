@@ -54,7 +54,6 @@ export default function Test() {
     if (Platform.OS == 'web') {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch((err) => {
-          console.log('Exit fullscreen failed:', err);
         });
       }
     }
@@ -74,13 +73,9 @@ export default function Test() {
     isSubmittingRef.current = true;
     setSubmitModalVisible(false);
     setIsSubmitting(true);
-    console.log('Submitting with attemptId:', attemptId.current);
-    console.log(testId, classroomId);
 
-    console.log('Selected answers payload:', makePayload(selectedAnswersRef.current));
 
     try {
-      console.log('inside try')
       if (!attemptId.current) throw new Error('Attempt ID not set');
       const result = await api.post('/timedtest/submit',
         makePayload(selectedAnswersRef.current), {
@@ -92,7 +87,6 @@ export default function Test() {
       });
 
       if (result.data == null) {
-        console.log('No result data received');
         hasSubmittedRef.current = true;
         setSubmitModalVisible(false);
         setSubmittedConfirmModalVisible(true);
@@ -110,7 +104,6 @@ export default function Test() {
       setIsSubmitting(false);
 
     } catch (err) {
-      console.log(err);
       isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
@@ -125,7 +118,6 @@ export default function Test() {
     if (Platform.OS === 'web' && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
 
       document.documentElement.requestFullscreen().catch((err) => {
-        console.log('Fullscreen request failed:', err);
       }).then(() => {
         setFullScreenExitWarning(false);
       });
@@ -167,7 +159,6 @@ export default function Test() {
     }
 
     violationCount.current += 1;
-    console.log('Proctor violation:', source, 'count:', violationCount.current);
 
     if (violationCount.current === 1) {
       setTabWarningBody(
@@ -283,9 +274,7 @@ export default function Test() {
 
   async function startNewTest() {
 
-    console.log("start new test called");
     try {
-      console.log('Starting test with classroomId:', classroomId, 'testId:', testId);
 
       if (!classroomId || !testId) {
         setMessage('Missing classroomId or testId');
@@ -300,7 +289,6 @@ export default function Test() {
       connectWebSocket(result.data.wsUrl + "&testId=" + testId);
     } catch (err) {
       if (err.response?.status === 403) setMessage('Maximum Attempts reached');
-      console.log('startNewTest error:', err);
     }
   }
 
@@ -310,11 +298,9 @@ export default function Test() {
   function connectWebSocket(url) {
     if (!url) return;
     const wsUrl = url;
-    console.log("connecting... ", wsUrl)
     try {
       const ws = new WebSocket(wsUrl);
 
-      ws.onopen = () => console.log("WebSocket Connected:", wsUrl);
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'FINISH_TEST') {
@@ -322,12 +308,9 @@ export default function Test() {
           onTimeEnd();
         }
       };
-      ws.onerror = (err) => console.log("WebSocket error:", err);
-      ws.onclose = () => console.log("WebSocket closed");
 
       wsRef.current = ws;
     } catch (err) {
-      console.log("WebSocket failed:", err);
     }
   }
 
@@ -666,7 +649,6 @@ function makePayload(input) {
   const payload = { answers: [] };
   Object.entries(input).forEach(([key, value]) => {
 
-    console.log(input)
 
     payload.answers.push({
       questionId: parseInt(key),

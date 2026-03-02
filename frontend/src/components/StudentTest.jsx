@@ -21,7 +21,6 @@ export default function StudentTest({ data, isStudentTest = true }) {
         try {
             await document.documentElement.requestFullscreen();
         } catch (err) {
-            console.log('Fullscreen request failed:', err);
         }
     }
 
@@ -37,7 +36,6 @@ export default function StudentTest({ data, isStudentTest = true }) {
     }
 
     //     function handleGrade() {
-    //     console.log("in handle grade", data.classroomId, data.testId, data.userId)
     //     router.push({
     //         pathname: '/student/[classroomId]/studentSubmission',
     //         params: {
@@ -49,7 +47,6 @@ export default function StudentTest({ data, isStudentTest = true }) {
     // }
 
     function handleGrade() {
-        console.log("in handle grade", classroomId, data.testId, data.userId)
         router.push({
             pathname: '/student/[classroomId]/studentTestSubmissions/studentSubmission',
             params: {

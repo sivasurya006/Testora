@@ -87,7 +87,6 @@ export default function CreatedTestList({ filter, search, isCreateTestModalVisib
   //     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' , margin : 'auto' }]}>
   //       <Pressable
   //         style={styles.addButton}
-  //         onPress={() =>{setCreateTestModalVisible(true); console.log('called') }}
   //       >
   //         <AntDesign name="plus" size={16} color={Colors.white} />
   //         <Text style={styles.addButtonText}>Create your first Test</Text>
@@ -193,13 +192,11 @@ async function handleCreateTest(classroomId, testTitle) {
 
     return null;
   } catch (err) {
-    console.log(err);
   }
 }
 
 
 async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
-  console.log("called", filter)
   let status;
   switch (filter) {
     case 'published':
@@ -221,10 +218,8 @@ async function getAllCreatedTests(setCreatedTests, classroomId, filter) {
     if (result?.status == 200) {
       setCreatedTests(result.data);
     } else {
-      console.log(`can't fetch created Tests`);
     }
   } catch (err) {
-    console.log(err)
   }
 }
 

@@ -47,7 +47,6 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
             setQuestionText(defaultQuestion.questionText);
             if (defaultQuestion.type == "FILL_BLANK") {
                 setTextParts(convertFillBlank(defaultQuestion))
-                console.log("Setting text parts ", defaultQuestion.id)
             }
         }
     }, []);
@@ -117,7 +116,6 @@ export default function QuestionEditor({ onConfirm, onCancel, mode, defaultQuest
         return true;
     }
 
-    console.log(textParts)
 
     const isEditMode = mode === 'editQuestion';
     defaultQuestion = isEditMode ? defaultQuestion : {};
@@ -312,7 +310,6 @@ function makeBlankQuestionPayload(mark, input) {
 
     const isLastIndexNeed = input[input.length - 1].type === "blank"
 
-    console.log(" part.blankMark ", mark)
 
     const payload = {
         "marks": mark ? mark : 0,
@@ -340,7 +337,6 @@ function makeBlankQuestionPayloadForUpdate(mark, input) {
 
     const isLastIndexNeed = input[input.length - 1].type === "blank"
 
-    console.log(" part.blankMark ", mark)
 
     const payload = {
         question: {

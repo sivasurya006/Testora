@@ -82,16 +82,13 @@ export default function StudentSubmissionScreen({ mode = 'submissions', search =
                 setData(result.data);
                 return;
             } else {
-                console.log("Can't fetch submissions");
             }
 
         } catch (err) {
-            console.log("getTestSubmissions err ", err.response?.data);
         }
     };
 
     const getTestSubmissions = async () => {
-        console.log("test submission data",classroomId,testId)
         try {
             const result = await api.get('/api/tests/testSubmissions', {
                 headers: {
@@ -104,17 +101,14 @@ export default function StudentSubmissionScreen({ mode = 'submissions', search =
                 setData(result.data);
                 return;
             } else {
-                console.log("Can't fetch submissions");
             }
 
         } catch (err) {
-            console.log("getTestSubmissions err ", err.response?.data);
         }
         setData([]);
     };
 
         const getStudentTestSubmissions = async () => {
-        console.log("test submission data",classroomId,testId)
         try {
             const result = await api.get('/api/tests/StudentTestSubmissions', {
                 headers: {
@@ -127,11 +121,9 @@ export default function StudentSubmissionScreen({ mode = 'submissions', search =
                 setData(result.data);
                 return;
             } else {
-                console.log("Can't fetch submissions");
             }
 
         } catch (err) {
-            console.log("getTestSubmissions err ", err.response?.data);
         }
         setData([]);
     };

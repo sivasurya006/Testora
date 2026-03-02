@@ -12,7 +12,6 @@ export default function TestsLayout() {
     const { classroomId, testId , title } = useGlobalSearchParams();
     const params = useGlobalSearchParams();
 
-    console.log(params)
 
     return (
         <Stack

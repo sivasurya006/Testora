@@ -49,7 +49,6 @@ export default function Publish() {
             if (success) {
                 handleCancel();
             } else {
-                console.log('test not published');
             }
             setIsLoading(false);
         }
@@ -304,7 +303,6 @@ async function getAllTestQuestion(classroomId, testId) {
         }
         return [];
     } catch (err) {
-        console.log(err);
         return [];
     }
 }
@@ -323,10 +321,8 @@ async function publishTest(testId, classroomId, timedTest, correctionMethod, dur
         });
 
         if (response.status === 200) {
-            console.log('Test published successfully');
             return true;
         } else {
-            console.log('Failed to publish test');
             return false;
         }
     } catch (error) {

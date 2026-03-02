@@ -13,7 +13,6 @@ const api = axios.create({
     withCredentials: Platform.OS == 'web' && true
 });
 
-// console.log(api.interceptors)
 
 api.interceptors.request.use(async (config) => {
 
@@ -29,7 +28,6 @@ api.interceptors.request.use(async (config) => {
             config.headers.Authorization = `Bearer ${token}`;
         }
     } catch (err) {
-        console.log(err);
     }
 
 
@@ -46,8 +44,15 @@ api.interceptors.response.use(null, (error) => {
         let navLink = '/signin';
         if (redirect) {
             navLink += `?redirect=${redirect}`;
+            router.replace(navLink);
         }
-        router.replace(navLink);
+        async function signOut() {
+            if (Platform.OS !== 'web') {
+                await SecureStore.deleteItemAsync("token");
+            } else {
+                localStorage.removeItem("token");
+            }
+        }
     }
     throw error;
 });

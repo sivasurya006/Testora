@@ -19,7 +19,6 @@ const theme = {
 };
 
 
-console.log({ ...MD3LightTheme.colors })
 
 export default function RootLayout() {
 

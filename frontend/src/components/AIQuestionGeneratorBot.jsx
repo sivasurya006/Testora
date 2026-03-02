@@ -293,7 +293,6 @@ export default function AIQuestionGeneratorBot({ onUseQuestion }) {
       const generatedQuestions = parseQuestionListFromApiData(data);
       if (generatedQuestions.length === 0) {
         const responseText = extractTextFromResponse(data);
-        console.log('AI raw response:', responseText);
         setError('Could not parse AI JSON.');
         return;
       }

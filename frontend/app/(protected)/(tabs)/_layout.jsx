@@ -15,19 +15,7 @@ export default function ProtectedLayout() {
 
     const { width } = useWindowDimensions();
     const isLargeScreen = width > 821;
-    const authContext = useContext(AuthContext);
 
-    if (authContext.isLoading) {
-        return (
-            <View style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <ActivityIndicator size={'large'}  />
-            </View>
-        )
-    }
 
     {/** For authentication check we don't need separate api. 
     Bcz we handle it on server (if any unauthorized request happens server respond with 401)

@@ -58,7 +58,6 @@ export default function StudentTestLists() {
 
     }, [allPublishedTests, search, selectedFilter]);
 
-    console.log("hi", classroomId);
     useFocusEffect(
         useCallback(() => {
             let isActive = true;
@@ -72,7 +71,6 @@ export default function StudentTestLists() {
         }, [classroomId])
     );
 
-    console.log("FlatList Data:", filteredTests);
 
     return (
         <>
@@ -159,7 +157,6 @@ export default function StudentTestLists() {
                             extraData={filteredTests}
                             keyExtractor={(item) => item.testId.toString()}
                             renderItem={({ item }) => {
-                                console.log("Rendering item:", item);
                                 return <StudentTest data={item} />;
                             }} />
                     )
@@ -174,7 +171,6 @@ export default function StudentTestLists() {
 
 
 async function getAllPublishedTests(setPublishedTest, classroomId) {
-    console.log("called", classroomId)
     let status;
     try {
         const result = await api.get(`/studenttest/getStudentTests`, {
@@ -185,13 +181,10 @@ async function getAllPublishedTests(setPublishedTest, classroomId) {
         });
         if (result?.status == 200) {
             setPublishedTest(result.data.reverse());
-            console.log("published ", result.data);
         } else {
 
-            console.log(`can't fetch created classrooms`);
         }
     } catch (err) {
-        console.log(err)
     }
 }
 

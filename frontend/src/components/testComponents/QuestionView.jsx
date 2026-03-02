@@ -14,7 +14,6 @@ export default function QuestionView({ question, selectedAnswers, setSelectedAns
     function onSelect(option) {
 
 
-        console.log(option)
 
         if (question.type === 'MCQ') {
             const prevQues = selectedAnswers[question.questionId] || [];

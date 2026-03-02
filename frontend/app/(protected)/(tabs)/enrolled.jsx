@@ -41,7 +41,6 @@ export default function JoinedClassrooms() {
     setSelectedClassroomId(null);  // reset
     setTimeout(() => setSelectedClassroomId(selectedClassroomId), 0);
     if (!selectedClassroomId) return;
-    console.log(selectedClassroomId);
     router.push(`/student/${selectedClassroomId}/`)
   }, [selectedClassroomId]);
 
@@ -117,7 +116,6 @@ async function getAllJoinedClassrooms(setAllJoinedClassrooms) {
       throw new Error(`can't fetch created classrooms`);
     }
   } catch (err) {
-    console.log(err);
   }
 }
 
@@ -229,7 +227,6 @@ function TopBar({ isLargeScreen, search, setSearch }) {
                   ]}
                   onPress={() => {
 
-                    console.log('Logging out...');
                     setTooltipVisible(false);
                     signOut();
                   }}

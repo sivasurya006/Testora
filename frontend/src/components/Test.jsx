@@ -24,7 +24,6 @@ export default function Test({ data, allTests, setAllTests, isDashboard }) {
 
 
   function handleEdit() {
-    console.log('edit')
     router.push({
       pathname: '/[classroomId]/(tabs)/test/[testId]/edit',
       params: {
@@ -36,7 +35,6 @@ export default function Test({ data, allTests, setAllTests, isDashboard }) {
   }
 
   function handlePublish() {
-    console.log('publish')
     router.push({
       pathname: '/[classroomId]/(tabs)/test/[testId]/publish',
       params: {
@@ -208,13 +206,10 @@ async function deleteTest(classroomId, testId) {
       }
     });
     if (result.status == 200 && result.data.success) {
-      console.log('test deleted successfully');
       return result.data.success;
     } else {
-      console.log('test not deleted');
     }
   } catch (err) {
-    console.log(err);
   }
   return false;
 }
@@ -229,14 +224,11 @@ async function unPublishTest(classroomId, testId) {
       },
     });
     if (result.status === 200) {
-      console.log('Test unpublished successfully');
       return true;
     } else {
-      console.log('Failed to unpublish test');
       return false;
     }
   } catch (error) {
-    console.log(error);
     return false;
   }
 }
@@ -255,13 +247,10 @@ async function renameTest(classroomId, testId, newTitle) {
 
 
     if (result.status == 200 && result.data.success) {
-      console.log('test renamed successfully');
       return result.data.success;
     } else {
-      console.log('test not renamed');
     }
   } catch (err) {
-    console.log(err);
   }
   return false;
 }

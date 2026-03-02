@@ -39,7 +39,6 @@ export default function Signin() {
                     router.replace('/')
                 }
             } else {
-                console.log(result.error);
                 setErrorMessage("Invalid email or Password")
             }
         }catch(err){

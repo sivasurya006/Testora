@@ -32,7 +32,6 @@ export default function MatchingQuestionView({ question, selectedAnswers, setSel
 
 
   useEffect(() => {
-    console.log(answers)
   }, [answers])
 
   // Initialize answers and restore saved selections
