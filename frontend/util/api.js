@@ -57,9 +57,11 @@ api.interceptors.response.use(null, (error) => {
             }
             router.replace(navLink);
         }
+
         signOut();
+        
+        throw error;
     }
-    throw error;
 });
 
 

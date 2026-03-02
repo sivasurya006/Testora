@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, usePathname, useRouter } from "expo-router";
 import { createContext, use, useEffect, useState } from "react";
 import api from "./api";
 import { Platform } from "react-native";
@@ -51,7 +51,14 @@ export default function AuthContextProvider({ children }) {
     //     checkIsLoggedIn();
     //   }, []);
 
+    const pathName = usePathname();
+
     useEffect(() => {
+    
+
+        if(pathName.includes('/signin') || pathName.includes('/signup') || pathName.includes('join')) {
+            return;
+        }
 
         const getUserDetails = async () => {
 
