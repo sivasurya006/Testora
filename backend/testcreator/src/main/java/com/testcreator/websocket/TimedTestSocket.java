@@ -35,36 +35,41 @@ public class TimedTestSocket {
 
 	@OnOpen
 	public void onOpen(Session session) throws IOException, SQLException {
-		sessions.add(session);
-		System.out.println("New user connected on Test attempId " + session.getRequestParameterMap().get("attemptId"));
-		int testId = Integer.parseInt(session.getRequestParameterMap().get("testId").get(0));
+		try {
+			sessions.add(session);
 
-		Connection connection = DBConnectionMaker.getInstance().getConnection();
-		int durationMinutes = new TestDao(connection).getTestDuration(testId);
-		if (durationMinutes == 0) {
-			System.out.println("Untimed Test");
-			session.close();
-		}
-		System.out.println(durationMinutes + " durationMinutes");
+					"New user connected on Test attempId " + session.getRequestParameterMap().get("attemptId"));
+			int testId = Integer.parseInt(session.getRequestParameterMap().get("testId").get(0));
 
-		Runnable timeoutTask = () -> {
-			try {
-				if (session.isOpen()) {
-					session.getAsyncRemote().sendText("{\"type\":\"FINISH_TEST\"}");
-					session.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			Connection connection = DBConnectionMaker.getInstance().getConnection();
+			int durationMinutes = new TestDao(connection).getTestDuration(testId);
+			if (durationMinutes == 0) {
+
+				session.close();
 			}
-		};
 
-		ScheduledFuture<?> future = scheduler.schedule(timeoutTask, durationMinutes, TimeUnit.MINUTES);
-		userTimers.put(session.getId(), future);
+
+			Runnable timeoutTask = () -> {
+				try {
+					if (session.isOpen()) {
+						session.getAsyncRemote().sendText("{\"type\":\"FINISH_TEST\"}");
+						session.close();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			};
+
+			ScheduledFuture<?> future = scheduler.schedule(timeoutTask, durationMinutes, TimeUnit.MINUTES);
+			userTimers.put(session.getId(), future);
+		} finally {
+			DBConnectionMaker.closeCurrentThreadConnection();
+		}
 	}
 
 	@OnMessage
 	public void onMessage(Session session, String message) throws IOException {
-		System.out.println(message);
+
 	}
 
 	@OnClose
@@ -77,7 +82,7 @@ public class TimedTestSocket {
 			future.cancel(true);
 		}
 
-		System.out.println("User disconnected");
+
 
 	}
 

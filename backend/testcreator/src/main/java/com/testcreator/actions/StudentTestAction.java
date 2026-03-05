@@ -28,8 +28,8 @@ public class StudentTestAction extends JsonApiAction implements ServletRequestAw
 	public String getNewTests() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-		System.out.println("new test userid"+userId);
-		System.out.println("new classroomId userid"+classroomId);
+
+
 
 		Context context = new Context();
 		context.setClasssroomId(classroomId);
@@ -67,7 +67,7 @@ public class StudentTestAction extends JsonApiAction implements ServletRequestAw
 	public String getStudentSubmittedTests() {
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-		System.out.println(userId);
+
 		Context context = new Context();
 		context.setClasssroomId(classroomId);
 		context.setUserId(userId);

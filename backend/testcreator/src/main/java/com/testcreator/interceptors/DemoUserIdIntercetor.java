@@ -23,7 +23,7 @@ public class DemoUserIdIntercetor extends AbstractInterceptor {
 
 	@Override
 	public void init() {
-		System.out.println("inited ");
+
 		super.init();
 	}
 

@@ -34,7 +34,7 @@ public class TestAnswerAction extends JsonApiAction implements ServletRequestAwa
 
 	public String submitAnswers() {
 
-		System.out.println("hello");
+
 
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));

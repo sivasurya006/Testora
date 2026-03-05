@@ -101,7 +101,7 @@ public class ClassroomDao {
 			insertClassroomUserRel.setInt(2, userId);
 			insertClassroomUserRel.setString(3, UserRole.STUDENT.name().toLowerCase());
 			
-			System.out.println("Suceessfully inserted ...");
+
 			
 			return insertClassroomUserRel.executeUpdate() > 0;
 		}
@@ -185,7 +185,7 @@ public class ClassroomDao {
 			e.printStackTrace();
 		}
 
-		System.out.println(students);
+
 		return students;
 	}
 
@@ -219,7 +219,7 @@ public class ClassroomDao {
 
 			try (ResultSet rs = isAuthorized.executeQuery()) {
 				if (!rs.next()) {
-					System.out.println("unautorized");
+
 					throw new UnauthorizedException();
 				} else {
 					try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteClassroom)) {
@@ -227,7 +227,7 @@ public class ClassroomDao {
 						deleteClass.setInt(2, userId);
 
 						if (deleteClass.executeUpdate() == 1) {
-							System.out.println("deleted");
+
 							return true;
 						} else {
 							throw new ClassroomNotNoundException();
@@ -247,14 +247,14 @@ public class ClassroomDao {
 
 			try (ResultSet rs = isAuthorized.executeQuery()) {
 				if (!rs.next()) {
-					System.out.println("Unauthorized access");
+
 					throw new UnauthorizedException();
 				} else {
 					try (PreparedStatement updateClass = connection.prepareStatement(Queries.updateClassRoomName)) {
 						updateClass.setString(1, newName);
 						updateClass.setInt(2, classroomId);
 						if (updateClass.executeUpdate() == 1) {
-							System.out.println("updated");
+
 							return true;
 						} else {
 							throw new ClassroomNotNoundException();
@@ -329,7 +329,7 @@ public class ClassroomDao {
 					classroomDto.setTotalStudents(rs.getInt("studentCount"));
 					classroomDto.setTotalTests(rs.getInt("testCount"));
 
-					System.out.println("creatorname" + rs.getString("username"));
+
 
 				}
 			} catch (Exception e) {
@@ -370,7 +370,7 @@ public class ClassroomDao {
 
 		try (PreparedStatement deleteClass = connection.prepareStatement(Queries.deleteStudent)) {
 //			deleteClass.setInt(1, classroomId);
-			System.out.println("user_id" + userId);
+
 			deleteClass.setInt(1, userId);
 			deleteClass.setInt(2, classroomId);
 

@@ -7,7 +7,7 @@ public class InputValidatorUtil {
 	}
 	
 	public static boolean isValidUsername(String name) {
-		System.out.println("name : "+name);
+
 		return name != null && ! name.isBlank();
 	}
 	

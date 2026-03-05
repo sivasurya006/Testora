@@ -155,7 +155,7 @@ public class TestService {
 	}
 	
 	public boolean gradeAttempt(int attemptId,int totalMarks,List<QuestionReportDto> gradedQuestions) throws SQLException {
-		System.out.println("Grading Tests");
+
 		return testDao.updateAnswers(gradedQuestions, totalMarks, attemptId);
 	}
 	

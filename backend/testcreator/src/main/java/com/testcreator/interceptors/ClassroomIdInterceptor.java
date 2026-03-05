@@ -27,7 +27,7 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 		HttpServletRequest request = ServletActionContext.getRequest();
 		
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
-		System.out.println(classroomIdHeader);
+
 		if(classroomIdHeader == null || classroomIdHeader.isBlank()) {
 			Object action = invocation.getAction();
 			if(action instanceof JsonApiAction jsonAction) {
@@ -43,7 +43,7 @@ public class ClassroomIdInterceptor extends AbstractInterceptor{
 		try {
 			int classroomId = Integer.parseInt(classroomIdHeader);
 			request.setAttribute("classroomId", classroomId);
-    System.out.println("class"+classroomId);
+
 			return invocation.invoke();
 		}catch (NumberFormatException e) {
 			Object action = invocation.getAction();

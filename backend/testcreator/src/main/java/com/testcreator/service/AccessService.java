@@ -77,24 +77,24 @@ public class AccessService {
 	}
 
 	private boolean isAttemptNotExpired(Context context) throws SQLException {
-		System.out.println(context);
+
 		TestDao testDao = new TestDao();
 		Attempt attempt = testDao.getActiveAttempt(context.getTestId(), context.getUserId());
 		if (attempt == null) {
 			return false;
 		}
-		System.out.println("1");
+
 		if (attempt.getStatus() != AttemptStatus.STARTED) {
 			return false;
 		}
-		System.out.println("2");
+
 		int durationMinutes = testDao.getTestDuration(context.getTestId());
 		if(durationMinutes == 0) return true; // untimed test
 		long extra = 15; 
 		long startedAtMillis = attempt.getStartedAt().getTime();
 		long allowedTimeMillis = (durationMinutes * 60 + extra) * 1000;
 		long nowMillis = System.currentTimeMillis();
-		System.out.println("not expied?");
+
 		return nowMillis <= (startedAtMillis + allowedTimeMillis);
 	}
 

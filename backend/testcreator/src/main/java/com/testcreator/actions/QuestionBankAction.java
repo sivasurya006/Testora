@@ -26,7 +26,7 @@ public class QuestionBankAction extends JsonApiAction implements ModelDriven<Que
 	private HttpServletRequest request;
 
 	public void validateCreateQuestions() {
-		System.out.println("validate called");
+
 		for (QuestionDto questionDto : questionBank.getQuestions()) {
 			if (questionDto == null || questionDto.getQuestionText() == null
 					|| questionDto.getQuestionText().isBlank()) {
@@ -56,7 +56,7 @@ public class QuestionBankAction extends JsonApiAction implements ModelDriven<Que
 					}
 					if (type == QuestionType.FILL_BLANK || type == QuestionType.MATCHING) {
 						option.setOptionProperties(type);
-						System.out.println("seted option properties");
+
 						if (option.getOptionProperties() == null
 								|| option.getOptionProperties().getProperties() == null) {
 							addFieldError("options.optionProperties", "Invalid option Properties");
@@ -77,11 +77,11 @@ public class QuestionBankAction extends JsonApiAction implements ModelDriven<Que
 			}
 
 			if (hasFieldErrors()) {
-				System.out.println("fieald errors");
+
 			}
 
 		}
-		System.out.println("validate ended");
+
 	}
 
 	public String createQuestions() {
@@ -114,7 +114,7 @@ public class QuestionBankAction extends JsonApiAction implements ModelDriven<Que
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}

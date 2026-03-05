@@ -140,7 +140,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 	}
 
 	public void validateCreateQuestion() {
-		System.out.println("validate called");
+
 		if (questionDto == null || questionDto.getQuestionText() == null || questionDto.getQuestionText().isBlank()) {
 			addFieldError("questionText", "Invalid question text");
 		}
@@ -187,14 +187,14 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		}
 
 		if (hasFieldErrors()) {
-			System.out.println("fieald errors");
+
 		}
 
-		System.out.println("validate ended");
+
 	}
 
 	public String createQuestion() {
-		System.out.println("execute called");
+
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 		int testId = (Integer) request.getAttribute("testId");
@@ -205,8 +205,8 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			TestService testService = new TestService();
 			this.questionDto = testService.createNewQuestion(context, testId, questionDto.getQuestionText(),
 					questionDto.getType(), questionDto.getMarks(), questionDto.getOptions());
-			System.out.println(questionDto);
-			System.out.println("execute success");
+
+
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
 			setError(new ApiError("Authentication failed", 401));
@@ -218,7 +218,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -259,7 +259,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 
@@ -310,7 +310,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 
@@ -434,35 +434,35 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 
 	}
 
 	public void validateUpdateQuestion() {
-		System.out.println("validate called");
 
-		System.out.println("Type : " + questionDto.getType());
+
+
 
 		if (questionDto == null || questionDto.getQuestionText() == null || questionDto.getQuestionText().isBlank()) {
 			addFieldError("questionText", "Invalid question text");
-			System.out.println("qu txt error");
+
 		}
 
 		if (questionDto.getId() <= 0) {
 			addFieldError("marks", "Invalid question id");
-			System.out.println("qu id error");
+
 		}
 
 		if (questionDto.getMarks() < 0) {
 			addFieldError("marks", "Invalid question marks");
-			System.out.println("qu mark error");
+
 		}
 
 		if (questionDto.getType() == null) {
 			addFieldError("type", "Invalid question type");
-			System.out.println("qu type error");
+
 		}
 		if (questionDto.getOptions() != null) {
 
@@ -472,20 +472,20 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 
 				if (option.getOptionId() < 0) {
 					addFieldError("options.optionId", "Invalid option id");
-					System.out.println("op id error");
+
 				}
 				if (option.getOptionText() == null || option.getOptionText().isBlank()) {
 					addFieldError("options.optionText", "Invalid option text");
-					System.out.println("op text error");
+
 				}
 				if (option.getOptionMark() < 0) {
 					addFieldError("options.optionMark", "Invalid option mark");
-					System.out.println("op mark error");
+
 				}
 			}
 		}
 
-		System.out.println("validate ended");
+
 	}
 
 	public String updateQuestion() {
@@ -499,7 +499,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			context.setClasssroomId(classroomId);
 			context.setUserId(userId);
 			new AccessService().require(Permission.CLASSROOM_TUTOR, context);
-			System.out.println("Incomming : " + questionDto);
+
 			boolean updated = testService.updateQuestion(context, questionDto);
 			if (updated) {
 				this.successDto = new SuccessDto("Question successfully updated", 200, updated);
@@ -518,21 +518,21 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 
 	}
 
 	public String fetchTestQuestion() {
-		System.out.println("execute called");
+
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 		int testId = (Integer) request.getAttribute("testId");
 
 		try {
 			TestService testService = new TestService();
-			System.out.println(classroomId + " " + userId + " " + testId);
+
 			this.testDto = testService.getAllTestQuestion(userId, classroomId, testId);
 			return SUCCESS;
 		} catch (UnauthorizedException e) {
@@ -545,7 +545,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -557,7 +557,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		}
 
 		this.testDto = questionDto.getTest();
-		System.out.println(testDto.getTimedTest());
+
 		if (testDto.getTimedTest() == null || (testDto.getTimedTest() && testDto.getDurationMinutes() <= 0)) {
 			addFieldError("test.durationMinutes", "Invalid duration minutes");
 			return;
@@ -663,7 +663,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		try {
 			TestService testService = new TestService();
 			this.analitics = testService.getDashbordAnaliticsData(classroomId);
-			System.out.println("Size " + analitics.size());
+
 			return SUCCESS;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -677,7 +677,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 		try {
 			TestService testService = new TestService();
 			this.analitics = testService.getTopPerformingData(classroomId);
-			System.out.println("Size " + analitics.size());
+
 			return SUCCESS;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -709,7 +709,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -739,7 +739,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -770,7 +770,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -808,7 +808,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -846,7 +846,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -883,7 +883,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -922,7 +922,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -960,7 +960,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}
@@ -1011,7 +1011,7 @@ public class TestAction extends JsonApiAction implements ServletRequestAware, Mo
 			e.printStackTrace();
 		}
 
-		System.out.println("execute ended");
+
 		setError(new ApiError("server error", 500));
 		return ERROR;
 	}

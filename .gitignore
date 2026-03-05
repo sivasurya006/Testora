@@ -81,3 +81,4 @@ yarn-error.*
 /ios
 /android
 *.properties
+logs/

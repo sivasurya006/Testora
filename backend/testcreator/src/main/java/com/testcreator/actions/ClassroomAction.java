@@ -207,7 +207,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 	public String getClassroomDetails() {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
-		System.out.println("user id:" + userId);
+
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
 
 		if (classroomIdHeader == null || classroomIdHeader.isBlank()) {
@@ -294,7 +294,7 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		int classroomId = (Integer) (request.getAttribute("classroomId"));
 		int userId = Integer.parseInt((String) request.getAttribute("userId"));
 
-		System.out.println(classroomId + " " + userId);
+
 
 		try {
 			Context context = new Context();
@@ -323,8 +323,8 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 		HttpServletRequest request = ServletActionContext.getRequest();
 		int userId = Integer.parseInt(request.getParameter("studentId"));
 		String classroomIdHeader = request.getHeader("X-ClassroomId");
-		System.out.println(classroomIdHeader);
-		System.out.println(userId);
+
+
 
 		if (classroomIdHeader == null) {
 
@@ -354,12 +354,12 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			}
 
 		} catch (UnauthorizedException e) {
-			System.out.println("in server error");
+
 
 			setError(new ApiError("Authendication failed", 401));
 			return LOGIN;
 		} catch (Exception e) {
-			System.out.println("in server error");
+
 			e.printStackTrace();
 			setError(new ApiError("Server error", 500));
 		}
@@ -394,12 +394,12 @@ public class ClassroomAction extends JsonApiAction implements ServletContextAwar
 			return SUCCESS;
 
 		} catch (UnauthorizedException e) {
-			System.out.println("in server error");
+
 
 			setError(new ApiError("Authendication failed", 401));
 			return LOGIN;
 		} catch (Exception e) {
-			System.out.println("in server error");
+
 			e.printStackTrace();
 			setError(new ApiError("Server error", 500));
 		}

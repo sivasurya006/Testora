@@ -17,7 +17,7 @@ public class TestIdInterceptor extends AbstractInterceptor {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		
-		System.out.println("Test id interceptor");
+
 		
 		String testIdHeader = request.getHeader("X-TestId");
 		if(testIdHeader  == null || testIdHeader.isBlank()) {

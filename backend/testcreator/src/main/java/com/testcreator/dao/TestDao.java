@@ -134,7 +134,7 @@ public class TestDao {
 			selectTest.setInt(1, testId);
 			try (ResultSet rs = selectTest.executeQuery()) {
 				if (rs.next()) {
-					System.out.println("Test Id : " + testId);
+
 					testDto = new TestDto();
 					testDto.setTestId(rs.getInt("test_id"));
 					testDto.setClassroomId(rs.getInt("classroom_id"));
@@ -161,7 +161,7 @@ public class TestDao {
 			ps.setInt(1, classroomId);
 			if (limit > 0) {
 				ps.setInt(2, limit);
-				System.out.println("setting limit : " + limit);
+
 			}
 
 			try (ResultSet rs = ps.executeQuery()) {
@@ -196,7 +196,7 @@ public class TestDao {
 			ps.setString(2, status.name().toLowerCase());
 			if (limit > 0) {
 				ps.setInt(3, limit);
-				System.out.println("setting limit : " + limit);
+
 			}
 
 			try (ResultSet rs = ps.executeQuery()) {
@@ -271,7 +271,7 @@ public class TestDao {
 
 	public QuestionDto getQuestionBtId(int questionId, boolean showAnswers) throws SQLException {
 		QuestionDto questionDto = null;
-		System.out.println(questionId + " " + showAnswers);
+
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getQuestionWtthOptionsByQuestionId)) {
 			ps.setInt(1, questionId);
 			try (ResultSet rs = ps.executeQuery()) {
@@ -297,12 +297,12 @@ public class TestDao {
 							option.setCorrect(isCorrect);
 							if (questionDto.getType() == QuestionType.FILL_BLANK) {
 								JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-								System.out.println(" first option JSON : " + json.toString());
+
 								option.setBlankOptionProperties(new BlankOptionProperties(
 										json.get("blankIdx").getAsInt(), json.get("isCaseSensitive").getAsBoolean()));
 							} else if (questionDto.getType() == QuestionType.MATCHING) {
 								JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-								System.out.println(" second option JSON : " + json.toString());
+
 								option.setMatchingOptionProperties(
 										(new MatchingOptionProperties(json.get("match").getAsString())));
 							}
@@ -315,20 +315,20 @@ public class TestDao {
 					while (rs.next()) {
 						Option opt = new Option();
 						opt.setOptionId(rs.getInt("option_id"));
-						System.out.println("get question by id " + questionDto.getType().name());
+
 						if (showAnswers) {
 							boolean isCorrect = rs.getBoolean("is_correct");
 							if (isCorrect) {
 								opt.setCorrect(isCorrect);
 								if (questionDto.getType() == QuestionType.FILL_BLANK) {
 									JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-									System.out.println(" second option JSON : " + json.toString());
+
 									opt.setBlankOptionProperties(
 											new BlankOptionProperties(json.get("blankIdx").getAsInt(),
 													json.get("isCaseSensitive").getAsBoolean()));
 								} else if (questionDto.getType() == QuestionType.MATCHING) {
 									JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-									System.out.println(" second option JSON : " + json.toString());
+
 									opt.setMatchingOptionProperties(
 											(new MatchingOptionProperties(json.get("match").getAsString())));
 								}
@@ -344,7 +344,7 @@ public class TestDao {
 			}
 		}
 
-		System.out.println(questionDto);
+
 
 		return questionDto;
 	}
@@ -381,7 +381,7 @@ public class TestDao {
 //						createdOption.setOptionId(rs.getInt(1));
 						createdOption.setOptionText(option.getOptionText());
 //						createdOption.setOptionMark(option.getOptionMark());
-						System.out.println(option.getCorrect());
+
 						if (option.getCorrect() == null || option.getCorrect()) {
 							createdOption.setCorrect(true);
 						}
@@ -402,7 +402,7 @@ public class TestDao {
 
 			}
 		}
-		System.out.println(createdOptions);
+
 		return createdOptions;
 	}
 
@@ -446,18 +446,18 @@ public class TestDao {
 						try (PreparedStatement optionUpdate = connection.prepareStatement(Queries.updateOptions)) {
 							optionUpdate.setString(1, option.getOptionText());
 							optionUpdate.setInt(3, option.getOptionMark());
-							System.out.println("Updating option mark : " + option.getOptionMark());
+
 							if (option.getOptionProperties() != null) {
-								System.out.println("if");
+
 								optionUpdate.setBoolean(2, true); // any way all blanks and Matching are correct
 								optionUpdate.setString(4, option.getOptionProperties().getProperties().toString());
 							} else {
-								System.out.println("else");
+
 								optionUpdate.setBoolean(2, option.getCorrect());
 								optionUpdate.setString(4, "{}");
 							}
 							optionUpdate.setInt(5, option.getOptionId());
-							System.out.println("For option id : " + option.getOptionId());
+
 							optionUpdate.executeUpdate();
 						}
 
@@ -479,7 +479,7 @@ public class TestDao {
 
 		try (PreparedStatement ps = connection.prepareStatement(Queries.getAllQuestionsWithOptions)) {
 
-			System.out.println(testId + " test Id");
+
 
 			ps.setInt(1, testId);
 
@@ -528,7 +528,7 @@ public class TestDao {
 									} else if (questionDto.getType() == QuestionType.MATCHING) {
 										JsonObject json = new Gson().fromJson(rs.getString("properties"),
 												JsonObject.class);
-										System.out.println(" second option JSON : " + json.toString());
+
 										option.setMatchingOptionProperties(
 												(new MatchingOptionProperties(json.get("match").getAsString())));
 									}
@@ -554,8 +554,8 @@ public class TestDao {
 				while (rs.next()) {
 					testDto = new TestDto();
 					testDto.setTestCount(rs.getInt("testCount"));
-//   					System.out.println(testDto);
-//   					System.out.println(testDto.getTestCount());
+
+
 
 				}
 			}
@@ -729,13 +729,13 @@ public class TestDao {
 					attempt.setSubmittedAt(rs.getTimestamp("submitted_at"));
 					attempt.setStatus(AttemptStatus.valueOf(rs.getString("status").toUpperCase()));
 					attempt.setMarks(rs.getDouble("marks"));
-					System.out.println(attempt);
+
 					return attempt;
 				}
 			}
 		}
 
-		System.out.println("activity");
+
 
 		return null;
 	}
@@ -753,7 +753,7 @@ public class TestDao {
 				}
 			}
 		}
-		System.out.println("duration ");
+
 		return 0;
 	}
 
@@ -810,7 +810,7 @@ public class TestDao {
 
 					if (question.getType() == QuestionType.FILL_BLANK) {
 						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-						System.out.println(" first option JSON : " + json.toString());
+
 						option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),
 								json.get("isCaseSensitive").getAsBoolean()));
 					}
@@ -922,7 +922,7 @@ public class TestDao {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("intestDto" + analiticsList.size());
+
 		return analiticsList;
 	}
 
@@ -951,7 +951,7 @@ public class TestDao {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("intestDto" + analiticsList.size());
+
 		return analiticsList;
 	}
 
@@ -973,7 +973,7 @@ public class TestDao {
 
 					submission.setAttemptsCount(count);
 
-					System.out.println(submission);
+
 
 					submissions.add(submission);
 				}
@@ -1118,7 +1118,7 @@ public class TestDao {
 
 					if (question.getType() == QuestionType.FILL_BLANK) {
 						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-						System.out.println(" first option JSON : " + json.toString());
+
 						option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),
 								json.get("isCaseSensitive").getAsBoolean()));
 					}
@@ -1228,7 +1228,7 @@ public class TestDao {
 
 					if (question.getType() == QuestionType.FILL_BLANK) {
 						JsonObject json = new Gson().fromJson(rs.getString("properties"), JsonObject.class);
-						System.out.println(" first option JSON : " + json.toString());
+
 						option.setBlankOptionProperties(new BlankOptionProperties(json.get("blankIdx").getAsInt(),
 								json.get("isCaseSensitive").getAsBoolean()));
 					}
@@ -1315,7 +1315,7 @@ public class TestDao {
 
 	                for (QuestionDto question : questionBank.getQuestions()) {
 	                	
-	                	System.out.println(question.getOptions());
+
 
 	                    for (Option option : question.getOptions()) {
 

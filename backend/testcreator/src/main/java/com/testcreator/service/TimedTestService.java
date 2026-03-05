@@ -64,11 +64,11 @@ public class TimedTestService {
 	
 	public TestReportDto submitAnswer(int attemptId,int testId,List<QuestionAnswerDto> answers) throws SQLException {
 		
-		System.out.println("saved called ");
+
 		
 		if(testDao.saveAnswer(attemptId, convertListToMap(answers))) {
 			
-			System.out.println("saved succeefully ");
+
 			
 			TestDto test =  testDao.getTestById(testId);
 			if(test.getCorrectionMethod() == CorrectionMethod.AUTO) {

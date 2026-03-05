@@ -33,7 +33,7 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 
 	// boolean haveRedirect = requestURI.contains("/join");
 
-	// System.out.println("Path info : "+requestURI);
+
 
 	// // For mobile
 	// if (clientType != null && clientType.equals("mobile")) {
@@ -98,7 +98,7 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 	// //
 	// if(request.getRequestURL().toString().contains("testcreator/api/isLoggedin"))
 	// {
-	// // System.out.println("redirected");
+
 	// // return Action.SUCCESS;
 	// // }
 
@@ -129,7 +129,7 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 		String tokenValue = null;
 		String requestURI = request.getRequestURI() + "?" + request.getQueryString();
 		
-		System.out.println("Path info befor : "+requestURI);
+
 
 
 		boolean haveRedirect = requestURI.contains("/join");
@@ -139,10 +139,10 @@ public class AuthenticationInterceptor extends AbstractInterceptor {
 		if(haveRedirect && request.getQueryString() != null) {
 			String code = request.getQueryString().split("=")[1];
 			requestURI = "join/classroom?code="+code;
-			System.out.println("setting redirect uri "+requestURI);
+
 		}
 
-		System.out.println("Path info : " + requestURI);
+
 
 		String authHeader = request.getHeader("Authorization");
 

@@ -68,7 +68,7 @@ public class StudentTestDao {
 		try (PreparedStatement selectTest = connection.prepareStatement(Queries.getStudentSubmittedTest)) {
 			selectTest.setInt(2, userId);
 			selectTest.setInt(1, classroomId);
-			System.out.println("userid" + userId);
+
 			try (ResultSet rs = selectTest.executeQuery()) {
 				while (rs.next()) {
 					submittedtTest = new TestDto();
